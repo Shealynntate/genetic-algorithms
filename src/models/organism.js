@@ -7,7 +7,7 @@ class Organism {
   }
 
   evaluateFitness(target) {
-    this.fitness = target.filter((l, i) => this.genome[i] === l).length;
+    this.fitness = target.split('').filter((l, i) => this.genome[i] === l).length;
     return this.fitness;
   }
 
