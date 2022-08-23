@@ -7,8 +7,16 @@ function App() {
   const [population, setPopulation] = useState(null);
 
   const onRun = (populationSize, mutationRate) => {
-    console.log('run', { populationSize, mutationRate });
-    setPopulation(new Population('hello friend', populationSize));
+    const p = new Population('hello friend', populationSize);
+    setPopulation(p);
+
+    while (!p.isTargetReached()) {
+      const oldGen = p.runGeneration(mutationRate);
+      // console.log(oldGen[0]);
+      console.log('top score', oldGen[0].fitness);
+    }
+    console.log('Target reached!');
+    console.log(p.organisms[0]);
   };
 
   const onReset = () => {
@@ -21,7 +29,7 @@ function App() {
         <Typography variant="h1">Genetic Algorithms</Typography>
       </header>
       <ControlPanel onRun={onRun} onReset={onReset} />
-      {population && population.organisms.map((o) => o.ToString())}
+      {population && population.organismsByFitness().map((o) => o.ToString())}
     </div>
   );
 }
