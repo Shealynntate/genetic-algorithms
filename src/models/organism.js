@@ -5,6 +5,11 @@ import {
 } from './utils';
 
 class Organism {
+  static get nextId() {
+    Organism.count = Organism.count == null ? 0 : Organism.count + 1;
+    return Organism.count;
+  }
+
   static reproduce(parentA, parentB, mutation) {
     // Crossover event
     const midPoint = Math.trunc(parentA.genome.length / 2);
@@ -19,6 +24,7 @@ class Organism {
   }
 
   constructor(genomeSize) {
+    this.id = Organism.nextId;
     this.genome = createRandomGenome(genomeSize);
     this.fitness = 0;
   }

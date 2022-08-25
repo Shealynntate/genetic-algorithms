@@ -1,22 +1,33 @@
 import { Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Population from '../models/population';
 import ControlPanel from './ControlPanel';
+import GenerationSummary from './GenerationSummary';
 
 function App() {
   const [population, setPopulation] = useState(null);
+  const [generations, setGenerations] = useState([]);
+  const counter = useRef(0);
+
+  useEffect(() => {
+    if (!population || population.isTargetReached()) return;
+    if (counter.current > 1000) {
+      console.log('saftey counter tripped');
+      return;
+    }
+    const oldGen = population.runGeneration();
+    console.log('top score', oldGen[0].fitness);
+    setTimeout(() => {
+      setGenerations([oldGen, ...generations]);
+    }, 10);
+    counter.current += 1;
+    // console.log('Target reached!');
+    // console.log(population.organisms[0]);
+  }, [population, generations]);
 
   const onRun = (populationSize, mutationRate) => {
-    const p = new Population('hello friend', populationSize);
+    const p = new Population(populationSize, 'hello friend', mutationRate);
     setPopulation(p);
-
-    while (!p.isTargetReached()) {
-      const oldGen = p.runGeneration(mutationRate);
-      // console.log(oldGen[0]);
-      console.log('top score', oldGen[0].fitness);
-    }
-    console.log('Target reached!');
-    console.log(p.organisms[0]);
   };
 
   const onReset = () => {
@@ -29,7 +40,9 @@ function App() {
         <Typography variant="h1">Genetic Algorithms</Typography>
       </header>
       <ControlPanel onRun={onRun} onReset={onReset} />
-      {population && population.organismsByFitness().map((o) => o.ToString())}
+      {generations.map((gen) => (
+        <GenerationSummary organisms={gen} key={gen[0].id} />
+      ))}
     </div>
   );
 }
