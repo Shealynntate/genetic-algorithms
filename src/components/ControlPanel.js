@@ -5,15 +5,14 @@ import {
 } from '@mui/material';
 import MutationSlider from './MutationSlider';
 import PopulationSlider from './PopulationSlider';
-import theme from '../theme';
 
 function ControlPanel({ onRun, onReset }) {
   const [mutation, setMutation] = useState(0.01);
   const [populationSize, setPopulationSize] = useState(100);
-  const [target, setTarget] = useState('hello friend');
+  const [target, setTarget] = useState('hello');
 
   return (
-    <Stack padding={theme.spacing(2)}>
+    <Stack>
       <TextField
         label="Target Phrase"
         variant="outlined"

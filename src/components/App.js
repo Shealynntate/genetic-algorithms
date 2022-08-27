@@ -1,8 +1,11 @@
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
+import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import Population from '../models/population';
 import ControlPanel from './ControlPanel';
 import GenerationSummary from './GenerationSummary';
+import PopulationOverviewChart from './PopulationOverviewChart';
+import theme from '../theme';
 
 function App() {
   const [population, setPopulation] = useState(null);
@@ -18,15 +21,15 @@ function App() {
     const oldGen = population.runGeneration();
     console.log('top score', oldGen[0].fitness);
     setTimeout(() => {
-      setGenerations([oldGen, ...generations]);
-    }, 10);
+      setGenerations([...generations, oldGen]);
+    }, 5);
     counter.current += 1;
     // console.log('Target reached!');
     // console.log(population.organisms[0]);
   }, [population, generations]);
 
   const onRun = (populationSize, mutationRate) => {
-    const p = new Population(populationSize, 'hello friend', mutationRate);
+    const p = new Population(populationSize, 'hello', mutationRate);
     setPopulation(p);
   };
 
@@ -39,7 +42,23 @@ function App() {
       <header>
         <Typography variant="h1">Genetic Algorithms</Typography>
       </header>
-      <ControlPanel onRun={onRun} onReset={onReset} />
+      <Grid container spacing={4} padding={theme.spacing(2)}>
+        <Grid item xs={4}>
+          <ControlPanel onRun={onRun} onReset={onReset} />
+        </Grid>
+        <Grid item xs={8}>
+          <ParentSize style={{ height: 500 }}>
+            {({ width, height }) => (
+              <PopulationOverviewChart
+                width={width}
+                height={height}
+                generations={generations}
+                maxFitness={5}
+              />
+            )}
+          </ParentSize>
+        </Grid>
+      </Grid>
       {generations.map((gen) => (
         <GenerationSummary organisms={gen} key={gen[0].id} />
       ))}

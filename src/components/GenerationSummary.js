@@ -5,7 +5,8 @@ import Organism from '../models/organism';
 function GenerationSummary({ organisms }) {
   return (
     <div>
-      {organisms.map((o) => o.ToString())}
+      {/* {organisms.map((o) => o.ToString())} */}
+      {organisms[0].ToString()}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 // This file contains useful helper functions and constants used in the algorithm
 
 export const codeToChar = (i) => String.fromCharCode(i);
@@ -12,7 +13,7 @@ export const charToCode = (v) => v.charCodeAt(0);
  * the Unicode standard
  */
 export const genCharRange = (start, length) => (
-  [...Array(length)].map((_, i) => codeToChar(charToCode(start) + i))
+  [...Array(length)].map((_v, i) => codeToChar(charToCode(start) + i))
 );
 
 // The domain of DNA values consists of A-Z, a-z, and the space character
@@ -102,3 +103,5 @@ export class LoadedDie {
     return this.k[index];
   }
 }
+
+export const meanFitness = (organisms) => _.meanBy(organisms, 'fitness');
