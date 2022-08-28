@@ -1,5 +1,6 @@
 import { Grid, Typography } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import Population from '../models/population';
 import ControlPanel from './ControlPanel';
@@ -10,27 +11,22 @@ import theme from '../theme';
 function App() {
   const [population, setPopulation] = useState(null);
   const [generations, setGenerations] = useState([]);
-  const counter = useRef(0);
+  const target = useSelector((state) => state.target.value);
+  const mutation = useSelector((state) => state.mutation.value);
 
   useEffect(() => {
     if (!population || population.isTargetReached()) return;
-    if (counter.current > 1000) {
-      console.log('saftey counter tripped');
-      return;
-    }
-    const oldGen = population.runGeneration();
-    console.log('top score', oldGen[0].fitness);
+
     setTimeout(() => {
-      setGenerations([...generations, oldGen]);
-    }, 5);
-    counter.current += 1;
-    // console.log('Target reached!');
-    // console.log(population.organisms[0]);
+      const nextGen = population.runGeneration(mutation);
+      setGenerations([...generations, nextGen]);
+    }, 3);
   }, [population, generations]);
 
-  const onRun = (populationSize, mutationRate) => {
-    const p = new Population(populationSize, 'hello', mutationRate);
+  const onRun = (populationSize) => {
+    const p = new Population(populationSize, target, mutation);
     setPopulation(p);
+    setGenerations([p.organisms]);
   };
 
   const onReset = () => {
@@ -53,7 +49,7 @@ function App() {
                 width={width}
                 height={height}
                 generations={generations}
-                maxFitness={5}
+                targetFitness={target.length}
               />
             )}
           </ParentSize>

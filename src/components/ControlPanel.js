@@ -3,13 +3,17 @@ import PropTypes from 'prop-types';
 import {
   Button, Stack, TextField,
 } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import MutationSlider from './MutationSlider';
 import PopulationSlider from './PopulationSlider';
+import { setTarget } from '../features/targetSlice';
+import { setMutation } from '../features/mutationSlice';
 
 function ControlPanel({ onRun, onReset }) {
-  const [mutation, setMutation] = useState(0.01);
+  const target = useSelector((state) => state.target.value);
+  const mutation = useSelector((state) => state.mutation.value);
+  const dispatch = useDispatch();
   const [populationSize, setPopulationSize] = useState(100);
-  const [target, setTarget] = useState('hello');
 
   return (
     <Stack>
@@ -17,14 +21,14 @@ function ControlPanel({ onRun, onReset }) {
         label="Target Phrase"
         variant="outlined"
         value={target}
-        onChange={(event) => { setTarget(event.target.value); }}
+        onChange={(event) => { dispatch(setTarget(event.target.value)); }}
       />
-      <MutationSlider rate={mutation} setRate={setMutation} />
+      <MutationSlider rate={mutation} setRate={(value) => { dispatch(setMutation(value)); }} />
       <PopulationSlider size={populationSize} setSize={setPopulationSize} />
       <Stack direction="row">
         <Button
           variant="contained"
-          onClick={() => { onRun(populationSize, mutation); }}
+          onClick={() => { onRun(populationSize); }}
         >
           Run
         </Button>

@@ -9,10 +9,9 @@ class Population {
     return Population.count;
   }
 
-  constructor(size, target, mutationRate) {
+  constructor(size, target) {
     this.id = Population.nextId;
     this.target = target;
-    this.mutationRate = mutationRate;
     this.organisms = [...Array(size)].map(() => new Organism(target.length));
     this.loadedDie = new LoadedDie(size);
   }
@@ -54,27 +53,27 @@ class Population {
     return this.organisms[this.loadedDie.roll()];
   }
 
-  performSelection() {
+  performSelection(mutationRate) {
     const nextGen = [];
     // Generate N offspring for the next generation
     while (nextGen.length < this.organisms.length) {
       // Roll loaded die to select the two parents to mate
       const p1 = this.rollParent();
       const p2 = this.rollParent();
-      const offspring = Organism.reproduce(p1, p2, this.mutationRate);
+      const offspring = Organism.reproduce(p1, p2, mutationRate);
       nextGen.push(offspring);
     }
     // Replace old population with new generation
-    const oldGen = this.organisms.slice();
+    // const oldGen = this.organisms.slice();
     this.organisms = nextGen;
 
-    return oldGen;
+    return this.organisms;
   }
 
-  runGeneration() {
+  runGeneration(mutationRate) {
     this.evaluateFitness();
     this.createProbabilityDistribution();
-    return this.performSelection(this.mutationRate);
+    return this.performSelection(mutationRate);
   }
 }
 

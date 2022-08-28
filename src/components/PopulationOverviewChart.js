@@ -1,6 +1,6 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import {
-  Line, Bar, AreaStack, AreaClosed,
+  Line, Bar, AreaClosed,
 } from '@visx/shape';
 import { curveMonotoneX } from '@visx/curve';
 import { GridRows, GridColumns } from '@visx/grid';
@@ -12,10 +12,8 @@ import {
 import { localPoint } from '@visx/event';
 import { GradientOrangeRed, LinearGradient } from '@visx/gradient';
 import { bisector } from 'd3-array';
-// import { timeFormat } from 'd3-time-format';
-import { meanFitness } from '../models/utils';
+import { meanFitness, minFitness, maxFitness } from '../models/utils';
 
-// const stock = appleStock.slice(800);
 export const background = '#3b6978';
 export const background2 = '#204051';
 export const accentColor = '#edffea';
@@ -25,15 +23,12 @@ const tooltipStyles = {
   background,
   border: '1px solid white',
   color: 'white',
+  opacity: 0.6,
 };
 
-// util
-// const formatDate = timeFormat("%b %d, '%y");
-
 // accessors
-const getGeneration = (d) => d?.x || 0; // new Date(d.date);
-// const getMaxFitness = (d) => d?.y || 0;
-const bisectDate = bisector((d) => d.x).left;
+const getGeneration = (d) => d?.x || 0;
+const bisectGenerations = bisector((d) => d.x).left;
 
 export default withTooltip(
   ({
@@ -45,19 +40,12 @@ export default withTooltip(
     showTooltip,
     hideTooltip,
     tooltipData,
-    tooltipTop = 0,
     tooltipLeft = 0,
-    maxFitness = 0,
+    targetFitness = 0,
     generations = [],
   }) => {
     if (width < 10) return null;
 
-    const data = generations.map((gen, i) => ({
-      x: i,
-      top: gen[0].fitness,
-      mean: meanFitness(gen),
-      bottom: gen[gen.length - 1].fitness,
-    }));
     // bounds
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -68,23 +56,25 @@ export default withTooltip(
       domain: [0, generations.length],
     });
       // [innerWidth, margin.left],
-    const stockValueScale = useMemo(
-      () => scaleLinear({
-        range: [innerHeight + margin.top, margin.top],
-        domain: [0, maxFitness],
-        nice: true,
-      }),
-      [margin.top, innerHeight],
-    );
-    // console.log('tooltipData', tooltipData);
-    // const lowestFitness = (gen) => (gen && gen.length ? gen[gen.length - 1].fitness : 0);
+    const stockValueScale = scaleLinear({
+      range: [innerHeight + margin.top, margin.top],
+      domain: [0, targetFitness],
+      nice: true,
+    });
+
+    const data = generations.map((gen, i) => ({
+      x: i,
+      top: maxFitness(gen),
+      mean: meanFitness(gen),
+      bottom: minFitness(gen),
+    }));
 
     // tooltip handler
     const handleTooltip = useCallback(
       (event) => {
         const { x } = localPoint(event) || { x: 0 };
         const x0 = generationScale.invert(x);
-        const index = bisectDate(data, x0, 1);
+        const index = bisectGenerations(data, x0, 1);
         const d0 = data[index - 1];
         const d1 = data[index];
         let d = d0;
@@ -94,10 +84,59 @@ export default withTooltip(
         showTooltip({
           tooltipData: d,
           tooltipLeft: x,
-          tooltipTop: stockValueScale(d.top),
+          tooltipTop: stockValueScale(d?.top || 0),
         });
       },
       [showTooltip, stockValueScale, generationScale],
+    );
+
+    const tooltipCircle = (cy) => (
+      <>
+        <circle
+          cx={tooltipLeft}
+          cy={cy + 1}
+          r={4}
+          fill="black"
+          fillOpacity={0.1}
+          stroke="black"
+          strokeOpacity={0.1}
+          strokeWidth={2}
+          pointerEvents="none"
+        />
+        <circle
+          cx={tooltipLeft}
+          cy={cy}
+          r={4}
+          fill={accentColorDark}
+          stroke="white"
+          strokeWidth={2}
+          pointerEvents="none"
+        />
+      </>
+    );
+
+    const tooltipBox = (value, label) => (
+      <TooltipWithBounds
+        key={Math.random()}
+        top={stockValueScale(value) - 12}
+        left={tooltipLeft + 12}
+        style={tooltipStyles}
+      >
+        {`${label}: ${value}`}
+      </TooltipWithBounds>
+    );
+
+    const area = (dataCallback) => (
+      <AreaClosed
+        data={generations.map((gen, i) => ({ x: i, y: dataCallback(gen) }))}
+        x={(d) => generationScale(d.x)}
+        y={(d) => stockValueScale(d.y)}
+        yScale={stockValueScale}
+        strokeWidth={1}
+        stroke="url(#area-gradient)"
+        fill="url(#area-gradient)"
+        curve={curveMonotoneX}
+      />
     );
 
     return (
@@ -112,8 +151,8 @@ export default withTooltip(
             rx={14}
           />
           <LinearGradient id="area-background-gradient" from={background} to={background2} />
-          <LinearGradient id="area-gradient" from={accentColor} to={accentColor} toOpacity={0.1} />
-          <GradientOrangeRed id="mean-area-gradient" fromOpacity={0} toOpacity={0} />
+          <LinearGradient id="area-gradient" from={accentColor} to={accentColor} toOpacity={0} />
+          <GradientOrangeRed id="mean-area-gradient" fromOpacity={1} toOpacity={0.1} />
           <GridRows
             left={margin.left}
             scale={stockValueScale}
@@ -132,39 +171,9 @@ export default withTooltip(
             strokeOpacity={0.2}
             pointerEvents="none"
           />
-          <AreaClosed
-            data={generations.map((gen, i) => ({ x: i, y: gen[0].fitness }))}
-            x={(d) => generationScale(d.x)}
-            y={(d) => stockValueScale(d.y)}
-            yScale={stockValueScale}
-            strokeWidth={1}
-            stroke="url(#area-gradient)"
-            fill="url(#area-gradient)"
-            curve={curveMonotoneX}
-          />
-          <AreaStack
-            top={margin.top}
-            left={margin.left}
-            keys={['top', 'mean', 'bottom']}
-            data={data}
-            x={(d) => generationScale(d.data.x)}
-            y0={(d) => stockValueScale(d[0])}
-            y1={(d) => stockValueScale(d[1])}
-            y2={(d) => stockValueScale(d.data.bottom)}
-            yScale={stockValueScale}
-            curve={curveMonotoneX}
-          >
-            {({ stacks, path }) => (
-              stacks.map((stack) => (
-                <path
-                  key={`stack-${stack.key}`}
-                  d={path(stack) || ''}
-                  stroke="transparent"
-                  fill="url(#mean-area-gradient)"
-                />
-              ))
-            )}
-          </AreaStack>
+          {area(maxFitness)}
+          {area(meanFitness)}
+          {area(minFitness)}
           <Bar
             x={margin.left}
             y={margin.top}
@@ -187,39 +196,17 @@ export default withTooltip(
                 pointerEvents="none"
                 strokeDasharray="5,2"
               />
-              <circle
-                cx={tooltipLeft}
-                cy={tooltipTop + 1}
-                r={4}
-                fill="black"
-                fillOpacity={0.1}
-                stroke="black"
-                strokeOpacity={0.1}
-                strokeWidth={2}
-                pointerEvents="none"
-              />
-              <circle
-                cx={tooltipLeft}
-                cy={tooltipTop}
-                r={4}
-                fill={accentColorDark}
-                stroke="white"
-                strokeWidth={2}
-                pointerEvents="none"
-              />
+              {tooltipCircle(stockValueScale(tooltipData.top))}
+              {tooltipCircle(stockValueScale(tooltipData.mean))}
+              {tooltipCircle(stockValueScale(tooltipData.bottom))}
             </g>
           )}
         </svg>
         {tooltipData && (
           <div>
-            <TooltipWithBounds
-              key={Math.random()}
-              top={tooltipTop - 12}
-              left={tooltipLeft + 12}
-              style={tooltipStyles}
-            >
-              {`${tooltipData.top}`}
-            </TooltipWithBounds>
+            {tooltipBox(tooltipData.top, 'Top')}
+            {tooltipBox(tooltipData.mean, 'Mean')}
+            {tooltipBox(tooltipData.bottom, 'Bottom')}
             <Tooltip
               top={innerHeight + margin.top - 14}
               left={tooltipLeft}
