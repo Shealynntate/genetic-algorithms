@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
@@ -55,9 +55,16 @@ function App() {
           </ParentSize>
         </Grid>
       </Grid>
-      {generations.map((gen) => (
-        <GenerationSummary organisms={gen} key={gen[0].id} />
-      ))}
+      <Box
+        sx={{
+          display: 'flex',
+          overflowX: 'scroll',
+        }}
+      >
+        {generations.map((gen) => (
+          <GenerationSummary organisms={gen} key={gen[0].id} />
+        ))}
+      </Box>
     </div>
   );
 }
