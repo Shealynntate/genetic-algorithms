@@ -26,6 +26,31 @@ const tooltipStyles = {
   opacity: 0.6,
 };
 
+const tooltipCircle = (cx, cy) => (
+  <>
+    <circle
+      cx={cx}
+      cy={cy + 1}
+      r={4}
+      fill="black"
+      fillOpacity={0.1}
+      stroke="black"
+      strokeOpacity={0.1}
+      strokeWidth={2}
+      pointerEvents="none"
+    />
+    <circle
+      cx={cx}
+      cy={cy}
+      r={4}
+      fill={accentColorDark}
+      stroke="white"
+      strokeWidth={2}
+      pointerEvents="none"
+    />
+  </>
+);
+
 // accessors
 const getGeneration = (d) => d?.x || 0;
 const bisectGenerations = bisector((d) => d.x).left;
@@ -56,7 +81,7 @@ export default withTooltip(
       domain: [0, generations.length],
     });
       // [innerWidth, margin.left],
-    const stockValueScale = scaleLinear({
+    const fitnessValueScale = scaleLinear({
       range: [innerHeight + margin.top, margin.top],
       domain: [0, targetFitness],
       nice: true,
@@ -84,41 +109,16 @@ export default withTooltip(
         showTooltip({
           tooltipData: d,
           tooltipLeft: x,
-          tooltipTop: stockValueScale(d?.top || 0),
+          tooltipTop: fitnessValueScale(d?.top || 0),
         });
       },
-      [showTooltip, stockValueScale, generationScale],
-    );
-
-    const tooltipCircle = (cy) => (
-      <>
-        <circle
-          cx={tooltipLeft}
-          cy={cy + 1}
-          r={4}
-          fill="black"
-          fillOpacity={0.1}
-          stroke="black"
-          strokeOpacity={0.1}
-          strokeWidth={2}
-          pointerEvents="none"
-        />
-        <circle
-          cx={tooltipLeft}
-          cy={cy}
-          r={4}
-          fill={accentColorDark}
-          stroke="white"
-          strokeWidth={2}
-          pointerEvents="none"
-        />
-      </>
+      [showTooltip, fitnessValueScale, generationScale],
     );
 
     const tooltipBox = (value, label) => (
       <TooltipWithBounds
         key={Math.random()}
-        top={stockValueScale(value) - 12}
+        top={fitnessValueScale(value) - 12}
         left={tooltipLeft + 12}
         style={tooltipStyles}
       >
@@ -130,8 +130,8 @@ export default withTooltip(
       <AreaClosed
         data={generations.map((gen, i) => ({ x: i, y: dataCallback(gen) }))}
         x={(d) => generationScale(d.x)}
-        y={(d) => stockValueScale(d.y)}
-        yScale={stockValueScale}
+        y={(d) => fitnessValueScale(d.y)}
+        yScale={fitnessValueScale}
         strokeWidth={1}
         stroke="url(#area-gradient)"
         fill="url(#area-gradient)"
@@ -155,7 +155,7 @@ export default withTooltip(
           <GradientOrangeRed id="mean-area-gradient" fromOpacity={1} toOpacity={0.1} />
           <GridRows
             left={margin.left}
-            scale={stockValueScale}
+            scale={fitnessValueScale}
             width={innerWidth}
             strokeDasharray="1,3"
             stroke={accentColor}
@@ -196,9 +196,9 @@ export default withTooltip(
                 pointerEvents="none"
                 strokeDasharray="5,2"
               />
-              {tooltipCircle(stockValueScale(tooltipData.top))}
-              {tooltipCircle(stockValueScale(tooltipData.mean))}
-              {tooltipCircle(stockValueScale(tooltipData.bottom))}
+              {tooltipCircle(tooltipLeft, fitnessValueScale(tooltipData.top))}
+              {tooltipCircle(tooltipLeft, fitnessValueScale(tooltipData.mean))}
+              {tooltipCircle(tooltipLeft, fitnessValueScale(tooltipData.bottom))}
             </g>
           )}
         </svg>

@@ -62,7 +62,16 @@ function App() {
         }}
       >
         {generations.map((gen) => (
-          <GenerationSummary organisms={gen} key={gen[0].id} />
+          <ParentSize style={{ height: 200, width: 200 }} key={gen.id}>
+            {({ width, height }) => (
+              <GenerationSummary
+                width={width}
+                height={height}
+                organisms={gen}
+                key={gen[0].id}
+              />
+            )}
+          </ParentSize>
         ))}
       </Box>
     </div>
