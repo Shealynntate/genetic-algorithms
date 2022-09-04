@@ -148,7 +148,7 @@ export default withTooltip(
             width={width}
             height={height}
             fill="url(#area-background-gradient)"
-            rx={14}
+            rx={5}
           />
           <LinearGradient id="area-background-gradient" from={background} to={background2} />
           <LinearGradient id="area-gradient" from={accentColor} to={accentColor} toOpacity={0} />
@@ -180,7 +180,7 @@ export default withTooltip(
             width={innerWidth}
             height={innerHeight}
             fill="transparent"
-            rx={14}
+            rx={5}
             onTouchStart={handleTooltip}
             onTouchMove={handleTooltip}
             onMouseMove={handleTooltip}
@@ -208,7 +208,7 @@ export default withTooltip(
             {tooltipBox(tooltipData.mean, 'Mean')}
             {tooltipBox(tooltipData.bottom, 'Bottom')}
             <Tooltip
-              top={innerHeight + margin.top - 14}
+              top={innerHeight + margin.top - 5}
               left={tooltipLeft}
               style={{
                 ...defaultStyles,

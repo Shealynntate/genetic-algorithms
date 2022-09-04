@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
+import { useSelector } from 'react-redux';
 
 const initialState = {
-  value: 'hello friend',
+  value: 'hello',
 };
 
 export const targetSlice = createSlice({
@@ -16,5 +17,10 @@ export const targetSlice = createSlice({
 });
 
 export const { setTarget } = targetSlice.actions;
+
+export const useMaxFitness = () => {
+  const target = useSelector((state) => state.target.value);
+  return target.length;
+};
 
 export default targetSlice.reducer;

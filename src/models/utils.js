@@ -5,6 +5,8 @@ export const codeToChar = (i) => String.fromCharCode(i);
 
 export const charToCode = (v) => v.charCodeAt(0);
 
+export const genNumRange = (max) => ([...Array(max + 1).keys()]);
+
 /**
  * A helper function to generate a range of letters for an Organism's DNA
  * @param {*} start - the starting character of the range
