@@ -61,9 +61,10 @@ function App() {
           overflowX: 'scroll',
         }}
       >
-        {generations.map((gen) => (
+        {generations.map((gen, index) => (
           <GenerationSummary
             key={gen[0].id}
+            genNumber={index}
             organisms={gen}
             maxFitness={target.length}
           />

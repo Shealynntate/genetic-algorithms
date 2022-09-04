@@ -39,7 +39,7 @@ class Organism {
   }
 
   ToString() {
-    return `[${this.genome.join('')}]`;
+    return this.genome.join('');
   }
 }
 

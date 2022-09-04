@@ -66,6 +66,17 @@ function GenerationSummaryChart({
   const meanFitness = mean(organisms, (o) => o.fitness);
   const fitnessDeviation = deviation(organisms, (o) => o.fitness);
 
+  const createLine = (x, stroke) => (
+    <Line
+      from={{ x: xScaleLinear(x), y: margin.top }}
+      to={{ x: xScaleLinear(x), y: innerHeight + margin.top }}
+      stroke={theme.palette.secondary.light}
+      strokeWidth={stroke}
+      pointerEvents="none"
+      strokeDasharray="1,3"
+    />
+  );
+
   return (
     <div>
       <svg width={width} height={height}>
@@ -74,8 +85,8 @@ function GenerationSummaryChart({
           y={0}
           width={width}
           height={height}
-          rx={5}
-          fill={theme.palette.grey['100']}
+          rx={theme.shape.borderRadius}
+          fill={theme.palette.background.default}
         />
         <GradientOrangeRed id="area-gradient" />
         <LinearGradient
@@ -103,34 +114,16 @@ function GenerationSummaryChart({
               y={yMax - barHeight}
               width={barWidth}
               height={barHeight}
-              fill="url(#background-gradient)"
+              fill={theme.palette.secondary.main}
             />
           );
         })}
-        <Line
-          from={{ x: xScaleLinear(meanFitness), y: margin.top }}
-          to={{ x: xScaleLinear(meanFitness), y: innerHeight + margin.top }}
-          stroke={theme.palette.secondary.dark}
-          strokeWidth={1}
-          pointerEvents="none"
-          strokeDasharray="5,2"
-        />
-        <Line
-          from={{ x: xScaleLinear(meanFitness + fitnessDeviation), y: margin.top }}
-          to={{ x: xScaleLinear(meanFitness + fitnessDeviation), y: innerHeight + margin.top }}
-          stroke={theme.palette.secondary.dark}
-          strokeWidth={0.5}
-          pointerEvents="none"
-          strokeDasharray="5,2"
-        />
-        <Line
-          from={{ x: xScaleLinear(meanFitness - fitnessDeviation), y: margin.top }}
-          to={{ x: xScaleLinear(meanFitness - fitnessDeviation), y: innerHeight + margin.top }}
-          stroke={theme.palette.secondary.dark}
-          strokeWidth={0.5}
-          pointerEvents="none"
-          strokeDasharray="5,2"
-        />
+        {/* Create mean and standard deviaiton lines */}
+        {createLine(meanFitness, 1)}
+        {createLine(meanFitness + fitnessDeviation, 0.5)}
+        {createLine(meanFitness + 2 * fitnessDeviation, 0.5)}
+        {createLine(meanFitness - fitnessDeviation, 0.5)}
+        {createLine(meanFitness - 2 * fitnessDeviation, 0.5)}
       </svg>
     </div>
   );

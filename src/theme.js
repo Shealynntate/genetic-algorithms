@@ -12,6 +12,9 @@ const theme = createTheme({
       main: '#FCE38A', // pale yellow
       light: '#fce8a1',
     },
+    background: {
+      paper: '#FFFFF5', // cream
+    },
   },
 });
 // #F38181 dusty rose
