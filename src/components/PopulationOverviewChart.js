@@ -10,8 +10,9 @@ import {
 } from '@visx/tooltip';
 // import { WithTooltipProvidedProps } from '@visx/tooltip/lib/enhancers/withTooltip';
 import { localPoint } from '@visx/event';
-import { GradientOrangeRed, LinearGradient } from '@visx/gradient';
+import { LinearGradient } from '@visx/gradient';
 import { bisector } from 'd3-array';
+import { useTheme } from '@emotion/react';
 import { meanFitness, minFitness, maxFitness } from '../models/utils';
 
 export const background = '#3b6978';
@@ -70,6 +71,8 @@ export default withTooltip(
     generations = [],
   }) => {
     if (width < 10) return null;
+
+    const theme = useTheme();
 
     // bounds
     const innerWidth = width - margin.left - margin.right;
@@ -147,18 +150,21 @@ export default withTooltip(
             y={0}
             width={width}
             height={height}
-            fill="url(#area-background-gradient)"
+            fill={theme.palette.background.paper}
             rx={5}
           />
-          <LinearGradient id="area-background-gradient" from={background} to={background2} />
-          <LinearGradient id="area-gradient" from={accentColor} to={accentColor} toOpacity={0} />
-          <GradientOrangeRed id="mean-area-gradient" fromOpacity={1} toOpacity={0.1} />
+          <LinearGradient
+            id="area-gradient"
+            from={theme.palette.primary.main}
+            to={theme.palette.primary.main}
+            toOpacity={0}
+          />
           <GridRows
             left={margin.left}
             scale={fitnessValueScale}
             width={innerWidth}
             strokeDasharray="1,3"
-            stroke={accentColor}
+            stroke={theme.palette.primary.dark}
             strokeOpacity={0}
             pointerEvents="none"
           />
@@ -167,7 +173,7 @@ export default withTooltip(
             scale={generationScale}
             height={innerHeight}
             strokeDasharray="1,3"
-            stroke={accentColor}
+            stroke={theme.palette.primary.dark}
             strokeOpacity={0.2}
             pointerEvents="none"
           />

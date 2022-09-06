@@ -36,14 +36,14 @@ function App() {
   return (
     <div>
       <header>
-        <Typography variant="h1">Genetic Algorithms</Typography>
+        <Typography variant="h2">Genetic Algorithms</Typography>
       </header>
       <Grid container spacing={4} padding={theme.spacing(2)}>
         <Grid item xs={4}>
           <ControlPanel onRun={onRun} onReset={onReset} />
         </Grid>
         <Grid item xs={8}>
-          <ParentSize style={{ height: 500 }}>
+          <ParentSize style={{ height: 400 }}>
             {({ width, height }) => (
               <PopulationOverviewChart
                 width={width}

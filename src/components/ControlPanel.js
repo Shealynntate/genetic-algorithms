@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button, Stack, TextField,
+  Button, Paper, Stack, TextField,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import MutationSlider from './MutationSlider';
@@ -16,30 +16,32 @@ function ControlPanel({ onRun, onReset }) {
   const [populationSize, setPopulationSize] = useState(100);
 
   return (
-    <Stack>
-      <TextField
-        label="Target Phrase"
-        variant="outlined"
-        value={target}
-        onChange={(event) => { dispatch(setTarget(event.target.value)); }}
-      />
-      <MutationSlider rate={mutation} setRate={(value) => { dispatch(setMutation(value)); }} />
-      <PopulationSlider size={populationSize} setSize={setPopulationSize} />
-      <Stack direction="row">
-        <Button
-          variant="contained"
-          onClick={() => { onRun(populationSize); }}
-        >
-          Run
-        </Button>
-        <Button
+    <Paper>
+      <Stack>
+        <TextField
+          label="Target Phrase"
           variant="outlined"
-          onClick={() => { onReset(); }}
-        >
-          Reset
-        </Button>
+          value={target}
+          onChange={(event) => { dispatch(setTarget(event.target.value)); }}
+        />
+        <MutationSlider rate={mutation} setRate={(value) => { dispatch(setMutation(value)); }} />
+        <PopulationSlider size={populationSize} setSize={setPopulationSize} />
+        <Stack direction="row">
+          <Button
+            variant="contained"
+            onClick={() => { onRun(populationSize); }}
+          >
+            Run
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => { onReset(); }}
+          >
+            Reset
+          </Button>
+        </Stack>
       </Stack>
-    </Stack>
+    </Paper>
   );
 }
 

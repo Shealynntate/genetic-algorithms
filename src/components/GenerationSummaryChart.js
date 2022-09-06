@@ -86,7 +86,7 @@ function GenerationSummaryChart({
           width={width}
           height={height}
           rx={theme.shape.borderRadius}
-          fill={theme.palette.background.default}
+          fill={theme.palette.background.paper}
         />
         <GradientOrangeRed id="area-gradient" />
         <LinearGradient
@@ -115,6 +115,9 @@ function GenerationSummaryChart({
               width={barWidth}
               height={barHeight}
               fill={theme.palette.secondary.main}
+              stroke={theme.palette.secondary.main}
+              strokeWidth={1}
+              opacity={0.5}
             />
           );
         })}

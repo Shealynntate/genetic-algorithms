@@ -13,7 +13,17 @@ const theme = createTheme({
       light: '#fce8a1',
     },
     background: {
-      paper: '#FFFFF5', // cream
+      default: '#F6F8FA',
+      paper: '#FFFFFF',
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          padding: '1rem',
+        },
+      },
     },
   },
 });
