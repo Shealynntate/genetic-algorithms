@@ -1,9 +1,14 @@
-import React, { useCallback } from 'react';
+/* eslint-disable no-unused-vars */
+import React, {
+  useCallback, useMemo, useRef, useState,
+} from 'react';
 import {
   Line, Bar, AreaClosed,
 } from '@visx/shape';
+import { Brush } from '@visx/brush';
 import { curveMonotoneX } from '@visx/curve';
 import { GridRows, GridColumns } from '@visx/grid';
+import { Group } from '@visx/group';
 import { scaleLinear } from '@visx/scale';
 import {
   withTooltip, Tooltip, TooltipWithBounds, defaultStyles,
@@ -56,6 +61,17 @@ const tooltipCircle = (cx, cy) => (
 const getGeneration = (d) => d?.x || 0;
 const bisectGenerations = bisector((d) => d.x).left;
 
+const chartSeparation = 5;
+const brushMargin = {
+  top: 5, bottom: 5, left: 20, right: 20,
+};
+const PATTERN_ID = 'brush_pattern';
+// const GRADIENT_ID = 'brush_gradient';
+const selectedBrushStyle = {
+  fill: `url(#${PATTERN_ID})`,
+  stroke: 'black',
+};
+
 export default withTooltip(
   ({
     width,
@@ -72,24 +88,6 @@ export default withTooltip(
   }) => {
     if (width < 10) return null;
 
-    const theme = useTheme();
-
-    // bounds
-    const innerWidth = width - margin.left - margin.right;
-    const innerHeight = height - margin.top - margin.bottom;
-
-    // scales
-    const generationScale = scaleLinear({
-      range: [margin.left, innerWidth + margin.left],
-      domain: [0, generations.length],
-    });
-      // [innerWidth, margin.left],
-    const fitnessValueScale = scaleLinear({
-      range: [innerHeight + margin.top, margin.top],
-      domain: [0, targetFitness],
-      nice: true,
-    });
-
     const data = generations.map((gen, i) => ({
       x: i,
       top: maxFitness(gen),
@@ -97,11 +95,99 @@ export default withTooltip(
       bottom: minFitness(gen),
     }));
 
+    const theme = useTheme();
+    const brushRef = useRef();
+    const [filteredData, setFilteredData] = useState(data);
+
+    // bounds
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
+    const topChartHeight = 0.75 * innerHeight - chartSeparation;
+    const bottomChartHeight = innerHeight - topChartHeight - chartSeparation;
+    const yBrushMax = Math.max(bottomChartHeight - brushMargin.top - brushMargin.bottom, 0);
+    const xBrushMax = Math.max(width - brushMargin.left - brushMargin.right, 0);
+
+    // scales
+    const xScale = useMemo(
+      () => scaleLinear({
+        range: [margin.left, innerWidth + margin.left],
+        domain: [0, filteredData.length],
+      }),
+      [filteredData],
+    );
+
+    const yScale = useMemo(
+      () => scaleLinear({
+        range: [topChartHeight, 0],
+        domain: [0, targetFitness],
+        nice: true,
+      }),
+      [],
+    );
+
+    const brushXScale = useMemo(
+      () => scaleLinear({
+        range: [0, xBrushMax],
+        domain: [0, generations.length],
+      }),
+      [xBrushMax, generations],
+    );
+
+    const brushYScale = useMemo(
+      () => scaleLinear({
+        range: [yBrushMax, 0],
+        domain: [0, targetFitness],
+        nice: true,
+      }),
+      [yBrushMax],
+    );
+
+    // const initialBrushPosition = useMemo(
+    //   () => ({
+    //     start: { x: xScale(data[0]?.x || 0) },
+    //     end: { x: xScale(data[data.length - 1]?.x || 0) },
+    //   }),
+    //   [xScale, data],
+    // );
+
+    const initialBrushPosition = {
+      start: { x: xScale(data[0]?.x || 0) },
+      end: { x: innerWidth + margin.left },
+    };
+
+    const onBrushChange = (domain) => {
+      if (!domain) return;
+      const { x0, x1 } = domain;
+      const dataSubset = data.filter((item) => item.x >= x0 && item.x <= x1);
+      setFilteredData(dataSubset);
+    };
+    // We need to manually offset the handles for them to be rendered at the right position
+
+    // eslint-disable-next-line react/prop-types, no-shadow
+    function BrushHandle({ x, height, isBrushActive }) {
+      const pathWidth = 8;
+      const pathHeight = 15;
+      if (!isBrushActive) {
+        return null;
+      }
+      return (
+        <Group left={x + pathWidth / 2} top={(height - pathHeight) / 2}>
+          <path
+            fill="#f2f2f2"
+            d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
+            stroke="#999999"
+            strokeWidth="1"
+            style={{ cursor: 'ew-resize' }}
+          />
+        </Group>
+      );
+    }
+
     // tooltip handler
     const handleTooltip = useCallback(
       (event) => {
         const { x } = localPoint(event) || { x: 0 };
-        const x0 = generationScale.invert(x);
+        const x0 = xScale.invert(x);
         const index = bisectGenerations(data, x0, 1);
         const d0 = data[index - 1];
         const d1 = data[index];
@@ -112,16 +198,16 @@ export default withTooltip(
         showTooltip({
           tooltipData: d,
           tooltipLeft: x,
-          tooltipTop: fitnessValueScale(d?.top || 0),
+          tooltipTop: yScale(d?.top || 0),
         });
       },
-      [showTooltip, fitnessValueScale, generationScale],
+      [showTooltip, yScale, xScale],
     );
 
     const tooltipBox = (value, label) => (
       <TooltipWithBounds
         key={Math.random()}
-        top={fitnessValueScale(value) - 12}
+        top={yScale(value) - 12}
         left={tooltipLeft + 12}
         style={tooltipStyles}
       >
@@ -129,12 +215,13 @@ export default withTooltip(
       </TooltipWithBounds>
     );
 
-    const area = (dataCallback) => (
+    const area = (key) => (
       <AreaClosed
-        data={generations.map((gen, i) => ({ x: i, y: dataCallback(gen) }))}
-        x={(d) => generationScale(d.x)}
-        y={(d) => fitnessValueScale(d.y)}
-        yScale={fitnessValueScale}
+        data={filteredData.map((gen, i) => ({ x: i, y: gen[key] }))}
+        // data={filteredData}
+        x={(d) => xScale(d.x)}
+        y={(d) => yScale(d.y)}
+        yScale={yScale}
         strokeWidth={1}
         stroke="url(#area-gradient)"
         fill="url(#area-gradient)"
@@ -159,9 +246,9 @@ export default withTooltip(
             to={theme.palette.primary.main}
             toOpacity={0}
           />
-          <GridRows
+          {/* <GridRows
             left={margin.left}
-            scale={fitnessValueScale}
+            scale={yScale}
             width={innerWidth}
             strokeDasharray="1,3"
             stroke={theme.palette.primary.dark}
@@ -170,17 +257,17 @@ export default withTooltip(
           />
           <GridColumns
             top={margin.top}
-            scale={generationScale}
+            scale={xScale}
             height={innerHeight}
             strokeDasharray="1,3"
             stroke={theme.palette.primary.dark}
             strokeOpacity={0.2}
             pointerEvents="none"
-          />
-          {area(maxFitness)}
-          {area(meanFitness)}
-          {area(minFitness)}
-          <Bar
+          /> */}
+          {area('top')}
+          {area('mean')}
+          {area('bottom')}
+          {/* <Bar
             x={margin.left}
             y={margin.top}
             width={innerWidth}
@@ -202,13 +289,43 @@ export default withTooltip(
                 pointerEvents="none"
                 strokeDasharray="5,2"
               />
-              {tooltipCircle(tooltipLeft, fitnessValueScale(tooltipData.top))}
-              {tooltipCircle(tooltipLeft, fitnessValueScale(tooltipData.mean))}
-              {tooltipCircle(tooltipLeft, fitnessValueScale(tooltipData.bottom))}
+              {tooltipCircle(tooltipLeft, yScale(tooltipData.top))}
+              {tooltipCircle(tooltipLeft, yScale(tooltipData.mean))}
+              {tooltipCircle(tooltipLeft, yScale(tooltipData.bottom))}
             </g>
-          )}
+          )} */}
+          <Group left={brushMargin.left} top={topChartHeight + margin.top + chartSeparation}>
+            <AreaClosed
+              data={generations.map((gen, i) => ({ x: i, y: meanFitness(gen) }))}
+              x={(d) => brushXScale(d.x)}
+              y={(d) => brushYScale(d.y)}
+              yScale={brushYScale}
+              strokeWidth={1}
+              stroke="url(#area-gradient)"
+              fill="url(#area-gradient)"
+              curve={curveMonotoneX}
+            />
+            <Brush
+              xScale={brushXScale}
+              yScale={brushYScale}
+              width={xBrushMax}
+              height={yBrushMax}
+              margin={margin}
+              handleSize={8}
+              innerRef={brushRef}
+              resizeTriggerAreas={['left', 'right']}
+              brushDirection="horizontal"
+              initialBrushPosition={initialBrushPosition}
+              onChange={onBrushChange}
+              onClick={() => setFilteredData()}
+              selectedBoxStyle={selectedBrushStyle}
+              useWindowMoveEvents
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              renderBrushHandle={(props) => <BrushHandle {...props} />}
+            />
+          </Group>
         </svg>
-        {tooltipData && (
+        {/* {tooltipData && (
           <div>
             {tooltipBox(tooltipData.top, 'Top')}
             {tooltipBox(tooltipData.mean, 'Mean')}
@@ -226,7 +343,7 @@ export default withTooltip(
               {`Generation ${tooltipData.x}`}
             </Tooltip>
           </div>
-        )}
+        )} */}
       </div>
     );
   },
