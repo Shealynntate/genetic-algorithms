@@ -3,10 +3,10 @@ import React, {
   useCallback, useMemo, useRef, useState,
 } from 'react';
 import {
-  Line, Bar, AreaClosed,
+  Line, Bar, AreaClosed, LinePath,
 } from '@visx/shape';
 import { Brush } from '@visx/brush';
-import { curveMonotoneX } from '@visx/curve';
+import { curveMonotoneX, curveNatural } from '@visx/curve';
 import { GridRows, GridColumns } from '@visx/grid';
 import { Group } from '@visx/group';
 import { scaleLinear } from '@visx/scale';
@@ -18,6 +18,7 @@ import { localPoint } from '@visx/event';
 import { LinearGradient } from '@visx/gradient';
 import { bisector } from 'd3-array';
 import { useTheme } from '@emotion/react';
+import { PatternLines } from '@visx/pattern';
 import { meanFitness, minFitness, maxFitness } from '../models/utils';
 
 export const background = '#3b6978';
@@ -67,10 +68,10 @@ const brushMargin = {
 };
 const PATTERN_ID = 'brush_pattern';
 // const GRADIENT_ID = 'brush_gradient';
-const selectedBrushStyle = {
+const selectedBrushStyle = (theme) => ({
   fill: `url(#${PATTERN_ID})`,
-  stroke: 'black',
-};
+  stroke: theme.palette.grey[400],
+});
 
 export default withTooltip(
   ({
@@ -102,16 +103,15 @@ export default withTooltip(
     // bounds
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
-    const topChartHeight = 0.75 * innerHeight - chartSeparation;
+    const topChartHeight = 0.8 * innerHeight - chartSeparation;
     const bottomChartHeight = innerHeight - topChartHeight - chartSeparation;
     const yBrushMax = Math.max(bottomChartHeight - brushMargin.top - brushMargin.bottom, 0);
     const xBrushMax = Math.max(width - brushMargin.left - brushMargin.right, 0);
-
     // scales
     const xScale = useMemo(
       () => scaleLinear({
         range: [margin.left, innerWidth + margin.left],
-        domain: [0, filteredData.length],
+        domain: [0, filteredData.length - 1],
       }),
       [filteredData],
     );
@@ -128,7 +128,7 @@ export default withTooltip(
     const brushXScale = useMemo(
       () => scaleLinear({
         range: [0, xBrushMax],
-        domain: [0, generations.length],
+        domain: [0, generations.length - 1],
       }),
       [xBrushMax, generations],
     );
@@ -142,18 +142,17 @@ export default withTooltip(
       [yBrushMax],
     );
 
-    // const initialBrushPosition = useMemo(
-    //   () => ({
-    //     start: { x: xScale(data[0]?.x || 0) },
-    //     end: { x: xScale(data[data.length - 1]?.x || 0) },
-    //   }),
-    //   [xScale, data],
-    // );
-
-    const initialBrushPosition = {
-      start: { x: xScale(data[0]?.x || 0) },
-      end: { x: innerWidth + margin.left },
-    };
+    const initialBrushPosition = useMemo(
+      () => {
+        const startGen = Math.max(data.length - 12, 0);
+        const endGen = Math.max(data.length - 1, 0);
+        return {
+          start: { x: brushXScale(startGen) },
+          end: { x: brushXScale(endGen) },
+        };
+      },
+      [brushXScale],
+    );
 
     const onBrushChange = (domain) => {
       if (!domain) return;
@@ -188,9 +187,9 @@ export default withTooltip(
       (event) => {
         const { x } = localPoint(event) || { x: 0 };
         const x0 = xScale.invert(x);
-        const index = bisectGenerations(data, x0, 1);
-        const d0 = data[index - 1];
-        const d1 = data[index];
+        const index = Math.max(Math.round(x0), 1);
+        const d0 = filteredData[index - 1];
+        const d1 = filteredData[index];
         let d = d0;
         if (d1 && getGeneration(d1)) {
           d = x0 - getGeneration(d0) > getGeneration(d1) - x0 ? d1 : d0;
@@ -215,19 +214,46 @@ export default withTooltip(
       </TooltipWithBounds>
     );
 
-    const area = (key) => (
-      <AreaClosed
-        data={filteredData.map((gen, i) => ({ x: i, y: gen[key] }))}
-        // data={filteredData}
-        x={(d) => xScale(d.x)}
-        y={(d) => yScale(d.y)}
-        yScale={yScale}
-        strokeWidth={1}
-        stroke="url(#area-gradient)"
-        fill="url(#area-gradient)"
-        curve={curveMonotoneX}
-      />
-    );
+    const area = (key) => {
+      const lineData = filteredData.map((gen, i) => ({ x: i, y: gen[key] }));
+      return (
+        <>
+          <LinePath
+            data={lineData}
+            x={(d) => xScale(d.x)}
+            y={(d) => yScale(d.y)}
+            strokeWidth={1}
+            stroke={theme.palette.primary.light}
+            curve={curveNatural}
+            shapeRendering="geometricPrecision"
+          />
+          <AreaClosed
+            data={lineData}
+            x={(d) => xScale(d.x)}
+            y={(d) => yScale(d.y)}
+            yScale={yScale}
+            fillOpacity={0.08}
+            // strokeWidth={1}
+            // stroke="url(#area-gradient)"
+            fill="url(#line-gradient)"
+            curve={curveNatural}
+            // shapeRendering="geometricPrecision"
+          />
+          {lineData.map((entry) => (
+            <circle
+              key={entry.x}
+              cx={xScale(entry.x)}
+              cy={yScale(entry.y)}
+              r={1.5}
+              stroke={theme.palette.primary.light}
+              opacity={0.3}
+              // stroke="rgba(0, 0, 0, 0.5)"
+              // fill="transparent"
+            />
+          ))}
+        </>
+      );
+    };
 
     return (
       <div>
@@ -244,7 +270,15 @@ export default withTooltip(
             id="area-gradient"
             from={theme.palette.primary.main}
             to={theme.palette.primary.main}
-            toOpacity={0}
+            toOpacity={0.2}
+          />
+          <LinearGradient
+            id="line-gradient"
+            from={theme.palette.primary.light}
+            to={theme.palette.primary.light}
+            // fromOpacity={0.2}
+            // toOpacity={0}
+            // toOffset="50%"
           />
           {/* <GridRows
             left={margin.left}
@@ -267,7 +301,7 @@ export default withTooltip(
           {area('top')}
           {area('mean')}
           {area('bottom')}
-          {/* <Bar
+          <Bar
             x={margin.left}
             y={margin.top}
             width={innerWidth}
@@ -293,7 +327,7 @@ export default withTooltip(
               {tooltipCircle(tooltipLeft, yScale(tooltipData.mean))}
               {tooltipCircle(tooltipLeft, yScale(tooltipData.bottom))}
             </g>
-          )} */}
+          )}
           <Group left={brushMargin.left} top={topChartHeight + margin.top + chartSeparation}>
             <AreaClosed
               data={generations.map((gen, i) => ({ x: i, y: meanFitness(gen) }))}
@@ -303,14 +337,22 @@ export default withTooltip(
               strokeWidth={1}
               stroke="url(#area-gradient)"
               fill="url(#area-gradient)"
-              curve={curveMonotoneX}
+              curve={curveNatural}
+            />
+            <PatternLines
+              id={PATTERN_ID}
+              height={8}
+              width={8}
+              stroke={theme.palette.primary.light}
+              strokeWidth={1}
+              orientation={['diagonal']}
             />
             <Brush
               xScale={brushXScale}
               yScale={brushYScale}
               width={xBrushMax}
               height={yBrushMax}
-              margin={margin}
+              margin={brushMargin}
               handleSize={8}
               innerRef={brushRef}
               resizeTriggerAreas={['left', 'right']}
@@ -318,14 +360,14 @@ export default withTooltip(
               initialBrushPosition={initialBrushPosition}
               onChange={onBrushChange}
               onClick={() => setFilteredData()}
-              selectedBoxStyle={selectedBrushStyle}
+              selectedBoxStyle={selectedBrushStyle(theme)}
               useWindowMoveEvents
               // eslint-disable-next-line react/jsx-props-no-spreading
               renderBrushHandle={(props) => <BrushHandle {...props} />}
             />
           </Group>
         </svg>
-        {/* {tooltipData && (
+        {tooltipData && (
           <div>
             {tooltipBox(tooltipData.top, 'Top')}
             {tooltipBox(tooltipData.mean, 'Mean')}
@@ -343,7 +385,7 @@ export default withTooltip(
               {`Generation ${tooltipData.x}`}
             </Tooltip>
           </div>
-        )} */}
+        )}
       </div>
     );
   },

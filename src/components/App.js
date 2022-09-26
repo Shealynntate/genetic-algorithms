@@ -1,4 +1,6 @@
-import { Box, Grid, Typography } from '@mui/material';
+import {
+  Box, Grid, Paper, Typography,
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
@@ -43,16 +45,18 @@ function App() {
           <ControlPanel onRun={onRun} onReset={onReset} />
         </Grid>
         <Grid item xs={8}>
-          <ParentSize style={{ height: 400 }}>
-            {({ width, height }) => (
-              <PopulationOverviewChart
-                width={width}
-                height={height}
-                generations={generations}
-                targetFitness={target.length}
-              />
-            )}
-          </ParentSize>
+          <Paper>
+            <ParentSize style={{ height: 400 }}>
+              {({ width, height }) => (
+                <PopulationOverviewChart
+                  width={width}
+                  height={height}
+                  generations={generations}
+                  targetFitness={target.length}
+                />
+              )}
+            </ParentSize>
+          </Paper>
         </Grid>
       </Grid>
       <Box
