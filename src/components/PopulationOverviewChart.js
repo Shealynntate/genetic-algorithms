@@ -6,7 +6,7 @@ import {
   Line, Bar, AreaClosed, LinePath,
 } from '@visx/shape';
 import { Brush } from '@visx/brush';
-import { curveMonotoneX, curveNatural } from '@visx/curve';
+import { curveMonotoneX } from '@visx/curve';
 import { GridRows, GridColumns } from '@visx/grid';
 import { Group } from '@visx/group';
 import { scaleLinear } from '@visx/scale';
@@ -20,6 +20,16 @@ import { bisector } from 'd3-array';
 import { useTheme } from '@emotion/react';
 import { PatternLines } from '@visx/pattern';
 import { meanFitness, minFitness, maxFitness } from '../models/utils';
+import PopulationOverviewBrush from './PopulationOverviewBrush';
+
+export class OverviewDataEntry {
+  constructor(x, top, mean, bottom) {
+    this.x = x;
+    this.top = top;
+    this.mean = mean;
+    this.bottom = bottom;
+  }
+}
 
 export const background = '#3b6978';
 export const background2 = '#204051';
@@ -63,9 +73,9 @@ const getGeneration = (d) => d?.x || 0;
 const bisectGenerations = bisector((d) => d.x).left;
 
 const chartSeparation = 5;
-const brushMargin = {
-  top: 5, bottom: 5, left: 20, right: 20,
-};
+// const brushMargin = {
+//   top: 5, bottom: 5, left: 20, right: 20,
+// };
 const PATTERN_ID = 'brush_pattern';
 // const GRADIENT_ID = 'brush_gradient';
 const selectedBrushStyle = (theme) => ({
@@ -105,8 +115,12 @@ export default withTooltip(
     const innerHeight = height - margin.top - margin.bottom;
     const topChartHeight = 0.8 * innerHeight - chartSeparation;
     const bottomChartHeight = innerHeight - topChartHeight - chartSeparation;
-    const yBrushMax = Math.max(bottomChartHeight - brushMargin.top - brushMargin.bottom, 0);
-    const xBrushMax = Math.max(width - brushMargin.left - brushMargin.right, 0);
+    // const yBrushMax = Math.max(bottomChartHeight - brushMargin.top - brushMargin.bottom, 0);
+    // const xBrushMax = Math.max(width - brushMargin.left - brushMargin.right, 0);
+
+    const brushMargin = {
+      top: 5 + topChartHeight + chartSeparation, bottom: 5, left: 20, right: 20,
+    };
     // scales
     const xScale = useMemo(
       () => scaleLinear({
@@ -125,41 +139,41 @@ export default withTooltip(
       [],
     );
 
-    const brushXScale = useMemo(
-      () => scaleLinear({
-        range: [0, xBrushMax],
-        domain: [0, generations.length - 1],
-      }),
-      [xBrushMax, generations],
-    );
+    // const brushXScale = useMemo(
+    //   () => scaleLinear({
+    //     range: [0, xBrushMax],
+    //     domain: [0, generations.length - 1],
+    //   }),
+    //   [xBrushMax, generations],
+    // );
 
-    const brushYScale = useMemo(
-      () => scaleLinear({
-        range: [yBrushMax, 0],
-        domain: [0, targetFitness],
-        nice: true,
-      }),
-      [yBrushMax],
-    );
+    // const brushYScale = useMemo(
+    //   () => scaleLinear({
+    //     range: [yBrushMax, 0],
+    //     domain: [0, targetFitness],
+    //     nice: true,
+    //   }),
+    //   [yBrushMax],
+    // );
 
-    const initialBrushPosition = useMemo(
-      () => {
-        const startGen = Math.max(data.length - 12, 0);
-        const endGen = Math.max(data.length - 1, 0);
-        return {
-          start: { x: brushXScale(startGen) },
-          end: { x: brushXScale(endGen) },
-        };
-      },
-      [brushXScale],
-    );
+    // const initialBrushPosition = useMemo(
+    //   () => {
+    //     const startGen = Math.max(data.length - 12, 0);
+    //     const endGen = Math.max(data.length - 1, 0);
+    //     return {
+    //       start: { x: brushXScale(startGen) },
+    //       end: { x: brushXScale(endGen) },
+    //     };
+    //   },
+    //   [brushXScale],
+    // );
 
-    const onBrushChange = (domain) => {
-      if (!domain) return;
-      const { x0, x1 } = domain;
-      const dataSubset = data.filter((item) => item.x >= x0 && item.x <= x1);
-      setFilteredData(dataSubset);
-    };
+    // const onBrushChange = (domain) => {
+    //   if (!domain) return;
+    //   const { x0, x1 } = domain;
+    //   const dataSubset = data.filter((item) => item.x >= x0 && item.x <= x1);
+    //   setFilteredData(dataSubset);
+    // };
     // We need to manually offset the handles for them to be rendered at the right position
 
     // eslint-disable-next-line react/prop-types, no-shadow
@@ -187,13 +201,8 @@ export default withTooltip(
       (event) => {
         const { x } = localPoint(event) || { x: 0 };
         const x0 = xScale.invert(x);
-        const index = Math.max(Math.round(x0), 1);
-        const d0 = filteredData[index - 1];
-        const d1 = filteredData[index];
-        let d = d0;
-        if (d1 && getGeneration(d1)) {
-          d = x0 - getGeneration(d0) > getGeneration(d1) - x0 ? d1 : d0;
-        }
+        const index = Math.round(x0);
+        const d = filteredData[index];
         showTooltip({
           tooltipData: d,
           tooltipLeft: x,
@@ -224,7 +233,7 @@ export default withTooltip(
             y={(d) => yScale(d.y)}
             strokeWidth={1}
             stroke={theme.palette.primary.light}
-            curve={curveNatural}
+            curve={curveMonotoneX}
             shapeRendering="geometricPrecision"
           />
           <AreaClosed
@@ -236,7 +245,7 @@ export default withTooltip(
             // strokeWidth={1}
             // stroke="url(#area-gradient)"
             fill="url(#line-gradient)"
-            curve={curveNatural}
+            curve={curveMonotoneX}
             // shapeRendering="geometricPrecision"
           />
           {lineData.map((entry) => (
@@ -328,7 +337,7 @@ export default withTooltip(
               {tooltipCircle(tooltipLeft, yScale(tooltipData.bottom))}
             </g>
           )}
-          <Group left={brushMargin.left} top={topChartHeight + margin.top + chartSeparation}>
+          {/* <Group left={brushMargin.left} top={topChartHeight + margin.top + chartSeparation}>
             <AreaClosed
               data={generations.map((gen, i) => ({ x: i, y: meanFitness(gen) }))}
               x={(d) => brushXScale(d.x)}
@@ -337,7 +346,7 @@ export default withTooltip(
               strokeWidth={1}
               stroke="url(#area-gradient)"
               fill="url(#area-gradient)"
-              curve={curveNatural}
+              curve={curveMonotoneX}
             />
             <PatternLines
               id={PATTERN_ID}
@@ -365,7 +374,15 @@ export default withTooltip(
               // eslint-disable-next-line react/jsx-props-no-spreading
               renderBrushHandle={(props) => <BrushHandle {...props} />}
             />
-          </Group>
+          </Group> */}
+          <PopulationOverviewBrush
+            data={data}
+            margin={brushMargin}
+            width={width}
+            height={height}
+            maxFitness={targetFitness}
+            setFilteredData={setFilteredData}
+          />
         </svg>
         {tooltipData && (
           <div>
