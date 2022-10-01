@@ -1,40 +1,27 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Group } from '@visx/group';
-import { LinePath } from '@visx/shape';
+import { AreaClosed, LinePath } from '@visx/shape';
 import { useTheme } from '@emotion/react';
 import { curveMonotoneX } from '@visx/curve';
 import { Brush } from '@visx/brush';
 import { PatternLines } from '@visx/pattern';
 import { scaleLinear } from '@visx/scale';
+import BrushHandle from './BrushHandle';
 
-function BrushHandle({ x, height, isBrushActive }) {
-  const theme = useTheme();
-  const pathWidth = 8;
-  const pathHeight = 15;
+const PATTERN_ID = 'brush_pattern';
+// const GRADIENT_ID = 'brush_gradient';
+const handleSize = 8;
+const initialLeftBound = 12;
+const initialRightBound = 1;
+const lineWidth = 8;
+const lineHeight = 8;
+const fillOpacity = 0.15;
 
-  if (!isBrushActive) {
-    return null;
-  }
-
-  return (
-    <Group top={(height - pathHeight) / 2} left={x + pathWidth / 2}>
-      <path
-        d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
-        fill={theme.palette.grey['100']}
-        strokeWidth="1"
-        stroke={theme.palette.grey['400']}
-        style={{ cursor: 'ew-resize' }}
-      />
-    </Group>
-  );
-}
-
-BrushHandle.propTypes = {
-  x: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
-  isBrushActive: PropTypes.bool.isRequired,
-};
+const selectedBoxStyle = (theme) => ({
+  fill: `url(#${PATTERN_ID})`,
+  stroke: theme.palette.grey[400],
+});
 
 function PopulationOverviewBrush({
   data,
@@ -45,18 +32,10 @@ function PopulationOverviewBrush({
   setFilteredData,
 }) {
   const theme = useTheme();
-  const brushRef = useRef();
 
   // Determine bounds and scale functions
   const xMax = Math.max(width - margin.left - margin.right, 0);
   const yMax = Math.max(height - margin.top - margin.bottom, 0);
-
-  const handleSize = 8;
-  const initialLeftBound = 12;
-  const initialRightBound = 1;
-  const PATTERN_ID = 'brush_pattern';
-  const lineWidth = 8;
-  const lineHeight = 8;
 
   const xScale = useMemo(
     () => scaleLinear({
@@ -103,6 +82,14 @@ function PopulationOverviewBrush({
         curve={curveMonotoneX}
         shapeRendering="geometricPrecision"
       />
+      <AreaClosed
+        data={data}
+        x={(d) => xScale(d.x)}
+        y={(d) => yScale(d.mean)}
+        yScale={yScale}
+        fillOpacity={fillOpacity}
+        fill={theme.palette.primary.light}
+      />
       <PatternLines
         id={PATTERN_ID}
         strokeWidth={1}
@@ -117,12 +104,13 @@ function PopulationOverviewBrush({
         width={xMax}
         height={yMax}
         margin={margin}
-        innerRef={brushRef}
         initialBrushPosition={initialBrushPosition}
-        onChange={onBrushChange}
         resizeTriggerAreas={['left', 'right']}
         brushDirection="horizontal"
+        onChange={onBrushChange}
+        onClick={() => setFilteredData()}
         handleSize={handleSize}
+        selectedBoxStyle={selectedBoxStyle(theme)}
         useWindowMoveEvents
         // eslint-disable-next-line react/jsx-props-no-spreading
         renderBrushHandle={(props) => <BrushHandle {...props} />}
