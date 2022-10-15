@@ -17,7 +17,7 @@ function BrushHandle({ x, height, isBrushActive }) {
     // Need to manually offset the handles for them to be rendered at the right position
     <Group top={(height - pathHeight) / 2} left={x + pathWidth / 2}>
       <path
-        d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
+        d="M -3 0.5 h 5 a 2 2 0 0 1 2 2 v 11 a 2 2 0 0 1 -2 2 h -5 a 2 2 0 0 1 -2 -2 v -11 a 2 2 0 0 1 2 -2 Z M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
         fill={theme.palette.grey['100']}
         strokeWidth="1"
         stroke={theme.palette.grey['400']}

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, {
   useCallback, useMemo, useState,
 } from 'react';
@@ -8,7 +9,7 @@ import { curveMonotoneX } from '@visx/curve';
 import { GridRows, GridColumns } from '@visx/grid';
 import { scaleLinear } from '@visx/scale';
 import {
-  withTooltip, Tooltip, TooltipWithBounds, defaultStyles,
+  Tooltip, TooltipWithBounds, defaultStyles, withTooltip,
 } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { LinearGradient } from '@visx/gradient';
@@ -57,8 +58,6 @@ const chartSeparation = 5;
 
 export default withTooltip(
   ({
-    width,
-    height,
     margin = {
       top: 0, right: 0, bottom: 0, left: 0,
     },
@@ -68,8 +67,12 @@ export default withTooltip(
     tooltipLeft = 0,
     targetFitness = 0,
     generations = [],
+    parentRef,
   }) => {
-    if (width < 10) return null;
+    const width = parentRef?.clientWidth;
+    const height = parentRef?.clientHeight;
+
+    if (!parentRef || width < 10) return null;
 
     const data = generations.map((gen, i) => ({
       x: i,
@@ -174,7 +177,7 @@ export default withTooltip(
     };
 
     return (
-      <div>
+      <>
         <svg width={width} height={height}>
           <rect
             x={0}
@@ -229,19 +232,19 @@ export default withTooltip(
             onMouseLeave={() => hideTooltip()}
           />
           {tooltipData && (
-            <g>
-              <Line
-                from={{ x: tooltipLeft, y: margin.top }}
-                to={{ x: tooltipLeft, y: innerHeight + margin.top }}
-                stroke={accentColorDark}
-                strokeWidth={2}
-                pointerEvents="none"
-                strokeDasharray="5,2"
-              />
-              {tooltipCircle(tooltipLeft, yScale(tooltipData.top))}
-              {tooltipCircle(tooltipLeft, yScale(tooltipData.mean))}
-              {tooltipCircle(tooltipLeft, yScale(tooltipData.bottom))}
-            </g>
+          <g>
+            <Line
+              from={{ x: tooltipLeft, y: margin.top }}
+              to={{ x: tooltipLeft, y: innerHeight + margin.top }}
+              stroke={accentColorDark}
+              strokeWidth={2}
+              pointerEvents="none"
+              strokeDasharray="5,2"
+            />
+            {tooltipCircle(tooltipLeft, yScale(tooltipData.top))}
+            {tooltipCircle(tooltipLeft, yScale(tooltipData.mean))}
+            {tooltipCircle(tooltipLeft, yScale(tooltipData.bottom))}
+          </g>
           )}
           <PopulationOverviewBrush
             data={data}
@@ -253,25 +256,25 @@ export default withTooltip(
           />
         </svg>
         {tooltipData && (
-          <div>
-            {tooltipBox(tooltipData.top, 'Top')}
-            {tooltipBox(tooltipData.mean, 'Mean')}
-            {tooltipBox(tooltipData.bottom, 'Bottom')}
-            <Tooltip
-              top={innerHeight + margin.top - 5}
-              left={tooltipLeft}
-              style={{
-                ...defaultStyles,
-                minWidth: 72,
-                textAlign: 'center',
-                transform: 'translateX(-50%)',
-              }}
-            >
-              {`Generation ${tooltipData.x}`}
-            </Tooltip>
-          </div>
+        <div>
+          {tooltipBox(tooltipData.top, 'Top')}
+          {tooltipBox(tooltipData.mean, 'Mean')}
+          {tooltipBox(tooltipData.bottom, 'Bottom')}
+          <Tooltip
+            top={innerHeight + margin.top - 5}
+            left={tooltipLeft}
+            style={{
+              ...defaultStyles,
+              minWidth: 72,
+              textAlign: 'center',
+              transform: 'translateX(-50%)',
+            }}
+          >
+            {`Generation ${tooltipData.x}`}
+          </Tooltip>
+        </div>
         )}
-      </div>
+      </>
     );
   },
 );

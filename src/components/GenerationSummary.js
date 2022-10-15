@@ -15,13 +15,13 @@ function GenerationSummary({ genNumber, organisms, maxFitness }) {
   const dispatch = useDispatch();
   const topOrganism = maxFitOrganism(organisms);
   const median = organisms[medianIndex(organisms, (o) => o.fitness)];
-  const selectedGeneration = useSelector((state) => state.generation.value);
-  const isSelected = selectedGeneration === organisms;
+  const selectedGeneration = useSelector((state) => state.selectedGeneration.value);
+  const isSelected = selectedGeneration === genNumber;
 
   return (
     <Paper
-      onClick={() => { dispatch(setGeneration(organisms)); }}
-      elevation={isSelected ? 2 : 1}
+      onClick={() => { dispatch(setGeneration(genNumber)); }}
+      elevation={isSelected ? 5 : 1}
       sx={{
         margin: theme.spacing(1),
         padding: `0 ${theme.spacing(1)}`,

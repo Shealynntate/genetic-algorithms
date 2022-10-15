@@ -23,8 +23,17 @@ class Organism {
     return child;
   }
 
-  constructor(genomeSize) {
-    this.id = Organism.nextId;
+  static deserialize(data) {
+    const genome = data.genome.split('');
+    const id = Number.parseInt(data.id, 10);
+    const organism = new Organism(genome.length, id);
+    organism.genome = genome;
+
+    return organism;
+  }
+
+  constructor(genomeSize, id) {
+    this.id = id ?? Organism.nextId;
     this.genome = createRandomGenome(genomeSize);
     this.fitness = 0;
   }
@@ -36,6 +45,14 @@ class Organism {
 
   subsequence(start, end) {
     return this.genome.slice(start, end);
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      fitness: this.fitness,
+      genome: this.genome.join(''),
+    };
   }
 
   ToString() {

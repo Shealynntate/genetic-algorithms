@@ -1,23 +1,36 @@
 import {
-  Box, Grid, Paper, Typography,
+  Box,
+  // Container,
+  Grid,
+  Paper,
+  Typography,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import Population from '../models/population';
 import ControlPanel from './ControlPanel';
 import GenerationSummary from './GenerationSummary';
 import PopulationOverviewChart from './PopulationOverviewChart';
 import theme from '../theme';
+import { setIsRunning } from '../features/populationSlice';
 
 function App() {
   const [population, setPopulation] = useState(null);
   const [generations, setGenerations] = useState([]);
   const target = useSelector((state) => state.target.value);
   const mutation = useSelector((state) => state.mutation.value);
+  const populationSize = useSelector((state) => state.population.size);
+  const isRunning = useSelector((state) => state.population.isRunning);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!population || population.isTargetReached()) return;
+    if (!population || population.isTargetReached()) {
+      if (isRunning) {
+        dispatch(setIsRunning(false));
+      }
+      return;
+    }
 
     setTimeout(() => {
       const nextGen = population.runGeneration(mutation);
@@ -25,14 +38,17 @@ function App() {
     }, 3);
   }, [population, generations]);
 
-  const onRun = (populationSize) => {
+  const onRun = () => {
+    dispatch(setIsRunning(true));
     const p = new Population(populationSize, target, mutation);
     setPopulation(p);
     setGenerations([p.organisms]);
   };
 
   const onReset = () => {
-    console.log('reset');
+    setPopulation(null);
+    setGenerations([]);
+    dispatch(setIsRunning(false));
   };
 
   return (
@@ -45,12 +61,11 @@ function App() {
           <ControlPanel onRun={onRun} onReset={onReset} />
         </Grid>
         <Grid item xs={8}>
-          <Paper>
-            <ParentSize style={{ height: 400 }}>
-              {({ width, height }) => (
+          <Paper sx={{ height: 400 }}>
+            <ParentSize>
+              {({ ref }) => (
                 <PopulationOverviewChart
-                  width={width}
-                  height={height}
+                  parentRef={ref}
                   generations={generations}
                   targetFitness={target.length}
                 />

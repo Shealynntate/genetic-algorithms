@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Button, Paper, Stack, TextField,
@@ -8,12 +8,18 @@ import MutationSlider from './MutationSlider';
 import PopulationSlider from './PopulationSlider';
 import { setTarget } from '../features/targetSlice';
 import { setMutation } from '../features/mutationSlice';
+import { setPopulationSize } from '../features/populationSlice';
 
 function ControlPanel({ onRun, onReset }) {
   const target = useSelector((state) => state.target.value);
   const mutation = useSelector((state) => state.mutation.value);
+  const populationSize = useSelector((state) => state.population.size);
+  const isRunning = useSelector((state) => state.population.isRunning);
   const dispatch = useDispatch();
-  const [populationSize, setPopulationSize] = useState(100);
+
+  const setSize = (value) => {
+    dispatch(setPopulationSize(value));
+  };
 
   return (
     <Paper>
@@ -25,17 +31,18 @@ function ControlPanel({ onRun, onReset }) {
           onChange={(event) => { dispatch(setTarget(event.target.value)); }}
         />
         <MutationSlider rate={mutation} setRate={(value) => { dispatch(setMutation(value)); }} />
-        <PopulationSlider size={populationSize} setSize={setPopulationSize} />
+        <PopulationSlider size={populationSize} setSize={setSize} />
         <Stack direction="row">
           <Button
             variant="contained"
-            onClick={() => { onRun(populationSize); }}
+            onClick={onRun}
+            disabled={isRunning}
           >
             Run
           </Button>
           <Button
             variant="outlined"
-            onClick={() => { onReset(); }}
+            onClick={onReset}
           >
             Reset
           </Button>
