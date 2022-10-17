@@ -1,19 +1,24 @@
 import {
   Box,
-  // Container,
   Grid,
   Paper,
   Typography,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import Population from '../models/population';
 import ControlPanel from './ControlPanel';
 import GenerationSummary from './GenerationSummary';
 import PopulationOverviewChart from './PopulationOverviewChart';
+import { useIsRunning } from '../hooks';
 import theme from '../theme';
-import { setIsRunning } from '../features/populationSlice';
+import {
+  resetSimulationState,
+  setSimulationStateToComplete,
+  setSimulationStateToPaused,
+  setSimulationStateToRunning,
+} from '../features/populationSlice';
 
 function App() {
   const [population, setPopulation] = useState(null);
@@ -21,34 +26,48 @@ function App() {
   const target = useSelector((state) => state.target.value);
   const mutation = useSelector((state) => state.mutation.value);
   const populationSize = useSelector((state) => state.population.size);
-  const isRunning = useSelector((state) => state.population.isRunning);
+  const isRunning = useIsRunning();
   const dispatch = useDispatch();
+  const timeoutRef = useRef();
+
+  const runGeneration = () => {
+    const nextGen = population.runGeneration(mutation);
+    setGenerations([...generations, nextGen]);
+  };
 
   useEffect(() => {
     if (!population || population.isTargetReached()) {
       if (isRunning) {
-        dispatch(setIsRunning(false));
+        dispatch(setSimulationStateToComplete());
       }
       return;
     }
 
-    setTimeout(() => {
-      const nextGen = population.runGeneration(mutation);
-      setGenerations([...generations, nextGen]);
-    }, 3);
+    timeoutRef.current = setTimeout(runGeneration, 3);
   }, [population, generations]);
 
   const onRun = () => {
-    dispatch(setIsRunning(true));
-    const p = new Population(populationSize, target, mutation);
-    setPopulation(p);
-    setGenerations([p.organisms]);
+    dispatch(setSimulationStateToRunning());
+    if (population) {
+      // If we're resuming after a pause, continue the simulation
+      timeoutRef.current = setTimeout(runGeneration, 3);
+    } else {
+      // Otherwise create a new population and start from the beginning
+      const p = new Population(populationSize, target, mutation);
+      setPopulation(p);
+      setGenerations([p.organisms]);
+    }
   };
 
   const onReset = () => {
     setPopulation(null);
     setGenerations([]);
-    dispatch(setIsRunning(false));
+    dispatch(resetSimulationState());
+  };
+
+  const onPause = () => {
+    dispatch(setSimulationStateToPaused());
+    clearTimeout(timeoutRef.current);
   };
 
   return (
@@ -57,10 +76,10 @@ function App() {
         <Typography variant="h2">Genetic Algorithms</Typography>
       </header>
       <Grid container spacing={4} padding={theme.spacing(2)}>
-        <Grid item xs={4}>
-          <ControlPanel onRun={onRun} onReset={onReset} />
+        <Grid item xs={3}>
+          <ControlPanel onRun={onRun} onReset={onReset} onPause={onPause} />
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={9}>
           <Paper sx={{ height: 400 }}>
             <ParentSize>
               {({ ref }) => (

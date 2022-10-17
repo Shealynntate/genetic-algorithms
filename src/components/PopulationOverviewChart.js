@@ -8,26 +8,18 @@ import {
 import { curveMonotoneX } from '@visx/curve';
 import { GridRows, GridColumns } from '@visx/grid';
 import { scaleLinear } from '@visx/scale';
-import {
-  Tooltip, TooltipWithBounds, defaultStyles, withTooltip,
-} from '@visx/tooltip';
+import { withTooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { LinearGradient } from '@visx/gradient';
 import { useTheme } from '@emotion/react';
 import { meanFitness, minFitness, maxFitness } from '../models/utils';
-import PopulationOverviewBrush from './PopulationOverviewBrush';
+import PopulationOverviewBrush from './chart/PopulationOverviewBrush';
+import PopulationOverviewTooltip from './chart/PopulationOverviewTooltip';
 
 export const background = '#3b6978';
 export const background2 = '#204051';
 export const accentColor = '#edffea';
 export const accentColorDark = '#75daad';
-const tooltipStyles = {
-  ...defaultStyles,
-  background,
-  border: '1px solid white',
-  color: 'white',
-  opacity: 0.6,
-};
 
 const tooltipCircle = (cx, cy) => (
   <>
@@ -127,17 +119,6 @@ export default withTooltip(
         });
       },
       [showTooltip, yScale, xScale],
-    );
-
-    const tooltipBox = (value, label) => (
-      <TooltipWithBounds
-        key={Math.random()}
-        top={yScale(value) - 12}
-        left={tooltipLeft + 12}
-        style={tooltipStyles}
-      >
-        {`${label}: ${value}`}
-      </TooltipWithBounds>
     );
 
     const area = (key) => {
@@ -257,21 +238,30 @@ export default withTooltip(
         </svg>
         {tooltipData && (
         <div>
-          {tooltipBox(tooltipData.top, 'Top')}
-          {tooltipBox(tooltipData.mean, 'Mean')}
-          {tooltipBox(tooltipData.bottom, 'Bottom')}
-          <Tooltip
+          <PopulationOverviewTooltip
+            top={yScale(tooltipData.top) - 12}
+            left={tooltipLeft}
+            value={tooltipData.top}
+            label="Top"
+          />
+          <PopulationOverviewTooltip
+            top={yScale(tooltipData.mean) - 12}
+            left={tooltipLeft}
+            value={tooltipData.mean}
+            label="Mean"
+          />
+          <PopulationOverviewTooltip
+            top={yScale(tooltipData.bottom) - 12}
+            left={tooltipLeft}
+            value={tooltipData.bottom}
+            label="Bottom"
+          />
+          <PopulationOverviewTooltip
             top={innerHeight + margin.top - 5}
             left={tooltipLeft}
-            style={{
-              ...defaultStyles,
-              minWidth: 72,
-              textAlign: 'center',
-              transform: 'translateX(-50%)',
-            }}
-          >
-            {`Generation ${tooltipData.x}`}
-          </Tooltip>
+            value={tooltipData.x}
+            label="Generation"
+          />
         </div>
         )}
       </>

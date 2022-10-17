@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
+import { SimulationState } from '../constants';
 
 const initialState = {
   size: 100,
-  isRunning: false,
+  simulationState: SimulationState.NONE,
   pastGenerations: [],
 };
 
@@ -14,8 +15,20 @@ export const populationSlice = createSlice({
     setPopulationSize: (state, action) => {
       state.size = action.payload;
     },
-    setIsRunning: (state, action) => {
-      state.isRunning = action.payload;
+    setSimulationState: (state, action) => {
+      state.simulationState = action.payload;
+    },
+    setSimulationStateToRunning: (state) => {
+      state.simulationState = SimulationState.RUNNING;
+    },
+    setSimulationStateToPaused: (state) => {
+      state.simulationState = SimulationState.PAUSED;
+    },
+    setSimulationStateToComplete: (state) => {
+      state.simulationState = SimulationState.COMPLETE;
+    },
+    resetSimulationState: (state) => {
+      state.simulationState = SimulationState.NONE;
     },
   },
 });
@@ -24,7 +37,11 @@ export const {
   setPopulation,
   clearPopulation,
   setPopulationSize,
-  setIsRunning,
+  setSimulationState,
+  setSimulationStateToRunning,
+  setSimulationStateToPaused,
+  setSimulationStateToComplete,
+  resetSimulationState,
 } = populationSlice.actions;
 
 export default populationSlice.reducer;

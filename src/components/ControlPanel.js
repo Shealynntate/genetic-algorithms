@@ -9,16 +9,53 @@ import PopulationSlider from './PopulationSlider';
 import { setTarget } from '../features/targetSlice';
 import { setMutation } from '../features/mutationSlice';
 import { setPopulationSize } from '../features/populationSlice';
+import { SimulationState } from '../constants';
 
-function ControlPanel({ onRun, onReset }) {
+const buttonLabels = {
+  [SimulationState.NONE]: 'Run',
+  [SimulationState.RUNNING]: 'Pause',
+  [SimulationState.PAUSED]: 'Resume',
+  [SimulationState.COMPLETE]: 'Reset',
+};
+
+function PrimaryButton({ currentState, callback }) {
+  return (
+    <Button
+      variant="contained"
+      onClick={callback}
+    >
+      {buttonLabels[currentState]}
+    </Button>
+  );
+}
+
+PrimaryButton.propTypes = {
+  currentState: PropTypes.string.isRequired,
+  callback: PropTypes.func.isRequired,
+};
+
+function ControlPanel({ onRun, onReset, onPause }) {
   const target = useSelector((state) => state.target.value);
   const mutation = useSelector((state) => state.mutation.value);
   const populationSize = useSelector((state) => state.population.size);
-  const isRunning = useSelector((state) => state.population.isRunning);
+  const simulationState = useSelector((state) => state.population.simulationState);
   const dispatch = useDispatch();
 
   const setSize = (value) => {
     dispatch(setPopulationSize(value));
+  };
+
+  const getCallback = () => {
+    switch (simulationState) {
+      case SimulationState.RUNNING:
+        return onPause;
+      case SimulationState.PAUSED:
+        return onRun;
+      case SimulationState.COMPLETE:
+        return onReset;
+      default:
+        return onRun;
+    }
   };
 
   return (
@@ -33,19 +70,18 @@ function ControlPanel({ onRun, onReset }) {
         <MutationSlider rate={mutation} setRate={(value) => { dispatch(setMutation(value)); }} />
         <PopulationSlider size={populationSize} setSize={setSize} />
         <Stack direction="row">
-          <Button
-            variant="contained"
-            onClick={onRun}
-            disabled={isRunning}
-          >
-            Run
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={onReset}
-          >
-            Reset
-          </Button>
+          <PrimaryButton
+            currentState={simulationState}
+            callback={getCallback()}
+          />
+          {simulationState === SimulationState.PAUSED && (
+            <Button
+              variant="outlined"
+              onClick={onReset}
+            >
+              Reset
+            </Button>
+          )}
         </Stack>
       </Stack>
     </Paper>
@@ -55,6 +91,7 @@ function ControlPanel({ onRun, onReset }) {
 ControlPanel.propTypes = {
   onRun: PropTypes.func.isRequired,
   onReset: PropTypes.func.isRequired,
+  onPause: PropTypes.func.isRequired,
 };
 
 export default ControlPanel;
