@@ -6,9 +6,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import MutationSlider from './MutationSlider';
 import PopulationSlider from './PopulationSlider';
-import { setTarget } from '../features/targetSlice';
-import { setMutation } from '../features/mutationSlice';
-import { setPopulationSize } from '../features/populationSlice';
+import { setMutationRate, setPopulationSize, setTarget } from '../features/metadataSlice';
 import { SimulationState } from '../constants';
 
 const buttonLabels = {
@@ -35,14 +33,18 @@ PrimaryButton.propTypes = {
 };
 
 function ControlPanel({ onRun, onReset, onPause }) {
-  const target = useSelector((state) => state.target.value);
-  const mutation = useSelector((state) => state.mutation.value);
-  const populationSize = useSelector((state) => state.population.size);
-  const simulationState = useSelector((state) => state.population.simulationState);
+  const target = useSelector((state) => state.metadata.target);
+  const mutation = useSelector((state) => state.metadata.mutationRate);
+  const populationSize = useSelector((state) => state.metadata.populationSize);
+  const simulationState = useSelector((state) => state.ux.simulationState);
   const dispatch = useDispatch();
 
   const setSize = (value) => {
     dispatch(setPopulationSize(value));
+  };
+
+  const setRate = (value) => {
+    dispatch(setMutationRate(value));
   };
 
   const getCallback = () => {
@@ -67,7 +69,7 @@ function ControlPanel({ onRun, onReset, onPause }) {
           value={target}
           onChange={(event) => { dispatch(setTarget(event.target.value)); }}
         />
-        <MutationSlider rate={mutation} setRate={(value) => { dispatch(setMutation(value)); }} />
+        <MutationSlider rate={mutation} setRate={setRate} />
         <PopulationSlider size={populationSize} setSize={setSize} />
         <Stack direction="row">
           <PrimaryButton

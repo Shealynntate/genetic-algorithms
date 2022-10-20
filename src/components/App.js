@@ -18,14 +18,14 @@ import {
   setSimulationStateToComplete,
   setSimulationStateToPaused,
   setSimulationStateToRunning,
-} from '../features/populationSlice';
+} from '../features/uxSlice';
 
 function App() {
   const [population, setPopulation] = useState(null);
   const [generations, setGenerations] = useState([]);
-  const target = useSelector((state) => state.target.value);
-  const mutation = useSelector((state) => state.mutation.value);
-  const populationSize = useSelector((state) => state.population.size);
+  const target = useSelector((state) => state.metadata.target);
+  const mutation = useSelector((state) => state.metadata.mutationRate);
+  const populationSize = useSelector((state) => state.metadata.populationSize);
   const isRunning = useIsRunning();
   const dispatch = useDispatch();
   const timeoutRef = useRef();

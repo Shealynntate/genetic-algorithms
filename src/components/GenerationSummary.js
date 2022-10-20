@@ -5,17 +5,17 @@ import { Paper, Typography } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import { medianIndex } from 'd3-array';
 import { useDispatch, useSelector } from 'react-redux';
-import { setGeneration } from '../features/generationSlice';
 import GenerationSummaryChart from './GenerationSummaryChart';
 import Organism from '../models/organism';
 import { maxFitOrganism } from '../models/utils';
+import { setGeneration } from '../features/uxSlice';
 
 function GenerationSummary({ genNumber, organisms, maxFitness }) {
   const theme = useTheme();
   const dispatch = useDispatch();
   const topOrganism = maxFitOrganism(organisms);
   const median = organisms[medianIndex(organisms, (o) => o.fitness)];
-  const selectedGeneration = useSelector((state) => state.selectedGeneration.value);
+  const selectedGeneration = useSelector((state) => state.ux.selectedGeneration);
   const isSelected = selectedGeneration === genNumber;
 
   return (

@@ -3,18 +3,14 @@ import { createSlice } from '@reduxjs/toolkit';
 import { SimulationState } from '../constants';
 
 const initialState = {
-  size: 100,
   simulationState: SimulationState.NONE,
-  pastGenerations: [],
+  selectedGeneration: null,
 };
 
-export const populationSlice = createSlice({
-  name: 'population',
+export const uxSlice = createSlice({
+  name: 'ux',
   initialState,
   reducers: {
-    setPopulationSize: (state, action) => {
-      state.size = action.payload;
-    },
     setSimulationState: (state, action) => {
       state.simulationState = action.payload;
     },
@@ -30,18 +26,19 @@ export const populationSlice = createSlice({
     resetSimulationState: (state) => {
       state.simulationState = SimulationState.NONE;
     },
+    setGeneration: (state, action) => {
+      state.selectedGeneration = action.payload;
+    },
   },
 });
 
 export const {
-  setPopulation,
-  clearPopulation,
-  setPopulationSize,
   setSimulationState,
   setSimulationStateToRunning,
   setSimulationStateToPaused,
   setSimulationStateToComplete,
   resetSimulationState,
-} = populationSlice.actions;
+  setGeneration,
+} = uxSlice.actions;
 
-export default populationSlice.reducer;
+export default uxSlice.reducer;
