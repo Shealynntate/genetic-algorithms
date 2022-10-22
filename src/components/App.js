@@ -1,15 +1,15 @@
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Grid,
   Paper,
   Typography,
 } from '@mui/material';
-import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import Population from '../models/population';
 import ControlPanel from './ControlPanel';
-import GenerationSummary from './GenerationSummary';
+// import GenerationSummary from './GenerationSummary';
 import PopulationOverviewChart from './PopulationOverviewChart';
 import { useIsRunning } from '../hooks';
 import theme from '../theme';
@@ -19,6 +19,7 @@ import {
   setSimulationStateToPaused,
   setSimulationStateToRunning,
 } from '../features/uxSlice';
+import SimulationStatusPanel from './SimulationStatusPanel';
 
 function App() {
   const [population, setPopulation] = useState(null);
@@ -75,9 +76,14 @@ function App() {
       <header>
         <Typography variant="h2">Genetic Algorithms</Typography>
       </header>
-      <Grid container spacing={4} padding={theme.spacing(2)}>
+      <Grid container spacing={theme.spacing(2)} padding={theme.spacing(2)}>
         <Grid item xs={3}>
           <ControlPanel onRun={onRun} onReset={onReset} onPause={onPause} />
+          <SimulationStatusPanel
+            genCount={generations.length}
+            currentGen={generations[generations.length - 1]}
+            styles={{ marginTop: theme.spacing(2) }}
+          />
         </Grid>
         <Grid item xs={9}>
           <Paper sx={{ height: 400 }}>
@@ -99,14 +105,14 @@ function App() {
           overflowX: 'scroll',
         }}
       >
-        {generations.map((gen, index) => (
+        {/* {generations.map((gen, index) => (
           <GenerationSummary
             key={gen[0].id}
             genNumber={index}
             organisms={gen}
             maxFitness={target.length}
           />
-        ))}
+        ))} */}
       </Box>
     </div>
   );

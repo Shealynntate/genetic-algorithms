@@ -4,33 +4,11 @@ import {
   Button, Paper, Stack, TextField,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import MutationSlider from './MutationSlider';
-import PopulationSlider from './PopulationSlider';
-import { setMutationRate, setPopulationSize, setTarget } from '../features/metadataSlice';
 import { SimulationState } from '../constants';
-
-const buttonLabels = {
-  [SimulationState.NONE]: 'Run',
-  [SimulationState.RUNNING]: 'Pause',
-  [SimulationState.PAUSED]: 'Resume',
-  [SimulationState.COMPLETE]: 'Reset',
-};
-
-function PrimaryButton({ currentState, callback }) {
-  return (
-    <Button
-      variant="contained"
-      onClick={callback}
-    >
-      {buttonLabels[currentState]}
-    </Button>
-  );
-}
-
-PrimaryButton.propTypes = {
-  currentState: PropTypes.string.isRequired,
-  callback: PropTypes.func.isRequired,
-};
+import { setMutationRate, setPopulationSize, setTarget } from '../features/metadataSlice';
+import MutationSlider from './sliders/MutationSlider';
+import PopulationSlider from './sliders/PopulationSlider';
+import PrimaryButton from './PrimaryButton';
 
 function ControlPanel({ onRun, onReset, onPause }) {
   const target = useSelector((state) => state.metadata.target);
@@ -38,6 +16,7 @@ function ControlPanel({ onRun, onReset, onPause }) {
   const populationSize = useSelector((state) => state.metadata.populationSize);
   const simulationState = useSelector((state) => state.ux.simulationState);
   const dispatch = useDispatch();
+  const isPaused = simulationState === SimulationState.PAUSED;
 
   const setSize = (value) => {
     dispatch(setPopulationSize(value));
@@ -69,14 +48,14 @@ function ControlPanel({ onRun, onReset, onPause }) {
           value={target}
           onChange={(event) => { dispatch(setTarget(event.target.value)); }}
         />
-        <MutationSlider rate={mutation} setRate={setRate} />
-        <PopulationSlider size={populationSize} setSize={setSize} />
+        <MutationSlider value={mutation} setValue={setRate} />
+        <PopulationSlider value={populationSize} setValue={setSize} />
         <Stack direction="row">
           <PrimaryButton
             currentState={simulationState}
             callback={getCallback()}
           />
-          {simulationState === SimulationState.PAUSED && (
+          {isPaused && (
             <Button
               variant="outlined"
               onClick={onReset}
