@@ -12,39 +12,10 @@ import { withTooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
 import { LinearGradient } from '@visx/gradient';
 import { useTheme } from '@emotion/react';
-import { meanFitness, minFitness, maxFitness } from '../models/utils';
+import { minFitness, maxFitness } from '../models/utils';
 import PopulationOverviewBrush from './chart/PopulationOverviewBrush';
 import PopulationOverviewTooltip from './chart/PopulationOverviewTooltip';
-
-export const background = '#3b6978';
-export const background2 = '#204051';
-export const accentColor = '#edffea';
-export const accentColorDark = '#75daad';
-
-const tooltipCircle = (cx, cy) => (
-  <>
-    <circle
-      cx={cx}
-      cy={cy + 1}
-      r={4}
-      fill="black"
-      fillOpacity={0.1}
-      stroke="black"
-      strokeOpacity={0.1}
-      strokeWidth={2}
-      pointerEvents="none"
-    />
-    <circle
-      cx={cx}
-      cy={cy}
-      r={4}
-      fill={accentColorDark}
-      stroke="white"
-      strokeWidth={2}
-      pointerEvents="none"
-    />
-  </>
-);
+import TooltipCircle from './chart/TooltipCircle';
 
 const chartSeparation = 5;
 
@@ -68,9 +39,9 @@ export default withTooltip(
 
     const data = generations.map((gen, i) => ({
       x: i,
-      top: maxFitness(gen),
-      mean: meanFitness(gen),
-      bottom: minFitness(gen),
+      top: maxFitness(gen.organisms),
+      mean: gen.meanFitness,
+      bottom: minFitness(gen.organisms),
     }));
 
     const theme = useTheme();
@@ -169,12 +140,6 @@ export default withTooltip(
             rx={5}
           />
           <LinearGradient
-            id="area-gradient"
-            from={theme.palette.primary.main}
-            to={theme.palette.primary.main}
-            toOpacity={0.2}
-          />
-          <LinearGradient
             id="line-gradient"
             from={theme.palette.primary.light}
             to={theme.palette.primary.light}
@@ -217,14 +182,15 @@ export default withTooltip(
             <Line
               from={{ x: tooltipLeft, y: margin.top }}
               to={{ x: tooltipLeft, y: innerHeight + margin.top }}
-              stroke={accentColorDark}
+              stroke={theme.palette.grey[500]}
               strokeWidth={2}
               pointerEvents="none"
               strokeDasharray="5,2"
+              opacity={0.7}
             />
-            {tooltipCircle(tooltipLeft, yScale(tooltipData.top))}
-            {tooltipCircle(tooltipLeft, yScale(tooltipData.mean))}
-            {tooltipCircle(tooltipLeft, yScale(tooltipData.bottom))}
+            <TooltipCircle cx={tooltipLeft} cy={yScale(tooltipData.top)} />
+            <TooltipCircle cx={tooltipLeft} cy={yScale(tooltipData.mean)} />
+            <TooltipCircle cx={tooltipLeft} cy={yScale(tooltipData.bottom)} />
           </g>
           )}
           <PopulationOverviewBrush

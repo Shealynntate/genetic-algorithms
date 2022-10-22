@@ -38,8 +38,8 @@ function GenerationSummary({ genNumber, organisms, maxFitness }) {
           />
         )}
       </ParentSize>
-      <Typography>{`Top: ${topOrganism?.ToString()}`}</Typography>
-      <Typography>{`Median: ${median?.ToString()}`}</Typography>
+      <Typography>{`Top: ${topOrganism?.toString()}`}</Typography>
+      <Typography>{`Median: ${median?.toString()}`}</Typography>
     </Paper>
   );
 }

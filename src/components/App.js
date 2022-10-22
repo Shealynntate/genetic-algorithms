@@ -56,7 +56,8 @@ function App() {
       // Otherwise create a new population and start from the beginning
       const p = new Population(populationSize, target, mutation);
       setPopulation(p);
-      setGenerations([p.organisms]);
+      p.evaluateFitness();
+      setGenerations([p.createGenNode()]);
     }
   };
 
@@ -74,7 +75,7 @@ function App() {
   return (
     <div>
       <header>
-        <Typography variant="h2">Genetic Algorithms</Typography>
+        <Typography variant="h4">Genetic Algorithms</Typography>
       </header>
       <Grid container spacing={theme.spacing(2)} padding={theme.spacing(2)}>
         <Grid item xs={3}>

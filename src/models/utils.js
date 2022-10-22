@@ -106,10 +106,10 @@ export class LoadedDie {
   }
 }
 
+export const maxFitOrganism = (orgs) => _.maxBy(orgs, 'fitness');
+
+export const maxFitness = (orgs) => maxFitOrganism(orgs)?.fitness || 0;
+
 export const meanFitness = (orgs) => _.meanBy(orgs, 'fitness');
 
-export const maxFitness = (orgs) => (orgs?.length ? orgs[0].fitness : 0);
-
-export const maxFitOrganism = (orgs) => (orgs?.length ? orgs[0] : null);
-
-export const minFitness = (orgs) => (orgs?.length ? orgs[orgs.length - 1].fitness : 0);
+export const minFitness = (orgs) => _.minBy(orgs, 'fitness')?.fitness || 0;

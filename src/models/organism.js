@@ -17,8 +17,15 @@ class Organism {
     // Mutation event
     newGenome = newGenome.map((gene) => (flipCoin(mutation) ? randomDNA() : gene));
     // Create the child Organism
-    const child = new Organism(parentA.genome.length);
+    const child = new Organism({
+      genomeSize: parentA.genome.length,
+      parentA: parentA.id,
+      parentB: parentB.id,
+    });
     child.genome = newGenome;
+    // Update the parent's offspring counts
+    parentA.addOffspring(1);
+    parentB.addOffspring(1);
 
     return child;
   }
@@ -26,16 +33,29 @@ class Organism {
   static deserialize(data) {
     const genome = data.genome.split('');
     const id = Number.parseInt(data.id, 10);
-    const organism = new Organism(genome.length, id);
+    const organism = new Organism({
+      id,
+      genomeSize: genome.length,
+      parentA: data.parentA,
+      parentB: data.parentB,
+    });
     organism.genome = genome;
 
     return organism;
   }
 
-  constructor(genomeSize, id) {
+  constructor({
+    id,
+    genomeSize,
+    parentA = -1,
+    parentB = -1,
+  }) {
     this.id = id ?? Organism.nextId;
     this.genome = createRandomGenome(genomeSize);
+    this.parentA = parentA;
+    this.parentB = parentB;
     this.fitness = 0;
+    this.offspringCount = 0;
   }
 
   evaluateFitness(target) {
@@ -47,15 +67,22 @@ class Organism {
     return this.genome.slice(start, end);
   }
 
-  toJSON() {
+  addOffspring(count) {
+    this.offspringCount += count;
+  }
+
+  createNode() {
     return {
       id: this.id,
+      parentA: this.parentA,
+      parentB: this.parentB,
+      genome: this.toString(),
       fitness: this.fitness,
-      genome: this.genome.join(''),
+      offspring: this.offspringCount,
     };
   }
 
-  ToString() {
+  toString() {
     return this.genome.join('');
   }
 }

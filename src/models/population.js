@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import Organism from './organism';
-import { LoadedDie } from './utils';
+import { LoadedDie, meanFitness } from './utils';
 
 //
 class Population {
@@ -12,7 +12,7 @@ class Population {
   constructor(size, target) {
     this.id = Population.nextId;
     this.target = target;
-    this.organisms = [...Array(size)].map(() => new Organism(target.length));
+    this.organisms = [...Array(size)].map(() => new Organism({ genomeSize: target.length }));
     this.loadedDie = new LoadedDie(size);
   }
 
@@ -64,16 +64,24 @@ class Population {
       nextGen.push(offspring);
     }
     // Replace old population with new generation
-    // const oldGen = this.organisms.slice();
     this.organisms = nextGen;
-
-    return this.organisms;
   }
 
   runGeneration(mutationRate) {
-    this.evaluateFitness();
     this.createProbabilityDistribution();
-    return this.performSelection(mutationRate);
+    this.performSelection(mutationRate);
+    this.evaluateFitness();
+
+    return this.createGenNode();
+  }
+
+  createGenNode() {
+    return {
+      id: this.id,
+      meanFitness: meanFitness(this.organisms),
+      variance: 1,
+      organisms: this.organisms.map((o) => o.createNode()),
+    };
   }
 }
 
