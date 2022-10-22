@@ -241,26 +241,7 @@ export default withTooltip(
           <PopulationOverviewTooltip
             top={yScale(tooltipData.top) - 12}
             left={tooltipLeft}
-            value={tooltipData.top}
-            label="Top"
-          />
-          <PopulationOverviewTooltip
-            top={yScale(tooltipData.mean) - 12}
-            left={tooltipLeft}
-            value={tooltipData.mean}
-            label="Mean"
-          />
-          <PopulationOverviewTooltip
-            top={yScale(tooltipData.bottom) - 12}
-            left={tooltipLeft}
-            value={tooltipData.bottom}
-            label="Bottom"
-          />
-          <PopulationOverviewTooltip
-            top={innerHeight + margin.top - 5}
-            left={tooltipLeft}
-            value={tooltipData.x}
-            label="Generation"
+            data={tooltipData}
           />
         </div>
         )}

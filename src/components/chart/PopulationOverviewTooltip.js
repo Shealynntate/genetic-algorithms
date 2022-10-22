@@ -2,12 +2,25 @@ import React from 'react';
 import { TooltipWithBounds, defaultStyles } from '@visx/tooltip';
 import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
+import { Typography } from '@mui/material';
+
+function LabelText({ label, data }) {
+  return (
+    <Typography variant="caption" component="div">
+      {`${label} ${data.toFixed(2)}`}
+    </Typography>
+  );
+}
+
+LabelText.propTypes = {
+  label: PropTypes.string.isRequired,
+  data: PropTypes.number.isRequired,
+};
 
 function PopulationOverviewTooltip({
   top,
   left,
-  value,
-  label,
+  data,
 }) {
   const theme = useTheme();
 
@@ -19,7 +32,6 @@ function PopulationOverviewTooltip({
     opacity: 0.6,
   };
 
-  const content = `${label}: ${value}`;
   return (
     <TooltipWithBounds
       top={top}
@@ -27,7 +39,16 @@ function PopulationOverviewTooltip({
       key={Math.random()}
       style={tooltipStyles}
     >
-      {content}
+      <Typography
+        variant="caption"
+        component="div"
+        sx={{ textDecoration: 'underline' }}
+      >
+        {`Gen ${data.x}`}
+      </Typography>
+      <LabelText label="Best" data={data.top} />
+      <LabelText label="Mean" data={data.mean} />
+      <LabelText label="Worst" data={data.bottom} />
     </TooltipWithBounds>
   );
 }
@@ -35,8 +56,7 @@ function PopulationOverviewTooltip({
 PopulationOverviewTooltip.propTypes = {
   top: PropTypes.number.isRequired,
   left: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-  label: PropTypes.string.isRequired,
+  data: PropTypes.objectOf(PropTypes.number).isRequired,
 };
 
 export default PopulationOverviewTooltip;
