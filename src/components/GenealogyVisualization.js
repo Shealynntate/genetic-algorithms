@@ -39,6 +39,7 @@ function GenealogyVisualization({
       </svg> */}
       {generations.map((gen) => (
         <GenerationNodes
+          id={gen.id}
           key={gen.id}
           nodes={generationToNodes(gen)}
           maxFitness={maxFitness}

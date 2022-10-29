@@ -86,7 +86,7 @@ TreeEdge.propTypes = {
 };
 
 const genNodePropsAreEqual = (prevProps, nextProps) => (
-  prevProps.key === nextProps.id
+  prevProps.id === nextProps.id
 );
 
 function GenerationNodes({
@@ -183,6 +183,7 @@ function GenerationNodes({
 }
 
 GenerationNodes.propTypes = {
+  id: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   margin: PropTypes.objectOf(PropTypes.number),
