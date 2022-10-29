@@ -4,13 +4,12 @@ import React, {
   memo, useCallback, useMemo, useState,
 } from 'react';
 import PropTypes from 'prop-types';
-import { DefaultNode, Graph } from '@visx/network';
 import { Tooltip, withTooltip } from '@visx/tooltip';
 import { scaleBand } from '@visx/scale';
 import { useTheme } from '@emotion/react';
 import { localPoint } from '@visx/event';
-import { genNumRange, hsvtoHex } from '../models/utils';
 import { OrganismNodeType } from '../constants';
+import OrganismTreeNode from './OrganismTreeNode';
 
 // const fitnessFrequencyMap = (organisms, maxFitness) => {
 //   const freq = {};
@@ -33,36 +32,6 @@ const xyToNodeIndex = (x, y, length) => {
   const index = rows * Math.round(yInv) + Math.round(xInv);
 
   return (index < length) ? index : -1;
-};
-
-function TreeNode({
-  cx, cy, r, organism, isSelected,
-}) {
-  const saturation = organism.fitness / 5.0;
-  const fill = hsvtoHex(150, saturation, 0.9);
-  return (
-    <DefaultNode
-      r={r}
-      fill={fill}
-      cx={cx}
-      cy={cy}
-      strokeWidth={isSelected ? 2 : 0}
-      stroke="black"
-    />
-  );
-}
-
-TreeNode.propTypes = {
-  cx: PropTypes.number.isRequired,
-  cy: PropTypes.number.isRequired,
-  r: PropTypes.number,
-  organism: PropTypes.shape(OrganismNodeType).isRequired,
-  isSelected: PropTypes.bool,
-};
-
-TreeNode.defaultProps = {
-  r: 6,
-  isSelected: false,
 };
 
 function TreeEdge({ source, target }) {
@@ -163,7 +132,7 @@ function GenerationNodes({
         onMouseLeave={() => hideTooltip()}
       >
         {nodes.map((n, i) => (
-          <TreeNode
+          <OrganismTreeNode
             key={n.organism.id}
             cx={n.cx}
             cy={n.cy}
@@ -187,11 +156,11 @@ GenerationNodes.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   margin: PropTypes.objectOf(PropTypes.number),
-  nodes: PropTypes.arrayOf(PropTypes.shape(TreeNode)).isRequired,
+  nodes: PropTypes.arrayOf(PropTypes.shape(OrganismNodeType)).isRequired,
   maxFitness: PropTypes.number.isRequired,
   showTooltip: PropTypes.func.isRequired,
   hideTooltip: PropTypes.func.isRequired,
-  tooltipData: PropTypes.instanceOf(TreeNode),
+  tooltipData: PropTypes.instanceOf(OrganismTreeNode),
   tooltipLeft: PropTypes.number,
   tooltipTop: PropTypes.number,
 };

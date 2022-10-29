@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 // import { useTheme } from '@emotion/react';
-import { OrganismNodeType } from '../constants';
+import { GenerationNodeType } from '../constants';
 import GenerationNodes from './GenerationNodes';
 
 const columns = 10;
@@ -52,7 +52,7 @@ function GenealogyVisualization({
 }
 
 GenealogyVisualization.propTypes = {
-  generations: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.shape(OrganismNodeType))),
+  generations: PropTypes.arrayOf(PropTypes.shape(GenerationNodeType)),
   maxFitness: PropTypes.number.isRequired,
 };
 
