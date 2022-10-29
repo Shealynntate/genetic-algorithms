@@ -1,16 +1,17 @@
 import _ from 'lodash';
+import { deviation } from 'd3-array';
 import Organism from './organism';
 import { LoadedDie, meanFitness } from './utils';
 
 //
 class Population {
-  static get nextId() {
+  static get nextGenId() {
     Population.count = Population.count == null ? 0 : Population.count + 1;
     return Population.count;
   }
 
   constructor(size, target) {
-    this.id = Population.nextId;
+    this.genId = Population.nextGenId;
     this.target = target;
     this.organisms = [...Array(size)].map(() => new Organism({ genomeSize: target.length }));
     this.loadedDie = new LoadedDie(size);
@@ -64,6 +65,7 @@ class Population {
       nextGen.push(offspring);
     }
     // Replace old population with new generation
+    this.genId = Population.nextGenId;
     this.organisms = nextGen;
   }
 
@@ -77,9 +79,9 @@ class Population {
 
   createGenNode() {
     return {
-      id: this.id,
+      id: this.genId,
       meanFitness: meanFitness(this.organisms),
-      variance: 1,
+      deviation: deviation(this.organisms, (o) => o.fitness),
       organisms: this.organisms.map((o) => o.createNode()),
     };
   }

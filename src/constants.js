@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 export const SimulationState = {
   NONE: 'NONE',
   RUNNING: 'RUNNING',
@@ -28,3 +30,18 @@ export const minMutationRate = 0;
 export const maxMutationRate = 1;
 
 export const mutationRateStep = 0.01;
+
+export const OrganismNodeType = {
+  id: PropTypes.number,
+  fitness: PropTypes.number,
+  parentA: PropTypes.number,
+  parentB: PropTypes.number,
+  offspringCount: PropTypes.number,
+};
+
+export const GenerationNodeType = {
+  id: PropTypes.number,
+  meanFitness: PropTypes.number,
+  deviation: PropTypes.number,
+  organisms: PropTypes.arrayOf(PropTypes.shape(OrganismNodeType)),
+};

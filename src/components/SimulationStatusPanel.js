@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { statusLabels } from '../constants';
+import { OrganismNodeType, statusLabels } from '../constants';
 import { maxFitOrganism } from '../models/utils';
 
 function SimulationStatusPanel({ currentGen, genCount, styles }) {
@@ -19,17 +19,9 @@ function SimulationStatusPanel({ currentGen, genCount, styles }) {
   );
 }
 
-const OrganismNodeShape = {
-  id: PropTypes.number,
-  fitness: PropTypes.number,
-  parentA: PropTypes.number,
-  parentB: PropTypes.number,
-  offspringCount: PropTypes.number,
-};
-
 SimulationStatusPanel.propTypes = {
   genCount: PropTypes.number,
-  currentGen: PropTypes.shape(OrganismNodeShape),
+  currentGen: PropTypes.shape(OrganismNodeType),
   styles: PropTypes.objectOf(PropTypes.string),
 };
 

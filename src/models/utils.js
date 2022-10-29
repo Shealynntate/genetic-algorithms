@@ -113,3 +113,18 @@ export const maxFitness = (orgs) => maxFitOrganism(orgs)?.fitness || 0;
 export const meanFitness = (orgs) => _.meanBy(orgs, 'fitness');
 
 export const minFitness = (orgs) => _.minBy(orgs, 'fitness')?.fitness || 0;
+
+// input: h in [0,360] and s,v in [0,1] - output: r,g,b in [0,1]
+export const hsv2rgb = (h, s, v) => {
+  const f = (n, k = (n + h / 60) % 6) => v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
+  return [f(5), f(3), f(1)];
+};
+
+const toHex = (c) => Math.trunc(c * 255).toString(16);
+
+export const rgb2Hex = (r, g, b) => `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+
+export const hsvtoHex = (h, s, v) => {
+  const rgb = hsv2rgb(h, s, v);
+  return rgb2Hex(...rgb);
+};

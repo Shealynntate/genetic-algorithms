@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Box,
   Grid,
   Paper,
   Typography,
@@ -9,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import Population from '../models/population';
 import ControlPanel from './ControlPanel';
-// import GenerationSummary from './GenerationSummary';
 import PopulationOverviewChart from './PopulationOverviewChart';
 import { useIsRunning } from '../hooks';
 import theme from '../theme';
@@ -20,6 +18,7 @@ import {
   setSimulationStateToRunning,
 } from '../features/uxSlice';
 import SimulationStatusPanel from './SimulationStatusPanel';
+import GenealogyVisualization from './GenealogyVisualization';
 
 function App() {
   const [population, setPopulation] = useState(null);
@@ -100,21 +99,10 @@ function App() {
           </Paper>
         </Grid>
       </Grid>
-      <Box
-        sx={{
-          display: 'flex',
-          overflowX: 'scroll',
-        }}
-      >
-        {/* {generations.map((gen, index) => (
-          <GenerationSummary
-            key={gen[0].id}
-            genNumber={index}
-            organisms={gen}
-            maxFitness={target.length}
-          />
-        ))} */}
-      </Box>
+      <GenealogyVisualization
+        generations={generations}
+        maxFitness={target.length}
+      />
     </div>
   );
 }
