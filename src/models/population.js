@@ -44,7 +44,7 @@ class Population {
 
   createProbabilityDistribution() {
     // Normalize the score to form a probability distribution
-    const totalFitness = _.sumBy(this.organisms, (org) => org.fitness);
+    const totalFitness = _.sumBy(this.organisms, (org) => org.fitness) || 1;
     const probabilities = this.organisms.map((org) => org.fitness / totalFitness);
     // Prepare the loaded die for selection process
     this.loadedDie.load(probabilities);

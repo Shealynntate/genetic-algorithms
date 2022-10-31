@@ -8,7 +8,7 @@ import { Tooltip, withTooltip } from '@visx/tooltip';
 import { scaleBand } from '@visx/scale';
 import { useTheme } from '@emotion/react';
 import { localPoint } from '@visx/event';
-import { OrganismNodeType } from '../constants';
+import { OrganismNodeType, treeParameters } from '../constants';
 import OrganismTreeNode from './OrganismTreeNode';
 
 // const fitnessFrequencyMap = (organisms, maxFitness) => {
@@ -18,13 +18,12 @@ import OrganismTreeNode from './OrganismTreeNode';
 //   return Object.entries(freq).map(([key, value]) => ({ fitness: key, frequency: value - 1 }));
 // };
 
-const columns = 10;
-const rows = 10;
-const spacing = 20;
-const padding = 10;
-
-const xScale = (index) => (index % columns) * spacing + padding;
-const yScale = (index) => Math.trunc(index / rows) * spacing + padding;
+const {
+  columns,
+  rows,
+  padding,
+  spacing,
+} = treeParameters;
 
 const xyToNodeIndex = (x, y, length) => {
   const yInv = (Math.max(y - padding, 0) / spacing);
@@ -32,26 +31,6 @@ const xyToNodeIndex = (x, y, length) => {
   const index = rows * Math.round(yInv) + Math.round(xInv);
 
   return (index < length) ? index : -1;
-};
-
-function TreeEdge({ source, target }) {
-  if (!source || !target) {
-    return null;
-  }
-
-  return (
-    <line
-      x1={source.x}
-      y1={source.y}
-      x2={target.x}
-      y2={target.y}
-    />
-  );
-}
-
-TreeEdge.propTypes = {
-  source: PropTypes.objectOf(PropTypes.number).isRequired,
-  target: PropTypes.objectOf(PropTypes.number).isRequired,
 };
 
 const genNodePropsAreEqual = (prevProps, nextProps) => (
@@ -133,10 +112,9 @@ function GenerationNodes({
       >
         {nodes.map((n, i) => (
           <OrganismTreeNode
-            key={n.organism.id}
-            cx={n.cx}
-            cy={n.cy}
-            organism={n.organism}
+            key={n.id}
+            index={i}
+            organism={n}
             isSelected={selectedNodeIndex === i}
           />
         ))}

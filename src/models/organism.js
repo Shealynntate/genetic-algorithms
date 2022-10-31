@@ -47,8 +47,8 @@ class Organism {
   constructor({
     id,
     genomeSize,
-    parentA = -1,
-    parentB = -1,
+    parentA = null,
+    parentB = null,
   }) {
     this.id = id ?? Organism.nextId;
     this.genome = createRandomGenome(genomeSize);

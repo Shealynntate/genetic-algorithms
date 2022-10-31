@@ -2,9 +2,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  populationSize: 100,
-  mutationRate: 0.01,
-  target: 'hello',
+  populationSize: 30,
+  mutationRate: 0.25,
+  target: 'hell',
 };
 
 export const metadataSlice = createSlice({

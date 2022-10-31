@@ -1,22 +1,42 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 // import { useTheme } from '@emotion/react';
-import { GenerationNodeType } from '../constants';
+import { Box } from '@mui/material';
+import { GenerationNodeType, treeParameters } from '../constants';
 import GenerationNodes from './GenerationNodes';
+import GenerationLinks from './GenerationLinks';
 
-const columns = 10;
-const rows = 10;
-const spacing = 20;
-const padding = 10;
+const {
+  columns,
+  padding,
+  spacing,
+} = treeParameters;
+const genHeight = 200;
 
-const indexToX = (index) => (index % columns) * spacing + padding;
-const indexToY = (index) => Math.trunc(index / rows) * spacing + padding;
+const indexToX = (gen, index) => (index % columns) * spacing + padding;
+const indexToY = (gen, index) => Math.trunc(index / columns) * spacing + padding;
 
-const generationToNodes = ({ organisms }) => organisms.map((organism, index) => ({
-  cx: indexToX(index),
-  cy: indexToY(index),
-  organism,
-}));
+const organismById = (id, organisms) => organisms.find((o) => o.id === id);
+
+const generateTree = (generations) => {
+  let prevGen = [];
+  return generations.map((gen, genIndex) => {
+    const nextGen = gen.organisms.map((organism, index) => ({
+      ...organism,
+      x: indexToX(genIndex, index),
+      y: indexToY(genIndex, index),
+      parentA: organismById(organism.parentA, prevGen),
+      parentB: organismById(organism.parentB, prevGen),
+    }));
+    prevGen = nextGen;
+    return {
+      id: gen.id,
+      meanFitness: gen.meanFitness,
+      deviation: gen.deviation,
+      nodes: nextGen,
+    };
+  });
+};
 
 function GenealogyVisualization({
   generations,
@@ -24,7 +44,7 @@ function GenealogyVisualization({
 }) {
   // const theme = useTheme();
 
-  // const genNodes = generations.map((gen) => generationToNodes(gen));
+  const tree = generateTree(generations);
   return (
     <>
       {/* <svg width="100%" height="500px">
@@ -37,15 +57,27 @@ function GenealogyVisualization({
           fill={theme.palette.background.paper}
         />
       </svg> */}
-      {generations.map((gen) => (
-        <GenerationNodes
-          id={gen.id}
+      {tree.map((gen) => (
+        <Box
+          sx={{ position: 'relative' }}
           key={gen.id}
-          nodes={generationToNodes(gen)}
-          maxFitness={maxFitness}
-          width={200}
-          height={200}
-        />
+        >
+          <GenerationLinks
+            id={gen.id}
+            nodes={gen.nodes}
+            maxFitness={maxFitness}
+            width={200}
+            height={genHeight * 2}
+            top={-genHeight - padding / 2}
+          />
+          <GenerationNodes
+            id={gen.id}
+            nodes={gen.nodes}
+            maxFitness={maxFitness}
+            width={200}
+            height={genHeight}
+          />
+        </Box>
       ))}
     </>
   );

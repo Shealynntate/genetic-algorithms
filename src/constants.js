@@ -34,14 +34,23 @@ export const mutationRateStep = 0.01;
 export const OrganismNodeType = {
   id: PropTypes.number,
   fitness: PropTypes.number,
-  parentA: PropTypes.number,
-  parentB: PropTypes.number,
   offspringCount: PropTypes.number,
 };
+
+OrganismNodeType.parentA = PropTypes.shape(OrganismNodeType);
+OrganismNodeType.parentB = PropTypes.shape(OrganismNodeType);
 
 export const GenerationNodeType = {
   id: PropTypes.number,
   meanFitness: PropTypes.number,
   deviation: PropTypes.number,
   organisms: PropTypes.arrayOf(PropTypes.shape(OrganismNodeType)),
+};
+
+export const treeParameters = {
+  columns: 20,
+  rows: 10,
+  spacing: 10,
+  padding: 10,
+  radius: 3,
 };
