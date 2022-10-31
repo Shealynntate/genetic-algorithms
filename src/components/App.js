@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Box,
   Grid,
   Paper,
   Typography,
@@ -77,15 +78,15 @@ function App() {
         <Typography variant="h4">Genetic Algorithms</Typography>
       </header>
       <Grid container spacing={theme.spacing(2)} padding={theme.spacing(2)}>
-        <Grid item xs={3}>
-          <ControlPanel onRun={onRun} onReset={onReset} onPause={onPause} />
-          <SimulationStatusPanel
-            genCount={generations.length}
-            currentGen={generations[generations.length - 1]}
-            styles={{ marginTop: theme.spacing(2) }}
-          />
-        </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={6}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <ControlPanel onRun={onRun} onReset={onReset} onPause={onPause} />
+            <SimulationStatusPanel
+              genCount={generations.length}
+              currentGen={generations[generations.length - 1]}
+              // styles={{ marginTop: theme.spacing(2) }}
+            />
+          </Box>
           <Paper sx={{ height: 400 }}>
             <ParentSize>
               {({ ref }) => (
@@ -98,11 +99,13 @@ function App() {
             </ParentSize>
           </Paper>
         </Grid>
+        <Grid item xs={6}>
+          <GenealogyVisualization
+            generations={generations}
+            maxFitness={target.length}
+          />
+        </Grid>
       </Grid>
-      <GenealogyVisualization
-        generations={generations}
-        maxFitness={target.length}
-      />
     </div>
   );
 }

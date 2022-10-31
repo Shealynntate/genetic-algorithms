@@ -128,3 +128,7 @@ export const hsvtoHex = (h, s, v) => {
   const rgb = hsv2rgb(h, s, v);
   return rgb2Hex(...rgb);
 };
+
+export const genNodePropsAreEqual = (prevProps, nextProps) => (
+  prevProps.id === nextProps.id
+);

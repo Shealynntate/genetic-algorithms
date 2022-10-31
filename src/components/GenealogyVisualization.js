@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 // import { useTheme } from '@emotion/react';
 import { Box } from '@mui/material';
-import { GenerationNodeType, treeParameters } from '../constants';
+import { pick } from 'lodash';
+import { GenerationType, treeParameters } from '../constants';
 import GenerationNodes from './GenerationNodes';
 import GenerationLinks from './GenerationLinks';
 
@@ -16,7 +17,12 @@ const genHeight = 200;
 const indexToX = (gen, index) => (index % columns) * spacing + padding;
 const indexToY = (gen, index) => Math.trunc(index / columns) * spacing + padding;
 
-const organismById = (id, organisms) => organisms.find((o) => o.id === id);
+const organismById = (id, organisms) => {
+  const organism = organisms.find((o) => o.id === id);
+  if (!organism) return null;
+  // Only return the parent's position to avoid overhead of recursive parent pointers
+  return pick(organism, ['x', 'y']);
+};
 
 const generateTree = (generations) => {
   let prevGen = [];
@@ -66,7 +72,7 @@ function GenealogyVisualization({
             id={gen.id}
             nodes={gen.nodes}
             maxFitness={maxFitness}
-            width={200}
+            width={350}
             height={genHeight * 2}
             top={-genHeight - padding / 2}
           />
@@ -74,7 +80,7 @@ function GenealogyVisualization({
             id={gen.id}
             nodes={gen.nodes}
             maxFitness={maxFitness}
-            width={200}
+            width={350}
             height={genHeight}
           />
         </Box>
@@ -84,7 +90,7 @@ function GenealogyVisualization({
 }
 
 GenealogyVisualization.propTypes = {
-  generations: PropTypes.arrayOf(PropTypes.shape(GenerationNodeType)),
+  generations: PropTypes.arrayOf(PropTypes.shape(GenerationType)),
   maxFitness: PropTypes.number.isRequired,
 };
 

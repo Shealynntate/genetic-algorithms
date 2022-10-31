@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
+import { Group } from '@visx/group';
 import { OrganismNodeType } from '../constants';
 import OrganismTreeLink from './OrganismTreeLink';
+import { genNodePropsAreEqual } from '../models/utils';
 
 function GenerationLinks({
+  id,
   width,
   height,
   top,
@@ -23,22 +26,16 @@ function GenerationLinks({
         if (!node.parentA && !node.parentB) return null;
 
         return (
-          <>
-            {node.parentA && (
-              <OrganismTreeLink
-                key={`${node.parentA.id}-${node.id}-a`}
-                source={node.parentA}
-                target={node}
-              />
-            )}
-            {node.parentB && (
-              <OrganismTreeLink
-                key={`${node.parentB.id}-${node.id}-b`}
-                source={node.parentB}
-                target={node}
-              />
-            )}
-          </>
+          <Group key={`${id}-node-links-${node.id}`}>
+            <OrganismTreeLink
+              source={node.parentA}
+              target={node}
+            />
+            <OrganismTreeLink
+              source={node.parentB}
+              target={node}
+            />
+          </Group>
         );
       })}
     </svg>
@@ -46,10 +43,11 @@ function GenerationLinks({
 }
 
 GenerationLinks.propTypes = {
+  id: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   top: PropTypes.number.isRequired,
   nodes: PropTypes.arrayOf(PropTypes.shape(OrganismNodeType)).isRequired,
 };
 
-export default GenerationLinks;
+export default memo(GenerationLinks, genNodePropsAreEqual);

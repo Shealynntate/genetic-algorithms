@@ -31,10 +31,31 @@ export const maxMutationRate = 1;
 
 export const mutationRateStep = 0.01;
 
+// Types
+// ------------------------------------------------------------
+export const OrganismType = {
+  id: PropTypes.number,
+  parentA: PropTypes.number,
+  parentB: PropTypes.number,
+  genome: PropTypes.string,
+  fitness: PropTypes.number,
+  offspring: PropTypes.number,
+};
+
+export const GenerationType = {
+  id: PropTypes.number,
+  meanFitness: PropTypes.number,
+  deviation: PropTypes.number,
+  organisms: PropTypes.arrayOf(PropTypes.shape(OrganismType)),
+};
+
 export const OrganismNodeType = {
   id: PropTypes.number,
+  genome: PropTypes.string,
   fitness: PropTypes.number,
-  offspringCount: PropTypes.number,
+  offspring: PropTypes.number,
+  x: PropTypes.number,
+  y: PropTypes.number,
 };
 
 OrganismNodeType.parentA = PropTypes.shape(OrganismNodeType);
@@ -48,7 +69,7 @@ export const GenerationNodeType = {
 };
 
 export const treeParameters = {
-  columns: 20,
+  columns: 30,
   rows: 10,
   spacing: 10,
   padding: 10,

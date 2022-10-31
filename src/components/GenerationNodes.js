@@ -10,6 +10,7 @@ import { useTheme } from '@emotion/react';
 import { localPoint } from '@visx/event';
 import { OrganismNodeType, treeParameters } from '../constants';
 import OrganismTreeNode from './OrganismTreeNode';
+import { genNodePropsAreEqual } from '../models/utils';
 
 // const fitnessFrequencyMap = (organisms, maxFitness) => {
 //   const freq = {};
@@ -32,10 +33,6 @@ const xyToNodeIndex = (x, y, length) => {
 
   return (index < length) ? index : -1;
 };
-
-const genNodePropsAreEqual = (prevProps, nextProps) => (
-  prevProps.id === nextProps.id
-);
 
 function GenerationNodes({
   width,
