@@ -39,7 +39,7 @@ export const OrganismType = {
   parentB: PropTypes.number,
   genome: PropTypes.string,
   fitness: PropTypes.number,
-  offspring: PropTypes.number,
+  children: PropTypes.arrayOf(PropTypes.number),
 };
 
 export const GenerationType = {
@@ -53,13 +53,13 @@ export const OrganismNodeType = {
   id: PropTypes.number,
   genome: PropTypes.string,
   fitness: PropTypes.number,
-  offspring: PropTypes.number,
   x: PropTypes.number,
   y: PropTypes.number,
 };
 
 OrganismNodeType.parentA = PropTypes.shape(OrganismNodeType);
 OrganismNodeType.parentB = PropTypes.shape(OrganismNodeType);
+OrganismNodeType.children = PropTypes.arrayOf(PropTypes.OrganismNodeType);
 
 export const GenerationNodeType = {
   id: PropTypes.number,

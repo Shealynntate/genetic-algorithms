@@ -106,6 +106,7 @@ function GenerationNodes({
         height={height}
         onMouseMove={handleTooltip}
         onMouseLeave={() => hideTooltip()}
+        style={{ zIndex: 99 }}
       >
         {nodes.map((n, i) => (
           <OrganismTreeNode

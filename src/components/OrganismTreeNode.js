@@ -26,6 +26,7 @@ function OrganismTreeNode({
       cy={indexToY(index)}
       strokeWidth={isSelected ? 2 : 0}
       stroke="black"
+      zindex={2}
     />
   );
 }

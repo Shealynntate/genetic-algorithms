@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Box } from '@mui/material';
 import { pick } from 'lodash';
 import { GenerationType, treeParameters } from '../constants';
-import GenerationNodes from './GenerationNodes';
 import GenerationLinks from './GenerationLinks';
 
 const {
@@ -17,11 +16,13 @@ const genHeight = 200;
 const indexToX = (gen, index) => (index % columns) * spacing + padding;
 const indexToY = (gen, index) => Math.trunc(index / columns) * spacing + padding;
 
+const organismIndex = (id, organisms) => (organisms.findIndex((o) => o.id === id));
+
 const organismById = (id, organisms) => {
-  const organism = organisms.find((o) => o.id === id);
+  const organism = organisms?.find((o) => o.id === id);
   if (!organism) return null;
   // Only return the parent's position to avoid overhead of recursive parent pointers
-  return pick(organism, ['x', 'y']);
+  return pick(organism, ['x', 'y', 'id', 'genome', 'fitness']);
 };
 
 const generateTree = (generations) => {
@@ -33,7 +34,18 @@ const generateTree = (generations) => {
       y: indexToY(genIndex, index),
       parentA: organismById(organism.parentA, prevGen),
       parentB: organismById(organism.parentB, prevGen),
+      children: organism.children.map((id) => ({
+        ...organismById(id, generations[genIndex + 1].organisms),
+        x: indexToX(id, organismIndex(id, generations[genIndex + 1].organisms)),
+        y: indexToY(id, organismIndex(id, generations[genIndex + 1].organisms)),
+      })),
     }));
+
+    // prevGen = prevGen.map((organism) => ({
+    //   ...organism,
+    //   children: organism.children.map((id) => (organismById(id, nextGen))),
+    // }));
+
     prevGen = nextGen;
     return {
       id: gen.id,
@@ -63,27 +75,23 @@ function GenealogyVisualization({
           fill={theme.palette.background.paper}
         />
       </svg> */}
-      {tree.map((gen) => (
-        <Box
-          sx={{ position: 'relative' }}
-          key={gen.id}
-        >
-          <GenerationLinks
-            id={gen.id}
-            nodes={gen.nodes}
-            maxFitness={maxFitness}
-            width={350}
-            height={genHeight * 2}
-            top={-genHeight - padding / 2}
-          />
-          <GenerationNodes
-            id={gen.id}
-            nodes={gen.nodes}
-            maxFitness={maxFitness}
-            width={350}
-            height={genHeight}
-          />
-        </Box>
+      {tree.map((gen, index) => (
+        index === tree.length - 1 ? null
+          : (
+            <Box
+              sx={{ position: 'relative' }}
+              key={gen.id}
+            >
+              <GenerationLinks
+                id={gen.id}
+                nodes={gen.nodes}
+                maxFitness={maxFitness}
+                width={350}
+                height={genHeight}
+                top={-genHeight - padding / 2}
+              />
+            </Box>
+          )
       ))}
     </>
   );

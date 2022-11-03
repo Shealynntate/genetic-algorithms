@@ -24,8 +24,8 @@ class Organism {
     });
     child.genome = newGenome;
     // Update the parent's offspring counts
-    parentA.addOffspring(1);
-    parentB.addOffspring(1);
+    parentA.addChild(child.id);
+    parentB.addChild(child.id);
 
     return child;
   }
@@ -55,7 +55,11 @@ class Organism {
     this.parentA = parentA;
     this.parentB = parentB;
     this.fitness = 0;
-    this.offspringCount = 0;
+    this.children = [];
+  }
+
+  get childrenCount() {
+    return this.children.length;
   }
 
   evaluateFitness(target) {
@@ -67,8 +71,8 @@ class Organism {
     return this.genome.slice(start, end);
   }
 
-  addOffspring(count) {
-    this.offspringCount += count;
+  addChild(child) {
+    this.children.push(child);
   }
 
   createNode() {
@@ -78,7 +82,7 @@ class Organism {
       parentB: this.parentB,
       genome: this.toString(),
       fitness: this.fitness,
-      offspring: this.offspringCount,
+      children: this.children,
     };
   }
 
