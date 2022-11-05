@@ -9,6 +9,7 @@ function OrganismTreeNode({
 }) {
   const saturation = organism.fitness / 5.0;
   const fill = hsvtoHex(150, saturation, 0.9);
+
   return (
     <DefaultNode
       r={r}

@@ -138,16 +138,15 @@ const {
   columns,
   padding,
   spacing,
-  genHeight,
 } = treeParameters;
 
 export const nodeIndexToX = (index) => (index % columns) * spacing + padding;
 
-export const nodeIndexToY = (index) => Math.trunc(index / columns) * spacing + genHeight - padding;
+export const nodeIndexToY = (index) => Math.trunc(index / columns) * spacing + padding;
 
 export const xyToNodeIndex = (x, y, length) => {
   const xInv = (Math.max(x - padding, 0) / spacing);
-  const yInv = (Math.max(y - genHeight + padding, 0) / spacing) * columns;
+  const yInv = (Math.max(y - padding, 0) / spacing) * columns;
   const index = Math.round(xInv) + Math.round(yInv);
 
   return (index < length) ? index : -1;

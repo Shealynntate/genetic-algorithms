@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 // import { useTheme } from '@emotion/react';
-import { Box } from '@mui/material';
-import { pick, reverse } from 'lodash';
+import { Box, Paper } from '@mui/material';
+import { pick } from 'lodash';
 import { GenerationType, treeParameters } from '../constants';
 import GenerationLinks from './GenerationLinks';
 import { nodeIndexToX, nodeIndexToY } from '../models/utils';
@@ -31,7 +31,7 @@ const generateTree = (generations) => {
       children: organism.children.map((id, childIndex) => ({
         ...organismById(id, nextGen),
         x: nodeIndexToX(organismIndex(id, nextGen)),
-        y: nodeIndexToY(organismIndex(id, nextGen)) - genHeight,
+        y: nodeIndexToY(organismIndex(id, nextGen)) + genHeight,
         index: childIndex,
       })),
     }));
@@ -51,24 +51,25 @@ function GenealogyVisualization({
   maxFitness,
 }) {
   // const theme = useTheme();
+  const latestGenRef = useRef();
+  if (latestGenRef.current) {
+    latestGenRef.current.scrollIntoView(false, { behavior: 'smooth' });
+  }
 
-  const tree = reverse(generateTree(generations));
+  const tree = generateTree(generations);
   return (
-    <>
-      {/* <svg width="100%" height="500px">
-        <rect
-          x={0}
-          y={0}
-          width={width}
-          height={height}
-          rx={theme.shape.borderRadius}
-          fill={theme.palette.background.paper}
-        />
-      </svg> */}
+    <Paper
+      sx={{
+        maxHeight: 600,
+        overflowY: 'scroll',
+      }}
+      className="no-scrollbar"
+    >
       {tree.map((gen, index) => (
         <Box
           sx={{ position: 'relative', lineHeight: 0, height: genHeight - padding }}
           key={gen.id}
+          ref={index === tree.length - 1 ? latestGenRef : null}
         >
           <GenerationLinks
             id={gen.id}
@@ -77,11 +78,11 @@ function GenealogyVisualization({
             width={350}
             height={genHeight}
             top={-padding}
-            isNewestGeneration={index === 0}
+            isNewestGeneration={index === tree.length - 1}
           />
         </Box>
       ))}
-    </>
+    </Paper>
   );
 }
 

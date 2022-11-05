@@ -5,10 +5,17 @@ import { Group } from '@visx/group';
 import { useTheme } from '@emotion/react';
 import { Tooltip, withTooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
-import { OrganismNodeType } from '../constants';
+import { OrganismNodeType, treeParameters } from '../constants';
 import OrganismTreeLink from './OrganismTreeLink';
 import { genNodePropsAreEqual, xyToNodeIndex } from '../models/utils';
 import OrganismTreeNode from './OrganismTreeNode';
+
+const {
+  padding,
+  radius,
+} = treeParameters;
+
+const nodeThresholdY = padding + (radius * 2) + 10;
 
 function GenerationLinks({
   id,
@@ -28,8 +35,12 @@ function GenerationLinks({
   const handleTooltip = useCallback(
     (event) => {
       const { x, y } = localPoint(event) || { x: 0, y: 0 };
+      if (y > nodeThresholdY) {
+        setSelectedNodeIndex(-1);
+        return;
+      }
       const index = xyToNodeIndex(x, y, nodes.length);
-      const organism = index < 0 ? null : nodes[index].organism;
+      const organism = index < 0 ? null : nodes[index];
       setSelectedNodeIndex(index);
 
       showTooltip({
@@ -47,6 +58,7 @@ function GenerationLinks({
         width={width}
         height={height}
         style={{ background, position: 'relative' }}
+        onMouseEnter={handleTooltip}
         onMouseMove={handleTooltip}
         onMouseLeave={() => hideTooltip()}
       >
@@ -85,7 +97,7 @@ GenerationLinks.propTypes = {
   isNewestGeneration: PropTypes.bool,
   showTooltip: PropTypes.func.isRequired,
   hideTooltip: PropTypes.func.isRequired,
-  tooltipData: PropTypes.instanceOf(OrganismTreeNode),
+  tooltipData: PropTypes.shape(OrganismNodeType),
   tooltipLeft: PropTypes.number,
   tooltipTop: PropTypes.number,
 };
