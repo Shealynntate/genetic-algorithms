@@ -49,17 +49,23 @@ export const GenerationType = {
   organisms: PropTypes.arrayOf(PropTypes.shape(OrganismType)),
 };
 
+export const OrganismChildNodeType = {
+  id: PropTypes.number,
+  genome: PropTypes.string,
+  fitness: PropTypes.number,
+  x: PropTypes.number,
+  y: PropTypes.number,
+  index: PropTypes.number,
+};
+
 export const OrganismNodeType = {
   id: PropTypes.number,
   genome: PropTypes.string,
   fitness: PropTypes.number,
   x: PropTypes.number,
   y: PropTypes.number,
+  children: PropTypes.arrayOf(PropTypes.shape(OrganismChildNodeType)),
 };
-
-OrganismNodeType.parentA = PropTypes.shape(OrganismNodeType);
-OrganismNodeType.parentB = PropTypes.shape(OrganismNodeType);
-OrganismNodeType.children = PropTypes.arrayOf(PropTypes.OrganismNodeType);
 
 export const GenerationNodeType = {
   id: PropTypes.number,
@@ -70,8 +76,8 @@ export const GenerationNodeType = {
 
 export const treeParameters = {
   columns: 30,
-  rows: 10,
   spacing: 10,
   padding: 10,
   radius: 3,
+  genHeight: 150,
 };

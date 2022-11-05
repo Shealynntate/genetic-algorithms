@@ -2,19 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 // import { useTheme } from '@emotion/react';
 import { Box } from '@mui/material';
-import { pick } from 'lodash';
+import { pick, reverse } from 'lodash';
 import { GenerationType, treeParameters } from '../constants';
 import GenerationLinks from './GenerationLinks';
+import { nodeIndexToX, nodeIndexToY } from '../models/utils';
 
-const {
-  columns,
-  padding,
-  spacing,
-} = treeParameters;
-const genHeight = 200;
-
-const indexToX = (gen, index) => (index % columns) * spacing + padding;
-const indexToY = (gen, index) => Math.trunc(index / columns) * spacing + padding;
+const { genHeight, padding } = treeParameters;
 
 const organismIndex = (id, organisms) => (organisms.findIndex((o) => o.id === id));
 
@@ -28,30 +21,27 @@ const organismById = (id, organisms) => {
 const generateTree = (generations) => {
   let prevGen = [];
   return generations.map((gen, genIndex) => {
-    const nextGen = gen.organisms.map((organism, index) => ({
+    const nextGen = generations[genIndex + 1]?.organisms || [];
+    const currentGen = gen.organisms.map((organism, index) => ({
       ...organism,
-      x: indexToX(genIndex, index),
-      y: indexToY(genIndex, index),
+      x: nodeIndexToX(index),
+      y: nodeIndexToY(index),
       parentA: organismById(organism.parentA, prevGen),
       parentB: organismById(organism.parentB, prevGen),
-      children: organism.children.map((id) => ({
-        ...organismById(id, generations[genIndex + 1].organisms),
-        x: indexToX(id, organismIndex(id, generations[genIndex + 1].organisms)),
-        y: indexToY(id, organismIndex(id, generations[genIndex + 1].organisms)),
+      children: organism.children.map((id, childIndex) => ({
+        ...organismById(id, nextGen),
+        x: nodeIndexToX(organismIndex(id, nextGen)),
+        y: nodeIndexToY(organismIndex(id, nextGen)) - genHeight,
+        index: childIndex,
       })),
     }));
 
-    // prevGen = prevGen.map((organism) => ({
-    //   ...organism,
-    //   children: organism.children.map((id) => (organismById(id, nextGen))),
-    // }));
-
-    prevGen = nextGen;
+    prevGen = currentGen;
     return {
       id: gen.id,
       meanFitness: gen.meanFitness,
       deviation: gen.deviation,
-      nodes: nextGen,
+      nodes: currentGen,
     };
   });
 };
@@ -62,7 +52,7 @@ function GenealogyVisualization({
 }) {
   // const theme = useTheme();
 
-  const tree = generateTree(generations);
+  const tree = reverse(generateTree(generations));
   return (
     <>
       {/* <svg width="100%" height="500px">
@@ -76,22 +66,20 @@ function GenealogyVisualization({
         />
       </svg> */}
       {tree.map((gen, index) => (
-        index === tree.length - 1 ? null
-          : (
-            <Box
-              sx={{ position: 'relative' }}
-              key={gen.id}
-            >
-              <GenerationLinks
-                id={gen.id}
-                nodes={gen.nodes}
-                maxFitness={maxFitness}
-                width={350}
-                height={genHeight}
-                top={-genHeight - padding / 2}
-              />
-            </Box>
-          )
+        <Box
+          sx={{ position: 'relative', lineHeight: 0, height: genHeight - padding }}
+          key={gen.id}
+        >
+          <GenerationLinks
+            id={gen.id}
+            nodes={gen.nodes}
+            maxFitness={maxFitness}
+            width={350}
+            height={genHeight}
+            top={-padding}
+            isNewestGeneration={index === 0}
+          />
+        </Box>
       ))}
     </>
   );

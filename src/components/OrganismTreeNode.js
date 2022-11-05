@@ -4,17 +4,8 @@ import { DefaultNode } from '@visx/network';
 import { hsvtoHex } from '../models/utils';
 import { OrganismNodeType, treeParameters } from '../constants';
 
-const {
-  columns,
-  padding,
-  spacing,
-} = treeParameters;
-
-const indexToX = (index) => (index % columns) * spacing + padding;
-const indexToY = (index) => Math.trunc(index / columns) * spacing + padding;
-
 function OrganismTreeNode({
-  index, r, organism, isSelected,
+  r, organism, isSelected,
 }) {
   const saturation = organism.fitness / 5.0;
   const fill = hsvtoHex(150, saturation, 0.9);
@@ -22,17 +13,16 @@ function OrganismTreeNode({
     <DefaultNode
       r={r}
       fill={fill}
-      cx={indexToX(index)}
-      cy={indexToY(index)}
+      cx={organism.x}
+      cy={organism.y}
       strokeWidth={isSelected ? 2 : 0}
-      stroke="black"
+      stroke="blue"
       zindex={2}
     />
   );
 }
 
 OrganismTreeNode.propTypes = {
-  index: PropTypes.number.isRequired,
   r: PropTypes.number,
   organism: PropTypes.shape(OrganismNodeType).isRequired,
   isSelected: PropTypes.bool,

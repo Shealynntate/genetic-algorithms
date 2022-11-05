@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { treeParameters } from '../constants';
 // This file contains useful helper functions and constants used in the algorithm
 
 export const codeToChar = (i) => String.fromCharCode(i);
@@ -130,5 +131,24 @@ export const hsvtoHex = (h, s, v) => {
 };
 
 export const genNodePropsAreEqual = (prevProps, nextProps) => (
-  prevProps.id === nextProps.id
+  prevProps.id === nextProps.id && prevProps.isNewestGeneration === nextProps.isNewestGeneration
 );
+
+const {
+  columns,
+  padding,
+  spacing,
+  genHeight,
+} = treeParameters;
+
+export const nodeIndexToX = (index) => (index % columns) * spacing + padding;
+
+export const nodeIndexToY = (index) => Math.trunc(index / columns) * spacing + genHeight - padding;
+
+export const xyToNodeIndex = (x, y, length) => {
+  const xInv = (Math.max(x - padding, 0) / spacing);
+  const yInv = (Math.max(y - genHeight + padding, 0) / spacing) * columns;
+  const index = Math.round(xInv) + Math.round(yInv);
+
+  return (index < length) ? index : -1;
+};

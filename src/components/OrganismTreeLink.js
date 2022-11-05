@@ -1,17 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { LinkVertical } from '@visx/shape';
 import { OrganismNodeType } from '../constants';
 
 function OrganismTreeLink({ source, target }) {
   if (!source || !target) return null;
 
   return (
-    <line
-      x1={source.x}
-      y1={source.y}
-      x2={target.x}
-      y2={target.y + 200}
-      strokeWidth={1}
+    <LinkVertical
+      data={{ source, target }}
+      fill="none"
+      strokeWidth={0.5}
       stroke="grey"
     />
   );
