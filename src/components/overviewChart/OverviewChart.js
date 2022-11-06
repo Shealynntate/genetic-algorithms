@@ -5,10 +5,7 @@ import React, {
   useState,
 } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Line, Bar, AreaClosed, LinePath,
-} from '@visx/shape';
-import { curveMonotoneX } from '@visx/curve';
+import { Line, Bar } from '@visx/shape';
 import { GridRows, GridColumns } from '@visx/grid';
 import { scaleLinear } from '@visx/scale';
 import { withTooltip } from '@visx/tooltip';
@@ -20,6 +17,7 @@ import OverviewTooltip from './OverviewTooltip';
 import TooltipCircle from './TooltipCircle';
 import { useIsComplete } from '../../hooks';
 import { GenerationNodeType } from '../../types';
+import LineArea from './LineArea';
 
 const chartSeparation = 5;
 
@@ -94,42 +92,6 @@ function OverviewChart({
 
   if (!parentRef || width < 10) return null;
 
-  const area = (key) => {
-    const lineData = currentData.map((gen, i) => ({ x: i, y: gen[key] }));
-    return (
-      <>
-        <LinePath
-          data={lineData}
-          x={(d) => xScale(d.x)}
-          y={(d) => yScale(d.y)}
-          strokeWidth={1}
-          stroke={theme.palette.primary.light}
-          curve={curveMonotoneX}
-          shapeRendering="geometricPrecision"
-        />
-        <AreaClosed
-          data={lineData}
-          x={(d) => xScale(d.x)}
-          y={(d) => yScale(d.y)}
-          yScale={yScale}
-          fillOpacity={0.08}
-          fill="url(#line-gradient)"
-          curve={curveMonotoneX}
-        />
-        {lineData.map((entry) => (
-          <circle
-            key={entry.x}
-            cx={xScale(entry.x)}
-            cy={yScale(entry.y)}
-            r={1.5}
-            stroke={theme.palette.primary.light}
-            opacity={0.3}
-          />
-        ))}
-      </>
-    );
-  };
-
   return (
     <>
       <svg width={width} height={height}>
@@ -164,9 +126,21 @@ function OverviewChart({
           strokeOpacity={0.2}
           pointerEvents="none"
         />
-        {area('maxFitness')}
-        {area('meanFitness')}
-        {area('minFitness')}
+        <LineArea
+          data={currentData.map((gen, i) => ({ x: i, y: gen.maxFitness }))}
+          xScale={xScale}
+          yScale={yScale}
+        />
+        <LineArea
+          data={currentData.map((gen, i) => ({ x: i, y: gen.meanFitness }))}
+          xScale={xScale}
+          yScale={yScale}
+        />
+        <LineArea
+          data={currentData.map((gen, i) => ({ x: i, y: gen.minFitness }))}
+          xScale={xScale}
+          yScale={yScale}
+        />
         <Bar
           x={margin.left}
           y={margin.top}
