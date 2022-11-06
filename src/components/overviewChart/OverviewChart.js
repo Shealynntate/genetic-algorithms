@@ -38,13 +38,6 @@ function OverviewChart({
   const height = parentRef?.clientHeight || 0;
   const isComplete = useIsComplete();
 
-  // const data = generations.map((gen, i) => ({
-  //   x: i,
-  //   top: maxFitness(gen.organisms),
-  //   mean: gen.meanFitness,
-  //   bottom: minFitness(gen.organisms),
-  // }));
-
   const theme = useTheme();
   const [filteredData, setFilteredData] = useState(tree);
   const currentData = isComplete ? filteredData : tree;
