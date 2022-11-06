@@ -1,13 +1,14 @@
-/* eslint-disable no-unused-vars */
 import React, { memo, useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Group } from '@visx/group';
 import { useTheme } from '@emotion/react';
 import { Tooltip, withTooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
-import { OrganismNodeType, treeParameters } from '../constants';
+import { Typography } from '@mui/material';
+import { OrganismNodeType } from '../../types';
+import { treeParameters } from '../../constants';
+import { genNodePropsAreEqual, xyToNodeIndex } from '../../models/utils';
 import OrganismTreeLink from './OrganismTreeLink';
-import { genNodePropsAreEqual, xyToNodeIndex } from '../models/utils';
 import OrganismTreeNode from './OrganismTreeNode';
 
 const {
@@ -17,7 +18,7 @@ const {
 
 const nodeThresholdY = padding + (radius * 2) + 10;
 
-function GenerationLinks({
+function GenerationLayer({
   id,
   width,
   height,
@@ -80,16 +81,17 @@ function GenerationLinks({
         ))}
       </svg>
       {tooltipData && (
-        <Tooltip left={tooltipLeft} top={tooltipTop}>
-          <div>{tooltipData.genome}</div>
-          <div>{tooltipData.fitness}</div>
+        <Tooltip left={tooltipLeft} top={tooltipTop} className="see-through">
+          <Typography>{`Genome: ${tooltipData.genome}`}</Typography>
+          <Typography>{`Fitness: ${tooltipData.fitness}`}</Typography>
+          <Typography>{`Offspring: ${tooltipData.children.length}`}</Typography>
         </Tooltip>
       )}
     </>
   );
 }
 
-GenerationLinks.propTypes = {
+GenerationLayer.propTypes = {
   id: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
@@ -102,11 +104,11 @@ GenerationLinks.propTypes = {
   tooltipTop: PropTypes.number,
 };
 
-GenerationLinks.defaultProps = {
+GenerationLayer.defaultProps = {
   isNewestGeneration: false,
   tooltipData: null,
   tooltipLeft: 0,
   tooltipTop: 0,
 };
 
-export default memo(withTooltip(GenerationLinks), genNodePropsAreEqual);
+export default memo(withTooltip(GenerationLayer), genNodePropsAreEqual);

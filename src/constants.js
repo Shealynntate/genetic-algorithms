@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 export const SimulationState = {
   NONE: 'NONE',
   RUNNING: 'RUNNING',
@@ -31,49 +29,7 @@ export const maxMutationRate = 1;
 
 export const mutationRateStep = 0.01;
 
-// Types
 // ------------------------------------------------------------
-export const OrganismType = {
-  id: PropTypes.number,
-  parentA: PropTypes.number,
-  parentB: PropTypes.number,
-  genome: PropTypes.string,
-  fitness: PropTypes.number,
-  children: PropTypes.arrayOf(PropTypes.number),
-};
-
-export const GenerationType = {
-  id: PropTypes.number,
-  meanFitness: PropTypes.number,
-  deviation: PropTypes.number,
-  organisms: PropTypes.arrayOf(PropTypes.shape(OrganismType)),
-};
-
-export const OrganismChildNodeType = {
-  id: PropTypes.number,
-  genome: PropTypes.string,
-  fitness: PropTypes.number,
-  x: PropTypes.number,
-  y: PropTypes.number,
-  index: PropTypes.number,
-};
-
-export const OrganismNodeType = {
-  id: PropTypes.number,
-  genome: PropTypes.string,
-  fitness: PropTypes.number,
-  x: PropTypes.number,
-  y: PropTypes.number,
-  children: PropTypes.arrayOf(PropTypes.shape(OrganismChildNodeType)),
-};
-
-export const GenerationNodeType = {
-  id: PropTypes.number,
-  meanFitness: PropTypes.number,
-  deviation: PropTypes.number,
-  organisms: PropTypes.arrayOf(PropTypes.shape(OrganismNodeType)),
-};
-
 export const treeParameters = {
   columns: 30,
   spacing: 10,

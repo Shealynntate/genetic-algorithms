@@ -3,6 +3,7 @@ import { TooltipWithBounds, defaultStyles } from '@visx/tooltip';
 import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
 import { Typography } from '@mui/material';
+import { GenerationNodeType } from '../../types';
 
 function LabelText({ label, data }) {
   return (
@@ -17,7 +18,7 @@ LabelText.propTypes = {
   data: PropTypes.number.isRequired,
 };
 
-function PopulationOverviewTooltip({
+function OverviewTooltip({
   top,
   left,
   data,
@@ -46,17 +47,17 @@ function PopulationOverviewTooltip({
       >
         {`Gen ${data.x}`}
       </Typography>
-      <LabelText label="Best" data={data.top} />
-      <LabelText label="Mean" data={data.mean} />
-      <LabelText label="Worst" data={data.bottom} />
+      <LabelText label="Best" data={data.maxFitness} />
+      <LabelText label="Mean" data={data.meanFitness} />
+      <LabelText label="Worst" data={data.minFitness} />
     </TooltipWithBounds>
   );
 }
 
-PopulationOverviewTooltip.propTypes = {
+OverviewTooltip.propTypes = {
   top: PropTypes.number.isRequired,
   left: PropTypes.number.isRequired,
-  data: PropTypes.objectOf(PropTypes.number).isRequired,
+  data: PropTypes.shape(GenerationNodeType).isRequired,
 };
 
-export default PopulationOverviewTooltip;
+export default OverviewTooltip;

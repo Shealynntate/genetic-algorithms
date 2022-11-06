@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { LinkVertical } from '@visx/shape';
-import { OrganismNodeType } from '../constants';
+import { OrganismNodeType } from '../../types';
 
 function OrganismTreeLink({ source, target }) {
   if (!source || !target) return null;

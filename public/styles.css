@@ -13,3 +13,7 @@
   width: 0;
   height: 0;
 }
+
+.see-through {
+  opacity: 0.5;
+}

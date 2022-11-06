@@ -6,6 +6,11 @@ export const useIsRunning = () => {
   return simulationState === SimulationState.RUNNING;
 };
 
+export const useIsComplete = () => {
+  const simulationState = useSelector((state) => state.ux.simulationState);
+  return simulationState === SimulationState.COMPLETE;
+};
+
 export const useMaxFitness = () => {
   const target = useSelector((state) => state.metadata.target);
   return target.length;

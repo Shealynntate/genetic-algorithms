@@ -8,6 +8,7 @@ import { Brush } from '@visx/brush';
 import { PatternLines } from '@visx/pattern';
 import { scaleLinear } from '@visx/scale';
 import BrushHandle from './BrushHandle';
+import { GenerationNodeType } from '../../types';
 
 const PATTERN_ID = 'brush_pattern';
 // const GRADIENT_ID = 'brush_gradient';
@@ -23,7 +24,7 @@ const selectedBoxStyle = (theme) => ({
   stroke: theme.palette.grey[400],
 });
 
-function PopulationOverviewBrush({
+function OverviewBrush({
   data,
   margin,
   width,
@@ -58,7 +59,7 @@ function PopulationOverviewBrush({
       start: { x: xScale(Math.max(data.length - initialLeftBound, 0)) },
       end: { x: xScale(Math.max(data.length - initialRightBound, 0)) },
     }),
-    [xScale],
+    [xScale, data],
   );
 
   const onBrushChange = (domain) => {
@@ -76,7 +77,7 @@ function PopulationOverviewBrush({
       <LinePath
         data={data}
         x={(d) => xScale(d.x)}
-        y={(d) => yScale(d.mean)}
+        y={(d) => yScale(d.meanFitness)}
         strokeWidth={1}
         stroke={theme.palette.primary.light}
         curve={curveMonotoneX}
@@ -85,7 +86,7 @@ function PopulationOverviewBrush({
       <AreaClosed
         data={data}
         x={(d) => xScale(d.x)}
-        y={(d) => yScale(d.mean)}
+        y={(d) => yScale(d.meanFitness)}
         yScale={yScale}
         fillOpacity={fillOpacity}
         fill={theme.palette.primary.light}
@@ -119,8 +120,8 @@ function PopulationOverviewBrush({
   );
 }
 
-PopulationOverviewBrush.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.number)),
+OverviewBrush.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape(GenerationNodeType)),
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   maxFitness: PropTypes.number.isRequired,
@@ -128,7 +129,7 @@ PopulationOverviewBrush.propTypes = {
   setFilteredData: PropTypes.func,
 };
 
-PopulationOverviewBrush.defaultProps = {
+OverviewBrush.defaultProps = {
   data: [],
   margin: {
     top: 0, right: 0, bottom: 0, left: 0,
@@ -136,4 +137,4 @@ PopulationOverviewBrush.defaultProps = {
   setFilteredData: () => {},
 };
 
-export default PopulationOverviewBrush;
+export default OverviewBrush;

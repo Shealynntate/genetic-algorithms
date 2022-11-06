@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import Population from '../models/population';
 import ControlPanel from './ControlPanel';
-import PopulationOverviewChart from './PopulationOverviewChart';
+import OverviewChart from './overviewChart/OverviewChart';
 import { useIsRunning } from '../hooks';
 import theme from '../theme';
 import {
@@ -19,7 +19,8 @@ import {
   setSimulationStateToRunning,
 } from '../features/uxSlice';
 import SimulationStatusPanel from './SimulationStatusPanel';
-import GenealogyVisualization from './GenealogyVisualization';
+import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
+import { generateTree } from '../models/utils';
 
 function App() {
   const [population, setPopulation] = useState(null);
@@ -72,6 +73,8 @@ function App() {
     clearTimeout(timeoutRef.current);
   };
 
+  const tree = generateTree(generations);
+
   return (
     <div>
       <header>
@@ -84,15 +87,14 @@ function App() {
             <SimulationStatusPanel
               genCount={generations.length}
               currentGen={generations[generations.length - 1]}
-              // styles={{ marginTop: theme.spacing(2) }}
             />
           </Box>
           <Paper sx={{ height: 400 }}>
             <ParentSize>
               {({ ref }) => (
-                <PopulationOverviewChart
+                <OverviewChart
                   parentRef={ref}
-                  generations={generations}
+                  tree={tree}
                   targetFitness={target.length}
                 />
               )}
@@ -101,7 +103,7 @@ function App() {
         </Grid>
         <Grid item xs={6}>
           <GenealogyVisualization
-            generations={generations}
+            tree={tree}
             maxFitness={target.length}
           />
         </Grid>

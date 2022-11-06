@@ -1,7 +1,12 @@
 import _ from 'lodash';
 import { deviation } from 'd3-array';
 import Organism from './organism';
-import { LoadedDie, meanFitness } from './utils';
+import {
+  LoadedDie,
+  maxFitness,
+  meanFitness,
+  minFitness,
+} from './utils';
 
 //
 class Population {
@@ -81,6 +86,8 @@ class Population {
     return {
       id: this.genId,
       meanFitness: meanFitness(this.organisms),
+      maxFitness: maxFitness(this.organisms),
+      minFitness: minFitness(this.organisms),
       deviation: deviation(this.organisms, (o) => o.fitness),
       organisms: this.organisms.map((o) => o.createNode()),
     };

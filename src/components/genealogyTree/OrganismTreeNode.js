@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { DefaultNode } from '@visx/network';
-import { hsvtoHex } from '../models/utils';
-import { OrganismNodeType, treeParameters } from '../constants';
+import { hsvtoHex } from '../../models/utils';
+import { OrganismNodeType } from '../../types';
+import { treeParameters } from '../../constants';
 
 function OrganismTreeNode({
   r, organism, isSelected,
