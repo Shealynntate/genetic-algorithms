@@ -10,7 +10,6 @@ import { GridRows, GridColumns } from '@visx/grid';
 import { scaleLinear } from '@visx/scale';
 import { withTooltip } from '@visx/tooltip';
 import { localPoint } from '@visx/event';
-import { LinearGradient } from '@visx/gradient';
 import { useTheme } from '@emotion/react';
 import OverviewBrush from './OverviewBrush';
 import OverviewTooltip from './OverviewTooltip';
@@ -102,11 +101,6 @@ function OverviewChart({
           height={height}
           fill={theme.palette.background.paper}
           rx={5}
-        />
-        <LinearGradient
-          id="line-gradient"
-          from={theme.palette.primary.light}
-          to={theme.palette.primary.light}
         />
         <GridRows
           left={margin.left}
