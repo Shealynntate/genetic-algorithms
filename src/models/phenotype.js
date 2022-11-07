@@ -7,11 +7,14 @@ class Phenotype {
   constructor() {
     const options = { height, width };
     this.canvas = document.createElement('canvas', options);
+    this.canvas.width = width;
+    this.canvas.height = height;
     this.ctx = this.canvas.getContext('2d');
   }
 
   update(dna) {
     this.ctx.clearRect(0, 0, width, height);
+    this.ctx.fillRect(0, 0, width, height, 'green');
     dna.forEach(({ color, points }) => {
       this.ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
       this.ctx.beginPath();

@@ -7,6 +7,7 @@ import { canvasParameters, statusLabels } from '../constants';
 import { createImage, maxFitOrganism } from '../models/utils';
 import square from '../assets/red_square_test.png';
 import Genome from '../models/genome';
+import DNA from '../models/dna';
 
 function SimulationStatusPanel({ currentGen, genCount, styles }) {
   const simulationState = useSelector((state) => state.ux.simulationState);
@@ -17,17 +18,24 @@ function SimulationStatusPanel({ currentGen, genCount, styles }) {
 
   const { width, height } = canvasParameters;
 
-  // const points = [
-  //   [0, 0],
-  //   [0, height],
-  //   [250000, 90],
-  // ];
-  // const color = [255, 37, 1, 1];
+  const point1 = [
+    [0, 0],
+    [0, 1],
+    [1, 1],
+  ];
+  const point2 = [
+    [1, 1],
+    [1, 0],
+    [0, 0],
+  ];
+  const color = [255, 37, 0, 1];
+  const dna1 = new DNA(point1, color);
+  const dna2 = new DNA(point2, color);
 
   useEffect(() => {
     if (canvasRef1.current && canvasRef2.current) {
       const ctx1 = canvasRef1.current.getContext('2d');
-      const genome = new Genome({ size: 2 });
+      const genome = new Genome({ size: 2, dna: [dna1, dna2] });
       ctx1.putImageData(genome.getPhenotype(), 0, 0);
 
       const ctx2 = canvasRef2.current.getContext('2d');
