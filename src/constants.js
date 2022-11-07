@@ -37,3 +37,8 @@ export const treeParameters = {
   radius: 3,
   genHeight: 150,
 };
+
+export const canvasParameters = {
+  width: 196,
+  height: 196,
+};

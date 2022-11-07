@@ -1,12 +1,12 @@
 import _ from 'lodash';
-import { treeParameters } from '../constants';
+import { canvasParameters, treeParameters } from '../constants';
 // This file contains useful helper functions and constants used in the algorithm
 
 export const codeToChar = (i) => String.fromCharCode(i);
 
 export const charToCode = (v) => v.charCodeAt(0);
 
-export const genNumRange = (max) => ([...Array(max + 1).keys()]);
+export const genNumRange = (max) => ([...Array(max).keys()]);
 
 /**
  * A helper function to generate a range of letters for an Organism's DNA
@@ -30,6 +30,8 @@ export const DNA = [...genCharRange('a', 26), ...genCharRange('A', 26), ' '];
 export const randomIndex = (length) => (Math.trunc(Math.random() * length));
 
 export const flipCoin = (bias = 0.5) => (Math.random() <= bias);
+
+export const randomInt = (start, end) => (Math.round(Math.random() * (end - start)) + start);
 
 /**
  * Generate an array of characters randomly sampled from the domain of valid DNA to be used as the
@@ -191,4 +193,22 @@ export const generateTree = (generations) => {
       organisms: currentGen,
     };
   });
+};
+
+export const createImage = (path, callback) => {
+  const image = new Image();
+  image.onload = () => { callback(image); };
+  image.src = path;
+
+  return image;
+};
+
+const { width, height } = canvasParameters;
+
+export const generateTestImage = (image) => {
+  const canvas = document.createElement('canvas', { width, height });
+
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(image, 0, 0, width, height);
+  return ctx.getImageData(0, 0, width, height);
 };
