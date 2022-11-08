@@ -1,8 +1,6 @@
-import {
-  createRandomGenome,
-  flipCoin,
-  randomDNA,
-} from './utils';
+import DNA from './dna';
+import Genome from './genome';
+import { flipCoin } from './utils';
 
 class Organism {
   static get nextId() {
@@ -10,19 +8,20 @@ class Organism {
     return Organism.count;
   }
 
+  // TODO: Fix this
   static reproduce(parentA, parentB, mutation) {
     // Crossover event
-    const midPoint = Math.trunc(parentA.genome.length / 2);
-    let newGenome = [...parentA.subsequence(0, midPoint), ...parentB.subsequence(midPoint)];
+    const midPoint = Math.trunc(parentA.genome.size / 2);
+    let newDNA = [...parentA.subsequence(0, midPoint), ...parentB.subsequence(midPoint)];
     // Mutation event
-    newGenome = newGenome.map((gene) => (flipCoin(mutation) ? randomDNA() : gene));
+    newDNA = newDNA.map((dna) => (flipCoin(mutation) ? new DNA() : dna));
     // Create the child Organism
     const child = new Organism({
       genomeSize: parentA.genome.length,
+      genome: new Genome({ size: parentA.genome.size, dna: newDNA }),
       parentA: parentA.id,
       parentB: parentB.id,
     });
-    child.genome = newGenome;
     // Update the parent's offspring counts
     parentA.addChild(child.id);
     parentB.addChild(child.id);
@@ -31,11 +30,11 @@ class Organism {
   }
 
   static deserialize(data) {
-    const genome = data.genome.split('');
+    const genome = Genome.deserialize(data.genome);
     const id = Number.parseInt(data.id, 10);
     const organism = new Organism({
       id,
-      genomeSize: genome.length,
+      genomeSize: genome.size,
       parentA: data.parentA,
       parentB: data.parentB,
     });
@@ -47,11 +46,12 @@ class Organism {
   constructor({
     id,
     genomeSize,
+    genome = null,
     parentA = null,
     parentB = null,
   }) {
     this.id = id ?? Organism.nextId;
-    this.genome = createRandomGenome(genomeSize);
+    this.genome = genome ?? new Genome({ size: genomeSize });
     this.parentA = parentA;
     this.parentB = parentB;
     this.fitness = 0;
@@ -59,16 +59,16 @@ class Organism {
   }
 
   get childrenCount() {
-    return this.children.length;
+    return new Set(this.children).size;
   }
 
   evaluateFitness(target) {
-    this.fitness = target.split('').filter((l, i) => this.genome[i] === l).length;
+    this.fitness = this.genome.evaluateFitness(target);
     return this.fitness;
   }
 
   subsequence(start, end) {
-    return this.genome.slice(start, end);
+    return this.genome.subsequence(start, end);
   }
 
   addChild(child) {
@@ -80,7 +80,7 @@ class Organism {
       id: this.id,
       parentA: this.parentA,
       parentB: this.parentB,
-      genome: this.toString(),
+      genome: this.genome.createNode(),
       fitness: this.fitness,
       children: this.children,
     };
