@@ -57,6 +57,7 @@ class Genome {
     return {
       size: this.size,
       dna: this.dna.map((base) => base.createNode()),
+      phenotype: this.getPhenotype(),
     };
   }
 }

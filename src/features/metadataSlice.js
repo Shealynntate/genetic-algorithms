@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
+import square from '../assets/red_square_test.png';
 
 const initialState = {
   populationSize: 30,
   mutationRate: 0.25,
-  target: 'hell',
+  target: square,
 };
 
 export const metadataSlice = createSlice({

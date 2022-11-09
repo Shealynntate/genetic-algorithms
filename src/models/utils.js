@@ -195,10 +195,11 @@ export const generateTree = (generations) => {
   });
 };
 
-export const createImage = (path, callback) => {
+export const createImage = (img, callback) => {
   const image = new Image();
   image.onload = () => { callback(image); };
-  image.src = path;
+  // image.onerror = () => { console.log('ERROR'); };
+  image.src = img;
 
   return image;
 };
@@ -211,4 +212,14 @@ export const generateTestImage = (image) => {
   const ctx = canvas.getContext('2d');
   ctx.drawImage(image, 0, 0, width, height);
   return ctx.getImageData(0, 0, width, height);
+};
+
+const callback = (image) => {
+  const data = generateTestImage(image);
+  return data.data;
+};
+
+export const generateTarget = (img) => {
+  const test = createImage(img, callback);
+  return test;
 };

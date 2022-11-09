@@ -75,6 +75,10 @@ class Organism {
     this.children.push(child);
   }
 
+  getPhenotype() {
+    return this.genome.getPhenotype();
+  }
+
   createNode() {
     return {
       id: this.id,

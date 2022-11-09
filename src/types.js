@@ -1,11 +1,32 @@
 import PropTypes from 'prop-types';
 
+export const DNAType = {
+  points: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
+  color: PropTypes.arrayOf(PropTypes.number),
+};
+
+export const DNANodeType = {
+  points: PropTypes.string,
+  color: PropTypes.string,
+};
+
+export const GenomeType = {
+  size: PropTypes.number,
+  dna: PropTypes.arrayOf(PropTypes.shape(DNAType)),
+  phenotype: PropTypes.shape(ImageData),
+};
+
+export const GenomeNodeType = {
+  size: PropTypes.number,
+  dna: PropTypes.arrayOf(PropTypes.shape(DNANodeType)),
+};
+
 // The type that results from calling createNode() on an Organsim
 export const OrganismType = {
   id: PropTypes.number,
   parentA: PropTypes.number,
   parentB: PropTypes.number,
-  genome: PropTypes.string,
+  genome: PropTypes.shape(GenomeType),
   fitness: PropTypes.number,
   children: PropTypes.arrayOf(PropTypes.number),
 };
@@ -19,7 +40,7 @@ export const GenerationType = {
 // The child type used for OrganismNodeType (has no children to prevent recursion)
 export const OrganismChildNodeType = {
   id: PropTypes.number,
-  genome: PropTypes.string,
+  genome: GenomeType,
   fitness: PropTypes.number,
   x: PropTypes.number,
   y: PropTypes.number,
@@ -28,7 +49,7 @@ export const OrganismChildNodeType = {
 // The Organism type used when rendering the Genealogy tree
 export const OrganismNodeType = {
   id: PropTypes.number,
-  genome: PropTypes.string,
+  genome: GenomeType,
   fitness: PropTypes.number,
   x: PropTypes.number,
   y: PropTypes.number,
