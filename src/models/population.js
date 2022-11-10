@@ -15,10 +15,10 @@ class Population {
     return Population.count;
   }
 
-  constructor(size, target) {
+  constructor(size, genomeSize, target) {
     this.genId = Population.nextGenId;
     this.target = target;
-    this.organisms = [...Array(size)].map(() => new Organism({ genomeSize: target.length }));
+    this.organisms = [...Array(size)].map(() => new Organism({ genomeSize }));
     this.loadedDie = new LoadedDie(size);
   }
 

@@ -20,7 +20,7 @@ import {
 } from '../features/uxSlice';
 import SimulationStatusPanel from './SimulationStatusPanel';
 import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
-import { generateTarget, generateTree } from '../models/utils';
+import { createImage, generateTestImage, generateTree } from '../models/utils';
 
 function App() {
   const [population, setPopulation] = useState(null);
@@ -55,10 +55,13 @@ function App() {
       timeoutRef.current = setTimeout(runGeneration, 3);
     } else {
       // Otherwise create a new population and start from the beginning
-      const p = new Population(populationSize, generateTarget(target), mutation);
-      setPopulation(p);
-      p.evaluateFitness();
-      setGenerations([p.createGenNode()]);
+      createImage(target, (image) => {
+        const { data } = generateTestImage(image);
+        const p = new Population(populationSize, 2, data);
+        setPopulation(p);
+        p.evaluateFitness();
+        setGenerations([p.createGenNode()]);
+      });
     }
   };
 

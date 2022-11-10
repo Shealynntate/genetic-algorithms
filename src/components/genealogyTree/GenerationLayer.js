@@ -82,7 +82,7 @@ function GenerationLayer({
       </svg>
       {tooltipData && (
         <Tooltip left={tooltipLeft} top={tooltipTop} className="see-through">
-          <Typography>{`Genome: ${tooltipData.genome}`}</Typography>
+          {/* <Typography>{`Genome: ${tooltipData.genome}`}</Typography> */}
           <Typography>{`Fitness: ${tooltipData.fitness}`}</Typography>
           <Typography>{`Offspring: ${tooltipData.children.length}`}</Typography>
         </Tooltip>

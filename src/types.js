@@ -49,7 +49,7 @@ export const OrganismChildNodeType = {
 // The Organism type used when rendering the Genealogy tree
 export const OrganismNodeType = {
   id: PropTypes.number,
-  genome: GenomeType,
+  genome: PropTypes.shape(GenomeType),
   fitness: PropTypes.number,
   x: PropTypes.number,
   y: PropTypes.number,
