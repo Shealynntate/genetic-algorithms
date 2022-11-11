@@ -195,14 +195,12 @@ export const generateTree = (generations) => {
   });
 };
 
-export const createImage = (img, callback) => {
+export const createImage = (src) => new Promise((resolve, reject) => {
   const image = new Image();
-  image.onload = () => { callback(image); };
-  // image.onerror = () => { console.log('ERROR'); };
-  image.src = img;
-
-  return image;
-};
+  image.onload = () => resolve(image);
+  image.onerror = (error) => reject(error);
+  image.src = src;
+});
 
 const { width, height } = canvasParameters;
 

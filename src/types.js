@@ -40,7 +40,7 @@ export const GenerationType = {
 // The child type used for OrganismNodeType (has no children to prevent recursion)
 export const OrganismChildNodeType = {
   id: PropTypes.number,
-  genome: GenomeType,
+  genome: PropTypes.shape(GenomeNodeType),
   fitness: PropTypes.number,
   x: PropTypes.number,
   y: PropTypes.number,
@@ -49,7 +49,7 @@ export const OrganismChildNodeType = {
 // The Organism type used when rendering the Genealogy tree
 export const OrganismNodeType = {
   id: PropTypes.number,
-  genome: PropTypes.shape(GenomeType),
+  genome: PropTypes.shape(GenomeNodeType),
   fitness: PropTypes.number,
   x: PropTypes.number,
   y: PropTypes.number,

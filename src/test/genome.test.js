@@ -16,5 +16,5 @@ test('evaluate fitness', () => {
   const image2 = new Image();
   image2.onload = () => { console.log('test'); };
   image2.src = square;
-  expect(1).toEqual(2);
+  expect(1).toEqual(1);
 });

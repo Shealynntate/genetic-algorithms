@@ -44,24 +44,24 @@ function App() {
       }
       return;
     }
-
-    timeoutRef.current = setTimeout(runGeneration, 3);
+    if (isRunning) {
+      timeoutRef.current = setTimeout(runGeneration, 3);
+    }
   }, [population, generations]);
 
-  const onRun = () => {
+  const onRun = async () => {
     dispatch(setSimulationStateToRunning());
     if (population) {
       // If we're resuming after a pause, continue the simulation
       timeoutRef.current = setTimeout(runGeneration, 3);
     } else {
       // Otherwise create a new population and start from the beginning
-      createImage(target, (image) => {
-        const { data } = generateTestImage(image);
-        const p = new Population(populationSize, 2, data);
-        setPopulation(p);
-        p.evaluateFitness();
-        setGenerations([p.createGenNode()]);
-      });
+      const image = await createImage(target);
+      const { data } = generateTestImage(image);
+      const p = new Population(populationSize, 2, data);
+      setPopulation(p);
+      p.evaluateFitness();
+      setGenerations([p.createGenNode()]);
     }
   };
 
@@ -72,8 +72,8 @@ function App() {
   };
 
   const onPause = () => {
-    dispatch(setSimulationStateToPaused());
     clearTimeout(timeoutRef.current);
+    dispatch(setSimulationStateToPaused());
   };
 
   const tree = generateTree(generations);

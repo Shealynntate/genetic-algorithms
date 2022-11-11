@@ -45,7 +45,7 @@ class Genome {
       difference += Math.abs(pixel - target[index]);
     });
 
-    return -difference / denominator;
+    return 1 - difference / denominator;
   }
 
   getPhenotype() {

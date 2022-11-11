@@ -19,9 +19,11 @@ function SimulationStatusPanel({ currentGen, genCount, styles }) {
   useEffect(() => {
     if (canvasRef2.current) {
       const ctx2 = canvasRef2.current.getContext('2d');
-      createImage(square, (image) => {
+      const generateImage = async () => {
+        const image = await createImage(square);
         ctx2.drawImage(image, 0, 0, width, height);
-      });
+      };
+      generateImage();
     }
   }, []);
 
@@ -30,7 +32,7 @@ function SimulationStatusPanel({ currentGen, genCount, styles }) {
       <Typography>{`Status: ${status}`}</Typography>
       <Typography>{`Current Generation: ${genCount}`}</Typography>
       <Typography>{`Fitness: ${best?.fitness || 0}`}</Typography>
-      {best && <OrganismCanvas organism={best} willReadFrequently />}
+      {best && <OrganismCanvas organism={best} />}
       <canvas ref={canvasRef2} width={width} height={height} />
     </Paper>
   );

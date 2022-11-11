@@ -1,5 +1,9 @@
 import {
-  charToCode, codeToChar, createRandomGenome, genCharRange, randomIndex,
+  charToCode,
+  codeToChar,
+  createRandomGenome,
+  genCharRange,
+  randomIndex,
 } from '../models/utils';
 
 test('Converts code to character', () => {

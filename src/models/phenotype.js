@@ -9,7 +9,7 @@ class Phenotype {
     this.canvas = document.createElement('canvas', options);
     this.canvas.width = width;
     this.canvas.height = height;
-    this.ctx = this.canvas.getContext('2d');
+    this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
   }
 
   update(dna) {
