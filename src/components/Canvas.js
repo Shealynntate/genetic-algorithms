@@ -8,7 +8,7 @@ function Canvas({
   const canvasRef = useRef();
 
   useEffect(() => {
-    if (canvasRef.current) {
+    if (canvasRef.current && imageData) {
       const ctx = canvasRef.current.getContext('2d', { willReadFrequently });
       ctx.clearRect(0, 0, width, height);
       ctx.putImageData(imageData, 0, 0);
@@ -27,12 +27,13 @@ function Canvas({
 Canvas.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
-  imageData: PropTypes.shape(ImageData).isRequired,
+  imageData: PropTypes.shape(ImageData),
   willReadFrequently: PropTypes.bool,
 };
 
 Canvas.defaultProps = {
   willReadFrequently: false,
+  imageData: null,
 };
 
 export default Canvas;

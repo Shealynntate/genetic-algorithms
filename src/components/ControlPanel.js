@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button, Paper, Stack, TextField,
+  Button, Paper, Stack, TextField, Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { SimulationState } from '../constants';
+import { canvasParameters, SimulationState } from '../constants';
 import { setMutationRate, setPopulationSize, setTarget } from '../features/metadataSlice';
 import MutationSlider from './sliders/MutationSlider';
 import PopulationSlider from './sliders/PopulationSlider';
 import PrimaryButton from './PrimaryButton';
+import Canvas from './Canvas';
+import square from '../assets/red_square_test.png';
+import { createImageData } from '../models/utils';
 
 function ControlPanel({ onRun, onReset, onPause }) {
   const target = useSelector((state) => state.metadata.target);
@@ -17,6 +20,17 @@ function ControlPanel({ onRun, onReset, onPause }) {
   const simulationState = useSelector((state) => state.ux.simulationState);
   const dispatch = useDispatch();
   const isPaused = simulationState === SimulationState.PAUSED;
+  const [imageData, setImageData] = useState();
+
+  useEffect(() => {
+    if (!imageData) {
+      const generateImage = async () => {
+        setImageData(await createImageData(square));
+      };
+      generateImage();
+    }
+    // TODO: Clean-up async call in return?
+  }, [imageData]);
 
   const setSize = (value) => {
     dispatch(setPopulationSize(value));
@@ -39,11 +53,15 @@ function ControlPanel({ onRun, onReset, onPause }) {
     }
   };
 
+  const { width, height } = canvasParameters;
+
   return (
     <Paper>
       <Stack>
+        <Typography>Target Image</Typography>
+        <Canvas width={width} height={height} imageData={imageData} />
         <TextField
-          label="Target Phrase"
+          label="Target Image"
           variant="outlined"
           value={target}
           onChange={(event) => { dispatch(setTarget(event.target.value)); }}

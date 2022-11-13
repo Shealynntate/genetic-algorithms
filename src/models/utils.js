@@ -195,6 +195,8 @@ export const generateTree = (generations) => {
   });
 };
 
+const { width, height } = canvasParameters;
+
 export const createImage = (src) => new Promise((resolve, reject) => {
   const image = new Image();
   image.onload = () => resolve(image);
@@ -202,22 +204,12 @@ export const createImage = (src) => new Promise((resolve, reject) => {
   image.src = src;
 });
 
-const { width, height } = canvasParameters;
+export const createImageData = async (src) => {
+  const image = await createImage(src);
 
-export const generateTestImage = (image) => {
   const canvas = document.createElement('canvas', { width, height });
-
   const ctx = canvas.getContext('2d');
   ctx.drawImage(image, 0, 0, width, height);
+
   return ctx.getImageData(0, 0, width, height);
-};
-
-const callback = (image) => {
-  const data = generateTestImage(image);
-  return data.data;
-};
-
-export const generateTarget = (img) => {
-  const test = createImage(img, callback);
-  return test;
 };
