@@ -1,3 +1,4 @@
+import { randomNormal } from 'd3';
 import _ from 'lodash';
 import { canvasParameters, treeParameters } from '../constants';
 // This file contains useful helper functions and constants used in the algorithm
@@ -31,7 +32,17 @@ export const randomIndex = (length) => (Math.trunc(Math.random() * length));
 
 export const flipCoin = (bias = 0.5) => (Math.random() <= bias);
 
+export const randomFloat = (start, end) => (Math.random() * (end - start)) + start;
+
 export const randomInt = (start, end) => (Math.round(Math.random() * (end - start)) + start);
+
+export const randomNoise = () => randomNormal(0, 0.02)();
+
+const clamp = (value) => Math.min(Math.max(value, 0), 1);
+
+export const tweakPoint = (x, y) => [clamp(x + randomNoise()), clamp(y + randomNoise())];
+
+export const tweakAlpha = (value) => clamp(value + randomNoise());
 
 /**
  * Generate an array of characters randomly sampled from the domain of valid DNA to be used as the

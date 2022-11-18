@@ -18,6 +18,17 @@ class Genome {
     });
   }
 
+  static uniformCrossover(genome1, genome2, prob) {
+    const child1 = [];
+    const child2 = [];
+    genNumRange(genome1.size).forEach((i) => {
+      const [a, b] = DNA.uniformCrossover(genome1.dna[i], genome2.dna[i], prob);
+      child1.push(a);
+      child2.push(b);
+    });
+    return [child1, child2];
+  }
+
   constructor({ size, dna }) {
     this.dna = dna || genNumRange(size).map(() => new DNA());
     this.phenotype = new Phenotype();
@@ -44,8 +55,7 @@ class Genome {
     pixels.forEach((pixel, index) => {
       difference += Math.abs(pixel - target[index]);
     });
-
-    return 1 - difference / denominator;
+    return (1 - difference / denominator);
   }
 
   getPhenotype() {

@@ -23,6 +23,8 @@ export const maxPopulationSize = 1e3;
 
 export const minPopulationSize = 2;
 
+export const populationStepSize = 2;
+
 export const minMutationRate = 0;
 
 export const maxMutationRate = 1;
@@ -39,6 +41,6 @@ export const treeParameters = {
 };
 
 export const canvasParameters = {
-  width: 196,
-  height: 196,
+  width: 150,
+  height: 150,
 };

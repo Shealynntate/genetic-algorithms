@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import square from '../assets/red_square_test.png';
 
 const initialState = {
-  populationSize: 10,
-  mutationRate: 0.1,
+  populationSize: 30,
+  mutationRate: 0.25,
   target: square,
 };
 

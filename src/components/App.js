@@ -57,7 +57,7 @@ function App() {
     } else {
       // Otherwise create a new population and start from the beginning
       const { data } = await createImageData(target);
-      const p = new Population(populationSize, 2, data);
+      const p = new Population(populationSize, 4, data);
       setPopulation(p);
       p.evaluateFitness();
       setGenerations([p.createGenNode()]);

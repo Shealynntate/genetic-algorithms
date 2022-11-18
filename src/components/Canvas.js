@@ -10,6 +10,9 @@ function Canvas({
   useEffect(() => {
     if (canvasRef.current && imageData) {
       const ctx = canvasRef.current.getContext('2d', { willReadFrequently });
+      ctx.canvas.style.width = `${width}px`;
+      ctx.canvas.style.height = `${height}px`;
+
       ctx.clearRect(0, 0, width, height);
       ctx.putImageData(imageData, 0, 0);
     }

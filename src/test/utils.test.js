@@ -3,8 +3,19 @@ import {
   codeToChar,
   createRandomGenome,
   genCharRange,
+  genNumRange,
   randomIndex,
+  tweakPoint,
 } from '../models/utils';
+
+const startPoint = () => [0.5, 0.5];
+
+test('Adds Gaussian noise to Point', () => {
+  genNumRange(100).forEach(() => {
+    let p = startPoint();
+    p = tweakPoint(...p);
+  });
+});
 
 test('Converts code to character', () => {
   expect(charToCode('a')).toEqual(97);

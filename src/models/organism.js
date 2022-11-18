@@ -1,6 +1,7 @@
 import DNA from './dna';
 import Genome from './genome';
-import { flipCoin } from './utils';
+
+const largeMutation = 0.001;
 
 class Organism {
   static get nextId() {
@@ -8,14 +9,7 @@ class Organism {
     return Organism.count;
   }
 
-  // TODO: Fix this
-  static reproduce(parentA, parentB, mutation) {
-    // Crossover event
-    const midPoint = Math.trunc(parentA.genome.size / 2);
-    let newDNA = [...parentA.subsequence(0, midPoint), ...parentB.subsequence(midPoint)];
-    // Mutation event
-    newDNA = newDNA.map((dna) => (flipCoin(mutation) ? new DNA() : dna));
-    // Create the child Organism
+  static createChild(parentA, parentB, newDNA) {
     const child = new Organism({
       genomeSize: parentA.genome.length,
       genome: new Genome({ size: parentA.genome.size, dna: newDNA }),
@@ -23,10 +17,23 @@ class Organism {
       parentB: parentB.id,
     });
     // Update the parent's offspring counts
-    parentA.addChild(child.id);
-    parentB.addChild(child.id);
+    parentA.addChild(child);
+    parentB.addChild(child);
 
     return child;
+  }
+
+  static reproduce(parentA, parentB, mutation) {
+    // Crossover event
+    let [newDNA1, newDNA2] = Genome.uniformCrossover(parentA.genome, parentB.genome, 0.1);
+    // Mutation event
+    newDNA1 = newDNA1.map((dna) => (DNA.mutate(dna, mutation, largeMutation)));
+    newDNA2 = newDNA2.map((dna) => (DNA.mutate(dna, mutation, largeMutation)));
+    // Create the child Organisms
+    const childA = Organism.createChild(parentA, parentB, newDNA1);
+    const childB = Organism.createChild(parentA, parentB, newDNA2);
+
+    return [childA, childB];
   }
 
   static deserialize(data) {

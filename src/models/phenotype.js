@@ -1,5 +1,6 @@
-const height = 196;
-const width = 196;
+import { canvasParameters } from '../constants';
+
+const { width, height } = canvasParameters;
 
 const scalePoint = (point) => [point[0] * width, point[1] * height];
 

@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import { SimulationState } from './constants';
+import { createImageData } from './models/utils';
 
 export const useIsRunning = () => {
   const simulationState = useSelector((state) => state.ux.simulationState);
@@ -14,4 +15,11 @@ export const useIsComplete = () => {
 export const useMaxFitness = () => {
   const target = useSelector((state) => state.metadata.target);
   return target.length;
+};
+
+export const useTargetData = async () => {
+  const target = useSelector((state) => state.metadata.target);
+  const { data } = await createImageData(target);
+
+  return data;
 };

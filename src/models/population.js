@@ -67,7 +67,7 @@ class Population {
       const p1 = this.rollParent();
       const p2 = this.rollParent();
       const offspring = Organism.reproduce(p1, p2, mutationRate);
-      nextGen.push(offspring);
+      nextGen.push(...offspring);
     }
     // Replace old population with new generation
     this.genId = Population.nextGenId;

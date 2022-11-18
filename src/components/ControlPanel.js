@@ -10,7 +10,6 @@ import MutationSlider from './sliders/MutationSlider';
 import PopulationSlider from './sliders/PopulationSlider';
 import PrimaryButton from './PrimaryButton';
 import Canvas from './Canvas';
-import square from '../assets/red_square_test.png';
 import { createImageData } from '../models/utils';
 
 function ControlPanel({ onRun, onReset, onPause }) {
@@ -25,7 +24,7 @@ function ControlPanel({ onRun, onReset, onPause }) {
   useEffect(() => {
     if (!imageData) {
       const generateImage = async () => {
-        setImageData(await createImageData(square));
+        setImageData(await createImageData(target));
       };
       generateImage();
     }

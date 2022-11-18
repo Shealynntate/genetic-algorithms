@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { maxPopulationSize, minPopulationSize } from '../../constants';
+import { maxPopulationSize, minPopulationSize, populationStepSize } from '../../constants';
 import ParameterSlider from './ParameterSlider';
 
 function PopulationSlider({ value, setValue }) {
@@ -12,6 +12,7 @@ function PopulationSlider({ value, setValue }) {
       label="Population"
       min={minPopulationSize}
       max={maxPopulationSize}
+      step={populationStepSize}
     />
   );
 }
