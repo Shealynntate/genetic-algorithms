@@ -80,16 +80,17 @@ class DNA {
   }
 
   static deserialize({ points, color }) {
-    const data = points.split(',').map((p) => parseInt(p, 10));
+    const data = points.split(',').map((p) => parseFloat(p));
+    // console.log(data);
     const xy = [];
     let i = 0;
-    while (i < data) {
+    while (i < data.length) {
       xy.push([data[i], data[i + 1]]);
       i += 2;
     }
     return new DNA(
       xy,
-      color.split(',').map((p) => parseInt(p, 10)),
+      color.split(',').map((p) => parseFloat(p)),
     );
   }
 

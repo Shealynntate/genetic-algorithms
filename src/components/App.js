@@ -2,14 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Box,
   Grid,
-  Paper,
+  // Paper,
   Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import ParentSize from '@visx/responsive/lib/components/ParentSize';
+// import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import Population from '../models/population';
 import ControlPanel from './ControlPanel';
-import OverviewChart from './overviewChart/OverviewChart';
+// import OverviewChart from './overviewChart/OverviewChart';
 import { useIsRunning } from '../hooks';
 import theme from '../theme';
 import {
@@ -19,12 +19,13 @@ import {
   setSimulationStateToRunning,
 } from '../features/uxSlice';
 import SimulationStatusPanel from './SimulationStatusPanel';
-import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
-import { createImageData, generateTree } from '../models/utils';
+// import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
+import { createImageData, generateTreeLayer } from '../models/utils';
 
 function App() {
   const [population, setPopulation] = useState(null);
-  const [generations, setGenerations] = useState([]);
+  const [currentGen, setCurrentGen] = useState();
+  const [tree, setTree] = useState([]);
   const target = useSelector((state) => state.metadata.target);
   const mutation = useSelector((state) => state.metadata.mutationRate);
   const populationSize = useSelector((state) => state.metadata.populationSize);
@@ -32,9 +33,19 @@ function App() {
   const dispatch = useDispatch();
   const timeoutRef = useRef();
 
+  const updateTree = (nextGen) => {
+    const treeCopy = tree.slice();
+    if (treeCopy.length > 1) {
+      treeCopy[treeCopy.length - 1] = generateTreeLayer([currentGen, nextGen], 0);
+    }
+    treeCopy.push(generateTreeLayer([currentGen, nextGen], 1));
+    setTree(treeCopy);
+  };
+
   const runGeneration = () => {
     const nextGen = population.runGeneration(mutation);
-    setGenerations([...generations, nextGen]);
+    updateTree(nextGen);
+    setCurrentGen(nextGen);
   };
 
   useEffect(() => {
@@ -47,7 +58,7 @@ function App() {
     if (isRunning) {
       timeoutRef.current = setTimeout(runGeneration, 3);
     }
-  }, [population, generations]);
+  }, [population, tree]);
 
   const onRun = async () => {
     dispatch(setSimulationStateToRunning());
@@ -60,13 +71,13 @@ function App() {
       const p = new Population(populationSize, 4, data);
       setPopulation(p);
       p.evaluateFitness();
-      setGenerations([p.createGenNode()]);
+      setCurrentGen(p.createGenNode());
     }
   };
 
   const onReset = () => {
     setPopulation(null);
-    setGenerations([]);
+    setCurrentGen();
     dispatch(resetSimulationState());
   };
 
@@ -74,8 +85,6 @@ function App() {
     clearTimeout(timeoutRef.current);
     dispatch(setSimulationStateToPaused());
   };
-
-  const tree = generateTree(generations);
 
   return (
     <div>
@@ -87,11 +96,11 @@ function App() {
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <ControlPanel onRun={onRun} onReset={onReset} onPause={onPause} />
             <SimulationStatusPanel
-              genCount={generations.length}
-              currentGen={generations[generations.length - 1]}
+              genCount={tree.length}
+              currentGen={currentGen}
             />
           </Box>
-          <Paper sx={{ height: 400 }}>
+          {/* <Paper sx={{ height: 400 }}>
             <ParentSize>
               {({ ref }) => (
                 <OverviewChart
@@ -101,13 +110,13 @@ function App() {
                 />
               )}
             </ParentSize>
-          </Paper>
+          </Paper> */}
         </Grid>
         <Grid item xs={6}>
-          <GenealogyVisualization
+          {/* <GenealogyVisualization
             tree={tree}
             maxFitness={0}
-          />
+          /> */}
         </Grid>
       </Grid>
     </div>

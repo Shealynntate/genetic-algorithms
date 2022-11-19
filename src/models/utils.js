@@ -206,6 +206,36 @@ export const generateTree = (generations) => {
   });
 };
 
+export const generateTreeLayer = (generations, genIndex) => {
+  const len = generations.length;
+  const prevGen = genIndex > 0 ? generations[genIndex - 1].organisms : [];
+  const nextGen = genIndex < len - 1 ? generations[len - 1].organisms : [];
+  const gen = generations[genIndex];
+  const currentGen = gen.organisms.map((organism, i) => ({
+    ...organism,
+    x: nodeIndexToX(i),
+    y: nodeIndexToY(i),
+    parentA: organismById(organism.parentA, prevGen),
+    parentB: organismById(organism.parentB, prevGen),
+    children: organism.children.map((id, childIndex) => ({
+      ...organismById(id, nextGen),
+      x: nodeIndexToX(organismIndex(id, nextGen)),
+      y: nodeIndexToY(organismIndex(id, nextGen)) + genHeight,
+      index: childIndex,
+    })),
+  }));
+
+  return {
+    id: gen.id,
+    x: gen.id,
+    meanFitness: gen.meanFitness,
+    maxFitness: gen.maxFitness,
+    minFitness: gen.minFitness,
+    deviation: gen.deviation,
+    organisms: currentGen,
+  };
+};
+
 const { width, height } = canvasParameters;
 
 export const createImage = (src) => new Promise((resolve, reject) => {

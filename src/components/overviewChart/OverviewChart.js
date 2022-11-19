@@ -130,11 +130,11 @@ function OverviewChart({
           xScale={xScale}
           yScale={yScale}
         />
-        <LineArea
+        {/* <LineArea
           data={currentData.map((gen, i) => ({ x: i, y: gen.minFitness }))}
           xScale={xScale}
           yScale={yScale}
-        />
+        /> */}
         <Bar
           x={margin.left}
           y={margin.top}
