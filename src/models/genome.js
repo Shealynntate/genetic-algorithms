@@ -46,10 +46,7 @@ class Genome {
   evaluateFitness(target) {
     const pixels = this.phenotype.getPixels().data;
     if (pixels.length !== target.length) {
-      console.error(
-        `[Genome] target length ${target.length} does not match phenotype length ${pixels.length}`,
-      );
-      return -1;
+      throw new Error(`[Genome] target length ${target.length} does not match phenotype length ${pixels.length}`);
     }
     let difference = 0;
     pixels.forEach((pixel, index) => {
