@@ -1,7 +1,7 @@
 import DNA from './dna';
 import Genome from './genome';
 
-const largeMutation = 0.001;
+const largeMutation = 0.005;
 
 class Organism {
   static get nextId() {

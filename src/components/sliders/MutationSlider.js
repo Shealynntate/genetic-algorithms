@@ -1,9 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 import ParameterSlider from './ParameterSlider';
 import { maxMutationRate, minMutationRate, mutationRateStep } from '../../constants';
+import { setMutationRate } from '../../features/metadataSlice';
 
-function MutationSlider({ value, setValue }) {
+function MutationSlider() {
+  const dispatch = useDispatch();
+
+  const value = useSelector((state) => state.metadata.mutationRate);
+
+  const setValue = (v) => {
+    dispatch(setMutationRate(v));
+  };
+
   return (
     <ParameterSlider
       value={value}
@@ -16,10 +25,5 @@ function MutationSlider({ value, setValue }) {
     />
   );
 }
-
-MutationSlider.propTypes = {
-  value: PropTypes.number.isRequired,
-  setValue: PropTypes.func.isRequired,
-};
 
 export default MutationSlider;

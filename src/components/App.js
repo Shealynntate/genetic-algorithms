@@ -29,6 +29,7 @@ function App() {
   const target = useSelector((state) => state.metadata.target);
   const mutation = useSelector((state) => state.metadata.mutationRate);
   const populationSize = useSelector((state) => state.metadata.populationSize);
+  const triangleCount = useSelector((state) => state.metadata.triangleCount);
   const isRunning = useIsRunning();
   const dispatch = useDispatch();
   const timeoutRef = useRef();
@@ -68,7 +69,7 @@ function App() {
     } else {
       // Otherwise create a new population and start from the beginning
       const { data } = await createImageData(target);
-      const p = new Population(populationSize, 4, data);
+      const p = new Population(populationSize, triangleCount, data);
       setPopulation(p);
       p.evaluateFitness();
       setCurrentGen(p.createGenNode());
@@ -78,6 +79,7 @@ function App() {
   const onReset = () => {
     setPopulation(null);
     setCurrentGen();
+    setTree([]);
     dispatch(resetSimulationState());
   };
 

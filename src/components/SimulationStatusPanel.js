@@ -16,7 +16,7 @@ function SimulationStatusPanel({ currentGen, genCount, styles }) {
     <Paper sx={styles}>
       <Typography>{`Status: ${status}`}</Typography>
       <Typography>{`Current Generation: ${genCount}`}</Typography>
-      <Typography>{`Fitness: ${best?.fitness || 0}`}</Typography>
+      <Typography>{`Fitness: ${best?.fitness.toFixed(4) || 0}`}</Typography>
       {best && <OrganismCanvas organism={best} />}
     </Paper>
   );

@@ -1,9 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 import { maxPopulationSize, minPopulationSize, populationStepSize } from '../../constants';
+import { setPopulationSize } from '../../features/metadataSlice';
 import ParameterSlider from './ParameterSlider';
 
-function PopulationSlider({ value, setValue }) {
+function PopulationSlider() {
+  const dispatch = useDispatch();
+
+  const value = useSelector((state) => state.metadata.populationSize);
+
+  const setValue = (v) => {
+    dispatch(setPopulationSize(v));
+  };
+
   return (
     <ParameterSlider
       value={value}
@@ -16,10 +25,5 @@ function PopulationSlider({ value, setValue }) {
     />
   );
 }
-
-PopulationSlider.propTypes = {
-  value: PropTypes.number.isRequired,
-  setValue: PropTypes.func.isRequired,
-};
 
 export default PopulationSlider;

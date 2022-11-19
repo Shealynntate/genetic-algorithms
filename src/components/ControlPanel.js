@@ -5,17 +5,16 @@ import {
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { canvasParameters, SimulationState } from '../constants';
-import { setMutationRate, setPopulationSize, setTarget } from '../features/metadataSlice';
+import { setTarget } from '../features/metadataSlice';
 import MutationSlider from './sliders/MutationSlider';
 import PopulationSlider from './sliders/PopulationSlider';
 import PrimaryButton from './PrimaryButton';
 import Canvas from './Canvas';
 import { createImageData } from '../models/utils';
+import TriangleSlider from './sliders/TriangleSlider';
 
 function ControlPanel({ onRun, onReset, onPause }) {
   const target = useSelector((state) => state.metadata.target);
-  const mutation = useSelector((state) => state.metadata.mutationRate);
-  const populationSize = useSelector((state) => state.metadata.populationSize);
   const simulationState = useSelector((state) => state.ux.simulationState);
   const dispatch = useDispatch();
   const isPaused = simulationState === SimulationState.PAUSED;
@@ -30,14 +29,6 @@ function ControlPanel({ onRun, onReset, onPause }) {
     }
     // TODO: Clean-up async call in return?
   }, [imageData]);
-
-  const setSize = (value) => {
-    dispatch(setPopulationSize(value));
-  };
-
-  const setRate = (value) => {
-    dispatch(setMutationRate(value));
-  };
 
   const getCallback = () => {
     switch (simulationState) {
@@ -65,8 +56,9 @@ function ControlPanel({ onRun, onReset, onPause }) {
           value={target}
           onChange={(event) => { dispatch(setTarget(event.target.value)); }}
         />
-        <MutationSlider value={mutation} setValue={setRate} />
-        <PopulationSlider value={populationSize} setValue={setSize} />
+        <MutationSlider />
+        <PopulationSlider />
+        <TriangleSlider />
         <Stack direction="row">
           <PrimaryButton
             currentState={simulationState}

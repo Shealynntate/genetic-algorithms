@@ -31,6 +31,12 @@ export const maxMutationRate = 1;
 
 export const mutationRateStep = 0.01;
 
+export const minTriangleCount = 2;
+
+export const maxTriangleCount = 100;
+
+export const triangleStepSize = 1;
+
 // ------------------------------------------------------------
 export const treeParameters = {
   columns: 30,

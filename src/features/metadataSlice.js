@@ -5,6 +5,7 @@ import square from '../assets/red_square_test.png';
 const initialState = {
   populationSize: 30,
   mutationRate: 0.25,
+  triangleCount: 2,
   target: square,
 };
 
@@ -21,6 +22,9 @@ export const metadataSlice = createSlice({
     setTarget: (state, action) => {
       state.target = action.payload;
     },
+    setTriangles: (state, action) => {
+      state.triangleCount = action.payload;
+    },
   },
 });
 
@@ -28,6 +32,7 @@ export const {
   setMutationRate,
   setPopulationSize,
   setTarget,
+  setTriangles,
 } = metadataSlice.actions;
 
 export default metadataSlice.reducer;
