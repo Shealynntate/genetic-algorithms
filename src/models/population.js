@@ -2,10 +2,8 @@ import _ from 'lodash';
 import { deviation } from 'd3-array';
 import Organism from './organism';
 import {
+  fitnessBounds,
   LoadedDie,
-  maxFitness,
-  meanFitness,
-  minFitness,
 } from './utils';
 
 //
@@ -83,13 +81,22 @@ class Population {
   }
 
   createGenNode() {
+    const [min, mean, max] = fitnessBounds(this.organisms);
+    let maxFitOrganism = null;
+    const orgNodes = this.organisms.map((o) => {
+      const node = o.createNode();
+      if (o.fitness === max) maxFitOrganism = node;
+
+      return node;
+    });
     return {
       id: this.genId,
-      meanFitness: meanFitness(this.organisms),
-      maxFitness: maxFitness(this.organisms),
-      minFitness: minFitness(this.organisms),
+      meanFitness: mean,
+      maxFitness: max,
+      minFitness: min,
       deviation: deviation(this.organisms, (o) => o.fitness),
-      organisms: this.organisms.map((o) => o.createNode()),
+      organisms: orgNodes,
+      maxFitOrganism,
     };
   }
 }

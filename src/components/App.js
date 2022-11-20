@@ -22,9 +22,12 @@ import SimulationStatusPanel from './SimulationStatusPanel';
 // import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
 import { createImageData, generateTreeLayer } from '../models/utils';
 
+const runDelay = 0;
+
 function App() {
   const [population, setPopulation] = useState(null);
   const [currentGen, setCurrentGen] = useState();
+  const [globalBest, setGlobalBest] = useState();
   const [tree, setTree] = useState([]);
   const target = useSelector((state) => state.metadata.target);
   const mutation = useSelector((state) => state.metadata.mutationRate);
@@ -39,8 +42,15 @@ function App() {
     if (treeCopy.length > 1) {
       treeCopy[treeCopy.length - 1] = generateTreeLayer([currentGen, nextGen], 0);
     }
-    treeCopy.push(generateTreeLayer([currentGen, nextGen], 1));
+    const newLayer = generateTreeLayer([currentGen, nextGen], 1);
+    treeCopy.push(newLayer);
     setTree(treeCopy);
+    if (!globalBest || newLayer.maxFitOrganism.fitness > globalBest.organism.fitness) {
+      setGlobalBest({
+        id: nextGen.id,
+        organism: newLayer.maxFitOrganism,
+      });
+    }
   };
 
   const runGeneration = () => {
@@ -57,7 +67,7 @@ function App() {
       return;
     }
     if (isRunning) {
-      timeoutRef.current = setTimeout(runGeneration, 3);
+      timeoutRef.current = setTimeout(runGeneration, runDelay);
     }
   }, [population, tree]);
 
@@ -65,7 +75,7 @@ function App() {
     dispatch(setSimulationStateToRunning());
     if (population) {
       // If we're resuming after a pause, continue the simulation
-      timeoutRef.current = setTimeout(runGeneration, 3);
+      timeoutRef.current = setTimeout(runGeneration, runDelay);
     } else {
       // Otherwise create a new population and start from the beginning
       const { data } = await createImageData(target);
@@ -100,6 +110,7 @@ function App() {
             <SimulationStatusPanel
               genCount={tree.length}
               currentGen={currentGen}
+              globalBest={globalBest}
             />
           </Box>
           {/* <Paper sx={{ height: 400 }}>

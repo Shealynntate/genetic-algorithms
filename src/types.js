@@ -64,4 +64,10 @@ export const GenerationNodeType = {
   minFitness: PropTypes.number,
   deviation: PropTypes.number,
   organisms: PropTypes.arrayOf(PropTypes.shape(OrganismNodeType)),
+  maxFitOrganism: PropTypes.shape(OrganismNodeType),
+};
+
+export const GlobalBestType = {
+  id: PropTypes.number,
+  organism: PropTypes.shape(OrganismNodeType),
 };

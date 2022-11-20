@@ -1,4 +1,4 @@
-import { genNumRange } from './utils';
+import { flipCoin, genNumRange } from './utils';
 import Phenotype from './phenotype';
 import DNA from './dna';
 import { canvasParameters } from '../constants';
@@ -11,6 +11,8 @@ const { width, height } = canvasParameters;
 const denominator = maxColorValue * numColorChannels * width * height;
 
 class Genome {
+  static phenotype = new Phenotype();
+
   static deserialize({ size, dna }) {
     return new Genome({
       size,
@@ -29,10 +31,23 @@ class Genome {
     return [child1, child2];
   }
 
+  // Crossover at the Gene level - keep the DNA intact
+  static uniformCrossover2(genome1, genome2, prob) {
+    const child1 = genome1.dna.map((d) => d.clone());
+    const child2 = genome2.dna.map((d) => d.clone());
+    genNumRange(genome1.size).forEach((i) => {
+      if (flipCoin(prob)) {
+        const temp = child1[i];
+        child1[i] = child2[i];
+        child2[i] = temp;
+      }
+    });
+    return [child1, child2];
+  }
+
   constructor({ size, dna }) {
     this.dna = dna || genNumRange(size).map(() => new DNA());
-    this.phenotype = new Phenotype();
-    this.phenotype.update(this.dna);
+    this.phenotype = Genome.phenotype.getImageData(this.dna);
   }
 
   get size() {
@@ -44,28 +59,32 @@ class Genome {
   }
 
   evaluateFitness(target) {
-    const pixels = this.phenotype.getPixels().data;
+    const pixels = this.phenotype.data;
     if (pixels.length !== target.length) {
       throw new Error(`[Genome] target length ${target.length} does not match phenotype length ${pixels.length}`);
     }
+
     let difference = 0;
     pixels.forEach((pixel, index) => {
       difference += Math.abs(pixel - target[index]);
     });
+
     return (1 - difference / denominator);
   }
 
   getPhenotype() {
-    this.phenotype.update(this.dna);
-    return this.phenotype.getPixels();
+    return this.phenotype;
   }
 
   createNode() {
     return {
       size: this.size,
       dna: this.dna.map((base) => base.createNode()),
-      // phenotype: this.getPhenotype(),
     };
+  }
+
+  clone() {
+    return new Genome({ size: this.size, dna: this.dna.map((d) => d.clone()) });
   }
 }
 

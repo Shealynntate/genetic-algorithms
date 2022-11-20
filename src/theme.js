@@ -26,6 +26,22 @@ const theme = createTheme({
         },
       },
     },
+    MuiFab: {
+      variants: [{
+        props: { size: 'extrasmall' },
+        style: {
+          height: 24,
+          width: 24,
+          minHeight: 0,
+          // color: '#628793',
+          '.MuiSvgIcon-root': {
+            fontSize: '1.2rem',
+            // fontSize: 'small',
+            // fontWeight
+          },
+        },
+      }],
+    },
   },
 });
 // #F38181 dusty rose

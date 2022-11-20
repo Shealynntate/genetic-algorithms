@@ -36,11 +36,13 @@ export const randomFloat = (start, end) => (Math.random() * (end - start)) + sta
 
 export const randomInt = (start, end) => (Math.round(Math.random() * (end - start)) + start);
 
-export const randomNoise = () => randomNormal(0, 0.02)();
+export const randomNoise = () => randomNormal(0, 0.1)();
 
-const clamp = (value) => Math.min(Math.max(value, 0), 1);
+const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
 
 export const tweakPoint = (x, y) => [clamp(x + randomNoise()), clamp(y + randomNoise())];
+
+export const tweakColor = (value) => clamp(value + randomNoise() * 255, 0, 255);
 
 export const tweakAlpha = (value) => clamp(value + randomNoise());
 
@@ -127,6 +129,19 @@ export const maxFitness = (orgs) => maxFitOrganism(orgs)?.fitness || 0;
 export const meanFitness = (orgs) => _.meanBy(orgs, 'fitness');
 
 export const minFitness = (orgs) => _.minBy(orgs, 'fitness')?.fitness || 0;
+
+export const fitnessBounds = (orgs) => {
+  let max = Number.MIN_SAFE_INTEGER;
+  let min = Number.MAX_SAFE_INTEGER;
+  let total = 0;
+  orgs.forEach(({ fitness }) => {
+    if (fitness < min) min = fitness;
+    if (fitness > max) max = fitness;
+    total += fitness;
+  });
+
+  return [min, total / orgs.length, max];
+};
 
 // input: h in [0,360] and s,v in [0,1] - output: r,g,b in [0,1]
 export const hsv2rgb = (h, s, v) => {
@@ -233,6 +248,7 @@ export const generateTreeLayer = (generations, genIndex) => {
     minFitness: gen.minFitness,
     deviation: gen.deviation,
     organisms: currentGen,
+    maxFitOrganism: gen.maxFitOrganism,
   };
 };
 
@@ -253,4 +269,14 @@ export const createImageData = async (src) => {
   ctx.drawImage(image, 0, 0, width, height);
 
   return ctx.getImageData(0, 0, width, height);
+};
+
+export const fileToBase64 = async (file) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+
+  return new Promise((resolve, reject) => {
+    reader.onload = () => { resolve(reader.result); };
+    reader.onerror = (error) => { reject(error); };
+  });
 };

@@ -13,8 +13,9 @@ class Phenotype {
     this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
   }
 
-  update(dna) {
+  getImageData(dna) {
     this.ctx.clearRect(0, 0, width, height);
+
     dna.forEach(({ color, points }) => {
       this.ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
       this.ctx.beginPath();
@@ -24,14 +25,8 @@ class Phenotype {
       this.ctx.closePath();
       this.ctx.fill();
     });
-  }
 
-  getPixels() {
     return this.ctx.getImageData(0, 0, width, height);
-  }
-
-  getCanvas() {
-    return this.canvas;
   }
 }
 

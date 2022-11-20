@@ -1,13 +1,11 @@
 /* eslint-disable no-param-reassign */
 import {
-  flipCoin, genNumRange, randomInt, tweakAlpha, tweakPoint,
+  flipCoin, genNumRange, randomInt, tweakAlpha, tweakPoint, tweakColor,
 } from './utils';
 
 const randomColor = () => [randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), Math.random()];
 
 const randomPoint = () => [Math.random(), Math.random()];
-
-const tweakColor = (value) => (255 + value + randomInt(-5, 5)) % 255;
 
 class DNA {
   static swap(type, dna1, dna2, index) {
