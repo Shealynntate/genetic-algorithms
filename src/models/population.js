@@ -1,10 +1,8 @@
 import _ from 'lodash';
 import { deviation } from 'd3-array';
 import Organism from './organism';
-import {
-  fitnessBounds,
-  LoadedDie,
-} from './utils';
+import { fitnessBounds } from '../utils';
+import LoadedDie from '../globals/loadedDie';
 
 //
 class Population {
@@ -57,14 +55,14 @@ class Population {
     return this.organisms[this.loadedDie.roll()];
   }
 
-  performSelection(mutationRate) {
+  performSelection(mutationNoise) {
     const nextGen = [];
     // Generate N offspring for the next generation
     while (nextGen.length < this.organisms.length) {
       // Roll loaded die to select the two parents to mate
       const p1 = this.rollParent();
       const p2 = this.rollParent();
-      const offspring = Organism.reproduce(p1, p2, mutationRate);
+      const offspring = Organism.reproduce(p1, p2, mutationNoise);
       nextGen.push(...offspring);
     }
     // Replace old population with new generation
@@ -72,9 +70,9 @@ class Population {
     this.organisms = nextGen;
   }
 
-  runGeneration(mutationRate) {
+  runGeneration(mutationNoise) {
     this.createProbabilityDistribution();
-    this.performSelection(mutationRate);
+    this.performSelection(mutationNoise);
     this.evaluateFitness();
 
     return this.createGenNode();

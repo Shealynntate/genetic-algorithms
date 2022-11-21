@@ -6,7 +6,7 @@ import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 import { canvasParameters } from '../constants';
 import { setTarget } from '../features/metadataSlice';
-import { createImageData, fileToBase64 } from '../models/utils';
+import { createImageData, fileToBase64 } from '../utils';
 import Canvas from './Canvas';
 
 const { width, height } = canvasParameters;

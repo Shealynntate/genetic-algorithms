@@ -1,4 +1,4 @@
-import { flipCoin, genNumRange } from './utils';
+import { flipCoin, genNumRange } from '../utils';
 import Phenotype from './phenotype';
 import DNA from './dna';
 import { canvasParameters } from '../constants';

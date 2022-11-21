@@ -4,12 +4,11 @@ import { Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { GenerationNodeType, GlobalBestType } from '../types';
 import { statusLabels } from '../constants';
-import { maxFitOrganism } from '../models/utils';
+import { maxFitOrganism } from '../utils';
 import OrganismCanvas from './OrganismCanvas';
 
 function SimulationStatusPanel({
   currentGen,
-  genCount,
   globalBest,
   styles,
 }) {
@@ -20,7 +19,7 @@ function SimulationStatusPanel({
   return (
     <Paper sx={styles}>
       <Typography>{`Status: ${status}`}</Typography>
-      <Typography>{`Current Generation: ${genCount}`}</Typography>
+      <Typography>{`Current Generation: ${currentGen.id || 0}`}</Typography>
       <Typography>{`Fitness: ${best?.fitness.toFixed(4) || 0}`}</Typography>
       <Typography>{`Deviation: ${currentGen.deviation?.toFixed(4) || 0}`}</Typography>
       {best && <OrganismCanvas organism={best} />}
@@ -37,14 +36,12 @@ function SimulationStatusPanel({
 }
 
 SimulationStatusPanel.propTypes = {
-  genCount: PropTypes.number,
   currentGen: PropTypes.shape(GenerationNodeType),
   globalBest: PropTypes.shape(GlobalBestType),
   styles: PropTypes.objectOf(PropTypes.string),
 };
 
 SimulationStatusPanel.defaultProps = {
-  genCount: 0,
   currentGen: {},
   globalBest: null,
   styles: {},

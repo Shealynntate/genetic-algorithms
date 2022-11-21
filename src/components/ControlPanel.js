@@ -9,7 +9,7 @@ import { SimulationState } from '../constants';
 import MutationSlider from './sliders/MutationSlider';
 import PopulationSlider from './sliders/PopulationSlider';
 import PrimaryButton from './PrimaryButton';
-import { createImageData } from '../models/utils';
+import { createImageData } from '../utils';
 import TriangleSlider from './sliders/TriangleSlider';
 import ImageInput from './ImageInput';
 import InfoButton from './InfoButton';

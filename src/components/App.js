@@ -20,7 +20,8 @@ import {
 } from '../features/uxSlice';
 import SimulationStatusPanel from './SimulationStatusPanel';
 // import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
-import { createImageData, generateTreeLayer } from '../models/utils';
+import { createImageData, generateTreeLayer } from '../utils';
+import RandomNoise from '../globals/randomNoise';
 
 const runDelay = 0;
 
@@ -36,9 +37,11 @@ function App() {
   const isRunning = useIsRunning();
   const dispatch = useDispatch();
   const timeoutRef = useRef();
+  const imageDataRef = useRef();
 
   const updateTree = (nextGen) => {
-    const treeCopy = tree.slice();
+    // const treeCopy = tree.slice();
+    const treeCopy = tree.slice(tree.length - 1);
     if (treeCopy.length > 1) {
       treeCopy[treeCopy.length - 1] = generateTreeLayer([currentGen, nextGen], 0);
     }
@@ -54,7 +57,7 @@ function App() {
   };
 
   const runGeneration = () => {
-    const nextGen = population.runGeneration(mutation);
+    const nextGen = population.runGeneration(new RandomNoise(mutation));
     updateTree(nextGen);
     setCurrentGen(nextGen);
   };
@@ -71,17 +74,26 @@ function App() {
     }
   }, [population, tree]);
 
-  const onRun = async () => {
+  useEffect(() => {
+    const setImageData = async () => {
+      const { data } = await createImageData(target);
+      imageDataRef.current = data;
+    };
+    if (target) {
+      setImageData();
+    }
+  }, [target]);
+
+  const onRun = () => {
     dispatch(setSimulationStateToRunning());
     if (population) {
       // If we're resuming after a pause, continue the simulation
       timeoutRef.current = setTimeout(runGeneration, runDelay);
     } else {
       // Otherwise create a new population and start from the beginning
-      const { data } = await createImageData(target);
-      const p = new Population(populationSize, triangleCount, data);
-      setPopulation(p);
+      const p = new Population(populationSize, triangleCount, imageDataRef.current);
       p.evaluateFitness();
+      setPopulation(p);
       setCurrentGen(p.createGenNode());
     }
   };
@@ -108,7 +120,6 @@ function App() {
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <ControlPanel onRun={onRun} onReset={onReset} onPause={onPause} />
             <SimulationStatusPanel
-              genCount={tree.length}
               currentGen={currentGen}
               globalBest={globalBest}
             />

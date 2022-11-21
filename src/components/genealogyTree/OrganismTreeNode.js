@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { DefaultNode } from '@visx/network';
-import { hsvtoHex } from '../../models/utils';
+import { hsvtoHex } from '../../utils';
 import { OrganismNodeType } from '../../types';
 import { treeParameters } from '../../constants';
 

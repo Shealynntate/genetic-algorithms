@@ -1,6 +1,4 @@
 import {
-  charToCode,
-  codeToChar,
   createRandomGenome,
   genCharRange,
   genNumRange,
@@ -15,22 +13,6 @@ test('Adds Gaussian noise to Point', () => {
     let p = startPoint();
     p = tweakPoint(...p);
   });
-});
-
-test('Converts code to character', () => {
-  expect(charToCode('a')).toEqual(97);
-  expect(charToCode('z')).toEqual(122);
-  expect(charToCode('A')).toEqual(65);
-  expect(charToCode('Z')).toEqual(90);
-  expect(charToCode(' ')).toEqual(32);
-});
-
-test('Converts character to code', () => {
-  expect(codeToChar(97)).toEqual('a');
-  expect(codeToChar(122)).toEqual('z');
-  expect(codeToChar(65)).toEqual('A');
-  expect(codeToChar(90)).toEqual('Z');
-  expect(codeToChar(32)).toEqual(' ');
 });
 
 test('Creates range of characters', () => {

@@ -1,7 +1,8 @@
 /* eslint-disable no-param-reassign */
+import { clamp } from 'lodash';
 import {
-  flipCoin, genNumRange, randomInt, tweakAlpha, tweakPoint, tweakColor,
-} from './utils';
+  flipCoin, genNumRange, randomInt,
+} from '../utils';
 
 const randomColor = () => [randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), Math.random()];
 
@@ -64,19 +65,6 @@ class DNA {
     return [child1, child2];
   }
 
-  static mutate(dna, smallRate, largeRate) {
-    if (flipCoin(largeRate)) return new DNA();
-
-    if (flipCoin(smallRate)) {
-      if (flipCoin(0.5)) {
-        dna.mutatePoints(largeRate);
-      } else {
-        dna.mutateColor(largeRate);
-      }
-    }
-    return dna;
-  }
-
   static deserialize({ points, color }) {
     const data = points.split(',').map((p) => parseFloat(p));
     // console.log(data);
@@ -92,30 +80,39 @@ class DNA {
     );
   }
 
+  static tweakPoint(noise, x, y) {
+    return [clamp(x + noise.next(), 0, 1), clamp(y + noise.next(), 0, 1)];
+  }
+
+  static tweakColor(noise, value) {
+    return clamp(value + noise.next() * 255, 0, 255);
+  }
+
+  static tweakAlpha(noise, value) {
+    return clamp(value + noise.next(), 0, 1);
+  }
+
   constructor(points, color) {
     this.points = points || [randomPoint(), randomPoint(), randomPoint()];
     this.color = color || randomColor();
   }
 
-  mutateColor(largeMutationRate) {
-    if (flipCoin(largeMutationRate)) {
-      this.color = randomColor();
+  mutate(noise) {
+    if (flipCoin()) {
+      this.mutatePoints(noise);
     } else {
-      this.color[0] = tweakColor(this.color[0]);
-      this.color[1] = tweakColor(this.color[1]);
-      this.color[2] = tweakColor(this.color[2]);
-      this.color[3] = tweakAlpha(this.color[3]);
+      this.mutateColor(noise);
     }
   }
 
-  mutatePoints(largeMutationRate) {
-    if (flipCoin(largeMutationRate)) {
-      this.points = [randomPoint(), randomPoint(), randomPoint()];
-    } else {
-      this.points[0] = tweakPoint(...this.points[0]);
-      this.points[1] = tweakPoint(...this.points[1]);
-      this.points[2] = tweakPoint(...this.points[2]);
-    }
+  mutateColor(noise) {
+    this.color = this.color.map((c, i) => (
+      i < 3 ? DNA.tweakColor(noise, c) : DNA.tweakAlpha(noise, c)
+    ));
+  }
+
+  mutatePoints(noise) {
+    this.points = this.points.map((p) => DNA.tweakPoint(noise, ...p));
   }
 
   createNode() {

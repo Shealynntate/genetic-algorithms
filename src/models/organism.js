@@ -1,7 +1,5 @@
-import DNA from './dna';
 import Genome from './genome';
 
-const largeMutation = 0; // 0.005;
 const crossoverProb = 0.05;
 
 class Organism {
@@ -24,16 +22,16 @@ class Organism {
     return child;
   }
 
-  static reproduce(parentA, parentB, mutation) {
+  static reproduce(parentA, parentB, noise) {
     // Crossover event
-    let [newDNA1, newDNA2] = Genome.uniformCrossover2(
+    const [newDNA1, newDNA2] = Genome.uniformCrossover2(
       parentA.genome,
       parentB.genome,
       crossoverProb,
     );
     // Mutation event
-    newDNA1 = newDNA1.map((dna) => (DNA.mutate(dna, mutation, largeMutation)));
-    newDNA2 = newDNA2.map((dna) => (DNA.mutate(dna, mutation, largeMutation)));
+    newDNA1.forEach((dna) => (dna.mutate(noise)));
+    newDNA2.forEach((dna) => (dna.mutate(noise)));
     // Create the child Organisms
     const childA = Organism.createChild(parentA, parentB, newDNA1);
     const childB = Organism.createChild(parentA, parentB, newDNA2);
