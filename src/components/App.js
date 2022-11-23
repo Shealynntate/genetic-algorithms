@@ -21,7 +21,7 @@ import SimulationStatusPanel from './SimulationStatusPanel';
 // import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
 import { approxEqual, createImageData, generateTreeLayer } from '../globals/utils';
 import RandomNoise from '../globals/randomNoise';
-import { setCurrentGen, setGlobalBest, setMutationRate } from '../features/metadataSlice';
+import { setCurrentGen, setMutationRate } from '../features/metadata/metadataSlice';
 import Header from './Header';
 
 const runDelay = 0;
@@ -33,7 +33,6 @@ function App() {
   const mutation = useSelector((state) => state.metadata.mutationRate);
   const populationSize = useSelector((state) => state.metadata.populationSize);
   const triangleCount = useSelector((state) => state.metadata.triangleCount);
-  const globalBest = useSelector((state) => state.metadata.globalBest);
   const currentGen = useSelector((state) => state.metadata.currentGen);
   const isRunning = useIsRunning();
   const dispatch = useDispatch();
@@ -53,12 +52,6 @@ function App() {
 
     treeCopy.push(newLayer);
     setTree(treeCopy);
-    if (!globalBest || newLayer.maxFitOrganism.fitness > globalBest.organism.fitness) {
-      dispatch(setGlobalBest({
-        id: nextGen.id,
-        organism: newLayer.maxFitOrganism,
-      }));
-    }
   };
 
   const runGeneration = () => {
@@ -86,7 +79,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (!population || approxEqual(globalBest?.fitness || 0, 1)) {
+    if (!population || approxEqual(currentGen.maxFitOrganism?.fitness || 0, 1)) {
       if (isRunning) {
         dispatch(setSimulationStateToComplete());
       }

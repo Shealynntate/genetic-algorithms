@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 import { AlertState, canvasParameters } from '../constants';
-import { setTarget } from '../features/metadataSlice';
+import { setTarget } from '../features/metadata/metadataSlice';
 import { createImageData, fileToBase64 } from '../globals/utils';
 import Canvas from './Canvas';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ParameterSlider from './ParameterSlider';
 import { maxMutationRate, minMutationRate, mutationRateStep } from '../../constants';
-import { setMutationRate } from '../../features/metadataSlice';
+import { setMutationRate } from '../../features/metadata/metadataSlice';
 
 function MutationSlider() {
   const dispatch = useDispatch();

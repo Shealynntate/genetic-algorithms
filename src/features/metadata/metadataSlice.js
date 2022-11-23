@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import square from '../assets/red_square_test.png';
+import square from '../../assets/red_square_test.png';
 
 const initialState = {
   populationSize: 200,

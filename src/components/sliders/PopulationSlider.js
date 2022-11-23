@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { maxPopulationSize, minPopulationSize, populationStepSize } from '../../constants';
-import { setPopulationSize } from '../../features/metadataSlice';
+import { setPopulationSize } from '../../features/metadata/metadataSlice';
 import ParameterSlider from './ParameterSlider';
 
 function PopulationSlider() {

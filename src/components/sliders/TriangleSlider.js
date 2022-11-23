@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setTriangles } from '../../features/metadataSlice';
+import { setTriangles } from '../../features/metadata/metadataSlice';
 import {
   maxTriangleCount,
   minTriangleCount,

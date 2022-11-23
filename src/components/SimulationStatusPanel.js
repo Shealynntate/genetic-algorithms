@@ -4,10 +4,10 @@ import { Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { statusLabels } from '../constants';
 import OrganismCanvas from './OrganismCanvas';
+import GlobalBest from './GlobalBest';
 
 function SimulationStatusPanel({ styles }) {
   const simulationState = useSelector((state) => state.ux.simulationState);
-  const globalBest = useSelector((state) => state.metadata.globalBest);
   const currentGen = useSelector((state) => state.metadata.currentGen);
   const status = statusLabels[simulationState];
   const { maxFitOrganism } = currentGen;
@@ -19,14 +19,7 @@ function SimulationStatusPanel({ styles }) {
       <Typography>{`Fitness: ${maxFitOrganism?.fitness.toFixed(4) || 0}`}</Typography>
       <Typography>{`Deviation: ${currentGen.deviation?.toFixed(4) || 0}`}</Typography>
       {maxFitOrganism && <OrganismCanvas organism={maxFitOrganism} />}
-      {globalBest && (
-        <>
-          <Typography>Global Best</Typography>
-          <OrganismCanvas organism={globalBest.organism} />
-          <Typography>{`Gen: ${globalBest.id}`}</Typography>
-          <Typography>{`Fitness: ${globalBest.organism.fitness.toFixed(4)}`}</Typography>
-        </>
-      )}
+      <GlobalBest />
     </Paper>
   );
 }
