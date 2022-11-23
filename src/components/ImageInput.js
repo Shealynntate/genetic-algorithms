@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useTheme } from '@emotion/react';
-import { Box } from '@mui/material';
+import { Alert, Box, Snackbar } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,11 +11,24 @@ import Canvas from './Canvas';
 
 const { width, height } = canvasParameters;
 
+const AlertState = {
+  error: 'error',
+  info: 'info',
+  success: 'success',
+  warning: 'warning',
+};
+
+const AlertMessage = {
+  error: 'Oops, unable to read the file provided',
+  warning: 'Only single, image files (.png, .jpg, .jpeg) are accepted',
+};
+
 function ImageInput() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const target = useSelector((state) => state.metadata.target);
   const [imageData, setImageData] = useState();
+  const [alertState, setAlertState] = useState();
 
   const updateImage = async () => {
     setImageData(await createImageData(target));
@@ -31,12 +44,17 @@ function ImageInput() {
       'image/*': ['.jpeg', '.jpg', '.png'],
     },
     onDrop: async (acceptedFiles) => {
-      console.log(acceptedFiles);
-      const data = await fileToBase64(acceptedFiles[0]);
-      dispatch(setTarget(data));
+      if (acceptedFiles[0]) {
+        try {
+          const data = await fileToBase64(acceptedFiles[0]);
+          dispatch(setTarget(data));
+        } catch (error) {
+          setAlertState(AlertState.error);
+        }
+      }
     },
-    onDropRejected: (rejectedFiles) => {
-      console.log('rejected', rejectedFiles);
+    onDropRejected: () => {
+      setAlertState(AlertState.warning);
     },
     maxFiles: 1,
   });
@@ -54,6 +72,9 @@ function ImageInput() {
     >
       <input {...getInputProps()} />
       <Canvas width={width} height={height} imageData={imageData} />
+      <Snackbar open={!!alertState} autoHideDuration={6e3} onClose={() => setAlertState()}>
+        {alertState && <Alert severity={alertState}>{AlertMessage[alertState]}</Alert>}
+      </Snackbar>
     </Box>
   );
 }

@@ -168,10 +168,11 @@ export const createImageData = async (src) => {
 
 export const fileToBase64 = async (file) => {
   const reader = new FileReader();
-  reader.readAsDataURL(file);
-
-  return new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     reader.onload = () => { resolve(reader.result); };
     reader.onerror = (error) => { reject(error); };
   });
+  reader.readAsDataURL(file);
+
+  return promise;
 };
