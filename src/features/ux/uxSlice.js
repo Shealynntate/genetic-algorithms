@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { SimulationState } from '../constants';
+import { SimulationState } from '../../constants';
 
 const initialState = {
   simulationState: SimulationState.NONE,
@@ -14,16 +14,16 @@ export const uxSlice = createSlice({
     setSimulationState: (state, action) => {
       state.simulationState = action.payload;
     },
-    setSimulationStateToRunning: (state) => {
+    runSimulation: (state) => {
       state.simulationState = SimulationState.RUNNING;
     },
-    setSimulationStateToPaused: (state) => {
+    pauseSimulation: (state) => {
       state.simulationState = SimulationState.PAUSED;
     },
-    setSimulationStateToComplete: (state) => {
+    endSimulation: (state) => {
       state.simulationState = SimulationState.COMPLETE;
     },
-    resetSimulationState: (state) => {
+    resetSimulation: (state) => {
       state.simulationState = SimulationState.NONE;
     },
     setGeneration: (state, action) => {
@@ -34,10 +34,10 @@ export const uxSlice = createSlice({
 
 export const {
   setSimulationState,
-  setSimulationStateToRunning,
-  setSimulationStateToPaused,
-  setSimulationStateToComplete,
-  resetSimulationState,
+  runSimulation,
+  pauseSimulation,
+  endSimulation,
+  resetSimulation,
   setGeneration,
 } = uxSlice.actions;
 

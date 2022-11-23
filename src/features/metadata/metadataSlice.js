@@ -9,6 +9,7 @@ const initialState = {
   target: square,
   globalBest: null,
   currentGen: {},
+  targetFitnessReached: false,
 };
 
 export const metadataSlice = createSlice({
@@ -33,6 +34,9 @@ export const metadataSlice = createSlice({
     setCurrentGen: (state, action) => {
       state.currentGen = action.payload;
     },
+    setTargetFitnessReached: (state, action) => {
+      state.targetFitnessReached = action.payload;
+    },
   },
 });
 
@@ -43,6 +47,7 @@ export const {
   setTriangles,
   setGlobalBest,
   setCurrentGen,
+  setTargetFitnessReached,
 } = metadataSlice.actions;
 
 export default metadataSlice.reducer;

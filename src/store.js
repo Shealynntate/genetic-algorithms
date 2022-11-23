@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
 import metadataReducer from './features/metadata/metadataSlice';
 import metadataSaga from './features/metadata/saga';
-import uxReducer from './features/uxSlice';
+import uxReducer from './features/ux/uxSlice';
 
 const sagaMiddleware = createSagaMiddleware();
 

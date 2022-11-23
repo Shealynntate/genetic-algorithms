@@ -12,14 +12,13 @@ import ControlPanel from './ControlPanel';
 import { useIsRunning } from '../hooks';
 import theme from '../theme';
 import {
-  resetSimulationState,
-  setSimulationStateToComplete,
-  setSimulationStateToPaused,
-  setSimulationStateToRunning,
-} from '../features/uxSlice';
+  resetSimulation,
+  pauseSimulation,
+  runSimulation,
+} from '../features/ux/uxSlice';
 import SimulationStatusPanel from './SimulationStatusPanel';
 // import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
-import { approxEqual, createImageData, generateTreeLayer } from '../globals/utils';
+import { createImageData, generateTreeLayer } from '../globals/utils';
 import RandomNoise from '../globals/randomNoise';
 import { setCurrentGen, setMutationRate } from '../features/metadata/metadataSlice';
 import Header from './Header';
@@ -79,10 +78,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (!population || approxEqual(currentGen.maxFitOrganism?.fitness || 0, 1)) {
-      if (isRunning) {
-        dispatch(setSimulationStateToComplete());
-      }
+    if (!population) {
       return;
     }
     if (isRunning) {
@@ -101,7 +97,7 @@ function App() {
   }, [target]);
 
   const onRun = () => {
-    dispatch(setSimulationStateToRunning());
+    dispatch(runSimulation());
     if (population) {
       // If we're resuming after a pause, continue the simulation
       timeoutRef.current = setTimeout(runGeneration, runDelay);
@@ -118,12 +114,12 @@ function App() {
     setPopulation(null);
     setCurrentGen();
     setTree([]);
-    dispatch(resetSimulationState());
+    dispatch(resetSimulation());
   };
 
   const onPause = () => {
     clearTimeout(timeoutRef.current);
-    dispatch(setSimulationStateToPaused());
+    dispatch(pauseSimulation());
   };
 
   return (

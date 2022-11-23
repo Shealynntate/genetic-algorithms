@@ -37,6 +37,8 @@ export const maxTriangleCount = 100;
 
 export const triangleStepSize = 1;
 
+export const targetFitness = 1;
+
 // ------------------------------------------------------------
 export const treeParameters = {
   columns: 30,
