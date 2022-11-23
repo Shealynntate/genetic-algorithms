@@ -7,6 +7,8 @@ const initialState = {
   mutationRate: 0.02,
   triangleCount: 2,
   target: square,
+  globalBest: null,
+  currentGen: {},
 };
 
 export const metadataSlice = createSlice({
@@ -25,6 +27,12 @@ export const metadataSlice = createSlice({
     setTriangles: (state, action) => {
       state.triangleCount = action.payload;
     },
+    setGlobalBest: (state, action) => {
+      state.globalBest = action.payload;
+    },
+    setCurrentGen: (state, action) => {
+      state.currentGen = action.payload;
+    },
   },
 });
 
@@ -33,6 +41,8 @@ export const {
   setPopulationSize,
   setTarget,
   setTriangles,
+  setGlobalBest,
+  setCurrentGen,
 } = metadataSlice.actions;
 
 export default metadataSlice.reducer;

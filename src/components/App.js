@@ -21,20 +21,20 @@ import SimulationStatusPanel from './SimulationStatusPanel';
 // import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
 import { approxEqual, createImageData, generateTreeLayer } from '../globals/utils';
 import RandomNoise from '../globals/randomNoise';
-import { setMutationRate } from '../features/metadataSlice';
+import { setCurrentGen, setGlobalBest, setMutationRate } from '../features/metadataSlice';
 import Header from './Header';
 
 const runDelay = 0;
 
 function App() {
   const [population, setPopulation] = useState(null);
-  const [currentGen, setCurrentGen] = useState();
-  const [globalBest, setGlobalBest] = useState();
   const [tree, setTree] = useState([]);
   const target = useSelector((state) => state.metadata.target);
   const mutation = useSelector((state) => state.metadata.mutationRate);
   const populationSize = useSelector((state) => state.metadata.populationSize);
   const triangleCount = useSelector((state) => state.metadata.triangleCount);
+  const globalBest = useSelector((state) => state.metadata.globalBest);
+  const currentGen = useSelector((state) => state.metadata.currentGen);
   const isRunning = useIsRunning();
   const dispatch = useDispatch();
   const timeoutRef = useRef();
@@ -54,17 +54,17 @@ function App() {
     treeCopy.push(newLayer);
     setTree(treeCopy);
     if (!globalBest || newLayer.maxFitOrganism.fitness > globalBest.organism.fitness) {
-      setGlobalBest({
+      dispatch(setGlobalBest({
         id: nextGen.id,
         organism: newLayer.maxFitOrganism,
-      });
+      }));
     }
   };
 
   const runGeneration = () => {
     const nextGen = population.runGeneration(new RandomNoise(mutation));
     updateTree(nextGen);
-    setCurrentGen(population.createGenNode());
+    dispatch(setCurrentGen(population.createGenNode()));
 
     let total = 0;
     const count = varianceRef.current.length;
@@ -140,10 +140,7 @@ function App() {
         <Grid item xs={6}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <ControlPanel onRun={onRun} onReset={onReset} onPause={onPause} />
-            <SimulationStatusPanel
-              currentGen={currentGen}
-              globalBest={globalBest}
-            />
+            <SimulationStatusPanel />
           </Box>
           {/* <Paper sx={{ height: 400 }}>
             <ParentSize>

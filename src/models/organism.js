@@ -82,7 +82,7 @@ class Organism {
   }
 
   addChild(child) {
-    this.children.push(child);
+    this.children = [...this.children, child];
   }
 
   getPhenotype() {
