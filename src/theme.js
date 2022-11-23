@@ -9,9 +9,14 @@ const theme = createTheme({
       light: '#628793',
     },
     secondary: {
-      dark: '#b09e60',
+      dark: '#B09E60',
       main: '#FCE38A', // pale yellow
-      light: '#fce8a1',
+      light: '#FCE8A1',
+    },
+    info: {
+      dark: '#7896A5',
+      main: '#ACD7EC', // Light Steel Blue
+      light: '#BCDFEF',
     },
     background: {
       // default: '#F6F8FA',

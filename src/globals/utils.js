@@ -1,8 +1,10 @@
 import _ from 'lodash';
-import { canvasParameters, treeParameters } from './constants';
+import { canvasParameters, treeParameters } from '../constants';
 // This file contains useful helper functions and constants used in the algorithm
 
 export const genNumRange = (max) => ([...Array(max).keys()]);
+
+export const approxEqual = (a, b) => (Math.round(1000 * a) === Math.round(1000 * b));
 
 /**
  * Generates a random index into an array of the specified length

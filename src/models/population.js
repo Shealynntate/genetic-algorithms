@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { deviation } from 'd3-array';
 import Organism from './organism';
-import { fitnessBounds } from '../utils';
+import { fitnessBounds } from '../globals/utils';
 import LoadedDie from '../globals/loadedDie';
 
 //
@@ -18,10 +18,6 @@ class Population {
     this.loadedDie = new LoadedDie(size);
   }
 
-  get maxFitness() {
-    return this.target?.length || 0;
-  }
-
   /**
    * Sorts the list of organisms by fitness in descending order. This also mutates the list
    * of Organisms held by the population.
@@ -34,8 +30,7 @@ class Population {
   }
 
   isTargetReached() {
-    this.organismsByFitness();
-    return this.organisms[0].fitness >= this.maxFitness;
+    return this.organisms[0].fitness >= 1;
   }
 
   evaluateFitness() {

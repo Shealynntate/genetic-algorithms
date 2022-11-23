@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { SimulationState } from './constants';
-import { createImageData } from './utils';
+import { createImageData } from './globals/utils';
 
 export const useIsRunning = () => {
   const simulationState = useSelector((state) => state.ux.simulationState);

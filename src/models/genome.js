@@ -1,4 +1,4 @@
-import { flipCoin, genNumRange } from '../utils';
+import { flipCoin, genNumRange } from '../globals/utils';
 import Phenotype from './phenotype';
 import DNA from './dna';
 import { canvasParameters } from '../constants';
@@ -60,6 +60,7 @@ class Genome {
 
   evaluateFitness(target) {
     const pixels = this.phenotype.data;
+    // console.log(this.phenotype);
     if (pixels.length !== target.length) {
       throw new Error(`[Genome] target length ${target.length} does not match phenotype length ${pixels.length}`);
     }

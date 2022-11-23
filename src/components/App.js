@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   // Paper,
-  Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 // import ParentSize from '@visx/responsive/lib/components/ParentSize';
@@ -20,8 +19,10 @@ import {
 } from '../features/uxSlice';
 import SimulationStatusPanel from './SimulationStatusPanel';
 // import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
-import { createImageData, generateTreeLayer } from '../utils';
+import { approxEqual, createImageData, generateTreeLayer } from '../globals/utils';
 import RandomNoise from '../globals/randomNoise';
+import { setMutationRate } from '../features/metadataSlice';
+import Header from './Header';
 
 const runDelay = 0;
 
@@ -38,6 +39,7 @@ function App() {
   const dispatch = useDispatch();
   const timeoutRef = useRef();
   const imageDataRef = useRef();
+  const varianceRef = useRef([]);
 
   const updateTree = (nextGen) => {
     // const treeCopy = tree.slice();
@@ -46,6 +48,9 @@ function App() {
       treeCopy[treeCopy.length - 1] = generateTreeLayer([currentGen, nextGen], 0);
     }
     const newLayer = generateTreeLayer([currentGen, nextGen], 1);
+
+    varianceRef.current.push(newLayer.deviation);
+
     treeCopy.push(newLayer);
     setTree(treeCopy);
     if (!globalBest || newLayer.maxFitOrganism.fitness > globalBest.organism.fitness) {
@@ -59,11 +64,29 @@ function App() {
   const runGeneration = () => {
     const nextGen = population.runGeneration(new RandomNoise(mutation));
     updateTree(nextGen);
-    setCurrentGen(nextGen);
+    setCurrentGen(population.createGenNode());
+
+    let total = 0;
+    const count = varianceRef.current.length;
+    const start = Math.max(0, count - 5);
+    const end = Math.min(count - 1, start + 5);
+    for (let i = start; i <= end; ++i) {
+      total += varianceRef.current[i];
+    }
+    const avg = total / 5;
+    if (avg < 0.008) {
+      const rate = Math.min(1, mutation + 0.0025);
+      console.log('Deviation too low, increasing mutation rate to ', rate);
+      dispatch(setMutationRate(rate));
+    } else if (avg > 0.05) {
+      const rate = Math.max(0, mutation - 0.0025);
+      console.log('Deviation too high, decreating mutation rate to ', rate);
+      dispatch(setMutationRate(rate));
+    }
   };
 
   useEffect(() => {
-    if (!population || population.isTargetReached()) {
+    if (!population || approxEqual(globalBest?.fitness || 0, 1)) {
       if (isRunning) {
         dispatch(setSimulationStateToComplete());
       }
@@ -112,9 +135,7 @@ function App() {
 
   return (
     <div>
-      <header>
-        <Typography variant="h4">Genetic Algorithms</Typography>
-      </header>
+      <Header />
       <Grid container spacing={theme.spacing(2)} padding={theme.spacing(2)}>
         <Grid item xs={6}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>

@@ -2,7 +2,7 @@
 import { clamp } from 'lodash';
 import {
   flipCoin, genNumRange, randomInt,
-} from '../utils';
+} from '../globals/utils';
 
 const randomColor = () => [randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), Math.random()];
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -9,26 +9,13 @@ import { SimulationState } from '../constants';
 import MutationSlider from './sliders/MutationSlider';
 import PopulationSlider from './sliders/PopulationSlider';
 import PrimaryButton from './PrimaryButton';
-import { createImageData } from '../utils';
 import TriangleSlider from './sliders/TriangleSlider';
 import ImageInput from './ImageInput';
 import InfoButton from './InfoButton';
 
 function ControlPanel({ onRun, onReset, onPause }) {
-  const target = useSelector((state) => state.metadata.target);
   const simulationState = useSelector((state) => state.ux.simulationState);
-  const [imageData, setImageData] = useState();
   const isPaused = simulationState === SimulationState.PAUSED;
-
-  useEffect(() => {
-    if (!imageData) {
-      const generateImage = async () => {
-        setImageData(await createImageData(target));
-      };
-      generateImage();
-    }
-    // TODO: Clean-up async call in return?
-  }, [imageData]);
 
   const getCallback = () => {
     switch (simulationState) {

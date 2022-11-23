@@ -6,7 +6,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 function InfoButton({ message }) {
   return (
     <Tooltip title={message}>
-      <Fab color="primary" size="extrasmall">
+      <Fab color="info" size="extrasmall">
         <InfoOutlinedIcon />
       </Fab>
     </Tooltip>

@@ -4,7 +4,7 @@ import { Paper, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { GenerationNodeType, GlobalBestType } from '../types';
 import { statusLabels } from '../constants';
-import { maxFitOrganism } from '../utils';
+import { maxFitOrganism } from '../globals/utils';
 import OrganismCanvas from './OrganismCanvas';
 
 function SimulationStatusPanel({

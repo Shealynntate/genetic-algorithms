@@ -53,7 +53,8 @@ export const OrganismNodeType = {
   fitness: PropTypes.number,
   x: PropTypes.number,
   y: PropTypes.number,
-  children: PropTypes.arrayOf(PropTypes.shape(OrganismChildNodeType)),
+  // children: PropTypes.arrayOf(PropTypes.shape(OrganismChildNodeType)),
+  children: PropTypes.arrayOf(PropTypes.number),
 };
 
 export const GenerationNodeType = {

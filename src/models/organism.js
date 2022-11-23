@@ -16,8 +16,8 @@ class Organism {
       parentB: parentB.id,
     });
     // Update the parent's offspring counts
-    parentA.addChild(child);
-    parentB.addChild(child);
+    parentA.addChild(child.id);
+    parentB.addChild(child.id);
 
     return child;
   }
