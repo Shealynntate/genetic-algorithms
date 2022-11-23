@@ -50,3 +50,11 @@ export const canvasParameters = {
   width: 150,
   height: 150,
 };
+
+// ------------------------------------------------------------
+export const AlertState = {
+  error: 'error',
+  info: 'info',
+  success: 'success',
+  warning: 'warning',
+};

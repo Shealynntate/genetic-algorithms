@@ -4,19 +4,12 @@ import { Alert, Box, Snackbar } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
-import { canvasParameters } from '../constants';
+import { AlertState, canvasParameters } from '../constants';
 import { setTarget } from '../features/metadataSlice';
 import { createImageData, fileToBase64 } from '../utils';
 import Canvas from './Canvas';
 
 const { width, height } = canvasParameters;
-
-const AlertState = {
-  error: 'error',
-  info: 'info',
-  success: 'success',
-  warning: 'warning',
-};
 
 const AlertMessage = {
   error: 'Oops, unable to read the file provided',
@@ -30,13 +23,19 @@ function ImageInput() {
   const [imageData, setImageData] = useState();
   const [alertState, setAlertState] = useState();
 
-  const updateImage = async () => {
-    setImageData(await createImageData(target));
-  };
-
   useEffect(() => {
+    let isMounted = true;
+    const updateImage = async () => {
+      const result = await createImageData(target);
+      if (isMounted) {
+        setImageData(result);
+      }
+    };
     updateImage();
-    // TODO: Clean-up async call in return?
+
+    return () => {
+      isMounted = false;
+    };
   }, [target]);
 
   const { getRootProps, getInputProps } = useDropzone({
