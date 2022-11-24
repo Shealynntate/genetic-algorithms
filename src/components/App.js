@@ -106,13 +106,11 @@ function App() {
       const p = new Population(populationSize, triangleCount, imageDataRef.current);
       p.evaluateFitness();
       setPopulation(p);
-      setCurrentGen(p.createGenNode());
     }
   };
 
   const onReset = () => {
     setPopulation(null);
-    setCurrentGen();
     setTree([]);
     dispatch(resetSimulation());
   };
