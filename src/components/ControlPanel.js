@@ -1,10 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Box,
   Button, Paper, Stack, Typography,
 } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SimulationState } from '../constants';
 import MutationSlider from './sliders/MutationSlider';
 import PopulationSlider from './sliders/PopulationSlider';
@@ -12,22 +11,33 @@ import PrimaryButton from './PrimaryButton';
 import TriangleSlider from './sliders/TriangleSlider';
 import ImageInput from './ImageInput';
 import InfoButton from './InfoButton';
+import { pauseSimulation, resetSimulation, runSimulation } from '../features/ux/uxSlice';
 
-function ControlPanel({ onRun, onReset, onPause }) {
+function ControlPanel() {
   const simulationState = useSelector((state) => state.ux.simulationState);
+  const dispatch = useDispatch();
   const isPaused = simulationState === SimulationState.PAUSED;
 
-  const getCallback = () => {
+  const onReset = () => {
+    dispatch(resetSimulation());
+  };
+
+  const onClick = () => {
+    let action;
     switch (simulationState) {
       case SimulationState.RUNNING:
-        return onPause;
+        action = pauseSimulation;
+        break;
       case SimulationState.PAUSED:
-        return onRun;
+        action = runSimulation;
+        break;
       case SimulationState.COMPLETE:
-        return onReset;
+        action = resetSimulation;
+        break;
       default:
-        return onRun;
+        action = runSimulation;
     }
+    dispatch(action());
   };
 
   return (
@@ -46,7 +56,7 @@ function ControlPanel({ onRun, onReset, onPause }) {
         <Stack direction="row">
           <PrimaryButton
             currentState={simulationState}
-            callback={getCallback()}
+            callback={onClick}
           />
           {isPaused && (
             <Button
@@ -61,11 +71,5 @@ function ControlPanel({ onRun, onReset, onPause }) {
     </Paper>
   );
 }
-
-ControlPanel.propTypes = {
-  onRun: PropTypes.func.isRequired,
-  onReset: PropTypes.func.isRequired,
-  onPause: PropTypes.func.isRequired,
-};
 
 export default ControlPanel;

@@ -12,6 +12,11 @@ export const useIsComplete = () => {
   return simulationState === SimulationState.COMPLETE;
 };
 
+export const useIsPaused = () => {
+  const simulationState = useSelector((state) => state.ux.simulationState);
+  return simulationState === SimulationState.PAUSED;
+};
+
 export const useMaxFitness = () => {
   const target = useSelector((state) => state.metadata.target);
   return target.length;
@@ -23,3 +28,9 @@ export const useTargetData = async () => {
 
   return data;
 };
+
+const currentStateSelector = ({ ux }) => (ux.simulationState);
+
+export const isRunningSelector = (state) => (
+  currentStateSelector(state) === SimulationState.RUNNING
+);

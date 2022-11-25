@@ -16,6 +16,8 @@ class Population {
     this.target = target;
     this.organisms = [...Array(size)].map(() => new Organism({ genomeSize }));
     this.loadedDie = new LoadedDie(size);
+    // Prep for the first call of runGeneration
+    this.evaluateFitness();
   }
 
   /**
@@ -62,6 +64,7 @@ class Population {
     }
     // Replace old population with new generation
     this.genId = Population.nextGenId;
+    this.parents = this.organisms;
     this.organisms = nextGen;
   }
 
@@ -70,27 +73,33 @@ class Population {
     this.performSelection(mutationNoise);
     this.evaluateFitness();
 
-    return this.createGenNode();
+    return this.createGenNodes();
   }
 
-  createGenNode() {
-    const [min, mean, max] = fitnessBounds(this.organisms);
+  static createGenNode(id, organisms) {
+    const [min, mean, max] = fitnessBounds(organisms);
     let maxFitOrganism = null;
-    const orgNodes = this.organisms.map((o) => {
+    const orgNodes = organisms.map((o) => {
       const node = o.createNode();
       if (o.fitness === max) maxFitOrganism = node;
 
       return node;
     });
     return {
-      id: this.genId,
+      id,
       meanFitness: mean,
       maxFitness: max,
       minFitness: min,
-      deviation: deviation(this.organisms, (o) => o.fitness),
+      deviation: deviation(organisms, (o) => o.fitness),
       organisms: orgNodes,
       maxFitOrganism,
     };
+  }
+
+  createGenNodes() {
+    const parents = Population.createGenNode(this.genId - 1, this.parents);
+    const children = Population.createGenNode(this.genId, this.organisms);
+    return [parents, children];
   }
 }
 

@@ -7,9 +7,10 @@ const initialState = {
   mutationRate: 0.02,
   triangleCount: 2,
   target: square,
+  targetFitnessReached: false,
   globalBest: null,
   currentGen: {},
-  targetFitnessReached: false,
+  genealogyTree: [],
 };
 
 export const metadataSlice = createSlice({
@@ -37,6 +38,9 @@ export const metadataSlice = createSlice({
     setTargetFitnessReached: (state, action) => {
       state.targetFitnessReached = action.payload;
     },
+    setGenealogyTree: (state, action) => {
+      state.genealogyTree = action.payload;
+    },
   },
 });
 
@@ -48,6 +52,7 @@ export const {
   setGlobalBest,
   setCurrentGen,
   setTargetFitnessReached,
+  setGenealogyTree,
 } = metadataSlice.actions;
 
 export default metadataSlice.reducer;
