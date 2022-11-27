@@ -19,6 +19,12 @@ export const statusLabels = {
   [SimulationState.COMPLETE]: 'Complete',
 };
 
+export const SelectionType = {
+  ROULETTE: 'ROULETTE',
+  TOURNAMENT: 'TOURNAMENT',
+  TOURNAMENT_ELITE: 'TOURNAMENT_ELITE',
+};
+
 export const maxPopulationSize = 1e3;
 
 export const minPopulationSize = 2;
@@ -38,6 +44,8 @@ export const maxTriangleCount = 100;
 export const triangleStepSize = 1;
 
 export const targetFitness = 1;
+
+export const maxColorValue = 255;
 
 // ------------------------------------------------------------
 export const treeParameters = {

@@ -1,10 +1,9 @@
-import { flipCoin, genNumRange } from '../globals/utils';
+import { flipCoin, genRange } from '../globals/utils';
 import Phenotype from './phenotype';
 import DNA from './dna';
-import { canvasParameters } from '../constants';
+import { canvasParameters, maxColorValue } from '../constants';
 
 //
-const maxColorValue = 255;
 const numColorChannels = 4;
 const { width, height } = canvasParameters;
 
@@ -23,7 +22,7 @@ class Genome {
   static uniformCrossover(genome1, genome2, prob) {
     const child1 = [];
     const child2 = [];
-    genNumRange(genome1.size).forEach((i) => {
+    genRange(genome1.size).forEach((i) => {
       const [a, b] = DNA.uniformCrossover(genome1.dna[i], genome2.dna[i], prob);
       child1.push(a);
       child2.push(b);
@@ -35,7 +34,7 @@ class Genome {
   static uniformCrossover2(genome1, genome2, prob) {
     const child1 = genome1.dna.map((d) => d.clone());
     const child2 = genome2.dna.map((d) => d.clone());
-    genNumRange(genome1.size).forEach((i) => {
+    genRange(genome1.size).forEach((i) => {
       if (flipCoin(prob)) {
         const temp = child1[i];
         child1[i] = child2[i];
@@ -46,7 +45,7 @@ class Genome {
   }
 
   constructor({ size, dna }) {
-    this.dna = dna || genNumRange(size).map(() => new DNA());
+    this.dna = dna || genRange(size).map(() => new DNA());
     this.phenotype = Genome.phenotype.getImageData(this.dna);
   }
 
@@ -60,7 +59,6 @@ class Genome {
 
   evaluateFitness(target) {
     const pixels = this.phenotype.data;
-    // console.log(this.phenotype);
     if (pixels.length !== target.length) {
       throw new Error(`[Genome] target length ${target.length} does not match phenotype length ${pixels.length}`);
     }

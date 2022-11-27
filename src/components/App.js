@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Box,
+  Container,
   Grid,
   // Paper,
 } from '@mui/material';
@@ -36,31 +37,33 @@ function App() {
   return (
     <div>
       <Header />
-      <Grid container spacing={theme.spacing(2)} padding={theme.spacing(2)}>
-        <Grid item xs={6}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <ControlPanel />
-            <SimulationStatusPanel />
-          </Box>
-          {/* <Paper sx={{ height: 400 }}>
-            <ParentSize>
-              {({ ref }) => (
-                <OverviewChart
-                  parentRef={ref}
-                  tree={tree}
-                  targetFitness={1}
-                />
-              )}
-            </ParentSize>
-          </Paper> */}
+      <Container>
+        <Grid container spacing={theme.spacing(2)} margin={theme.spacing(0)}>
+          <Grid item xs={6}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <ControlPanel />
+              <SimulationStatusPanel />
+            </Box>
+            {/* <Paper sx={{ height: 400 }}>
+              <ParentSize>
+                {({ ref }) => (
+                  <OverviewChart
+                    parentRef={ref}
+                    tree={tree}
+                    targetFitness={1}
+                  />
+                )}
+              </ParentSize>
+            </Paper> */}
+          </Grid>
+          <Grid item xs={6}>
+            {/* <GenealogyVisualization
+              tree={tree}
+              maxFitness={0}
+            /> */}
+          </Grid>
         </Grid>
-        <Grid item xs={6}>
-          {/* <GenealogyVisualization
-            tree={tree}
-            maxFitness={0}
-          /> */}
-        </Grid>
-      </Grid>
+      </Container>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import {
   createRandomGenome,
   genCharRange,
-  genNumRange,
+  genRange,
   randomIndex,
   tweakPoint,
 } from '../models/utils';
@@ -9,7 +9,7 @@ import {
 const startPoint = () => [0.5, 0.5];
 
 test('Adds Gaussian noise to Point', () => {
-  genNumRange(100).forEach(() => {
+  genRange(100).forEach(() => {
     let p = startPoint();
     p = tweakPoint(...p);
   });

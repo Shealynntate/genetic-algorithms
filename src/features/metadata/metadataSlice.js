@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import square from '../../assets/red_square_test.png';
+// import monaLisa from '../../assets/mona_lisa.jpeg';
 
 const initialState = {
-  populationSize: 200,
-  mutationRate: 0.02,
+  populationSize: 300,
+  mutationRate: 0.01,
   triangleCount: 2,
   target: square,
   targetFitnessReached: false,

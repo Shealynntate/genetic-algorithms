@@ -1,6 +1,6 @@
 import Genome from './genome';
 
-const crossoverProb = 0.05;
+const crossoverProb = 0.1;
 
 class Organism {
   static get nextId() {

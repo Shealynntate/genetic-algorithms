@@ -5,7 +5,7 @@ import {
   takeEvery,
   delay,
 } from 'redux-saga/effects';
-import { targetFitness } from '../../constants';
+import { SelectionType, targetFitness } from '../../constants';
 import RandomNoise from '../../globals/randomNoise';
 import { approxEqual, createImageData, generateTreeLayer } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
@@ -20,7 +20,7 @@ import {
 
 let population;
 let randomNoise;
-const runDelay = 1;
+const runDelay = 0;
 
 function* processNextGenerationSaga(parentGen, nextGen) {
   const parentLayer = generateTreeLayer([parentGen, nextGen], 0);
@@ -34,7 +34,7 @@ function* runGenerationSaga() {
     const isRunning = yield select(isRunningSelector);
     if (!isRunning) return;
 
-    const [parentGen, nextGen] = population.runGeneration(randomNoise);
+    const [parentGen, nextGen] = population.runGeneration(SelectionType.ROULETTE, randomNoise);
     yield call(processNextGenerationSaga, parentGen, nextGen);
     yield put(setCurrentGen(nextGen));
     yield delay(runDelay);

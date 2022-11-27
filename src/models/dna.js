@@ -1,10 +1,17 @@
 /* eslint-disable no-param-reassign */
 import { clamp } from 'lodash';
+import { maxColorValue } from '../constants';
 import {
-  flipCoin, genNumRange, randomInt,
+  flipCoin,
+  genRange,
+  randomInt,
 } from '../globals/utils';
 
-const randomColor = () => [randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), Math.random()];
+const randomColorValue = () => randomInt(0, maxColorValue);
+const randomColor = () => (
+  [randomColorValue(), randomColorValue(), randomColorValue(), Math.random()]
+);
+// const randomColor = () => [0, 0, 0, 0];
 
 const randomPoint = () => [Math.random(), Math.random()];
 
@@ -52,12 +59,12 @@ class DNA {
   static uniformCrossover(dna1, dna2, prob) {
     const child1 = dna1.clone();
     const child2 = dna2.clone();
-    genNumRange(dna1.points.length).forEach((i) => {
+    genRange(dna1.points.length).forEach((i) => {
       if (flipCoin(prob)) {
         DNA.swapPoint(child1, child2, i);
       }
     });
-    genNumRange(dna1.color.length).forEach((i) => {
+    genRange(dna1.color.length).forEach((i) => {
       if (flipCoin(prob)) {
         DNA.swapColor(child1, child2, i);
       }
@@ -67,7 +74,6 @@ class DNA {
 
   static deserialize({ points, color }) {
     const data = points.split(',').map((p) => parseFloat(p));
-    // console.log(data);
     const xy = [];
     let i = 0;
     while (i < data.length) {
@@ -85,7 +91,7 @@ class DNA {
   }
 
   static tweakColor(noise, value) {
-    return clamp(value + noise.next() * 255, 0, 255);
+    return clamp(value + noise.next() * maxColorValue, 0, maxColorValue);
   }
 
   static tweakAlpha(noise, value) {

@@ -1,24 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  AppBar, Box, Button, IconButton, Toolbar, Typography,
+  AppBar,
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Toolbar,
+  Typography,
 } from '@mui/material';
 import { GitHub } from '@mui/icons-material';
-import { Container } from '@mui/system';
+import About from './About';
+
+// TODO: Add "Save Gallery" download button - make it social media friendly!! (think Wordle)
 
 function Header() {
+  const [aboutOpen, setAboutOpen] = useState(false);
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
           <Typography variant="h4">Genetic Algorithms</Typography>
           <Box>
-            <Button>About</Button>
+            <Button onClick={() => setAboutOpen(true)}>Gallery</Button>
+            <Button onClick={() => setAboutOpen(true)}>About</Button>
             <IconButton>
               <GitHub />
             </IconButton>
           </Box>
         </Toolbar>
       </Container>
+      <About open={aboutOpen} onClose={() => setAboutOpen(false)} />
     </AppBar>
   );
 }

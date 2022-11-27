@@ -26,7 +26,6 @@ function ParameterSlider({
           aria-label={label}
           valueLabelFormat={formatValue}
           valueLabelDisplay="auto"
-          size="small"
         />
       </Grid>
     </Grid>
