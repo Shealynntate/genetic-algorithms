@@ -1,12 +1,12 @@
 import { deviation } from 'd3-array';
 import Organism from './organism';
+import { SelectionType } from '../constants';
 import {
   fitnessBounds,
   genRange,
   randomFloat,
   randomIndex,
 } from '../globals/utils';
-import { SelectionType } from '../constants';
 
 class Population {
   static get nextGenId() {
@@ -74,14 +74,7 @@ class Population {
 
   rouletteSelectParent(cdf, total) {
     const n = randomFloat(0, total);
-    let prev = 0;
-    const index = cdf.findIndex((f) => {
-      if (prev < n && n <= f) {
-        return true;
-      }
-      prev = f;
-      return false;
-    });
+    const index = cdf.findIndex((f) => n <= f);
     return this.organisms[index];
   }
 
@@ -123,6 +116,7 @@ class Population {
         best = next;
       }
     });
+
     return best;
   }
 

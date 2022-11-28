@@ -5,8 +5,8 @@ import square from '../../assets/red_square_test.png';
 
 const initialState = {
   populationSize: 300,
-  mutationRate: 0.01,
-  triangleCount: 2,
+  mutationRate: 0.002,
+  triangleCount: 30,
   target: square,
   targetFitnessReached: false,
   globalBest: null,

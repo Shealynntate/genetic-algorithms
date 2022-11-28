@@ -34,7 +34,7 @@ function* runGenerationSaga() {
     const isRunning = yield select(isRunningSelector);
     if (!isRunning) return;
 
-    const [parentGen, nextGen] = population.runGeneration(SelectionType.ROULETTE, randomNoise);
+    const [parentGen, nextGen] = population.runGeneration(SelectionType.TOURNAMENT, randomNoise);
     yield call(processNextGenerationSaga, parentGen, nextGen);
     yield put(setCurrentGen(nextGen));
     yield delay(runDelay);
