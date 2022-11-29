@@ -10,10 +10,16 @@ function GlobalBest() {
 
   return (
     <Box>
-      <Typography>Global Best</Typography>
+      <Typography>Best So Far</Typography>
       <OrganismCanvas organism={globalBest.organism} />
-      <Typography>{`Gen: ${globalBest.id}`}</Typography>
-      <Typography>{`Fitness: ${globalBest.organism.fitness.toFixed(4)}`}</Typography>
+      <Box>
+        <Typography variant="caption" sx={{ display: 'block' }}>
+          {`Gen: ${globalBest.id}`}
+        </Typography>
+        <Typography variant="caption">
+          {`Fitness: ${globalBest.organism.fitness.toFixed(4)}`}
+        </Typography>
+      </Box>
     </Box>
   );
 }

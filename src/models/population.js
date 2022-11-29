@@ -14,6 +14,8 @@ class Population {
     return Population.count;
   }
 
+  // Instance Methods
+  // ------------------------------------------------------------
   constructor(size, genomeSize, target) {
     this.genId = Population.nextGenId;
     this.target = target;
@@ -22,15 +24,11 @@ class Population {
     this.evaluateFitness();
   }
 
-  /**
-   * Sorts the list of organisms by fitness in descending order. This also mutates the list
-   * of Organisms held by the population.
-   * @returns the array of organisms
-   */
-  organismsByFitness() {
+  runGeneration(selectionType, mutationNoise) {
+    this.performSelection(selectionType, mutationNoise);
     this.evaluateFitness();
-    this.organisms.sort((a, b) => b.fitness - a.fitness);
-    return this.organisms;
+
+    return this.createGenNodes();
   }
 
   evaluateFitness() {
@@ -60,6 +58,22 @@ class Population {
     this.organisms = nextGen;
   }
 
+  // Parent Selection Algorithms
+  // ------------------------------------------------------------
+  rouletteSelection(mutationNoise) {
+    const cdf = this.createFitnessCDF();
+    const nextGen = [];
+    // Generate N offspring for the next generation
+    while (nextGen.length < this.organisms.length) {
+      const p1 = this.rouletteSelectParent(cdf);
+      const p2 = this.rouletteSelectParent(cdf);
+      const offspring = Organism.reproduce(p1, p2, mutationNoise);
+      nextGen.push(...offspring);
+    }
+
+    return nextGen;
+  }
+
   tournamentSelection(mutationNoise, tournamentSize) {
     const nextGen = [];
     // Generate N offspring for the next generation
@@ -72,39 +86,12 @@ class Population {
     return nextGen;
   }
 
-  rouletteSelectParent(cdf, total) {
+  // Parent Selection Algorithm Helpers
+  // ------------------------------------------------------------
+  rouletteSelectParent(cdf) {
+    const total = cdf[cdf.length - 1];
     const n = randomFloat(0, total);
     const index = cdf.findIndex((f) => n <= f);
-    return this.organisms[index];
-  }
-
-  createFitnessCDF() {
-    const cdf = [];
-    let fitnessSum = 0;
-    this.organisms.forEach((org) => {
-      fitnessSum += org.fitness;
-      cdf.push(fitnessSum);
-    });
-    return cdf;
-  }
-
-  rouletteSelection(mutationNoise) {
-    const cdf = this.createFitnessCDF();
-    const fitnessSum = cdf[cdf.length - 1];
-    const nextGen = [];
-    // Generate N offspring for the next generation
-    while (nextGen.length < this.organisms.length) {
-      const p1 = this.rouletteSelectParent(cdf, fitnessSum);
-      const p2 = this.rouletteSelectParent(cdf, fitnessSum);
-      const offspring = Organism.reproduce(p1, p2, mutationNoise);
-      nextGen.push(...offspring);
-    }
-
-    return nextGen;
-  }
-
-  randomOrganism() {
-    const index = randomIndex(this.organisms.length);
     return this.organisms[index];
   }
 
@@ -120,11 +107,32 @@ class Population {
     return best;
   }
 
-  runGeneration(selectionType, mutationNoise) {
-    this.performSelection(selectionType, mutationNoise);
-    this.evaluateFitness();
+  createFitnessCDF() {
+    const cdf = [];
+    let fitnessSum = 0;
+    this.organisms.forEach((org) => {
+      fitnessSum += org.fitness;
+      cdf.push(fitnessSum);
+    });
+    return cdf;
+  }
 
-    return this.createGenNodes();
+  randomOrganism() {
+    const index = randomIndex(this.organisms.length);
+    return this.organisms[index];
+  }
+
+  // Helper Methods
+  // ------------------------------------------------------------
+  /**
+   * Sorts the list of organisms by fitness in descending order. This also mutates the list
+   * of Organisms held by the population.
+   * @returns the array of organisms
+   */
+  organismsByFitness() {
+    this.evaluateFitness();
+    this.organisms.sort((a, b) => b.fitness - a.fitness);
+    return this.organisms;
   }
 
   static createGenNode(id, organisms) {

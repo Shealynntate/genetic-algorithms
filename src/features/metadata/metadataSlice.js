@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import square from '../../assets/red_square_test.png';
+import { SelectionType } from '../../constants';
 // import monaLisa from '../../assets/mona_lisa.jpeg';
 
 const initialState = {
@@ -8,6 +9,7 @@ const initialState = {
   mutationRate: 0.002,
   triangleCount: 30,
   target: square,
+  selectionType: SelectionType.TOURNAMENT,
   targetFitnessReached: false,
   globalBest: null,
   currentGen: {},
@@ -30,6 +32,9 @@ export const metadataSlice = createSlice({
     setTriangles: (state, action) => {
       state.triangleCount = action.payload;
     },
+    setSelectionType: (state, action) => {
+      state.selectionType = action.payload;
+    },
     setGlobalBest: (state, action) => {
       state.globalBest = action.payload;
     },
@@ -50,6 +55,7 @@ export const {
   setPopulationSize,
   setTarget,
   setTriangles,
+  setSelectionType,
   setGlobalBest,
   setCurrentGen,
   setTargetFitnessReached,

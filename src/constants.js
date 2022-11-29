@@ -21,8 +21,16 @@ export const statusLabels = {
 
 export const SelectionType = {
   ROULETTE: 'ROULETTE',
+  ROULETTE_ELITE: 'ROULETTE_ELITE',
   TOURNAMENT: 'TOURNAMENT',
   TOURNAMENT_ELITE: 'TOURNAMENT_ELITE',
+};
+
+export const SelectionTypeLabels = {
+  [SelectionType.ROULETTE]: 'Roulette',
+  [SelectionType.ROULETTE_ELITE]: 'Elite Roulette',
+  [SelectionType.TOURNAMENT]: 'Tournament',
+  [SelectionType.TOURNAMENT_ELITE]: 'Elite Tournament',
 };
 
 export const maxPopulationSize = 1e3;
@@ -31,7 +39,7 @@ export const minPopulationSize = 2;
 
 export const populationStepSize = 2;
 
-export const minMutationRate = 0;
+export const minMutationRate = 0.001;
 
 export const maxMutationRate = 1;
 

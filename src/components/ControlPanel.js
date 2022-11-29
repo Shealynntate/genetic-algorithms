@@ -1,7 +1,10 @@
 import React from 'react';
 import {
   Box,
-  Button, Paper, Stack, Typography,
+  Button,
+  Paper,
+  Stack,
+  Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { SimulationState } from '../constants';
@@ -12,6 +15,7 @@ import TriangleSlider from './sliders/TriangleSlider';
 import ImageInput from './ImageInput';
 import InfoButton from './InfoButton';
 import { pauseSimulation, resetSimulation, runSimulation } from '../features/ux/uxSlice';
+import SelectionTypeInput from './SelectionTypeInput';
 
 function ControlPanel() {
   const simulationState = useSelector((state) => state.ux.simulationState);
@@ -50,9 +54,10 @@ function ControlPanel() {
         <Box sx={{ minWidth: 200 }}>
           <ImageInput />
         </Box>
-        <MutationSlider />
-        <PopulationSlider />
         <TriangleSlider />
+        <PopulationSlider />
+        <MutationSlider />
+        <SelectionTypeInput />
         <Stack direction="row">
           <PrimaryButton
             currentState={simulationState}

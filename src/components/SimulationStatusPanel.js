@@ -14,12 +14,12 @@ function SimulationStatusPanel({ styles }) {
 
   return (
     <Paper sx={styles}>
+      <GlobalBest />
       <Typography>{`Status: ${status}`}</Typography>
       <Typography>{`Current Generation: ${currentGen.id || 0}`}</Typography>
       <Typography>{`Fitness: ${maxFitOrganism?.fitness.toFixed(4) || 0}`}</Typography>
       <Typography>{`Deviation: ${currentGen.deviation?.toFixed(4) || 0}`}</Typography>
       {maxFitOrganism && <OrganismCanvas organism={maxFitOrganism} />}
-      <GlobalBest />
     </Paper>
   );
 }

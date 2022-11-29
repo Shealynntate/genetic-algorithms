@@ -9,9 +9,8 @@ import {
 import ControlPanel from './ControlPanel';
 // import OverviewChart from './overviewChart/OverviewChart';
 import theme from '../theme';
-import SimulationStatusPanel from './SimulationStatusPanel';
-// import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
 import Header from './Header';
+import DisplayTabs from './DisplayTabs';
 
 function App() {
   // const varianceRef = useRef([]);
@@ -39,10 +38,9 @@ function App() {
       <Header />
       <Container>
         <Grid container spacing={theme.spacing(2)} margin={theme.spacing(0)}>
-          <Grid item xs={6}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Grid item xs={3}>
+            <Box sx={{ display: 'flex' }}>
               <ControlPanel />
-              <SimulationStatusPanel />
             </Box>
             {/* <Paper sx={{ height: 400 }}>
               <ParentSize>
@@ -56,11 +54,8 @@ function App() {
               </ParentSize>
             </Paper> */}
           </Grid>
-          <Grid item xs={6}>
-            {/* <GenealogyVisualization
-              tree={tree}
-              maxFitness={0}
-            /> */}
+          <Grid item xs={9}>
+            <DisplayTabs />
           </Grid>
         </Grid>
       </Container>
