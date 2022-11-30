@@ -1,14 +1,14 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import square from '../../assets/red_square_test.png';
 import { SelectionType } from '../../constants';
-// import monaLisa from '../../assets/mona_lisa.jpeg';
+// import square from '../../assets/red_square_test.png';
+import monaLisa from '../../assets/mona_lisa.jpeg';
 
 const initialState = {
   populationSize: 300,
   mutationRate: 0.002,
-  triangleCount: 30,
-  target: square,
+  triangleCount: 40,
+  target: monaLisa,
   selectionType: SelectionType.TOURNAMENT,
   targetFitnessReached: false,
   globalBest: null,

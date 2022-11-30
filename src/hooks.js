@@ -1,6 +1,8 @@
 import { useSelector } from 'react-redux';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { SimulationState } from './constants';
 import { createImageData } from './globals/utils';
+import database from './globals/database';
 
 export const useIsRunning = () => {
   const simulationState = useSelector((state) => state.ux.simulationState);
@@ -33,4 +35,8 @@ const currentStateSelector = ({ ux }) => (ux.simulationState);
 
 export const isRunningSelector = (state) => (
   currentStateSelector(state) === SimulationState.RUNNING
+);
+
+export const useImageDbQuery = () => (
+  useLiveQuery(() => database.images.toArray())
 );

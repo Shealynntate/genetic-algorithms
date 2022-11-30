@@ -1,35 +1,76 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
-import { Paper, Typography } from '@mui/material';
+import {
+  Box, Paper, Stack, Typography,
+} from '@mui/material';
 import { useSelector } from 'react-redux';
-import { statusLabels } from '../constants';
 import OrganismCanvas from './OrganismCanvas';
 import GlobalBest from './GlobalBest';
+import Canvas from './Canvas';
+import { canvasParameters } from '../constants';
+import { useImageDbQuery } from '../hooks';
 
-function SimulationStatusPanel({ styles }) {
-  const simulationState = useSelector((state) => state.ux.simulationState);
-  const currentGen = useSelector((state) => state.metadata.currentGen);
-  const status = statusLabels[simulationState];
-  const { maxFitOrganism } = currentGen;
+const { width, height } = canvasParameters;
 
+function StatusText({ children }) {
+  return <Typography variant="caption" sx={{ display: 'block' }}>{children}</Typography>;
+}
+
+StatusText.propTypes = {
+  children: PropTypes.node.isRequired,
+};
+
+function HistoryEntry({ genId, fitness, imageData }) {
   return (
-    <Paper sx={styles}>
-      <GlobalBest />
-      <Typography>{`Status: ${status}`}</Typography>
-      <Typography>{`Current Generation: ${currentGen.id || 0}`}</Typography>
-      <Typography>{`Fitness: ${maxFitOrganism?.fitness.toFixed(4) || 0}`}</Typography>
-      <Typography>{`Deviation: ${currentGen.deviation?.toFixed(4) || 0}`}</Typography>
-      {maxFitOrganism && <OrganismCanvas organism={maxFitOrganism} />}
-    </Paper>
+    <Box>
+      <Canvas
+        width={width}
+        height={height}
+        imageData={imageData}
+      />
+      <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
+        <Typography variant="caption">{`Gen: ${genId}`}</Typography>
+        <Typography variant="caption">{`Score: ${fitness.toFixed(3)}`}</Typography>
+      </Box>
+    </Box>
   );
 }
 
-SimulationStatusPanel.propTypes = {
-  styles: PropTypes.objectOf(PropTypes.string),
+HistoryEntry.propTypes = {
+  genId: PropTypes.number.isRequired,
+  fitness: PropTypes.number.isRequired,
+  imageData: PropTypes.instanceOf(ImageData).isRequired,
 };
 
-SimulationStatusPanel.defaultProps = {
-  styles: {},
-};
+function SimulationStatusPanel() {
+  const currentGen = useSelector((state) => state.metadata.currentGen);
+  const images = useImageDbQuery() || [];
+  const { maxFitOrganism } = currentGen;
+
+  return (
+    <Paper>
+      <Stack direction="row">
+        <GlobalBest />
+        <Box>
+          <Typography>Current Best</Typography>
+          {maxFitOrganism && <OrganismCanvas organism={maxFitOrganism} />}
+          <StatusText>{`Generation: ${currentGen.id || 0}`}</StatusText>
+          <StatusText>{`Fitness: ${maxFitOrganism?.fitness.toFixed(4) || 0}`}</StatusText>
+          <StatusText>{`Deviation: ${currentGen.deviation?.toFixed(4) || 0}`}</StatusText>
+        </Box>
+      </Stack>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+        {images.slice().reverse().map(({ gen, fitness, imageData }) => (
+          <HistoryEntry
+            key={`history-entry-${gen}`}
+            genId={gen}
+            fitness={fitness}
+            imageData={imageData}
+          />
+        ))}
+      </Box>
+    </Paper>
+  );
+}
 
 export default memo(SimulationStatusPanel);

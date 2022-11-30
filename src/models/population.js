@@ -38,16 +38,20 @@ class Population {
 
   performSelection(selectionType, mutationNoise) {
     const tournamentSize = 2;
+    const eliteCount = 2;
     let nextGen;
     switch (selectionType) {
       case SelectionType.ROULETTE:
         nextGen = this.rouletteSelection(mutationNoise);
         break;
+      case SelectionType.ROULETTE_ELITE:
+        nextGen = this.rouletteSelectionElite(mutationNoise, eliteCount);
+        break;
       case SelectionType.TOURNAMENT:
         nextGen = this.tournamentSelection(mutationNoise, tournamentSize);
         break;
       case SelectionType.TOURNAMENT_ELITE:
-        nextGen = this.tournamentSelectionElite(mutationNoise, tournamentSize);
+        nextGen = this.tournamentSelectionElite(mutationNoise, tournamentSize, eliteCount);
         break;
       default:
         throw new Error(`[Population] Invalid SelectionType ${selectionType} provided`);
@@ -74,9 +78,38 @@ class Population {
     return nextGen;
   }
 
+  rouletteSelectionElite(mutationNoise, eliteCount) {
+    const organisms = this.organismsByFitness();
+    const nextGen = organisms.slice(0, eliteCount);
+    const cdf = this.createFitnessCDF();
+    // Generate (N - eliteCount) offspring for the next generation
+    while (nextGen.length < this.organisms.length) {
+      const p1 = this.rouletteSelectParent(cdf);
+      const p2 = this.rouletteSelectParent(cdf);
+      const offspring = Organism.reproduce(p1, p2, mutationNoise);
+      nextGen.push(...offspring);
+    }
+
+    return nextGen;
+  }
+
   tournamentSelection(mutationNoise, tournamentSize) {
     const nextGen = [];
     // Generate N offspring for the next generation
+    while (nextGen.length < this.organisms.length) {
+      const p1 = this.tournamentParentSelect(tournamentSize);
+      const p2 = this.tournamentParentSelect(tournamentSize);
+      const offspring = Organism.reproduce(p1, p2, mutationNoise);
+      nextGen.push(...offspring);
+    }
+    return nextGen;
+  }
+
+  // TODO: CLONE THE PARENTS PASSED INTO NEXT GEN!!
+  tournamentSelectionElite(mutationNoise, tournamentSize, eliteCount) {
+    const organisms = this.organismsByFitness();
+    const nextGen = organisms.slice(0, eliteCount);
+    // Generate (N - eliteCount) offspring for the next generation
     while (nextGen.length < this.organisms.length) {
       const p1 = this.tournamentParentSelect(tournamentSize);
       const p2 = this.tournamentParentSelect(tournamentSize);
@@ -120,6 +153,11 @@ class Population {
   randomOrganism() {
     const index = randomIndex(this.organisms.length);
     return this.organisms[index];
+  }
+
+  maxFitOrganism() {
+    this.organismsByFitness();
+    return this.organisms[0];
   }
 
   // Helper Methods

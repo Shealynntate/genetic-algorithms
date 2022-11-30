@@ -10,7 +10,7 @@ function GlobalBest() {
 
   return (
     <Box>
-      <Typography>Best So Far</Typography>
+      <Typography>All Time Best</Typography>
       <OrganismCanvas organism={globalBest.organism} />
       <Box>
         <Typography variant="caption" sx={{ display: 'block' }}>

@@ -5,7 +5,8 @@ import {
   takeEvery,
   delay,
 } from 'redux-saga/effects';
-import { SelectionType, targetFitness } from '../../constants';
+import { addImageToDatabase, clearDatabase } from '../../globals/database';
+import { targetFitness } from '../../constants';
 import RandomNoise from '../../globals/randomNoise';
 import { approxEqual, createImageData, generateTreeLayer } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
@@ -22,6 +23,8 @@ let population;
 let randomNoise;
 const runDelay = 0;
 
+clearDatabase();
+
 function* processNextGenerationSaga(parentGen, nextGen) {
   const parentLayer = generateTreeLayer([parentGen, nextGen], 0);
   const newLayer = generateTreeLayer([parentGen, nextGen], 1);
@@ -30,11 +33,16 @@ function* processNextGenerationSaga(parentGen, nextGen) {
 }
 
 function* runGenerationSaga() {
+  const selectionType = yield select((state) => state.metadata.selectionType);
   while (true) {
     const isRunning = yield select(isRunningSelector);
     if (!isRunning) return;
 
-    const [parentGen, nextGen] = population.runGeneration(SelectionType.TOURNAMENT, randomNoise);
+    if (population.genId % 100 === 0) {
+      yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
+      yield delay(10);
+    }
+    const [parentGen, nextGen] = population.runGeneration(selectionType, randomNoise);
     yield call(processNextGenerationSaga, parentGen, nextGen);
     yield put(setCurrentGen(nextGen));
     yield delay(runDelay);
@@ -49,6 +57,7 @@ function* runSimulationSaga() {
 
   const { data } = yield createImageData(target);
   if (!population) {
+    // yield call(clearDatabase);
     population = new Population(populationSize, triangleCount, data);
   }
   randomNoise = new RandomNoise(mutation);
@@ -81,6 +90,7 @@ function* updateGlobalBestSaga({ payload }) {
 function* resetSimulationSaga() {
   yield put(setCurrentGen({}));
   yield put(setGenealogyTree([]));
+  yield call(clearDatabase);
 }
 
 function* metadataSaga() {
