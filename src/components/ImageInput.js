@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
 import { AlertState, canvasParameters } from '../constants';
-import { setTarget } from '../features/metadata/metadataSlice';
+import { setTarget } from '../features/parameters/parametersSlice';
 import { createImageData, fileToBase64 } from '../globals/utils';
 import Canvas from './Canvas';
 
@@ -19,7 +19,7 @@ const AlertMessage = {
 function ImageInput() {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const target = useSelector((state) => state.metadata.target);
+  const target = useSelector((state) => state.parameters.target);
   const [imageData, setImageData] = useState();
   const [alertState, setAlertState] = useState();
 

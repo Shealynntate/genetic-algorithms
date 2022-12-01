@@ -7,14 +7,14 @@ import {
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { SelectionType, SelectionTypeLabels } from '../constants';
-import { setSelectionType } from '../features/metadata/metadataSlice';
+import { setSelectionType } from '../features/parameters/parametersSlice';
 
 const label = 'Selection Type';
 
 const types = Object.keys(SelectionType);
 
 function SelectionTypeInput() {
-  const type = useSelector((state) => state.metadata.selectionType);
+  const type = useSelector((state) => state.parameters.selectionType);
   const dispatch = useDispatch();
 
   const onChangeSelect = (event) => {

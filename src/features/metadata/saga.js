@@ -38,8 +38,8 @@ function* processNextGenerationSaga(parentGen, nextGen) {
 }
 
 function* runGenerationSaga() {
-  const selectionType = yield select((state) => state.metadata.selectionType);
-  const eliteCount = yield select((state) => state.metadata.eliteCount);
+  const selectionType = yield select((state) => state.parameters.selectionType);
+  const eliteCount = yield select((state) => state.parameters.eliteCount);
 
   while (true) {
     const isRunning = yield select(isRunningSelector);
@@ -58,10 +58,10 @@ function* runGenerationSaga() {
 }
 
 function* runSimulationSaga() {
-  const populationSize = yield select((state) => state.metadata.populationSize);
-  const triangleCount = yield select((state) => state.metadata.triangleCount);
-  const target = yield select((state) => state.metadata.target);
-  const mutation = yield select((state) => state.metadata.mutationRate);
+  const populationSize = yield select((state) => state.parameters.populationSize);
+  const triangleCount = yield select((state) => state.parameters.triangleCount);
+  const target = yield select((state) => state.parameters.target);
+  const mutation = yield select((state) => state.parameters.mutationRate);
 
   const { data } = yield createImageData(target);
   if (!population) {

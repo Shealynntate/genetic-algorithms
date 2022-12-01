@@ -9,7 +9,7 @@ import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import { scaleLinear } from '@visx/scale';
 import { AreaClosed, LinePath } from '@visx/shape';
 import ParameterSlider from './ParameterSlider';
-import { setMutationRate } from '../../features/metadata/metadataSlice';
+import { setMutationRate } from '../../features/parameters/parametersSlice';
 import NormalDistribution from '../../globals/normalDistribution';
 import { mutationBounds } from '../../constants';
 
@@ -32,7 +32,7 @@ const graphHeight = 100;
 function MutationSlider() {
   const dispatch = useDispatch();
   const theme = useTheme();
-  const value = useSelector((state) => state.metadata.mutationRate);
+  const value = useSelector((state) => state.parameters.mutationRate);
   const { min, max, step } = mutationBounds;
   const { max: dataMax, dist } = createData(0, value);
   const [data, setData] = useState(dist);

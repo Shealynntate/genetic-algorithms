@@ -20,12 +20,12 @@ export const useIsPaused = () => {
 };
 
 export const useMaxFitness = () => {
-  const target = useSelector((state) => state.metadata.target);
+  const target = useSelector((state) => state.parameters.target);
   return target.length;
 };
 
 export const useTargetData = async () => {
-  const target = useSelector((state) => state.metadata.target);
+  const target = useSelector((state) => state.parameters.target);
   const { data } = await createImageData(target);
 
   return data;
