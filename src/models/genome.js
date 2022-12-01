@@ -1,4 +1,4 @@
-import { flipCoin, genRange } from '../globals/utils';
+import { flipCoin, genRange, randomIndex } from '../globals/utils';
 import Phenotype from './phenotype';
 import DNA from './dna';
 import { canvasParameters, maxColorValue } from '../constants';
@@ -69,6 +69,12 @@ class Genome {
     });
 
     return (1 - difference / denominator);
+  }
+
+  mutateOrder() {
+    const index = randomIndex(this.size);
+    const removed = this.dna.splice(index, 1);
+    this.dna.push(...removed);
   }
 
   getPhenotype() {

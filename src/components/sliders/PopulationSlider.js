@@ -1,11 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { maxPopulationSize, minPopulationSize, populationStepSize } from '../../constants';
+import { populationBounds } from '../../constants';
 import { setPopulationSize } from '../../features/metadata/metadataSlice';
 import ParameterSlider from './ParameterSlider';
 
 function PopulationSlider() {
   const dispatch = useDispatch();
+  const { max, min, step } = populationBounds;
 
   const value = useSelector((state) => state.metadata.populationSize);
 
@@ -19,9 +20,9 @@ function PopulationSlider() {
       setValue={setValue}
       formatValue={(v) => v.toLocaleString()}
       label="Population"
-      min={minPopulationSize}
-      max={maxPopulationSize}
-      step={populationStepSize}
+      min={min}
+      max={max}
+      step={step}
     />
   );
 }

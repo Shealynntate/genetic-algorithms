@@ -1,3 +1,4 @@
+import { pickBy, values } from 'lodash';
 import * as utils from '../globals/utils';
 import { SelectionType } from '../constants';
 import RandomNoise from '../globals/randomNoise';
@@ -17,12 +18,12 @@ beforeEach(() => {
   Organism.count = null;
 });
 
-const mockRandomFloat = (values) => {
+const mockRandomFloat = (v) => {
   let index = -1;
 
   return (() => {
     index += 1;
-    return values[index];
+    return v[index];
   });
 };
 
@@ -37,23 +38,31 @@ test('Roulette CDF', () => {
 });
 
 test('Roulette Parent Selection', () => {
-  const values = [0, 1, 1.5, 7.2, 10];
-  jest.spyOn(utils, 'randomFloat').mockImplementation(mockRandomFloat(values));
+  const picks = [
+    { n: 0, id: 0 },
+    { n: 1, id: 0 },
+    { n: 1.01, id: 1 },
+    { n: 1.99, id: 1 },
+    { n: 2, id: 1 },
+    { n: 4, id: 3 },
+    { n: 5, id: 4 },
+    { n: 7.2, id: 7 },
+    { n: 9.99, id: 9 },
+    { n: 10, id: 9 },
+    { n: 0, id: 0 },
+  ];
+  // Extract the "random" values and feed them into the mock randomFloat function
+  const rvs = values(pickBy(picks, 'n'));
+  jest.spyOn(utils, 'randomFloat').mockImplementation(mockRandomFloat(rvs));
   jest.spyOn(Population.prototype, 'evaluateFitness').mockImplementation(mockEvaluateFitness);
 
   const population = new Population(popSize, 1, null);
   const cdf = population.createFitnessCDF();
-
-  const p1 = population.rouletteSelectParent(cdf);
-  expect(p1.id).toBe(0);
-  const p2 = population.rouletteSelectParent(cdf);
-  expect(p2.id).toBe(0);
-  const p3 = population.rouletteSelectParent(cdf);
-  expect(p3.id).toBe(1);
-  const p4 = population.rouletteSelectParent(cdf);
-  expect(p4.id).toBe(7);
-  const p5 = population.rouletteSelectParent(cdf);
-  expect(p5.id).toBe(9);
+  // Check that the appropriate parent was chosen for each of the corresponding n values
+  picks.forEach(({ id }) => {
+    const p = population.rouletteSelectParent(cdf);
+    expect(p.id).toBe(id);
+  });
 });
 
 test('Roulette Selection', () => {
@@ -65,7 +74,8 @@ test('Roulette Selection', () => {
     expect(org.fitness).toBe(1);
   });
 
-  jest.spyOn(utils, 'randomFloat').mockImplementation(() => { return 0; });
+  const rvs = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  jest.spyOn(utils, 'randomFloat').mockImplementation(mockRandomFloat(rvs));
   population.performSelection(SelectionType.ROULETTE, noise);
 
   expect(utils.randomFloat).toBeCalledTimes(10);

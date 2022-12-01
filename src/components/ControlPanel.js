@@ -16,6 +16,7 @@ import ImageInput from './ImageInput';
 import InfoButton from './InfoButton';
 import { pauseSimulation, resetSimulation, runSimulation } from '../features/ux/uxSlice';
 import SelectionTypeInput from './SelectionTypeInput';
+import EliteSlider from './sliders/EliteSlider';
 
 function ControlPanel() {
   const simulationState = useSelector((state) => state.ux.simulationState);
@@ -58,6 +59,7 @@ function ControlPanel() {
         <PopulationSlider />
         <MutationSlider />
         <SelectionTypeInput />
+        <EliteSlider />
         <Stack direction="row">
           <PrimaryButton
             currentState={simulationState}

@@ -20,38 +20,38 @@ class Population {
     this.genId = Population.nextGenId;
     this.target = target;
     this.organisms = [...Array(size)].map(() => new Organism({ genomeSize }));
+    this.fitnessEvaluatedFlag = false;
     // Prep for the first call of runGeneration
     this.evaluateFitness();
   }
 
-  runGeneration(selectionType, mutationNoise) {
-    this.performSelection(selectionType, mutationNoise);
+  runGeneration(selectionType, eliteCount, mutationNoise) {
+    this.fitnessEvaluatedFlag = false;
+    this.performSelection(selectionType, eliteCount, mutationNoise);
     this.evaluateFitness();
 
     return this.createGenNodes();
   }
 
   evaluateFitness() {
+    if (this.fitnessEvaluatedFlag) return;
     // Have each Organism compute its fitness score
     this.organisms.forEach((org) => org.evaluateFitness(this.target));
+    this.fitnessEvaluatedFlag = true;
   }
 
-  performSelection(selectionType, mutationNoise) {
+  performSelection(selectionType, eliteCount, mutationNoise) {
     const tournamentSize = 2;
-    const eliteCount = 2;
     let nextGen;
     switch (selectionType) {
       case SelectionType.ROULETTE:
-        nextGen = this.rouletteSelection(mutationNoise);
-        break;
-      case SelectionType.ROULETTE_ELITE:
-        nextGen = this.rouletteSelectionElite(mutationNoise, eliteCount);
+        nextGen = this.rouletteSelection(mutationNoise, eliteCount);
         break;
       case SelectionType.TOURNAMENT:
-        nextGen = this.tournamentSelection(mutationNoise, tournamentSize);
+        nextGen = this.tournamentSelection(mutationNoise, tournamentSize, eliteCount);
         break;
-      case SelectionType.TOURNAMENT_ELITE:
-        nextGen = this.tournamentSelectionElite(mutationNoise, tournamentSize, eliteCount);
+      case SelectionType.SUS:
+        nextGen = this.susSelection(mutationNoise, eliteCount);
         break;
       default:
         throw new Error(`[Population] Invalid SelectionType ${selectionType} provided`);
@@ -64,11 +64,11 @@ class Population {
 
   // Parent Selection Algorithms
   // ------------------------------------------------------------
-  rouletteSelection(mutationNoise) {
+  rouletteSelection(mutationNoise, eliteCount) {
+    const nextGen = this.getElites(eliteCount);
     const cdf = this.createFitnessCDF();
-    const nextGen = [];
-    // Generate N offspring for the next generation
-    while (nextGen.length < this.organisms.length) {
+    // Generate (N - eliteCount) offspring for the next generation
+    while (nextGen.length < this.size) {
       const p1 = this.rouletteSelectParent(cdf);
       const p2 = this.rouletteSelectParent(cdf);
       const offspring = Organism.reproduce(p1, p2, mutationNoise);
@@ -78,45 +78,36 @@ class Population {
     return nextGen;
   }
 
-  rouletteSelectionElite(mutationNoise, eliteCount) {
-    const organisms = this.organismsByFitness();
-    const nextGen = organisms.slice(0, eliteCount);
+  tournamentSelection(mutationNoise, tournamentSize, eliteCount) {
+    const nextGen = this.getElites(eliteCount);
+    // Generate (N - eliteCount) offspring for the next generation
+    while (nextGen.length < this.size) {
+      const p1 = this.tournamentSelectParent(tournamentSize);
+      const p2 = this.tournamentSelectParent(tournamentSize);
+      const offspring = Organism.reproduce(p1, p2, mutationNoise);
+      nextGen.push(...offspring);
+    }
+    return nextGen;
+  }
+
+  susSelection(mutationNoise, eliteCount) {
+    const nextGen = this.getElites(eliteCount);
     const cdf = this.createFitnessCDF();
-    // Generate (N - eliteCount) offspring for the next generation
-    while (nextGen.length < this.organisms.length) {
-      const p1 = this.rouletteSelectParent(cdf);
-      const p2 = this.rouletteSelectParent(cdf);
+    const step = cdf[cdf.length - 1] / this.size;
+    let value = randomFloat(0, step);
+    while (nextGen.length < this.size) {
+      const p1 = this.susSelectParent(value);
+      value += step;
+      const p2 = this.susSelectParent(value);
+      value += step;
       const offspring = Organism.reproduce(p1, p2, mutationNoise);
       nextGen.push(...offspring);
     }
-
-    return nextGen;
   }
 
-  tournamentSelection(mutationNoise, tournamentSize) {
-    const nextGen = [];
-    // Generate N offspring for the next generation
-    while (nextGen.length < this.organisms.length) {
-      const p1 = this.tournamentParentSelect(tournamentSize);
-      const p2 = this.tournamentParentSelect(tournamentSize);
-      const offspring = Organism.reproduce(p1, p2, mutationNoise);
-      nextGen.push(...offspring);
-    }
-    return nextGen;
-  }
-
-  // TODO: CLONE THE PARENTS PASSED INTO NEXT GEN!!
-  tournamentSelectionElite(mutationNoise, tournamentSize, eliteCount) {
-    const organisms = this.organismsByFitness();
-    const nextGen = organisms.slice(0, eliteCount);
-    // Generate (N - eliteCount) offspring for the next generation
-    while (nextGen.length < this.organisms.length) {
-      const p1 = this.tournamentParentSelect(tournamentSize);
-      const p2 = this.tournamentParentSelect(tournamentSize);
-      const offspring = Organism.reproduce(p1, p2, mutationNoise);
-      nextGen.push(...offspring);
-    }
-    return nextGen;
+  susSelectParent(cdf, value) {
+    const index = cdf.findIndex((f) => value <= f);
+    return this.organisms[index];
   }
 
   // Parent Selection Algorithm Helpers
@@ -128,7 +119,7 @@ class Population {
     return this.organisms[index];
   }
 
-  tournamentParentSelect(size) {
+  tournamentSelectParent(size) {
     let best = this.randomOrganism();
     genRange(size).forEach(() => {
       const next = this.randomOrganism();
@@ -150,27 +141,31 @@ class Population {
     return cdf;
   }
 
+  getElites(count) {
+    if (count === 0) return [];
+
+    const organisms = this.organismsByFitness();
+    return organisms.slice(0, count).map((org) => org.clone());
+  }
+
   randomOrganism() {
-    const index = randomIndex(this.organisms.length);
+    const index = randomIndex(this.size);
     return this.organisms[index];
   }
 
   maxFitOrganism() {
-    this.organismsByFitness();
-    return this.organisms[0];
+    return this.organismsByFitness()[0];
   }
 
   // Helper Methods
   // ------------------------------------------------------------
   /**
-   * Sorts the list of organisms by fitness in descending order. This also mutates the list
-   * of Organisms held by the population.
-   * @returns the array of organisms
+   * Sorts a copy of the list of organisms by fitness in descending order.
+   * @returns the array of sorted organisms
    */
   organismsByFitness() {
     this.evaluateFitness();
-    this.organisms.sort((a, b) => b.fitness - a.fitness);
-    return this.organisms;
+    return [...this.organisms].sort((a, b) => b.fitness - a.fitness);
   }
 
   static createGenNode(id, organisms) {
@@ -197,6 +192,13 @@ class Population {
     const parents = Population.createGenNode(this.genId - 1, this.parents);
     const children = Population.createGenNode(this.genId, this.organisms);
     return [parents, children];
+  }
+
+  /**
+   * The size of the population (number of organisms per generation)
+   */
+  get size() {
+    return this.organisms.length;
   }
 }
 

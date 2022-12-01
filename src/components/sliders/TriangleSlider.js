@@ -1,15 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { triangleBounds } from '../../constants';
 import { setTriangles } from '../../features/metadata/metadataSlice';
-import {
-  maxTriangleCount,
-  minTriangleCount,
-  triangleStepSize,
-} from '../../constants';
 import ParameterSlider from './ParameterSlider';
 
 function TriangleSlider() {
   const dispatch = useDispatch();
+  const { min, max, step } = triangleBounds;
 
   const value = useSelector((state) => state.metadata.triangleCount);
 
@@ -23,9 +20,9 @@ function TriangleSlider() {
       setValue={setValue}
       formatValue={(v) => v.toLocaleString()}
       label="Triangles"
-      min={minTriangleCount}
-      max={maxTriangleCount}
-      step={triangleStepSize}
+      min={min}
+      max={max}
+      step={step}
     />
   );
 }

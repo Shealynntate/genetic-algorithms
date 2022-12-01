@@ -9,9 +9,9 @@ import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import { scaleLinear } from '@visx/scale';
 import { AreaClosed, LinePath } from '@visx/shape';
 import ParameterSlider from './ParameterSlider';
-import { maxMutationRate, minMutationRate, mutationRateStep } from '../../constants';
 import { setMutationRate } from '../../features/metadata/metadataSlice';
 import NormalDistribution from '../../globals/normalDistribution';
+import { mutationBounds } from '../../constants';
 
 const createData = (mean, sigma) => {
   const dist = new NormalDistribution(mean, sigma);
@@ -33,9 +33,10 @@ function MutationSlider() {
   const dispatch = useDispatch();
   const theme = useTheme();
   const value = useSelector((state) => state.metadata.mutationRate);
-  const { max, dist } = createData(0, value);
+  const { min, max, step } = mutationBounds;
+  const { max: dataMax, dist } = createData(0, value);
   const [data, setData] = useState(dist);
-  const [maxValue, setMaxValue] = useState(max);
+  const [maxValue, setMaxValue] = useState(dataMax);
 
   const setValue = (v) => {
     dispatch(setMutationRate(v));
@@ -106,9 +107,9 @@ function MutationSlider() {
         setValue={setValue}
         formatValue={(v) => `${(v * 100).toFixed(0)}%`}
         label="Mutation"
-        min={minMutationRate}
-        max={maxMutationRate}
-        step={mutationRateStep}
+        min={min}
+        max={max}
+        step={step}
       />
     </Box>
   );

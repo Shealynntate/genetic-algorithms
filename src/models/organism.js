@@ -1,3 +1,4 @@
+import { flipCoin } from '../globals/utils';
 import Genome from './genome';
 
 const crossoverProb = 0.1;
@@ -36,6 +37,13 @@ class Organism {
     const childA = Organism.createChild(parentA, parentB, newDNA1);
     const childB = Organism.createChild(parentA, parentB, newDNA2);
 
+    if (flipCoin(0.1)) {
+      childA.genome.mutateOrder();
+    }
+    if (flipCoin(0.1)) {
+      childB.genome.mutateOrder();
+    }
+
     return [childA, childB];
   }
 
@@ -66,6 +74,15 @@ class Organism {
     this.parentB = parentB;
     this.fitness = 0;
     this.children = [];
+  }
+
+  clone() {
+    return new Organism({
+      genomeSize: this.genome.size,
+      genome: this.genome.clone(),
+      parentA: this.parentA,
+      parentB: this.parentB,
+    });
   }
 
   get childrenCount() {

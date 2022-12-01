@@ -21,35 +21,38 @@ export const statusLabels = {
 
 export const SelectionType = {
   ROULETTE: 'ROULETTE',
-  ROULETTE_ELITE: 'ROULETTE_ELITE',
   TOURNAMENT: 'TOURNAMENT',
-  TOURNAMENT_ELITE: 'TOURNAMENT_ELITE',
+  SUS: 'SUS',
 };
 
 export const SelectionTypeLabels = {
   [SelectionType.ROULETTE]: 'Roulette',
-  [SelectionType.ROULETTE_ELITE]: 'Elite Roulette',
   [SelectionType.TOURNAMENT]: 'Tournament',
-  [SelectionType.TOURNAMENT_ELITE]: 'Elite Tournament',
+  [SelectionType.SUS]: 'SUS',
 };
 
-export const maxPopulationSize = 1e3;
+export const populationBounds = {
+  max: 1e3,
+  min: 2,
+  step: 2,
+};
 
-export const minPopulationSize = 2;
+export const eliteCountBounds = {
+  min: 0,
+  step: 1,
+};
 
-export const populationStepSize = 2;
+export const mutationBounds = {
+  min: 0.001,
+  max: 1,
+  step: 0.001,
+};
 
-export const minMutationRate = 0.001;
-
-export const maxMutationRate = 1;
-
-export const mutationRateStep = 0.01;
-
-export const minTriangleCount = 2;
-
-export const maxTriangleCount = 100;
-
-export const triangleStepSize = 1;
+export const triangleBounds = {
+  min: 2,
+  max: 100,
+  step: 1,
+};
 
 export const targetFitness = 1;
 

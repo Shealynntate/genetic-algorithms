@@ -10,6 +10,7 @@ const initialState = {
   triangleCount: 40,
   target: monaLisa,
   selectionType: SelectionType.TOURNAMENT,
+  eliteCount: 0,
   targetFitnessReached: false,
   globalBest: null,
   currentGen: {},
@@ -35,6 +36,14 @@ export const metadataSlice = createSlice({
     setSelectionType: (state, action) => {
       state.selectionType = action.payload;
     },
+    setEliteCount: (state, action) => {
+      const count = action.payload;
+      const popSize = state.populationSize;
+      if (count > popSize) {
+        throw new Error(`Elite count ${count} cannot exceed population size ${popSize}`);
+      }
+      state.eliteCount = count;
+    },
     setGlobalBest: (state, action) => {
       state.globalBest = action.payload;
     },
@@ -56,6 +65,7 @@ export const {
   setTarget,
   setTriangles,
   setSelectionType,
+  setEliteCount,
   setGlobalBest,
   setCurrentGen,
   setTargetFitnessReached,

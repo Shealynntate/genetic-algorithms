@@ -180,3 +180,15 @@ export const fileToBase64 = async (file) => {
 
   return promise;
 };
+
+// [0, 100, 200, 300, 400, 600, 800, 1000, 1500, 2000, ...]
+export const shouldSaveGenImage = (genId) => {
+  let mod = 500;
+  if (genId <= 1000) {
+    mod = 200;
+  }
+  if (genId <= 300) {
+    mod = 100;
+  }
+  return (genId % mod) === 0;
+};

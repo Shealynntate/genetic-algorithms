@@ -8,7 +8,12 @@ import {
 import { addImageToDatabase, clearDatabase } from '../../globals/database';
 import { targetFitness } from '../../constants';
 import RandomNoise from '../../globals/randomNoise';
-import { approxEqual, createImageData, generateTreeLayer } from '../../globals/utils';
+import {
+  approxEqual,
+  createImageData,
+  generateTreeLayer,
+  shouldSaveGenImage,
+} from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
 import Population from '../../models/population';
 import { endSimulation, resetSimulation, runSimulation } from '../ux/uxSlice';
@@ -34,15 +39,18 @@ function* processNextGenerationSaga(parentGen, nextGen) {
 
 function* runGenerationSaga() {
   const selectionType = yield select((state) => state.metadata.selectionType);
+  const eliteCount = yield select((state) => state.metadata.eliteCount);
+
   while (true) {
     const isRunning = yield select(isRunningSelector);
     if (!isRunning) return;
 
-    if (population.genId % 100 === 0) {
+    // Check if we should store a copy of the maxFitOrganism for Image History
+    if (shouldSaveGenImage(population.genId)) {
       yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
       yield delay(10);
     }
-    const [parentGen, nextGen] = population.runGeneration(selectionType, randomNoise);
+    const [parentGen, nextGen] = population.runGeneration(selectionType, eliteCount, randomNoise);
     yield call(processNextGenerationSaga, parentGen, nextGen);
     yield put(setCurrentGen(nextGen));
     yield delay(runDelay);
@@ -57,7 +65,6 @@ function* runSimulationSaga() {
 
   const { data } = yield createImageData(target);
   if (!population) {
-    // yield call(clearDatabase);
     population = new Population(populationSize, triangleCount, data);
   }
   randomNoise = new RandomNoise(mutation);
