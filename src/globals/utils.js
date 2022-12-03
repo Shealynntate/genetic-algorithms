@@ -42,6 +42,11 @@ export const fitnessBounds = (orgs) => {
   return [min, total / orgs.length, max];
 };
 
+export const setSigFigs = (value, sigFigs) => {
+  const m = 10 ** sigFigs;
+  return Math.round(value * m) / m;
+};
+
 // input: h in [0,360] and s,v in [0,1] - output: r,g,b in [0,1]
 export const hsv2rgb = (h, s, v) => {
   const f = (n, k = (n + h / 60) % 6) => v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);

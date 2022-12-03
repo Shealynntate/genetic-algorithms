@@ -57,9 +57,9 @@ function ControlPanel() {
         </Box>
         <TriangleSlider />
         <PopulationSlider />
+        <EliteSlider />
         <MutationSlider />
         <SelectionTypeInput />
-        <EliteSlider />
         <Stack direction="row">
           <PrimaryButton
             currentState={simulationState}

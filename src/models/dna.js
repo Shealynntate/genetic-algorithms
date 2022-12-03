@@ -105,10 +105,9 @@ class DNA {
 
   mutate(noise) {
     if (flipCoin()) {
-      this.mutatePoints(noise);
-    } else {
       this.mutateColor(noise);
     }
+    this.mutatePoints(noise);
   }
 
   mutateColor(noise) {

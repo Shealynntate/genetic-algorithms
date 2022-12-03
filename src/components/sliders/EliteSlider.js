@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import StarIcon from '@mui/icons-material/Star';
 import { eliteCountBounds } from '../../constants';
 import { setEliteCount } from '../../features/parameters/parametersSlice';
 import ParameterSlider from './ParameterSlider';
@@ -19,7 +20,8 @@ function EliteSlider() {
     <ParameterSlider
       value={value}
       setValue={setValue}
-      label="Elites"
+      Icon={StarIcon}
+      tooltip="Number of elites cloned into the next generation"
       min={min}
       max={max}
       step={step}

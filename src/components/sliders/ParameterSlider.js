@@ -1,29 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Slider, Typography } from '@mui/material';
+import { Grid, Slider, Tooltip } from '@mui/material';
 
 function ParameterSlider({
   value,
   setValue,
   formatValue,
-  label,
+  Icon,
+  tooltip,
   min,
   max,
   step,
 }) {
   return (
     <Grid container>
-      <Grid item xs={4}>
-        <Typography variant="caption">{label}</Typography>
+      <Grid item xs={3}>
+        <Tooltip title={tooltip}>
+          <Icon />
+        </Tooltip>
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={9}>
         <Slider
           value={value}
           min={min}
           max={max}
           step={step}
           onChange={(_, v) => { setValue(v); }}
-          aria-label={label}
+          aria-label={tooltip}
           valueLabelFormat={formatValue}
           valueLabelDisplay="auto"
         />
@@ -35,8 +38,9 @@ function ParameterSlider({
 ParameterSlider.propTypes = {
   value: PropTypes.number.isRequired,
   setValue: PropTypes.func.isRequired,
-  label: PropTypes.string.isRequired,
   formatValue: PropTypes.func,
+  Icon: PropTypes.node.isRequired,
+  tooltip: PropTypes.string,
   min: PropTypes.number.isRequired,
   max: PropTypes.number.isRequired,
   step: PropTypes.number,
@@ -45,6 +49,7 @@ ParameterSlider.propTypes = {
 ParameterSlider.defaultProps = {
   formatValue: (v) => v,
   step: 1,
+  tooltip: null,
 };
 
 export default ParameterSlider;

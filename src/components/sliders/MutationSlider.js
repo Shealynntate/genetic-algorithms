@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
 import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Box } from '@mui/material';
+import ScienceIcon from '@mui/icons-material/Science';
 import { curveMonotoneX } from '@visx/curve';
 import { Group } from '@visx/group';
-import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import { scaleLinear } from '@visx/scale';
 import { AreaClosed, LinePath } from '@visx/shape';
+import { Grid } from '@visx/grid';
 import ParameterSlider from './ParameterSlider';
 import { setMutationRate } from '../../features/parameters/parametersSlice';
 import NormalDistribution from '../../globals/normalDistribution';
@@ -26,8 +27,14 @@ const createData = (mean, sigma) => {
   return { dist: result, max };
 };
 
-// const graphWidth = 200;
-const graphHeight = 100;
+const graphWidth = 190;
+const graphHeight = 130;
+const margin = {
+  left: 20,
+  top: 2,
+  right: 6,
+  bottom: 15,
+};
 
 function MutationSlider() {
   const dispatch = useDispatch();
@@ -46,8 +53,11 @@ function MutationSlider() {
     setMaxValue(max);
   };
 
+  const fullWidth = graphWidth + margin.left + margin.right;
+  const fullHeight = graphHeight + margin.top + margin.bottom;
+
   const xScale = useMemo(() => scaleLinear({
-    range: [20, 200 - 20],
+    range: [0, graphWidth],
     domain: [-(value * 5), value * 5],
   }), [value]);
 
@@ -56,57 +66,86 @@ function MutationSlider() {
     domain: [0, maxValue],
   }), [maxValue]);
 
-  const margin = {
-    left: 10,
-    top: 10,
-    right: 10,
-    bottom: 10,
-  };
+  const bgColor = theme.palette.background.default;
+  const axisColor = theme.palette.grey[400];
 
   return (
     <Box pb={4}>
-      <div>
-        <ParentSize>
-          {({ width }) => (
-            <svg width={width} height={graphHeight + margin.top + margin.bottom}>
-              <AxisLeft
-                scale={yScale}
-                left={margin.left}
-                tickValues={yScale.ticks(6)}
-              />
-              <Group left={margin.left}>
-                <LinePath
-                  data={data}
-                  x={(entry) => xScale(entry.x)}
-                  y={(entry) => yScale(entry.y)}
-                  curve={curveMonotoneX}
-                  stroke={theme.palette.primary.light}
-                  strokeWidth={1}
-                />
-                <AreaClosed
-                  data={data}
-                  x={(entry) => xScale(entry.x)}
-                  y={(entry) => yScale(entry.y)}
-                  curve={curveMonotoneX}
-                  yScale={yScale}
-                  fillOpacity={0.1}
-                  fill={theme.palette.primary.light}
-                />
-                <AxisBottom
-                  scale={xScale}
-                  top={graphHeight - margin.bottom}
-                  tickValues={xScale.ticks(5)}
-                />
-              </Group>
-            </svg>
-          )}
-        </ParentSize>
-      </div>
+      <Box sx={{ borderRadius: `${theme.shape.borderRadius}px`, overflow: 'hidden' }}>
+        <svg width={fullWidth} height={fullHeight}>
+          <Group top={margin.top} left={margin.left}>
+            <rect
+              x={0}
+              y={0}
+              width={graphWidth}
+              height={graphHeight}
+              fill={bgColor}
+              rx={theme.shape.borderRadius}
+            />
+            <Grid
+              xScale={xScale}
+              yScale={yScale}
+              width={graphWidth}
+              height={graphHeight}
+              stroke="white"
+              strokeOpacity={0.10}
+            />
+            <LinePath
+              data={data}
+              x={(entry) => xScale(entry.x)}
+              y={(entry) => yScale(entry.y)}
+              curve={curveMonotoneX}
+              stroke={theme.palette.primary.light}
+              strokeWidth={1}
+            />
+            <AreaClosed
+              data={data}
+              x={(entry) => xScale(entry.x)}
+              y={(entry) => yScale(entry.y)}
+              curve={curveMonotoneX}
+              yScale={yScale}
+              fillOpacity={0.1}
+              fill={theme.palette.primary.light}
+            />
+          </Group>
+          <AxisLeft
+            scale={yScale}
+            top={margin.top}
+            left={margin.left}
+            tickValues={yScale.ticks(6)}
+            tickStroke={axisColor}
+            tickLength={4}
+            hideAxisLine
+            tickLabelProps={() => ({
+              fill: axisColor,
+              fontSize: 9,
+              textAnchor: 'end',
+              dx: -1,
+              dy: 3,
+            })}
+          />
+          <AxisBottom
+            scale={xScale}
+            top={fullHeight - margin.bottom}
+            left={margin.left}
+            tickValues={xScale.ticks(5)}
+            tickStroke={axisColor}
+            tickLength={4}
+            hideAxisLine
+            tickLabelProps={() => ({
+              fill: axisColor,
+              fontSize: 9,
+              textAnchor: 'middle',
+            })}
+          />
+        </svg>
+      </Box>
       <ParameterSlider
         value={value}
         setValue={setValue}
         formatValue={(v) => `${(v * 100).toFixed(0)}%`}
-        label="Mutation"
+        Icon={ScienceIcon}
+        tooltip="Sigma value for the Mutation rate (follows a Normal Distribution)"
         min={min}
         max={max}
         step={step}

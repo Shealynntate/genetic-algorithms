@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import ChangeHistoryTwoToneIcon from '@mui/icons-material/ChangeHistoryTwoTone';
 import { triangleBounds } from '../../constants';
 import { setTriangles } from '../../features/parameters/parametersSlice';
 import ParameterSlider from './ParameterSlider';
@@ -19,7 +20,8 @@ function TriangleSlider() {
       value={value}
       setValue={setValue}
       formatValue={(v) => v.toLocaleString()}
-      label="Triangles"
+      Icon={ChangeHistoryTwoToneIcon}
+      tooltip="Number of triangles used in a image"
       min={min}
       max={max}
       step={step}

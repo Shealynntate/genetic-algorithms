@@ -12,12 +12,15 @@ import {
   approxEqual,
   createImageData,
   generateTreeLayer,
+  setSigFigs,
   shouldSaveGenImage,
 } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
 import Population from '../../models/population';
 import { endSimulation, resetSimulation, runSimulation } from '../ux/uxSlice';
 import {
+  addMaxFitnessScore,
+  clearMaxFitnessScores,
   setCurrentGen,
   setGenealogyTree,
   setGlobalBest,
@@ -27,10 +30,18 @@ import {
 let population;
 let randomNoise;
 const runDelay = 0;
+const fitnessSigFigs = 3;
+const stagnationThreshold = 200;
 
 clearDatabase();
 
 function* processNextGenerationSaga(parentGen, nextGen) {
+  randomNoise.nextGeneration();
+
+  // Update the list of maxFitness scores
+  const { maxFitness } = parentGen;
+  yield put(addMaxFitnessScore(setSigFigs(maxFitness, fitnessSigFigs)));
+  // Form the next layer of the Genealogy Tree
   const parentLayer = generateTreeLayer([parentGen, nextGen], 0);
   const newLayer = generateTreeLayer([parentGen, nextGen], 1);
   const tree = [parentLayer, newLayer];
@@ -94,9 +105,26 @@ function* updateGlobalBestSaga({ payload }) {
   }
 }
 
+function* stagnationDaemonSaga() {
+  const scores = yield select((state) => state.metadata.maxFitnessScores);
+  const start = scores.length - stagnationThreshold - 1;
+  if (start < 0 || randomNoise.inDecay) {
+    return;
+  }
+  for (let i = start; i < scores.length; ++i) {
+    if (scores[i] > scores[start]) {
+      // A generation's max score has improved within the threshold, don't disrupt
+      return;
+    }
+  }
+  // Create disruption event
+  // randomNoise.disrupt();
+}
+
 function* resetSimulationSaga() {
   yield put(setCurrentGen({}));
   yield put(setGenealogyTree([]));
+  yield put(clearMaxFitnessScores());
   yield call(clearDatabase);
 }
 
@@ -104,6 +132,7 @@ function* metadataSaga() {
   yield takeEvery(runSimulation, runSimulationSaga);
   yield takeEvery(setCurrentGen, updateGlobalBestSaga);
   yield takeEvery(resetSimulation, resetSimulationSaga);
+  yield takeEvery(addMaxFitnessScore, stagnationDaemonSaga);
 }
 
 export default metadataSaga;
