@@ -1,4 +1,5 @@
 import { randomNormal } from 'd3';
+import { setSigFigs } from './utils';
 
 /**
  *
@@ -16,7 +17,7 @@ class RandomNoise {
   }
 
   next() {
-    return this.noise();
+    return setSigFigs(this.noise(), 4);
   }
 
   setSigma(sigma) {

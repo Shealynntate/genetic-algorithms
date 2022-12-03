@@ -19,7 +19,7 @@ function Header() {
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
+        <Toolbar variant="dense" disableGutters sx={{ justifyContent: 'space-between' }}>
           <Typography variant="h4">Genetic Algorithms</Typography>
           <Box>
             <Button onClick={() => setAboutOpen(true)}>Gallery</Button>

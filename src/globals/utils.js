@@ -186,14 +186,52 @@ export const fileToBase64 = async (file) => {
   return promise;
 };
 
+export const downloadFile = (data) => {
+  const fileName = 'image-history';
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const href = URL.createObjectURL(blob);
+  // Create "a" element with href to file
+  const link = document.createElement('a');
+  link.href = href;
+  link.download = `${fileName}.json`;
+  document.body.appendChild(link);
+  link.click();
+  // cCean up element & remove ObjectURL
+  document.body.removeChild(link);
+  URL.revokeObjectURL(href);
+};
+
 // [0, 100, 200, 300, 400, 600, 800, 1000, 1500, 2000, ...]
+// const saveThresholds = [
+//   { threshold: 50, mod: 10 },
+//   { threshold: 100, mod: 50 },
+//   { threshold: 300, mod: 100 },
+//   { threshold: 1000, mod: 200 },
+//   { threshold: 5000, mod: 500 },
+//   { threshold: 10000, mod: 1000 },
+//   { threshold: Math.MAX_SAFE_INTEGER, mod: 5000 },
+// ];
+
 export const shouldSaveGenImage = (genId) => {
-  let mod = 500;
+  let mod = 5000;
+  if (genId <= 10000) {
+    mod = 1000;
+  }
+  if (genId <= 5000) {
+    mod = 500;
+  }
   if (genId <= 1000) {
     mod = 200;
   }
   if (genId <= 300) {
     mod = 100;
+  }
+  if (genId <= 100) {
+    mod = 50;
+  }
+  if (genId <= 60) {
+    mod = 20;
   }
   return (genId % mod) === 0;
 };

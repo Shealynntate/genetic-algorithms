@@ -4,6 +4,7 @@ import { Alert, Box, Snackbar } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDisableSettings } from '../hooks';
 import { AlertState, canvasParameters } from '../constants';
 import { setTarget } from '../features/parameters/parametersSlice';
 import { createImageData, fileToBase64 } from '../globals/utils';
@@ -19,6 +20,7 @@ const AlertMessage = {
 function ImageInput() {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const isDisabled = useDisableSettings();
   const target = useSelector((state) => state.parameters.target);
   const [imageData, setImageData] = useState();
   const [alertState, setAlertState] = useState();
@@ -55,6 +57,7 @@ function ImageInput() {
     onDropRejected: () => {
       setAlertState(AlertState.warning);
     },
+    disabled: isDisabled,
     maxFiles: 1,
   });
 

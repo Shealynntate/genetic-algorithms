@@ -64,9 +64,11 @@ class Genome {
     }
 
     let difference = 0;
-    pixels.forEach((pixel, index) => {
-      difference += Math.abs(pixel - target[index]);
-    });
+    // Note: This for-loop is an order of magnitude faster than Array.prototype.forEach
+    // Super important here since each length is tens of thousands of pixels per organism
+    for (let i = 0; i < pixels.length; i++) {
+      difference += Math.abs(pixels[i] - target[i]);
+    }
 
     return (1 - difference / denominator);
   }

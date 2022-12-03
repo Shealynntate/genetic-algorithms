@@ -38,7 +38,7 @@ function App() {
       <Header />
       <Container>
         <Grid container spacing={theme.spacing(2)} margin={theme.spacing(0)}>
-          <Grid item xs={3}>
+          <Grid item xs={4}>
             <Box sx={{ display: 'flex' }}>
               <ControlPanel />
             </Box>
@@ -54,7 +54,7 @@ function App() {
               </ParentSize>
             </Paper> */}
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={8}>
             <DisplayTabs />
           </Grid>
         </Grid>

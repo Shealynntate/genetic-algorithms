@@ -10,14 +10,14 @@ function GlobalBest() {
 
   return (
     <Box>
-      <Typography>All Time Best</Typography>
+      <Typography pb={1}>All Time Best</Typography>
       <OrganismCanvas organism={globalBest.organism} />
-      <Box>
-        <Typography variant="caption" sx={{ display: 'block' }}>
+      <Box sx={{ justifyContent: 'space-between' }}>
+        <Typography variant="caption">
           {`Gen: ${globalBest.id}`}
         </Typography>
         <Typography variant="caption">
-          {`Fitness: ${globalBest.organism.fitness.toFixed(4)}`}
+          {`Score: ${globalBest.organism.fitness.toFixed(3)}`}
         </Typography>
       </Box>
     </Box>

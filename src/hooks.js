@@ -4,6 +4,12 @@ import { SimulationState } from './constants';
 import { createImageData } from './globals/utils';
 import database from './globals/database';
 
+const SettingsDisabledStates = [
+  SimulationState.RUNNING,
+  SimulationState.PAUSED,
+  SimulationState.COMPLETE,
+];
+
 export const useIsRunning = () => {
   const simulationState = useSelector((state) => state.ux.simulationState);
   return simulationState === SimulationState.RUNNING;
@@ -17,6 +23,11 @@ export const useIsComplete = () => {
 export const useIsPaused = () => {
   const simulationState = useSelector((state) => state.ux.simulationState);
   return simulationState === SimulationState.PAUSED;
+};
+
+export const useDisableSettings = () => {
+  const simulationState = useSelector((state) => state.ux.simulationState);
+  return SettingsDisabledStates.includes(simulationState);
 };
 
 export const useMaxFitness = () => {

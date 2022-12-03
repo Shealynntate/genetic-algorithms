@@ -39,7 +39,7 @@ export const populationBounds = {
 
 export const eliteCountBounds = {
   min: 0,
-  step: 1,
+  step: 2,
 };
 
 export const mutationBounds = {

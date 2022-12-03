@@ -5,15 +5,18 @@ import {
   flipCoin,
   genRange,
   randomInt,
+  setSigFigs,
 } from '../globals/utils';
+
+const rand = () => setSigFigs(Math.random(), 4);
 
 const randomColorValue = () => randomInt(0, maxColorValue);
 const randomColor = () => (
-  [randomColorValue(), randomColorValue(), randomColorValue(), Math.random()]
+  [randomColorValue(), randomColorValue(), randomColorValue(), rand()]
 );
 // const randomColor = () => [0, 0, 0, 0];
 
-const randomPoint = () => [Math.random(), Math.random()];
+const randomPoint = () => [rand(), rand()];
 
 class DNA {
   static swap(type, dna1, dna2, index) {
@@ -104,9 +107,7 @@ class DNA {
   }
 
   mutate(noise) {
-    if (flipCoin()) {
-      this.mutateColor(noise);
-    }
+    this.mutateColor(noise);
     this.mutatePoints(noise);
   }
 

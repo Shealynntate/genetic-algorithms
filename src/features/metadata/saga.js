@@ -90,6 +90,8 @@ function* targetReachedSaga({ fitness }) {
   }
 }
 
+// let lastSavedId = -10;
+
 function* updateGlobalBestSaga({ payload }) {
   const { id, maxFitOrganism } = payload;
   const globalBest = yield select((state) => state.metadata.globalBest);
@@ -100,6 +102,13 @@ function* updateGlobalBestSaga({ payload }) {
   // Check if the latest generation's most fit organism can beat our global best
   if (maxFitOrganism.fitness > currentBest) {
     yield put(setGlobalBest({ id, organism: maxFitOrganism }));
+    // Check if we should store a copy of the maxFitOrganism for Image History
+    // if (shouldSaveGenImage(population.genId)) {
+    // if (population.genId >= lastSavedId + 10) {
+    //   lastSavedId = population.genId;
+    //   yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
+    //   yield delay(10);
+    // }
     // Check if this new best reaches our target fitness
     yield call(targetReachedSaga, maxFitOrganism);
   }
