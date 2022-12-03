@@ -186,8 +186,7 @@ export const fileToBase64 = async (file) => {
   return promise;
 };
 
-export const downloadFile = (data) => {
-  const fileName = 'image-history';
+export const downloadFile = (fileName, data) => {
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const href = URL.createObjectURL(blob);

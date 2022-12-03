@@ -1,16 +1,13 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Box, Button, Paper, Stack, Typography,
+  Box, Paper, Stack, Typography,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { omit } from 'lodash';
 import OrganismCanvas from './OrganismCanvas';
 import Canvas from './Canvas';
 import { canvasParameters } from '../constants';
 import { useImageDbQuery } from '../hooks';
-import { getImages } from '../globals/database';
-import { downloadFile } from '../globals/utils';
 
 const { width, height } = canvasParameters;
 
@@ -49,12 +46,6 @@ function SimulationStatusPanel() {
   const images = useImageDbQuery() || [];
   const { maxFitOrganism } = currentGen;
 
-  const onClick = async () => {
-    const history = await getImages();
-    const contents = history.map((entry) => omit(entry, ['imageData']));
-    downloadFile(contents);
-  };
-
   return (
     <Paper>
       <Stack direction="row">
@@ -65,7 +56,6 @@ function SimulationStatusPanel() {
           <StatusText>{`Fitness: ${maxFitOrganism?.fitness.toFixed(4) || 0}`}</StatusText>
           <StatusText>{`Deviation: ${currentGen.deviation?.toFixed(4) || 0}`}</StatusText>
         </Box>
-        <Button onClick={onClick}>Download</Button>
       </Stack>
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
         {images.slice().reverse().map(({ gen, fitness, imageData }) => (

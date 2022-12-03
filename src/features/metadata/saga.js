@@ -5,7 +5,7 @@ import {
   takeEvery,
   delay,
 } from 'redux-saga/effects';
-import { addImageToDatabase, clearDatabase } from '../../globals/database';
+import { addImageToDatabase, clearDatabase, initializeDBEntry } from '../../globals/database';
 import { targetFitness } from '../../constants';
 import RandomNoise from '../../globals/randomNoise';
 import {
@@ -70,10 +70,19 @@ function* runGenerationSaga() {
 
 function* runSimulationSaga() {
   const populationSize = yield select((state) => state.parameters.populationSize);
+  const eliteCount = yield select((state) => state.parameters.eliteCount);
+  const selectionType = yield select((state) => state.parameters.selectionType);
   const triangleCount = yield select((state) => state.parameters.triangleCount);
   const target = yield select((state) => state.parameters.target);
   const mutation = yield select((state) => state.parameters.mutationRate);
-
+  // Store our parameters in the database
+  yield call(initializeDBEntry, {
+    triangleCount,
+    selectionType,
+    populationSize,
+    eliteCount,
+    mutation,
+  });
   const { data } = yield createImageData(target);
   if (!population) {
     population = new Population(populationSize, triangleCount, data);
