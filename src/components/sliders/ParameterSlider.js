@@ -39,7 +39,7 @@ ParameterSlider.propTypes = {
   value: PropTypes.number.isRequired,
   setValue: PropTypes.func.isRequired,
   formatValue: PropTypes.func,
-  Icon: PropTypes.node.isRequired,
+  Icon: PropTypes.element.isRequired,
   tooltip: PropTypes.string,
   min: PropTypes.number.isRequired,
   max: PropTypes.number.isRequired,

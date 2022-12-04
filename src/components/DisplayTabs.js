@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Tab, Tabs } from '@mui/material';
 import TabPanel from './TabPanel';
-import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
+// import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
 import SimulationStatusPanel from './SimulationStatusPanel';
 
 function DisplayTabs() {
@@ -23,7 +23,7 @@ function DisplayTabs() {
         <SimulationStatusPanel />
       </TabPanel>
       <TabPanel index={1} value={value}>
-        <GenealogyVisualization />
+        {/* <GenealogyVisualization /> */}
       </TabPanel>
     </Box>
   );

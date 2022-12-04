@@ -1,15 +1,18 @@
-import React, { memo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Box, Paper, Stack, Typography,
+  Box,
+  Button,
+  Paper,
+  Stack,
+  Typography,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-import OrganismCanvas from './OrganismCanvas';
-import Canvas from './Canvas';
-import { canvasParameters } from '../constants';
 import { useImageDbQuery } from '../hooks';
-
-const { width, height } = canvasParameters;
+import OrganismCanvas from './OrganismCanvas';
+import HistoryEntry from './HistoryEntry';
+import { getCurrentImages } from '../globals/database';
+import { createGif } from '../globals/utils';
 
 function StatusText({ children }) {
   return <Typography variant="caption" sx={{ display: 'block' }}>{children}</Typography>;
@@ -19,32 +22,18 @@ StatusText.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-function HistoryEntry({ genId, fitness, imageData }) {
-  return (
-    <Box>
-      <Canvas
-        width={width}
-        height={height}
-        imageData={imageData}
-      />
-      <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
-        <Typography variant="caption">{`Gen: ${genId}`}</Typography>
-        <Typography variant="caption">{`Score: ${fitness.toFixed(3)}`}</Typography>
-      </Box>
-    </Box>
-  );
-}
-
-HistoryEntry.propTypes = {
-  genId: PropTypes.number.isRequired,
-  fitness: PropTypes.number.isRequired,
-  imageData: PropTypes.instanceOf(ImageData).isRequired,
-};
+const fileName = 'ga-image-timelapse';
 
 function SimulationStatusPanel() {
   const currentGen = useSelector((state) => state.metadata.currentGen);
   const images = useImageDbQuery() || [];
   const { maxFitOrganism } = currentGen;
+
+  const downloadGif = async () => {
+    const history = await getCurrentImages();
+    const imageData = history.map((entry) => entry.imageData);
+    createGif(imageData, fileName);
+  };
 
   return (
     <Paper>
@@ -56,6 +45,13 @@ function SimulationStatusPanel() {
           <StatusText>{`Fitness: ${maxFitOrganism?.fitness.toFixed(4) || 0}`}</StatusText>
           <StatusText>{`Deviation: ${currentGen.deviation?.toFixed(4) || 0}`}</StatusText>
         </Box>
+        <Button
+          variant="contained"
+          onClick={() => { downloadGif(); }}
+          sx={{ height: 'fit-content', margin: 'auto 0' }}
+        >
+          Make it a gif!
+        </Button>
       </Stack>
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
         {images.slice().reverse().map(({ gen, fitness, imageData }) => (
@@ -71,4 +67,4 @@ function SimulationStatusPanel() {
   );
 }
 
-export default memo(SimulationStatusPanel);
+export default SimulationStatusPanel;

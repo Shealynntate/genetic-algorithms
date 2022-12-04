@@ -107,3 +107,37 @@ export const generateTreeLayer = (generations, genIndex) => {
 export const genNodePropsAreEqual = (prevProps, nextProps) => (
   prevProps.id === nextProps.id && prevProps.isNewestGeneration === nextProps.isNewestGeneration
 );
+
+// [0, 100, 200, 300, 400, 600, 800, 1000, 1500, 2000, ...]
+// const saveThresholds = [
+//   { threshold: 50, mod: 10 },
+//   { threshold: 100, mod: 50 },
+//   { threshold: 300, mod: 100 },
+//   { threshold: 1000, mod: 200 },
+//   { threshold: 5000, mod: 500 },
+//   { threshold: 10000, mod: 1000 },
+//   { threshold: Math.MAX_SAFE_INTEGER, mod: 5000 },
+// ];
+
+export const shouldSaveGenImage = (genId) => {
+  let mod = 5000;
+  if (genId <= 10000) {
+    mod = 1000;
+  }
+  if (genId <= 5000) {
+    mod = 500;
+  }
+  if (genId <= 1000) {
+    mod = 200;
+  }
+  if (genId <= 300) {
+    mod = 100;
+  }
+  if (genId <= 100) {
+    mod = 50;
+  }
+  if (genId <= 60) {
+    mod = 20;
+  }
+  return (genId % mod) === 0;
+};

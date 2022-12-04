@@ -10,10 +10,10 @@ import PropTypes from 'prop-types';
 import { omit } from 'lodash';
 import React, { useState } from 'react';
 import { getCurrentImages, getCurrentMetadata } from '../../globals/database';
-import { downloadFile } from '../../globals/utils';
+import { downloadJSON } from '../../globals/utils';
 
 function DeveloperMenu({ open, onClose }) {
-  const [imageTitle, setImageTitle] = useState();
+  const [imageTitle, setImageTitle] = useState('');
 
   const onClick = async () => {
     const metadata = await getCurrentMetadata();
@@ -23,7 +23,7 @@ function DeveloperMenu({ open, onClose }) {
     contents.name = imageTitle;
     contents.images = history.map((entry) => omit(entry, ['imageData']));
 
-    downloadFile(imageTitle, contents);
+    downloadJSON(imageTitle, contents);
   };
 
   return (

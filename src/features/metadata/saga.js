@@ -9,8 +9,8 @@ import { addImageToDatabase, clearDatabase, initializeDBEntry } from '../../glob
 import { targetFitness } from '../../constants';
 import RandomNoise from '../../globals/randomNoise';
 import { approxEqual, setSigFigs } from '../../globals/statsUtils';
-import { generateTreeLayer } from '../../globals/treeUtils';
-import { createImageData, shouldSaveGenImage } from '../../globals/utils';
+import { generateTreeLayer, shouldSaveGenImage } from '../../globals/treeUtils';
+import { createImageData } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
 import Population from '../../models/population';
 import { endSimulation, resetSimulation, runSimulation } from '../ux/uxSlice';
