@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { clamp } from 'lodash';
 import { maxColorValue } from '../constants';
-import { flipCoin, randomInt, setSigFigs } from '../globals/stats';
+import { flipCoin, randomInt, setSigFigs } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 
 const rand = () => setSigFigs(Math.random(), 4);

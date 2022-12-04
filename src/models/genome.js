@@ -1,4 +1,4 @@
-import { flipCoin, randomIndex } from '../globals/stats';
+import { flipCoin, randomIndex } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 import Phenotype from './phenotype';
 import DNA from './dna';

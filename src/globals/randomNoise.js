@@ -1,5 +1,5 @@
 import { randomNormal } from 'd3';
-import { setSigFigs } from './stats';
+import { setSigFigs } from './statsUtils';
 
 /**
  *

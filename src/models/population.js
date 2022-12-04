@@ -1,8 +1,9 @@
 import { deviation } from 'd3-array';
 import Organism from './organism';
 import { SelectionType } from '../constants';
-import { randomFloat, randomIndex } from '../globals/stats';
-import { fitnessBounds, genRange } from '../globals/utils';
+import { randomFloat, randomIndex } from '../globals/statsUtils';
+import { fitnessBounds } from '../globals/treeUtils';
+import { genRange } from '../globals/utils';
 
 class Population {
   static get nextGenId() {

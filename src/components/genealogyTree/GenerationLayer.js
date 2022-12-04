@@ -7,7 +7,7 @@ import { localPoint } from '@visx/event';
 import { Typography } from '@mui/material';
 import { OrganismNodeType } from '../../types';
 import { treeParameters } from '../../constants';
-import { genNodePropsAreEqual, xyToNodeIndex } from '../../globals/utils';
+import { genNodePropsAreEqual, xyToNodeIndex } from '../../globals/treeUtils';
 import OrganismTreeLink from './OrganismTreeLink';
 import OrganismTreeNode from './OrganismTreeNode';
 
