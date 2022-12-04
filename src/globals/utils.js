@@ -6,47 +6,6 @@ export const genRange = (max) => ([...Array(max).keys()]);
 
 export const genMinMaxRange = (min, max) => ([...Array(max).keys()].slice(min));
 
-export const approxEqual = (a, b) => (Math.round(1000 * a) === Math.round(1000 * b));
-
-/**
- * Generates a random index into an array of the specified length
- * @param {*} length - The length of the array
- * @returns An index value between [0, length)
- */
-export const randomIndex = (length) => (Math.trunc(Math.random() * length));
-
-export const flipCoin = (bias = 0.5) => (Math.random() <= bias);
-
-export const randomFloat = (start, end) => (Math.random() * (end - start)) + start;
-
-export const randomInt = (start, end) => (Math.round(Math.random() * (end - start)) + start);
-
-export const maxFitOrganism = (orgs) => _.maxBy(orgs, 'fitness');
-
-export const maxFitness = (orgs) => maxFitOrganism(orgs)?.fitness || 0;
-
-export const meanFitness = (orgs) => _.meanBy(orgs, 'fitness');
-
-export const minFitness = (orgs) => _.minBy(orgs, 'fitness')?.fitness || 0;
-
-export const fitnessBounds = (orgs) => {
-  let max = Number.MIN_SAFE_INTEGER;
-  let min = Number.MAX_SAFE_INTEGER;
-  let total = 0;
-  orgs.forEach(({ fitness }) => {
-    if (fitness < min) min = fitness;
-    if (fitness > max) max = fitness;
-    total += fitness;
-  });
-
-  return [min, total / orgs.length, max];
-};
-
-export const setSigFigs = (value, sigFigs) => {
-  const m = 10 ** sigFigs;
-  return Math.round(value * m) / m;
-};
-
 // input: h in [0,360] and s,v in [0,1] - output: r,g,b in [0,1]
 export const hsv2rgb = (h, s, v) => {
   const f = (n, k = (n + h / 60) % 6) => v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
@@ -92,6 +51,19 @@ const organismById = (id, organisms) => {
   if (!organism) return null;
   // Only return the parent's position to avoid overhead of recursive parent pointers
   return _.pick(organism, ['x', 'y', 'id', 'genome', 'fitness']);
+};
+
+export const fitnessBounds = (orgs) => {
+  let max = Number.MIN_SAFE_INTEGER;
+  let min = Number.MAX_SAFE_INTEGER;
+  let total = 0;
+  orgs.forEach(({ fitness }) => {
+    if (fitness < min) min = fitness;
+    if (fitness > max) max = fitness;
+    total += fitness;
+  });
+
+  return [min, total / orgs.length, max];
 };
 
 export const generateTree = (generations) => {

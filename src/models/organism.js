@@ -1,4 +1,4 @@
-import { flipCoin } from '../globals/utils';
+import { flipCoin } from '../globals/stats';
 import Genome from './genome';
 
 const crossoverProb = 0.1;

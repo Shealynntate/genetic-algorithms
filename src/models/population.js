@@ -1,12 +1,8 @@
 import { deviation } from 'd3-array';
 import Organism from './organism';
 import { SelectionType } from '../constants';
-import {
-  fitnessBounds,
-  genRange,
-  randomFloat,
-  randomIndex,
-} from '../globals/utils';
+import { randomFloat, randomIndex } from '../globals/stats';
+import { fitnessBounds, genRange } from '../globals/utils';
 
 class Population {
   static get nextGenId() {
@@ -20,24 +16,24 @@ class Population {
     this.genId = Population.nextGenId;
     this.target = target;
     this.organisms = [...Array(size)].map(() => new Organism({ genomeSize }));
-    this.fitnessEvaluatedFlag = false;
     // Prep for the first call of runGeneration
     this.evaluateFitness();
   }
 
   runGeneration(selectionType, eliteCount, mutationNoise) {
-    this.fitnessEvaluatedFlag = false;
     this.performSelection(selectionType, eliteCount, mutationNoise);
     this.evaluateFitness();
-
     return this.createGenNodes();
   }
 
+  /**
+   * Evaluates the fitness of each organism in the population
+   * Should only be called per generation as it's compulationally expensive
+   * @returns null
+   */
   evaluateFitness() {
-    if (this.fitnessEvaluatedFlag) return;
     // Have each Organism compute its fitness score
     this.organisms.forEach((org) => org.evaluateFitness(this.target));
-    this.fitnessEvaluatedFlag = true;
   }
 
   performSelection(selectionType, eliteCount, mutationNoise) {
@@ -164,7 +160,6 @@ class Population {
    * @returns the array of sorted organisms
    */
   organismsByFitness() {
-    this.evaluateFitness();
     return [...this.organisms].sort((a, b) => b.fitness - a.fitness);
   }
 

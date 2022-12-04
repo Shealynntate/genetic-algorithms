@@ -6,11 +6,18 @@ import {
   // Paper,
 } from '@mui/material';
 // import ParentSize from '@visx/responsive/lib/components/ParentSize';
+import styled from '@emotion/styled';
 import ControlPanel from './ControlPanel';
 // import OverviewChart from './overviewChart/OverviewChart';
 import theme from '../theme';
 import Header from './Header';
 import DisplayTabs from './DisplayTabs';
+
+const GridItem = styled(Grid)`
+  &.MuiGrid-item {
+    padding-top: 0;
+  }
+`;
 
 function App() {
   // const varianceRef = useRef([]);
@@ -38,7 +45,7 @@ function App() {
       <Header />
       <Container>
         <Grid container spacing={theme.spacing(2)} margin={theme.spacing(0)}>
-          <Grid item xs={4}>
+          <GridItem item xs={4}>
             <Box sx={{ display: 'flex' }}>
               <ControlPanel />
             </Box>
@@ -49,14 +56,13 @@ function App() {
                     parentRef={ref}
                     tree={tree}
                     targetFitness={1}
-                  />
                 )}
               </ParentSize>
             </Paper> */}
-          </Grid>
-          <Grid item xs={8}>
+          </GridItem>
+          <GridItem item xs={8}>
             <DisplayTabs />
-          </Grid>
+          </GridItem>
         </Grid>
       </Container>
     </div>

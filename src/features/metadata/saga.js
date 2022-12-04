@@ -8,11 +8,10 @@ import {
 import { addImageToDatabase, clearDatabase, initializeDBEntry } from '../../globals/database';
 import { targetFitness } from '../../constants';
 import RandomNoise from '../../globals/randomNoise';
+import { approxEqual, setSigFigs } from '../../globals/stats';
 import {
-  approxEqual,
   createImageData,
   generateTreeLayer,
-  setSigFigs,
   shouldSaveGenImage,
 } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';

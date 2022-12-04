@@ -1,4 +1,5 @@
-import { flipCoin, genRange, randomIndex } from '../globals/utils';
+import { flipCoin, randomIndex } from '../globals/stats';
+import { genRange } from '../globals/utils';
 import Phenotype from './phenotype';
 import DNA from './dna';
 import { canvasParameters, maxColorValue } from '../constants';
