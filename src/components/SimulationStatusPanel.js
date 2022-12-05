@@ -9,10 +9,10 @@ import {
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useImageDbQuery } from '../hooks';
-import OrganismCanvas from './OrganismCanvas';
-import HistoryEntry from './HistoryEntry';
-import { getCurrentImages } from '../globals/database';
 import { createGif } from '../globals/utils';
+import OrganismCanvas from './OrganismCanvas';
+import { getCurrentImages } from '../globals/database';
+import HistoryDisplay from './HistoryDisplay';
 
 function StatusText({ children }) {
   return <Typography variant="caption" sx={{ display: 'block' }}>{children}</Typography>;
@@ -32,7 +32,9 @@ function SimulationStatusPanel() {
   const downloadGif = async () => {
     const history = await getCurrentImages();
     const imageData = history.map((entry) => entry.imageData);
-    createGif(imageData, fileName);
+    const lastImg = imageData[imageData.length - 1];
+    // Show the last image 4 times as long in the gif
+    createGif([...imageData, lastImg, lastImg, lastImg], fileName);
   };
 
   return (
@@ -53,16 +55,7 @@ function SimulationStatusPanel() {
           Make it a gif!
         </Button>
       </Stack>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-        {images.slice().reverse().map(({ gen, fitness, imageData }) => (
-          <HistoryEntry
-            key={`history-entry-${gen}`}
-            genId={gen}
-            fitness={fitness}
-            imageData={imageData}
-          />
-        ))}
-      </Box>
+      <HistoryDisplay images={images} />
     </Paper>
   );
 }

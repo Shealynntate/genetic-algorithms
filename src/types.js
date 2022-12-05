@@ -72,3 +72,9 @@ export const GlobalBestType = {
   id: PropTypes.number,
   organism: PropTypes.shape(OrganismNodeType),
 };
+
+export const ImageEntryType = {
+  gen: PropTypes.number,
+  fitness: PropTypes.number,
+  imageData: PropTypes.instanceOf(ImageData),
+};

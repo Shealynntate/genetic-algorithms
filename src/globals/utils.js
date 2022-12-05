@@ -1,4 +1,4 @@
-import GIFEncoder from './gifEncoder';
+import gifshot from 'gifshot';
 import { canvasParameters } from '../constants';
 
 export const genRange = (max) => ([...Array(max).keys()]);
@@ -50,9 +50,17 @@ export const fileToBase64 = async (file) => {
   return promise;
 };
 
+const imageDataToImage = async (imageData) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = imageData.width;
+  canvas.height = imageData.height;
+  canvas.getContext('2d').putImageData(imageData, 0, 0);
+
+  return createImage(canvas.toDataURL());
+};
+
 export const downloadFile = (fileName, data, blobType, fileType) => {
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], { type: blobType });
+  const blob = new Blob([data], { type: blobType });
   const href = URL.createObjectURL(blob);
   // Create "a" element with href to file
   const link = document.createElement('a');
@@ -60,7 +68,7 @@ export const downloadFile = (fileName, data, blobType, fileType) => {
   link.download = `${fileName}.${fileType}`;
   document.body.appendChild(link);
   link.click();
-  // cCean up element & remove ObjectURL
+  // Cean up element & remove ObjectURL
   document.body.removeChild(link);
   URL.revokeObjectURL(href);
 };
@@ -70,22 +78,33 @@ export const downloadJSON = (fileName, data) => {
   downloadFile(fileName, json, 'application/json', 'json');
 };
 
-export const createGif = (images, filename) => {
-  const encoder = GIFEncoder();
-  encoder.setDelay(1e3);
-  encoder.setSize(width, height);
+export const downloadGIF = (fileName, data) => {
+  downloadFile(fileName, data, 'image/gif', 'gif');
+};
 
-  if (!encoder.start()) {
-    throw new Error('[GIFEncoder] unable to start encoding process');
-  }
-  images.forEach((image) => {
-    if (!encoder.addFrame(image, true)) {
-      throw new Error('[GifEncode] unable to addFrame');
-    }
-  });
-  if (!encoder.finish()) {
-    throw new Error('[GIFEncoder] unable to finish encoding process');
-  }
-
-  encoder.download(filename);
+export const createGif = async (images, filename) => {
+  const imgs = await Promise.all(images.map(async (image) => (imageDataToImage(image))));
+  gifshot.createGIF(
+    {
+      images: imgs,
+      frameDuration: 5, // 10 = 1.0 seconds
+    },
+    ({
+      error,
+      errorCode,
+      errorMsg,
+      image, // base64 image (gif)
+    }) => {
+      if (error) {
+        throw new Error(`[Gifshot] ${errorCode}: ${errorMsg}`);
+      }
+      // Download the GIF
+      const a = document.createElement('a');
+      a.download = filename;
+      a.href = image;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    },
+  );
 };

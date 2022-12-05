@@ -8,7 +8,7 @@ function Gallery({ open, onClose }) {
   return (
     <Dialog open={open} onClose={onClose}>
       Gallery Here
-      <p>{data}</p>
+      {console.log('hello friend')}
     </Dialog>
   );
 }

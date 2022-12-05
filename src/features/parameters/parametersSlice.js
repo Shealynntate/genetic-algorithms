@@ -7,7 +7,7 @@ import monaLisa from '../../assets/mona_lisa.jpeg';
 const initialState = {
   populationSize: 300,
   mutationRate: 0.002,
-  triangleCount: 60,
+  triangleCount: 50,
   target: monaLisa,
   selectionType: SelectionType.TOURNAMENT,
   eliteCount: 0,

@@ -34,7 +34,9 @@ class Population {
    */
   evaluateFitness() {
     // Have each Organism compute its fitness score
-    this.organisms.forEach((org) => org.evaluateFitness(this.target));
+    for (let i = 0; i < this.size; ++i) {
+      this.organisms[i].evaluateFitness(this.target);
+    }
   }
 
   performSelection(selectionType, eliteCount, mutationNoise) {
