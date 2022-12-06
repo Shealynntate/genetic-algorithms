@@ -8,13 +8,13 @@ const { width, height } = canvasParameters;
 
 function HistoryEntry({ genId, fitness, imageData }) {
   return (
-    <Box>
+    <Box px={1}>
       <Canvas
         width={width}
         height={height}
         imageData={imageData}
       />
-      <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
         <Typography variant="caption">{`Gen: ${genId}`}</Typography>
         <Typography variant="caption">{`Score: ${fitness.toFixed(3)}`}</Typography>
       </Box>
@@ -28,4 +28,8 @@ HistoryEntry.propTypes = {
   imageData: PropTypes.instanceOf(ImageData).isRequired,
 };
 
-export default memo(HistoryEntry);
+const propsAreEqual = (prevProps, nextProps) => (
+  prevProps.genId === nextProps.id
+);
+
+export default memo(HistoryEntry, propsAreEqual);

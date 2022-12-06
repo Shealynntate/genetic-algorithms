@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
@@ -71,7 +72,7 @@ function MutationSlider() {
 
   return (
     <Box pb={4}>
-      <Box sx={{ borderRadius: `${theme.shape.borderRadius}px`, overflow: 'hidden' }}>
+      {/* <Box sx={{ borderRadius: `${theme.shape.borderRadius}px`, overflow: 'hidden' }}>
         <svg width={fullWidth} height={fullHeight}>
           <Group top={margin.top} left={margin.left}>
             <rect
@@ -139,11 +140,10 @@ function MutationSlider() {
             })}
           />
         </svg>
-      </Box>
+      </Box> */}
       <ParameterSlider
         value={value}
         setValue={setValue}
-        formatValue={(v) => `${(v * 100).toFixed(0)}%`}
         Icon={ScienceIcon}
         tooltip="Sigma value for the Mutation rate (follows a Normal Distribution)"
         min={min}

@@ -1,6 +1,8 @@
 import gifshot from 'gifshot';
 import { canvasParameters } from '../constants';
 
+const { width, height } = canvasParameters;
+
 export const genRange = (max) => ([...Array(max).keys()]);
 
 export const genMinMaxRange = (min, max) => ([...Array(max).keys()].slice(min));
@@ -19,8 +21,6 @@ export const hsvtoHex = (h, s, v) => {
   const rgb = hsv2rgb(h, s, v);
   return rgb2Hex(...rgb);
 };
-
-const { width, height } = canvasParameters;
 
 export const createImage = (src) => new Promise((resolve, reject) => {
   const image = new Image();
@@ -87,7 +87,10 @@ export const createGif = async (images, filename) => {
   gifshot.createGIF(
     {
       images: imgs,
-      frameDuration: 5, // 10 = 1.0 seconds
+      frameDuration: 4, // 10 = 1.0 seconds
+      gifWidth: width,
+      gifHeight: height,
+      numFrames: images.length,
     },
     ({
       error,

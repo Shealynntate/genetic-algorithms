@@ -16,7 +16,7 @@ class Genome {
   static deserialize({ size, dna }) {
     return new Genome({
       size,
-      dna: DNA.deserialize(dna),
+      dna: dna.map((base) => DNA.deserialize(base)),
     });
   }
 
