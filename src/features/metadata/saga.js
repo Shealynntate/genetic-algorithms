@@ -71,16 +71,17 @@ function* runSimulationSaga() {
   const triangleCount = yield select((state) => state.parameters.triangleCount);
   const target = yield select((state) => state.parameters.target);
   const mutation = yield select((state) => state.parameters.mutationRate);
-  // Store our parameters in the database
-  yield call(initializeDBEntry, {
-    triangleCount,
-    selectionType,
-    populationSize,
-    eliteCount,
-    mutation,
-  });
-  const { data } = yield createImageData(target);
   if (!population) {
+    // Store our parameters in the database
+    yield call(initializeDBEntry, {
+      triangleCount,
+      selectionType,
+      populationSize,
+      eliteCount,
+      mutation,
+    });
+    const { data } = yield createImageData(target);
+    // Initialize the population
     population = new Population(populationSize, triangleCount, data);
   }
   randomNoise = new RandomNoise(mutation);

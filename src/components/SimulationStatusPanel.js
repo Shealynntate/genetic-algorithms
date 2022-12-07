@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
+import { useIsRunning } from '../hooks';
 import { createGif } from '../globals/utils';
 import { getCurrentImages } from '../globals/database';
 import HistoryDisplay from './HistoryDisplay';
@@ -26,6 +27,7 @@ const fileName = 'ga-image-timelapse';
 function SimulationStatusPanel() {
   const currentGen = useSelector((state) => state.metadata.currentGen);
   const globalBest = useSelector((state) => state.metadata.globalBest);
+  const isRunning = useIsRunning();
   const { maxFitOrganism } = currentGen;
 
   const downloadGif = async () => {
@@ -34,7 +36,8 @@ function SimulationStatusPanel() {
     const genome = Genome.deserialize(globalBest.organism.genome);
     const bestImage = Genome.phenotype.getImageData(genome.dna);
     // Show the last image 4 times as long in the gif
-    createGif([...imageData, bestImage, bestImage, bestImage], fileName);
+    const result = [...imageData, bestImage, bestImage, bestImage, bestImage];
+    createGif(result, fileName);
   };
 
   return (
@@ -49,6 +52,7 @@ function SimulationStatusPanel() {
           variant="contained"
           onClick={() => { downloadGif(); }}
           sx={{ height: 'fit-content', margin: 'auto 0' }}
+          disabled={isRunning}
         >
           Make it a gif!
         </Button>
