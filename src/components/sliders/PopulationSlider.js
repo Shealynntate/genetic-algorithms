@@ -20,7 +20,7 @@ function PopulationSlider() {
       value={value}
       setValue={setValue}
       formatValue={(v) => v.toLocaleString()}
-      Icon={GroupsIcon}
+      icon={<GroupsIcon />}
       tooltip="The number of organisms in each generation"
       min={min}
       max={max}

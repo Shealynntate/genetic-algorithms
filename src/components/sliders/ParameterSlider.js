@@ -6,7 +6,7 @@ function ParameterSlider({
   value,
   setValue,
   formatValue,
-  Icon,
+  icon,
   tooltip,
   min,
   max,
@@ -16,7 +16,7 @@ function ParameterSlider({
     <Grid container>
       <Grid item xs={3}>
         <Tooltip title={tooltip}>
-          <Icon />
+          {icon}
         </Tooltip>
       </Grid>
       <Grid item xs={9}>
@@ -39,7 +39,7 @@ ParameterSlider.propTypes = {
   value: PropTypes.number.isRequired,
   setValue: PropTypes.func.isRequired,
   formatValue: PropTypes.func,
-  Icon: PropTypes.element.isRequired,
+  icon: PropTypes.element.isRequired,
   tooltip: PropTypes.string,
   min: PropTypes.number.isRequired,
   max: PropTypes.number.isRequired,

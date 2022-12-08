@@ -144,7 +144,7 @@ function MutationSlider() {
       <ParameterSlider
         value={value}
         setValue={setValue}
-        Icon={ScienceIcon}
+        icon={<ScienceIcon />}
         tooltip="Sigma value for the Mutation rate (follows a Normal Distribution)"
         min={min}
         max={max}

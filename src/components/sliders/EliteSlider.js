@@ -20,7 +20,7 @@ function EliteSlider() {
     <ParameterSlider
       value={value}
       setValue={setValue}
-      Icon={StarIcon}
+      icon={<StarIcon />}
       tooltip="Number of elites cloned into the next generation"
       min={min}
       max={max}

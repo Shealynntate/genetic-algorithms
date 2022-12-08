@@ -20,7 +20,7 @@ function TriangleSlider() {
       value={value}
       setValue={setValue}
       formatValue={(v) => v.toLocaleString()}
-      Icon={ChangeHistoryTwoToneIcon}
+      icon={<ChangeHistoryTwoToneIcon />}
       tooltip="Number of triangles used in a image"
       min={min}
       max={max}
