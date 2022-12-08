@@ -33,15 +33,19 @@ class Genome {
 
   // Crossover at the Gene level - keep the DNA intact
   static uniformCrossover2(genome1, genome2, prob) {
-    const child1 = genome1.dna.map((d) => d.clone());
-    const child2 = genome2.dna.map((d) => d.clone());
+    const child1 = [];
+    const child2 = [];
     genRange(genome1.size).forEach((i) => {
       if (flipCoin(prob)) {
-        const temp = child1[i];
-        child1[i] = child2[i];
-        child2[i] = temp;
+        // Perform a crossover event
+        child1.push(genome2.dna[i].clone());
+        child2.push(genome1.dna[i].clone());
+      } else {
+        child1.push(genome1.dna[i].clone());
+        child2.push(genome2.dna[i].clone());
       }
     });
+
     return [child1, child2];
   }
 
@@ -74,10 +78,23 @@ class Genome {
     return (1 - difference / denominator);
   }
 
+  // mutateOrder() {
+  //   const index = randomIndex(this.size);
+  //   const removed = this.dna.splice(index, 1);
+  //   this.dna.push(...removed);
+  // }
+
   mutateOrder() {
-    const index = randomIndex(this.size);
-    const removed = this.dna.splice(index, 1);
-    this.dna.push(...removed);
+    const index1 = randomIndex(this.size);
+    const index2 = randomIndex(this.size);
+    if (index1 !== index2) {
+      const r1 = this.dna.splice(index1, 1);
+      const r2 = this.dna.splice(index2, 1, ...r1);
+      this.dna.splice(index1, 0, ...r2);
+      // console.log('mutateOrder', {
+      //   index1, index2, r1, r2, dna: this.dna,
+      // });
+    }
   }
 
   getPhenotype() {

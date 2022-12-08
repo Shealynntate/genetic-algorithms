@@ -118,9 +118,12 @@ class DNA {
   }
 
   createNode() {
+    const p = this.points;
+    const c = this.color;
+    // Note: this appears to run much faster than toString() or join()
     return {
-      points: this.points.toString(),
-      color: this.color.toString(),
+      points: `${p[0][0]},${p[0][1]},${p[1][0]},${p[1][1]},${p[2][0]},${p[2][1]}`,
+      color: `${c[0]},${c[1]},${c[2]},${c[3]}`,
     };
   }
 

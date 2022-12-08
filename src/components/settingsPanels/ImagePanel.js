@@ -8,8 +8,10 @@ import {
 import GlobalBest from '../GlobalBest';
 import ImageInput from '../ImageInput';
 import TriangleSlider from '../sliders/TriangleSlider';
+import { canvasParameters } from '../../constants';
 
-const imageSize = 200;
+const { width } = canvasParameters;
+console.log(width);
 
 function ImagePanel() {
   return (
@@ -19,9 +21,7 @@ function ImagePanel() {
           <Tooltip title="Drag and drop an image file to set a new target">
             <Typography>Target Image</Typography>
           </Tooltip>
-          <Box sx={{ minWidth: imageSize }}>
-            <ImageInput />
-          </Box>
+          <ImageInput />
         </Box>
         <GlobalBest />
       </Box>

@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Box,
   Button,
   Stack,
   Typography,
@@ -40,7 +41,7 @@ function ControlPanel() {
   };
 
   return (
-    <Stack spacing={1} mt={2}>
+    <Box spacing={1} mt={2}>
       <Typography variant="button">Controls</Typography>
       <ImagePanel />
       <SelectionPanel />
@@ -59,7 +60,7 @@ function ControlPanel() {
           </Button>
         )}
       </Stack>
-    </Stack>
+    </Box>
   );
 }
 

@@ -7,7 +7,7 @@ const scalePoint = (point) => [point[0] * width, point[1] * height];
 class Phenotype {
   constructor() {
     const options = { height, width };
-    this.canvas = document.createElement('canvas', options);
+    this.canvas = document.createElement('canvas', options).transferControlToOffscreen();
     this.canvas.width = width;
     this.canvas.height = height;
     this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });

@@ -22,11 +22,17 @@ class Population {
   }
 
   runGeneration(selectionType, eliteCount, mutationNoise) {
-    // console.time('Run Generation');
+    console.time('Run Generation');
+    // console.time('Run Selection');
     this.performSelection(selectionType, eliteCount, mutationNoise);
+    // console.timeEnd('Run Selection');
+    // console.time('Run Evaluate Fitness');
     this.evaluateFitness();
+    // console.timeEnd('Run Evaluate Fitness');
+    // console.time('Create Node');
     const node = this.createGenNodes();
-    // console.timeEnd('Run Generation');
+    // console.timeEnd('Create Node');
+    console.timeEnd('Run Generation');
     return node;
   }
 

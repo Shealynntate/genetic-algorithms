@@ -31,6 +31,10 @@ class Organism {
       crossoverProb,
     );
     // Mutation event
+    // for (let i = 0; i < newDNA1.length; ++i) {
+    //   newDNA1[i].mutate(noise);
+    //   newDNA2[i].mutate(noise);
+    // }
     newDNA1.forEach((dna) => (dna.mutate(noise)));
     newDNA2.forEach((dna) => (dna.mutate(noise)));
     // Create the child Organisms

@@ -1,23 +1,10 @@
 import React from 'react';
-import {
-  Box,
-  Container,
-  Grid,
-  // Paper,
-} from '@mui/material';
+import { Container, Stack } from '@mui/material';
 // import ParentSize from '@visx/responsive/lib/components/ParentSize';
-import styled from '@emotion/styled';
 import ControlPanel from './ControlPanel';
 // import OverviewChart from './overviewChart/OverviewChart';
-import theme from '../theme';
 import Header from './Header';
 import DisplayTabs from './DisplayTabs';
-
-const GridItem = styled(Grid)`
-  &.MuiGrid-item {
-    padding-top: 0;
-  }
-`;
 
 function App() {
   // const varianceRef = useRef([]);
@@ -40,30 +27,24 @@ function App() {
   //   dispatch(setMutationRate(rate));
   // }
 
+  /* <Paper sx={{ height: 400 }}>
+    <ParentSize>
+      {({ ref }) => (
+        <OverviewChart
+          parentRef={ref}
+          tree={tree}
+          targetFitness={1}
+      )}
+    </ParentSize>
+  </Paper> */
   return (
     <div>
       <Header />
       <Container>
-        <Grid container spacing={theme.spacing(2)} margin={theme.spacing(0)}>
-          <GridItem item xs={4}>
-            <Box sx={{ display: 'flex' }}>
-              <ControlPanel />
-            </Box>
-            {/* <Paper sx={{ height: 400 }}>
-              <ParentSize>
-                {({ ref }) => (
-                  <OverviewChart
-                    parentRef={ref}
-                    tree={tree}
-                    targetFitness={1}
-                )}
-              </ParentSize>
-            </Paper> */}
-          </GridItem>
-          <GridItem item xs={8}>
-            <DisplayTabs />
-          </GridItem>
-        </Grid>
+        <Stack spacing={1} direction="row">
+          <ControlPanel />
+          <DisplayTabs />
+        </Stack>
       </Container>
     </div>
   );

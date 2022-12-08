@@ -10,7 +10,7 @@ function HistoryDisplay() {
   const images = useImageDbQuery() || [];
   const { maxFitOrganism, id: genId } = currentGen;
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
       {maxFitOrganism && (
       <Box px={1}>
         <OrganismCanvas organism={maxFitOrganism} />

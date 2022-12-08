@@ -34,6 +34,8 @@ export const createImageData = async (src) => {
 
   const canvas = document.createElement('canvas', { width, height });
   const ctx = canvas.getContext('2d');
+  ctx.canvas.width = width;
+  ctx.canvas.height = height;
   ctx.drawImage(image, 0, 0, width, height);
 
   return ctx.getImageData(0, 0, width, height);
