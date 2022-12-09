@@ -89,7 +89,7 @@ export const createGif = async (images, filename) => {
   gifshot.createGIF(
     {
       images: imgs,
-      frameDuration: 4, // 10 = 1.0 seconds
+      frameDuration: 3, // 10 = 1.0 seconds
       gifWidth: width,
       gifHeight: height,
       numFrames: images.length,
