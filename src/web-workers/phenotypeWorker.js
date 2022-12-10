@@ -60,13 +60,14 @@ export default () => {
   }) => {
     if (canvas) {
       phenotype = new Phenotype(canvas, width, height);
+      tar = target;
       denominator = maxColorValue * numColorChannels * width * height;
       return;
     }
-    if (target) {
-      tar = target;
-      return;
-    }
+    // if (target) {
+    //   tar = target;
+    //   return;
+    // }
     const results = organisms.map((org) => {
       const data = phenotype.getImageData(org.genome.dna);
       return {
