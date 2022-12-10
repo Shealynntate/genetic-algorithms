@@ -26,7 +26,11 @@ class Population {
 
   runGeneration(selectionType, eliteCount, crossoverProb, mutationNoise) {
     // console.time('Run Selection');
-    this.performSelection(selectionType, eliteCount, crossoverProb, mutationNoise);
+    const count = (this.size - eliteCount) / 2;
+    const parents = this.performSelection(selectionType, count);
+    // Replace old population with new generation
+    this.organisms = this.reproduce(parents, eliteCount, crossoverProb, mutationNoise);
+    this.genId = Population.nextGenId;
     // console.timeEnd('Run Selection');
     // console.time('Run Evaluate Fitness');
     this.evaluateFitness();
@@ -64,73 +68,66 @@ class Population {
     // });
   }
 
-  performSelection(selectionType, eliteCount, crossoverProb, mutationNoise) {
+  performSelection(selectionType, count) {
     const tournamentSize = 2;
-    let nextGen;
     switch (selectionType) {
       case SelectionType.ROULETTE:
-        nextGen = this.rouletteSelection(mutationNoise, eliteCount, crossoverProb);
-        break;
+        return this.rouletteSelection(count);
       case SelectionType.TOURNAMENT:
-        nextGen = this.tournamentSelection(
-          mutationNoise,
-          tournamentSize,
-          eliteCount,
-          crossoverProb,
-        );
-        break;
+        return this.tournamentSelection(count, tournamentSize);
       case SelectionType.SUS:
-        nextGen = this.susSelection(mutationNoise, eliteCount, crossoverProb);
-        break;
+        return this.susSelection(count);
       default:
         throw new Error(`[Population] Invalid SelectionType ${selectionType} provided`);
     }
-    // Replace old population with new generation
-    this.genId = Population.nextGenId;
-    this.organisms = nextGen;
+  }
+
+  reproduce(parents, eliteCount, crossoverProb, mutationNoise) {
+    // Generate (N - eliteCount) offspring for the next generation
+    const nextGen = this.getElites(eliteCount);
+    parents.forEach(([p1, p2]) => {
+      const offspring = Organism.reproduce(p1, p2, crossoverProb, mutationNoise);
+      nextGen.push(...offspring);
+    });
+    return nextGen;
   }
 
   // Parent Selection Algorithms
   // ------------------------------------------------------------
-  rouletteSelection(mutationNoise, eliteCount, crossoverProb) {
-    const nextGen = this.getElites(eliteCount);
+  rouletteSelection(count) {
+    const parents = [];
     const cdf = this.createFitnessCDF();
-    // Generate (N - eliteCount) offspring for the next generation
-    while (nextGen.length < this.size) {
+    while (parents.length < count) {
       const p1 = this.rouletteSelectParent(cdf);
       const p2 = this.rouletteSelectParent(cdf);
-      const offspring = Organism.reproduce(p1, p2, crossoverProb, mutationNoise);
-      nextGen.push(...offspring);
+      parents.push([p1, p2]);
     }
-
-    return nextGen;
+    return parents;
   }
 
-  tournamentSelection(mutationNoise, tournamentSize, eliteCount, crossoverProb) {
-    const nextGen = this.getElites(eliteCount);
-    // Generate (N - eliteCount) offspring for the next generation
-    while (nextGen.length < this.size) {
+  tournamentSelection(count, tournamentSize) {
+    const parents = [];
+    while (parents.length < count) {
       const p1 = this.tournamentSelectParent(tournamentSize);
       const p2 = this.tournamentSelectParent(tournamentSize);
-      const offspring = Organism.reproduce(p1, p2, crossoverProb, mutationNoise);
-      nextGen.push(...offspring);
+      parents.push([p1, p2]);
     }
-    return nextGen;
+    return parents;
   }
 
-  susSelection(mutationNoise, eliteCount, crossoverProb) {
-    const nextGen = this.getElites(eliteCount);
+  susSelection(count) {
+    const parents = [];
     const cdf = this.createFitnessCDF();
     const step = cdf[cdf.length - 1] / this.size;
     let value = randomFloat(0, step);
-    while (nextGen.length < this.size) {
+    while (parents.length < count) {
       const p1 = this.susSelectParent(value);
       value += step;
       const p2 = this.susSelectParent(value);
       value += step;
-      const offspring = Organism.reproduce(p1, p2, crossoverProb, mutationNoise);
-      nextGen.push(...offspring);
+      parents.push([p1, p2]);
     }
+    return parents;
   }
 
   // Parent Selection Algorithm Helpers

@@ -8,10 +8,6 @@ import {
 import GlobalBest from '../GlobalBest';
 import ImageInput from '../ImageInput';
 import TriangleSlider from '../sliders/TriangleSlider';
-import { canvasParameters } from '../../constants';
-
-const { width } = canvasParameters;
-console.log(width);
 
 function ImagePanel() {
   return (
