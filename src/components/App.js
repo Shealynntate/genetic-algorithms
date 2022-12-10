@@ -2,7 +2,6 @@ import React from 'react';
 import { Container, Stack } from '@mui/material';
 // import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import ControlPanel from './ControlPanel';
-// import OverviewChart from './overviewChart/OverviewChart';
 import Header from './Header';
 import DisplayTabs from './DisplayTabs';
 
@@ -27,16 +26,6 @@ function App() {
   //   dispatch(setMutationRate(rate));
   // }
 
-  /* <Paper sx={{ height: 400 }}>
-    <ParentSize>
-      {({ ref }) => (
-        <OverviewChart
-          parentRef={ref}
-          tree={tree}
-          targetFitness={1}
-      )}
-    </ParentSize>
-  </Paper> */
   return (
     <div>
       <Header />
