@@ -1,26 +1,22 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Dialog } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import data from '../assets/test-data.json';
 
-function Gallery({ open, onClose }) {
+function Gallery() {
+  const { name, images } = data;
   console.log(data);
+
   return (
-    <Dialog open={open} onClose={onClose}>
-      Gallery Here
-      {console.log('hello friend')}
-    </Dialog>
+    <Paper>
+      <Typography>{name}</Typography>
+      {images.map(({ gen, fitness }) => (
+        <Box key={`gallery-entry-${gen}`}>
+          <Typography variant="caption">{gen}</Typography>
+          <Typography variant="caption">{fitness}</Typography>
+        </Box>
+      ))}
+    </Paper>
   );
 }
-
-Gallery.propTypes = {
-  open: PropTypes.bool,
-  onClose: PropTypes.func,
-};
-
-Gallery.defaultProps = {
-  open: false,
-  onClose: () => {},
-};
 
 export default Gallery;

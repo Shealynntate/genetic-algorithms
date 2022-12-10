@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import {
-  Box, Tab, Tabs, Typography,
+  Box, Tab, Tabs,
 } from '@mui/material';
 import TabPanel from './TabPanel';
+import Gallery from './Gallery';
 import SimulationStatusPanel from './SimulationStatusPanel';
 
 function DisplayTabs() {
@@ -24,7 +25,7 @@ function DisplayTabs() {
         <SimulationStatusPanel />
       </TabPanel>
       <TabPanel index={1} value={value}>
-        <Typography>Gallery Here</Typography>
+        <Gallery />
       </TabPanel>
     </Box>
   );
