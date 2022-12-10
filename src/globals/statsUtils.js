@@ -19,6 +19,8 @@ export const setSigFigs = (value, sigFigs) => {
  */
 export const approxEqual = (a, b) => (setSigFigs(a, 3) === setSigFigs(b, 3));
 
+export const rand = (num = 4) => setSigFigs(Math.random(), num);
+
 /**
  * Generates a random index into an array of the specified length
  * @param {*} length - The length of the array

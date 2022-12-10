@@ -5,7 +5,6 @@ const initialState = {
   targetFitnessReached: false,
   globalBest: null,
   currentGen: {},
-  genealogyTree: [],
   maxFitnessScores: [],
 };
 
@@ -22,9 +21,6 @@ export const metadataSlice = createSlice({
     setTargetFitnessReached: (state, action) => {
       state.targetFitnessReached = action.payload;
     },
-    setGenealogyTree: (state, action) => {
-      state.genealogyTree = action.payload;
-    },
     addMaxFitnessScore: (state, action) => {
       state.maxFitnessScores = [...state.maxFitnessScores, action.payload];
     },
@@ -38,7 +34,6 @@ export const {
   setGlobalBest,
   setCurrentGen,
   setTargetFitnessReached,
-  setGenealogyTree,
   addMaxFitnessScore,
   clearMaxFitnessScores,
 } = metadataSlice.actions;

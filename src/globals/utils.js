@@ -113,3 +113,50 @@ export const createGif = async (images, filename) => {
     },
   );
 };
+
+export const fitnessBounds = (orgs) => {
+  let max = Number.MIN_SAFE_INTEGER;
+  let min = Number.MAX_SAFE_INTEGER;
+  let total = 0;
+  orgs.forEach(({ fitness }) => {
+    if (fitness < min) min = fitness;
+    if (fitness > max) max = fitness;
+    total += fitness;
+  });
+
+  return [min, total / orgs.length, max];
+};
+
+// [0, 100, 200, 300, 400, 600, 800, 1000, 1500, 2000, ...]
+// const saveThresholds = [
+//   { threshold: 50, mod: 10 },
+//   { threshold: 100, mod: 50 },
+//   { threshold: 300, mod: 100 },
+//   { threshold: 1000, mod: 200 },
+//   { threshold: 5000, mod: 500 },
+//   { threshold: 10000, mod: 1000 },
+//   { threshold: Math.MAX_SAFE_INTEGER, mod: 5000 },
+// ];
+
+export const shouldSaveGenImage = (genId) => {
+  let mod = 5000;
+  if (genId <= 10000) {
+    mod = 1000;
+  }
+  if (genId <= 5000) {
+    mod = 500;
+  }
+  if (genId <= 1000) {
+    mod = 200;
+  }
+  if (genId <= 300) {
+    mod = 100;
+  }
+  if (genId <= 100) {
+    mod = 50;
+  }
+  if (genId <= 60) {
+    mod = 20;
+  }
+  return (genId % mod) === 0;
+};

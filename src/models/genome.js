@@ -2,25 +2,26 @@ import { flipCoin, randomIndex } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 import Phenotype from './phenotype';
 import DNA from './dna';
-import { canvasParameters, maxColorValue } from '../constants';
+import { canvasParameters, maxColorValue, numColorChannels } from '../constants';
 
 //
-const numColorChannels = 4;
 const { width, height } = canvasParameters;
 
 const denominator = maxColorValue * numColorChannels * width * height;
 
-class Genome {
-  static phenotype = new Phenotype();
+const Phenome = new Phenotype();
 
-  static deserialize({ size, dna }) {
-    return new Genome({
+const Genome = {
+  create: ({ size, dna }) => {
+    const bases = dna || genRange(size).map(() => DNA.create());
+    return {
       size,
-      dna: dna.map((base) => DNA.deserialize(base)),
-    });
-  }
+      dna: bases,
+      phenotype: Phenome.getImageData(bases),
+    };
+  },
 
-  static uniformCrossover(genome1, genome2, prob) {
+  uniformCrossover: (genome1, genome2, prob) => {
     const child1 = [];
     const child2 = [];
     genRange(genome1.size).forEach((i) => {
@@ -29,41 +30,28 @@ class Genome {
       child2.push(b);
     });
     return [child1, child2];
-  }
+  },
 
   // Crossover at the Gene level - keep the DNA intact
-  static uniformCrossover2(genome1, genome2, prob) {
+  uniformCrossover2: (genome1, genome2, prob) => {
     const child1 = [];
     const child2 = [];
     genRange(genome1.size).forEach((i) => {
       if (flipCoin(prob)) {
         // Perform a crossover event
-        child1.push(genome2.dna[i].clone());
-        child2.push(genome1.dna[i].clone());
+        child1.push(DNA.clone(genome2.dna[i]));
+        child2.push(DNA.clone(genome1.dna[i]));
       } else {
-        child1.push(genome1.dna[i].clone());
-        child2.push(genome2.dna[i].clone());
+        child1.push(DNA.clone(genome1.dna[i]));
+        child2.push(DNA.clone(genome2.dna[i]));
       }
     });
 
     return [child1, child2];
-  }
+  },
 
-  constructor({ size, dna }) {
-    this.dna = dna || genRange(size).map(() => new DNA());
-    this.phenotype = Genome.phenotype.getImageData(this.dna);
-  }
-
-  get size() {
-    return this.dna.length;
-  }
-
-  subsequence(start, end) {
-    return this.dna.slice(start, end);
-  }
-
-  evaluateFitness(target) {
-    const pixels = this.phenotype.data;
+  evaluateFitness: (genome, target) => {
+    const { data: pixels } = genome.phenotype;
     if (pixels.length !== target.length) {
       throw new Error(`[Genome] target length ${target.length} does not match phenotype length ${pixels.length}`);
     }
@@ -76,41 +64,19 @@ class Genome {
     }
 
     return (1 - difference / denominator);
-  }
+  },
 
-  // mutateOrder() {
-  //   const index = randomIndex(this.size);
-  //   const removed = this.dna.splice(index, 1);
-  //   this.dna.push(...removed);
-  // }
-
-  mutateOrder() {
-    const index1 = randomIndex(this.size);
-    const index2 = randomIndex(this.size);
+  mutateOrder: (genome) => {
+    const index1 = randomIndex(genome.size);
+    const index2 = randomIndex(genome.size);
     if (index1 !== index2) {
-      const r1 = this.dna.splice(index1, 1);
-      const r2 = this.dna.splice(index2, 1, ...r1);
-      this.dna.splice(index1, 0, ...r2);
-      // console.log('mutateOrder', {
-      //   index1, index2, r1, r2, dna: this.dna,
-      // });
+      const r1 = genome.dna.splice(index1, 1);
+      const r2 = genome.dna.splice(index2, 1, ...r1);
+      genome.dna.splice(index1, 0, ...r2);
     }
-  }
+  },
 
-  getPhenotype() {
-    return this.phenotype;
-  }
-
-  createNode() {
-    return {
-      size: this.size,
-      dna: this.dna.map((base) => base.createNode()),
-    };
-  }
-
-  clone() {
-    return new Genome({ size: this.size, dna: this.dna.map((d) => d.clone()) });
-  }
-}
+  clone: (genome) => Genome.create({ size: genome.size, dna: genome.dna.map((d) => d.clone()) }),
+};
 
 export default Genome;

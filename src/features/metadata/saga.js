@@ -9,8 +9,7 @@ import { addImageToDatabase, clearDatabase, initializeDBEntry } from '../../glob
 import { targetFitness } from '../../constants';
 import RandomNoise from '../../globals/randomNoise';
 import { approxEqual, setSigFigs } from '../../globals/statsUtils';
-import { generateTreeLayer, shouldSaveGenImage } from '../../globals/treeUtils';
-import { createImageData } from '../../globals/utils';
+import { createImageData, shouldSaveGenImage } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
 import Population from '../../models/population';
 import { endSimulation, resetSimulation, runSimulation } from '../ux/uxSlice';
@@ -18,7 +17,6 @@ import {
   addMaxFitnessScore,
   clearMaxFitnessScores,
   setCurrentGen,
-  setGenealogyTree,
   setGlobalBest,
   setTargetFitnessReached,
 } from './metadataSlice';
@@ -31,22 +29,18 @@ const stagnationThreshold = 200;
 
 clearDatabase();
 
-function* processNextGenerationSaga(parentGen, nextGen) {
+function* processNextGenerationSaga(gen) {
   randomNoise.nextGeneration();
 
   // Update the list of maxFitness scores
-  const { maxFitness } = parentGen;
+  const { maxFitness } = gen;
   yield put(addMaxFitnessScore(setSigFigs(maxFitness, fitnessSigFigs)));
-  // Form the next layer of the Genealogy Tree
-  const parentLayer = generateTreeLayer([parentGen, nextGen], 0);
-  const newLayer = generateTreeLayer([parentGen, nextGen], 1);
-  const tree = [parentLayer, newLayer];
-  yield put(setGenealogyTree(tree));
 }
 
 function* runGenerationSaga() {
   const selectionType = yield select((state) => state.parameters.selectionType);
   const eliteCount = yield select((state) => state.parameters.eliteCount);
+  const crossoverProb = yield select((state) => state.parameters.crossoverProbability);
 
   while (true) {
     const isRunning = yield select(isRunningSelector);
@@ -57,9 +51,16 @@ function* runGenerationSaga() {
       yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
       yield delay(10);
     }
-    const [parentGen, nextGen] = population.runGeneration(selectionType, eliteCount, randomNoise);
-    yield call(processNextGenerationSaga, parentGen, nextGen);
-    yield put(setCurrentGen(nextGen));
+    console.time('Run Generation');
+    const gen = population.runGeneration(
+      selectionType,
+      eliteCount,
+      crossoverProb,
+      randomNoise,
+    );
+    yield call(processNextGenerationSaga, gen);
+    console.timeEnd('Run Generation');
+    yield put(setCurrentGen(gen));
     yield delay(runDelay);
   }
 }
@@ -138,7 +139,6 @@ function* stagnationDaemonSaga() {
 
 function* resetSimulationSaga() {
   yield put(setCurrentGen({}));
-  yield put(setGenealogyTree([]));
   yield put(clearMaxFitnessScores());
   yield call(clearDatabase);
 }

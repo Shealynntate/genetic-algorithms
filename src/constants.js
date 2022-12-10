@@ -58,6 +58,8 @@ export const targetFitness = 1;
 
 export const maxColorValue = 255;
 
+export const numColorChannels = 4;
+
 // ------------------------------------------------------------
 export const treeParameters = {
   columns: 30,

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { canvasParameters } from '../constants';
-import { OrganismNodeType } from '../types';
-import DNA from '../models/dna';
+import { OrganismType } from '../types';
+// import DNA from '../models/dna';
 
 function OrganismCanvas({
   organism, width, height, willReadFrequently,
@@ -20,7 +20,7 @@ function OrganismCanvas({
 
       ctx.clearRect(0, 0, width, height);
       dna.forEach((base) => {
-        const { color, points } = DNA.deserialize(base);
+        const { color, points } = base;
         ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
         ctx.beginPath();
         ctx.moveTo(...scalePoint(points[0]));
@@ -42,7 +42,7 @@ function OrganismCanvas({
 }
 
 OrganismCanvas.propTypes = {
-  organism: PropTypes.shape(OrganismNodeType).isRequired,
+  organism: PropTypes.shape(OrganismType).isRequired,
   width: PropTypes.number,
   height: PropTypes.number,
   willReadFrequently: PropTypes.bool,

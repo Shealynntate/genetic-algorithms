@@ -12,7 +12,6 @@ import { useIsRunning } from '../hooks';
 import { createGif } from '../globals/utils';
 import { getCurrentImages } from '../globals/database';
 import HistoryDisplay from './HistoryDisplay';
-import Genome from '../models/genome';
 
 function StatusText({ children }) {
   return <Typography variant="caption" sx={{ display: 'block' }}>{children}</Typography>;
@@ -33,10 +32,9 @@ function SimulationStatusPanel() {
   const downloadGif = async () => {
     const history = await getCurrentImages();
     const imageData = history.map((entry) => entry.imageData);
-    const genome = Genome.deserialize(globalBest.organism.genome);
-    const bestImage = Genome.phenotype.getImageData(genome.dna);
+    const { phenotype } = globalBest.organism.genome;
     // Show the last image 4 times as long in the gif
-    const result = [...imageData, bestImage, bestImage, bestImage, bestImage];
+    const result = [...imageData, phenotype, phenotype, phenotype, phenotype];
     createGif(result, fileName);
   };
 

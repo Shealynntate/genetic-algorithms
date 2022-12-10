@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Tab, Tabs } from '@mui/material';
+import {
+  Box, Tab, Tabs, Typography,
+} from '@mui/material';
 import TabPanel from './TabPanel';
-// import GenealogyVisualization from './genealogyTree/GenealogyVisualization';
 import SimulationStatusPanel from './SimulationStatusPanel';
 
 function DisplayTabs() {
@@ -16,14 +17,14 @@ function DisplayTabs() {
       <Box>
         <Tabs onChange={onChange} value={value}>
           <Tab label="Images" />
-          <Tab label="Genealogy" />
+          <Tab label="Gallery" />
         </Tabs>
       </Box>
       <TabPanel index={0} value={value}>
         <SimulationStatusPanel />
       </TabPanel>
       <TabPanel index={1} value={value}>
-        {/* <GenealogyVisualization /> */}
+        <Typography>Gallery Here</Typography>
       </TabPanel>
     </Box>
   );

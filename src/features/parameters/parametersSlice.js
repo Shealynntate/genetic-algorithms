@@ -7,6 +7,7 @@ import monaLisa from '../../assets/mona_lisa.jpeg';
 const initialState = {
   populationSize: 350,
   mutationRate: 0.002,
+  crossoverProbability: 0.1,
   triangleCount: 50,
   target: monaLisa,
   selectionType: SelectionType.TOURNAMENT,
@@ -22,6 +23,9 @@ export const parametersSlice = createSlice({
     },
     setMutationRate: (state, action) => {
       state.mutationRate = action.payload;
+    },
+    setCrossoverProbability: (state, action) => {
+      state.crossoverProbability = action.payload;
     },
     setTarget: (state, action) => {
       state.target = action.payload;
@@ -46,6 +50,7 @@ export const parametersSlice = createSlice({
 export const {
   setPopulationSize,
   setMutationRate,
+  setCrossoverProbability,
   setTarget,
   setTriangles,
   setSelectionType,
