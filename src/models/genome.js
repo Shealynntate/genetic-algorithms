@@ -9,7 +9,7 @@ const { width, height } = canvasParameters;
 
 const denominator = maxColorValue * numColorChannels * width * height;
 
-const Phenome = new Phenotype();
+const Phenome = new Phenotype(width, height);
 
 const Genome = {
   create: ({ size, dna }) => {
