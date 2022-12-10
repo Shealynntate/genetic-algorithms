@@ -6,7 +6,7 @@ import PopulationSlider from '../sliders/PopulationSlider';
 
 function SelectionPanel() {
   return (
-    <Paper>
+    <Paper sx={{ mb: 1 }}>
       <SelectionTypeInput />
       <PopulationSlider />
       <EliteSlider />

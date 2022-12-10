@@ -11,7 +11,7 @@ import TriangleSlider from '../sliders/TriangleSlider';
 
 function ImagePanel() {
   return (
-    <Paper>
+    <Paper sx={{ mb: 1 }}>
       <Box sx={{ display: 'flex', textAlign: 'center' }}>
         <Box>
           <Tooltip title="Drag and drop an image file to set a new target">

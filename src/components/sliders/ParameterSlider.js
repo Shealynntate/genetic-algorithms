@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Grid, Slider, Tooltip } from '@mui/material';
+import { useDisableSettings } from '../../hooks';
 
 function ParameterSlider({
   value,
@@ -12,6 +13,8 @@ function ParameterSlider({
   max,
   step,
 }) {
+  const isDisabled = useDisableSettings();
+
   return (
     <Grid container>
       <Grid item xs={3}>
@@ -29,6 +32,7 @@ function ParameterSlider({
           aria-label={tooltip}
           valueLabelFormat={formatValue}
           valueLabelDisplay="auto"
+          disabled={isDisabled}
         />
       </Grid>
     </Grid>

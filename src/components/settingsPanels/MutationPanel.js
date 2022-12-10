@@ -4,7 +4,7 @@ import MutationSlider from '../sliders/MutationSlider';
 
 function MutationPanel() {
   return (
-    <Paper>
+    <Paper sx={{ mb: 1 }}>
       <MutationSlider />
     </Paper>
   );

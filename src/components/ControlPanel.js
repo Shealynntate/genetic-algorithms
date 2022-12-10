@@ -46,7 +46,7 @@ function ControlPanel() {
       <ImagePanel />
       <SelectionPanel />
       <MutationPanel />
-      <Stack direction="row">
+      <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-event' }}>
         <PrimaryButton
           currentState={simulationState}
           callback={onClick}
@@ -55,6 +55,7 @@ function ControlPanel() {
           <Button
             variant="outlined"
             onClick={onReset}
+            size="large"
           >
             Reset
           </Button>

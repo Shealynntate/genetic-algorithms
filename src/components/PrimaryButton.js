@@ -8,6 +8,7 @@ function PrimaryButton({ currentState, callback }) {
     <Button
       variant="contained"
       onClick={callback}
+      size="large"
     >
       {primaryButtonLabels[currentState]}
     </Button>

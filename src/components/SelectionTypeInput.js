@@ -8,6 +8,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { SelectionType, SelectionTypeLabels } from '../constants';
 import { setSelectionType } from '../features/parameters/parametersSlice';
+import { useDisableSettings } from '../hooks';
 
 const label = 'Selection Type';
 
@@ -15,6 +16,7 @@ const types = Object.keys(SelectionType);
 
 function SelectionTypeInput() {
   const type = useSelector((state) => state.parameters.selectionType);
+  const isDisabled = useDisableSettings();
   const dispatch = useDispatch();
 
   const onChangeSelect = (event) => {
@@ -22,7 +24,7 @@ function SelectionTypeInput() {
   };
 
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth disabled={isDisabled}>
       <InputLabel id="select-label">{label}</InputLabel>
       <Select
         labelId="select-label"
