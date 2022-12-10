@@ -5,7 +5,7 @@ import { useTheme } from '@emotion/react';
 import OrganismCanvas from './OrganismCanvas';
 import { canvasParameters } from '../constants';
 
-const { width } = canvasParameters;
+const { width, height } = canvasParameters;
 
 function GlobalBest() {
   const theme = useTheme();
@@ -17,7 +17,7 @@ function GlobalBest() {
       {globalBest ? (
         <>
           <OrganismCanvas organism={globalBest.organism} />
-          <Box sx={{ justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography variant="caption">
               {`Gen: ${globalBest.id}`}
             </Typography>
@@ -36,7 +36,7 @@ function GlobalBest() {
         >
           <Box sx={{
             display: 'flex',
-            height: '100%',
+            height: `${height}px`,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: theme.palette.background.paper,
