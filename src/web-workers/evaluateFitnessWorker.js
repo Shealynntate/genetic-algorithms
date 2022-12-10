@@ -24,13 +24,18 @@ export default () => {
   // eslint-disable-next-line no-restricted-globals
   self.onmessage = ({
     data: {
-      phenotypes,
+      organisms,
       target,
     },
   }) => {
     const results = [];
-    for (let i = 0; i < phenotypes.length; ++i) {
-      results.push(evaluateFitness(target, phenotypes[i]));
+    for (let i = 0; i < organisms.length; ++i) {
+      const { phenotype } = organisms[i].genome;
+      const fitness = evaluateFitness(target, phenotype);
+      results.push({
+        ...organisms[i],
+        fitness,
+      });
     }
     postMessage({ results });
   };

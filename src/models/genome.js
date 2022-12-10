@@ -1,6 +1,6 @@
 import { flipCoin, randomIndex } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
-import Phenotype from './phenotype';
+// import Phenotype from './phenotype';
 import DNA from './dna';
 import { canvasParameters, maxColorValue, numColorChannels } from '../constants';
 
@@ -9,7 +9,7 @@ const { width, height } = canvasParameters;
 
 const denominator = maxColorValue * numColorChannels * width * height;
 
-const Phenome = new Phenotype(width, height);
+// const Phenome = new Phenotype(width, height);
 
 const Genome = {
   create: ({ size, dna }) => {
@@ -17,7 +17,7 @@ const Genome = {
     return {
       size,
       dna: bases,
-      phenotype: Phenome.getImageData(bases),
+      // phenotype: Phenome.getImageData(bases),
     };
   },
 

@@ -1,14 +1,58 @@
 import { deviation } from 'd3-array';
+import { flatten } from 'lodash';
 import Organism from './organism';
-import { SelectionType } from '../constants';
+import { canvasParameters, SelectionType } from '../constants';
 import { randomFloat, randomIndex } from '../globals/statsUtils';
 import WorkerBuilder from '../web-workers/workerBuilder';
-import evaluateFitnessWorker from '../web-workers/evaluateFitnessWorker';
+import phenotypeWorker from '../web-workers/phenotypeWorker';
 import { genRange } from '../globals/utils';
 
-class Population {
-  static worker = new WorkerBuilder(evaluateFitnessWorker);
+const { width, height } = canvasParameters;
+const options = { height, width };
+const getCanvas = () => {
+  const canvas = document.createElement('canvas', options);
+  canvas.width = width;
+  canvas.height = height;
+  return canvas;
+};
 
+const workerA = new WorkerBuilder(phenotypeWorker);
+const canvasA = getCanvas();
+const canvasWorkerA = canvasA.transferControlToOffscreen();
+workerA.postMessage({
+  canvas: canvasWorkerA,
+  width,
+  height,
+}, [canvasWorkerA]);
+
+const workerB = new WorkerBuilder(phenotypeWorker);
+const canvasB = getCanvas();
+const canvasWorkerB = canvasB.transferControlToOffscreen();
+workerB.postMessage({
+  canvas: canvasWorkerB,
+  width,
+  height,
+}, [canvasWorkerB]);
+
+const workerC = new WorkerBuilder(phenotypeWorker);
+const canvasC = getCanvas();
+const canvasWorkerC = canvasC.transferControlToOffscreen();
+workerC.postMessage({
+  canvas: canvasWorkerC,
+  width,
+  height,
+}, [canvasWorkerC]);
+
+const workerD = new WorkerBuilder(phenotypeWorker);
+const canvasD = getCanvas();
+const canvasWorkerD = canvasD.transferControlToOffscreen();
+workerD.postMessage({
+  canvas: canvasWorkerD,
+  width,
+  height,
+}, [canvasWorkerD]);
+
+class Population {
   static get nextGenId() {
     Population.count = Population.count == null ? 0 : Population.count + 1;
     return Population.count;
@@ -20,11 +64,27 @@ class Population {
     this.genId = Population.nextGenId;
     this.target = target;
     this.organisms = [...Array(size)].map(() => Organism.create({ size: genomeSize }));
-    // Prep for the first call of runGeneration
-    this.evaluateFitness();
+    workerA.postMessage({
+      target,
+    });
+    workerB.postMessage({
+      target,
+    });
+    workerC.postMessage({
+      target,
+    });
+    workerD.postMessage({
+      target,
+    });
   }
 
-  runGeneration(selectionType, eliteCount, crossoverProb, mutationNoise) {
+  async init() {
+    // Prep for the first call of runGeneration
+    this.organisms = await this.generatePhenotypes();
+    // this.organisms = await this.evaluateFitness();
+  }
+
+  async runGeneration(selectionType, eliteCount, crossoverProb, mutationNoise) {
     // console.time('Run Selection');
     const count = (this.size - eliteCount) / 2;
     const parents = this.performSelection(selectionType, count);
@@ -33,15 +93,71 @@ class Population {
     this.genId = Population.nextGenId;
     // console.timeEnd('Run Selection');
     // console.time('Run Evaluate Fitness');
-    this.evaluateFitness();
-    // const { results } = await this.evaluateFitness();
-    // for (let i = 0; i < results.length; ++i) {
-    //   this.organisms[i].fitness = results[i];
-    // }
+    this.organisms = await this.generatePhenotypes();
+    // this.organisms = await this.evaluateFitness();
     // console.timeEnd('Run Evaluate Fitness');
     // console.time('Create Node');
     return this.createStats();
     // console.timeEnd('Create Node');
+  }
+
+  async generatePhenotypes() {
+    const results = await Promise.all([new Promise((resolve, reject) => {
+      try {
+        workerA.postMessage({
+          organisms: this.organisms.slice(0, this.size / 4),
+        });
+        workerA.onmessage = (result) => {
+          resolve(result.data);
+          // Population.worker.terminate();
+        };
+      } catch (error) {
+        reject(error);
+      }
+    }),
+    new Promise((resolve, reject) => {
+      try {
+        workerB.postMessage({
+          organisms: this.organisms.slice(this.size / 4, this.size / 2),
+        });
+        workerB.onmessage = (result) => {
+          resolve(result.data);
+        };
+      } catch (error) {
+        reject(error);
+      }
+    }),
+    new Promise((resolve, reject) => {
+      try {
+        workerC.postMessage({
+          organisms: this.organisms.slice(this.size / 2, (this.size * 3) / 4),
+        });
+        workerC.onmessage = (result) => {
+          resolve(result.data);
+        };
+      } catch (error) {
+        reject(error);
+      }
+    }),
+    new Promise((resolve, reject) => {
+      try {
+        workerD.postMessage({
+          organisms: this.organisms.slice((this.size * 3) / 4),
+        });
+        workerD.onmessage = (result) => {
+          resolve(result.data);
+        };
+      } catch (error) {
+        reject(error);
+      }
+    }),
+    ]);
+    let orgs = [];
+    for (let i = 0; i < results.length; ++i) {
+      orgs = orgs.concat(results[i].results);
+    }
+    console.log(orgs.length);
+    return flatten(orgs);
   }
 
   /**
@@ -49,24 +165,70 @@ class Population {
    * Should only be called per generation as it's compulationally expensive
    * @returns null
    */
-  evaluateFitness() {
-    // Have each Organism compute its fitness score
-    this.organisms.forEach((org) => Organism.evaluateFitness(org, this.target));
-    // return new Promise((resolve, reject) => {
-    //   try {
-    //     Population.worker.postMessage({
-    //       phenotypes: this.organisms.map((org) => org.genome.phenotype),
-    //       target: this.target,
-    //     });
-    //     Population.worker.onmessage = (result) => {
-    //       resolve(result.data);
-    //       // Population.worker.terminate();
-    //     };
-    //   } catch (error) {
-    //     reject(error);
-    //   }
-    // });
-  }
+  // async evaluateFitness() {
+  //   // Have each Organism compute its fitness score
+  //   this.organisms.forEach((org) => Organism.evaluateFitness(org, this.target));
+  //   const results = await Promise.all([new Promise((resolve, reject) => {
+  //     try {
+  //       fitnessWorkerA.postMessage({
+  //         organisms: this.organisms.slice(0, this.size / 4),
+  //         target: this.target,
+  //       });
+  //       fitnessWorkerA.onmessage = (result) => {
+  //         resolve(result.data);
+  //         // Population.worker.terminate();
+  //       };
+  //     } catch (error) {
+  //       reject(error);
+  //     }
+  //   }),
+  //   new Promise((resolve, reject) => {
+  //     try {
+  //       fitnessWorkerB.postMessage({
+  //         organisms: this.organisms.slice(this.size / 4, this.size / 2),
+  //         target: this.target,
+  //       });
+  //       fitnessWorkerB.onmessage = (result) => {
+  //         resolve(result.data);
+  //       };
+  //     } catch (error) {
+  //       reject(error);
+  //     }
+  //   }),
+  //   new Promise((resolve, reject) => {
+  //     try {
+  //       fitnessWorkerC.postMessage({
+  //         organisms: this.organisms.slice(this.size / 2, (this.size * 3) / 4),
+  //         target: this.target,
+  //       });
+  //       fitnessWorkerC.onmessage = (result) => {
+  //         resolve(result.data);
+  //       };
+  //     } catch (error) {
+  //       reject(error);
+  //     }
+  //   }),
+  //   new Promise((resolve, reject) => {
+  //     try {
+  //       fitnessWorkerD.postMessage({
+  //         organisms: this.organisms.slice((this.size * 3) / 4),
+  //         target: this.target,
+  //       });
+  //       fitnessWorkerD.onmessage = (result) => {
+  //         resolve(result.data);
+  //       };
+  //     } catch (error) {
+  //       reject(error);
+  //     }
+  //   }),
+  //   ]);
+  //   let orgs = [];
+  //   for (let i = 0; i < results.length; ++i) {
+  //     orgs = orgs.concat(results[i].results);
+  //   }
+  //   console.log(orgs.length);
+  //   return flatten(orgs);
+  // }
 
   performSelection(selectionType, count) {
     const tournamentSize = 2;

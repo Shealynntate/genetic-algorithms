@@ -52,7 +52,7 @@ function* runGenerationSaga() {
       yield delay(10);
     }
     console.time('Run Generation');
-    const gen = population.runGeneration(
+    const gen = yield population.runGeneration(
       selectionType,
       eliteCount,
       crossoverProb,
@@ -84,6 +84,7 @@ function* runSimulationSaga() {
     const { data } = yield createImageData(target);
     // Initialize the population
     population = new Population(populationSize, triangleCount, data);
+    yield population.init();
   }
   randomNoise = new RandomNoise(mutation);
 

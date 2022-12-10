@@ -5,7 +5,7 @@ import { SelectionType } from '../../constants';
 import monaLisa from '../../assets/mona_lisa.jpeg';
 
 const initialState = {
-  populationSize: 350,
+  populationSize: 360,
   mutationRate: 0.002,
   crossoverProbability: 0.1,
   triangleCount: 50,
