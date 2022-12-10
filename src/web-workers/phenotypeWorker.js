@@ -1,26 +1,49 @@
-let w = null;
-let h = null;
+/* eslint-disable no-restricted-globals */
+export default () => {
+  class Phenotype {
+    constructor(width, height) {
+      const options = { height, width };
+      this.canvas = document.createElement('canvas', options).transferControlToOffscreen();
+      this.canvas.width = width;
+      this.canvas.height = height;
+      this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
+      this.width = width;
+      this.height = height;
+    }
 
-const scalePoint = (point) => [point[0] * w, point[1] * h];
+    scalePoint(point) { return [point[0] * this.width, point[1] * this.height]; }
 
-const drawDNA = (ctx, dna) => {
-  dna.forEach(({ color, points }) => {
-    ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
-    ctx.beginPath();
-    ctx.moveTo(...scalePoint(points[0]));
-    ctx.lineTo(...scalePoint(points[1]));
-    ctx.lineTo(...scalePoint(points[2]));
-    ctx.closePath();
-    ctx.fill();
+    getImageData(dna) {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      dna.forEach(({ color, points }) => {
+        this.ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
+        this.ctx.beginPath();
+        this.ctx.moveTo(...this.scalePoint(points[0]));
+        this.ctx.lineTo(...this.scalePoint(points[1]));
+        this.ctx.lineTo(...this.scalePoint(points[2]));
+        this.ctx.closePath();
+        this.ctx.fill();
+      });
+
+      return this.ctx.getImageData(0, 0, this.width, this.height);
+    }
+  }
+  self.onmessage = (({
+    data: {
+      organisms,
+      width,
+      height,
+    },
+  }) => {
+    const phenotype = new Phenotype(width, height);
+    const results = organisms.map((org) => ({
+      ...org,
+      genome: {
+        ...org.genome,
+        phenotype: phenotype.getImageData(org.genome.dna),
+      },
+    }));
+    postMessage({ results });
   });
-  return ctx.getImageData(0, 0, w, h);
-};
-
-onmessage = ({
-  width, height, ctx, data,
-}) => {
-  w = width;
-  h = height;
-  const imageData = drawDNA(ctx, data.dna);
-  postMessage({ imageData });
 };
