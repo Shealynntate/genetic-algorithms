@@ -1,20 +1,21 @@
 /* eslint-disable no-restricted-globals */
-
-let phenotype = null;
-let denominator = null;
-let tar = null;
 export default () => {
+  let phenotype = null;
   const maxColorValue = 255;
-  const numColorChannels = 4;
 
   class Phenotype {
-    constructor(canvas, width, height) {
+    constructor({ canvas, numColorChannels, target }) {
       this.ctx = canvas.getContext('2d', { willReadFrequently: true });
-      this.width = width;
-      this.height = height;
+      this.width = canvas.width;
+      this.height = canvas.height;
+      this.target = target;
+      this.denominator = maxColorValue * numColorChannels * this.width * this.height;
     }
 
-    scalePoint(point) { return [point[0] * this.width, point[1] * this.height]; }
+    scalePoint(point) {
+      // return [point[0] * this.width, point[1] * this.height];
+      return [Math.round(point[0] * this.width), Math.round(point[1] * this.height)];
+    }
 
     getImageData(dna) {
       this.ctx.clearRect(0, 0, this.width, this.height);
@@ -31,44 +32,38 @@ export default () => {
 
       return this.ctx.getImageData(0, 0, this.width, this.height);
     }
+
+    evaluateFitness(p) {
+      const pixels = p.data;
+      if (pixels.length !== this.target.length) {
+        throw new Error(`Target length ${this.target.length} does not match phenotype length ${pixels.length}`);
+      }
+
+      let difference = 0;
+      // Note: This for-loop is an order of magnitude faster than Array.prototype.forEach
+      // Super important here since each length is tens of thousands of pixels per organism
+      for (let i = 0; i < pixels.length; i++) {
+        difference += Math.abs(pixels[i] - this.target[i]);
+      }
+
+      return (1 - difference / this.denominator);
+    }
   }
-
-  const evaluateFitness = (target, p) => {
-    const pixels = p.data;
-    if (pixels.length !== target.length) {
-      throw new Error(`[Genome] target length ${target.length} does not match phenotype length ${pixels.length}`);
-    }
-
-    let difference = 0;
-    // Note: This for-loop is an order of magnitude faster than Array.prototype.forEach
-    // Super important here since each length is tens of thousands of pixels per organism
-    for (let i = 0; i < pixels.length; i++) {
-      difference += Math.abs(pixels[i] - target[i]);
-    }
-
-    return (1 - difference / denominator);
-  };
 
   self.onmessage = ({
     data: {
       canvas,
       organisms,
-      width,
-      height,
+      numColorChannels,
       target,
     },
   }) => {
     if (canvas) {
-      phenotype = new Phenotype(canvas, width, height);
-      tar = target;
-      denominator = maxColorValue * numColorChannels * width * height;
+      phenotype = new Phenotype({ canvas, numColorChannels, target });
       return;
     }
-    // if (target) {
-    //   tar = target;
-    //   return;
-    // }
-    const results = organisms.map((org) => {
+
+    const updatedOrganisms = organisms.map((org) => {
       const data = phenotype.getImageData(org.genome.dna);
       return {
         ...org,
@@ -76,9 +71,9 @@ export default () => {
           ...org.genome,
           phenotype: data,
         },
-        fitness: evaluateFitness(tar, data),
+        fitness: phenotype.evaluateFitness(data),
       };
     });
-    postMessage({ results });
+    postMessage({ updatedOrganisms });
   };
 };

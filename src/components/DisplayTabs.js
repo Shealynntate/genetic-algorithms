@@ -17,7 +17,8 @@ function DisplayTabs() {
     <Box>
       <Box>
         <Tabs onChange={onChange} value={value}>
-          <Tab label="Images" />
+          <Tab label="Progress" />
+          <Tab label="Stats" />
           <Tab label="Gallery" />
         </Tabs>
       </Box>
@@ -25,6 +26,9 @@ function DisplayTabs() {
         <SimulationStatusPanel />
       </TabPanel>
       <TabPanel index={1} value={value}>
+        Stats
+      </TabPanel>
+      <TabPanel index={2} value={value}>
         <Gallery />
       </TabPanel>
     </Box>

@@ -10,15 +10,16 @@ import {
 
 function About({ open, onClose }) {
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md">
+    <Dialog open={open} onClose={onClose} maxWidth="lg">
       <DialogTitle>About</DialogTitle>
       <DialogContent>
-        <DialogContentText>
+        <DialogContentText sx={{ display: 'inline-block', pr: 1 }}>
           Full credit to Robert Johansson for this project idea. Check it out at
         </DialogContentText>
         <Link
           href="https://rogerjohansson.blog/2008/12/07/genetic-programming-evolution-of-mona-lisa/"
           underline="hover"
+          sx={{ display: 'inline-block' }}
         >
           Genetic Programming: Evolution of the Mona Lisa
         </Link>

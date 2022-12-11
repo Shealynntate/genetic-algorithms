@@ -46,7 +46,7 @@ function ControlPanel() {
       <ImagePanel />
       <SelectionPanel />
       <MutationPanel />
-      <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-event' }}>
+      <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
         <PrimaryButton
           currentState={simulationState}
           callback={onClick}

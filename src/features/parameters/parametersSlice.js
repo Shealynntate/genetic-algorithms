@@ -1,15 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import { SelectionType } from '../../constants';
-// import square from '../../assets/red_square_test.png';
-import monaLisa from '../../assets/mona_lisa.jpeg';
+import square from '../../assets/red_square_test.png';
+// import monaLisa from '../../assets/mona_lisa.jpeg';
 
 const initialState = {
-  populationSize: 350,
-  mutationRate: 0.003,
+  populationSize: 300,
+  mutationRate: 0.001,
   crossoverProbability: 0.1,
-  triangleCount: 50,
-  target: monaLisa,
+  triangleCount: 2,
+  target: square,
   selectionType: SelectionType.TOURNAMENT,
   eliteCount: 0,
 };

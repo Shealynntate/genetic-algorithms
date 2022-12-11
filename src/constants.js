@@ -56,22 +56,14 @@ export const triangleBounds = {
 
 export const targetFitness = 1;
 
+// ------------------------------------------------------------
 export const maxColorValue = 255;
 
 export const numColorChannels = 4;
 
-// ------------------------------------------------------------
-export const treeParameters = {
-  columns: 30,
-  spacing: 10,
-  padding: 10,
-  radius: 3,
-  genHeight: 150,
-};
-
 export const canvasParameters = {
-  width: 180,
-  height: 180,
+  width: 200,
+  height: 200,
 };
 
 // ------------------------------------------------------------

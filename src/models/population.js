@@ -1,34 +1,31 @@
 import { deviation } from 'd3-array';
 import Organism from './organism';
-import { canvasParameters, SelectionType } from '../constants';
+import { canvasParameters, numColorChannels, SelectionType } from '../constants';
 import { randomFloat, randomIndex } from '../globals/statsUtils';
 import WorkerBuilder from '../web-workers/workerBuilder';
 import phenotypeWorker from '../web-workers/phenotypeWorker';
 import { genRange } from '../globals/utils';
 
 const { width, height } = canvasParameters;
-const options = { height, width };
-const getCanvas = () => {
-  const canvas = document.createElement('canvas', options);
-  canvas.width = width;
-  canvas.height = height;
-  return canvas;
-};
+
+const batchSize = 30;
 
 const createWorker = (target) => {
+  // Create a new worker
   const worker = new WorkerBuilder(phenotypeWorker);
-  const canvas = getCanvas();
+  // Create a canvas to transfer to the worker
+  const canvas = document.createElement('canvas', canvasParameters);
+  canvas.width = width;
+  canvas.height = height;
   const canvasWorker = canvas.transferControlToOffscreen();
+  // Post an init message to the worker
   worker.postMessage({
     canvas: canvasWorker,
-    width,
-    height,
+    numColorChannels,
     target,
   }, [canvasWorker]);
   return worker;
 };
-
-const batchSize = 30;
 
 class Population {
   static get nextGenId() {
@@ -52,7 +49,7 @@ class Population {
   }
 
   async runGeneration(selectionType, eliteCount, crossoverProb, mutationNoise) {
-    // Select the all the parents for reproduction
+    // Select all the parents for reproduction
     const count = (this.size - eliteCount) / 2;
     const parents = this.performSelection(selectionType, count);
     // Replace old population with new generation
@@ -92,7 +89,7 @@ class Population {
     const results = await Promise.all(promises);
     let orgs = [];
     for (let i = 0; i < results.length; ++i) {
-      orgs = orgs.concat(results[i].results);
+      orgs = orgs.concat(results[i].updatedOrganisms);
     }
     if (orgs.length !== this.size) {
       throw new Error(`[Population] evaluateFitness returned incorrect number of organisms ${orgs.length}`);
