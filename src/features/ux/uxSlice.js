@@ -4,7 +4,6 @@ import { SimulationState } from '../../constants';
 
 const initialState = {
   simulationState: SimulationState.NONE,
-  selectedGeneration: null,
 };
 
 export const uxSlice = createSlice({
@@ -26,9 +25,6 @@ export const uxSlice = createSlice({
     resetSimulation: (state) => {
       state.simulationState = SimulationState.NONE;
     },
-    setGeneration: (state, action) => {
-      state.selectedGeneration = action.payload;
-    },
   },
 });
 
@@ -38,7 +34,6 @@ export const {
   pauseSimulation,
   endSimulation,
   resetSimulation,
-  setGeneration,
 } = uxSlice.actions;
 
 export default uxSlice.reducer;

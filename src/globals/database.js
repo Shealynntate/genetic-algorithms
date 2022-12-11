@@ -15,16 +15,14 @@ let currentMetadataId;
 
 export async function initializeDBEntry({
   triangleCount,
-  selectionType,
   populationSize,
-  eliteCount,
+  selection,
   mutation,
 }) {
   currentMetadataId = await db[metadataTable].add({
     triangleCount,
-    selectionType,
+    selection,
     populationSize,
-    eliteCount,
     mutation,
   });
   return Promise.resolve();

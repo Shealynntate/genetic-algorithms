@@ -1,4 +1,3 @@
-import { flipCoin } from '../globals/statsUtils';
 import DNA from './dna';
 import Genome from './genome';
 
@@ -16,26 +15,26 @@ const Organism = {
     fitness: 0,
   }),
 
-  reproduce: (parentA, parentB, crossoverProb, noise) => {
+  reproduce: (parentA, parentB, crossover, mutation) => {
     // Crossover event
     const [newDNA1, newDNA2] = Genome.uniformCrossover2(
       parentA.genome,
       parentB.genome,
-      crossoverProb,
+      crossover.prob,
     );
     const size = newDNA1.length;
     // Mutation DNA
     for (let i = 0; i < size; ++i) {
-      newDNA1[i] = DNA.mutate(newDNA1[i], noise);
-      newDNA2[i] = DNA.mutate(newDNA2[i], noise);
+      newDNA1[i] = DNA.mutate(newDNA1[i], mutation);
+      newDNA2[i] = DNA.mutate(newDNA2[i], mutation);
     }
     // Mutate Genome
     const genomeA = Genome.create({ size, dna: newDNA1 });
     const genomeB = Genome.create({ size, dna: newDNA2 });
-    if (flipCoin(0.1)) {
+    if (mutation.doPermute()) {
       Genome.mutateOrder(genomeA);
     }
-    if (flipCoin(0.1)) {
+    if (mutation.doPermute()) {
       Genome.mutateOrder(genomeB);
     }
 

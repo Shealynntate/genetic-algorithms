@@ -1,17 +1,28 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { SelectionType } from '../../constants';
-import square from '../../assets/red_square_test.png';
+import { CrossoverType, SelectionType } from '../../constants';
+// import square from '../../assets/red_square_test.png';
+import square from '../../assets/test_grid.png';
 // import monaLisa from '../../assets/mona_lisa.jpeg';
 
 const initialState = {
   populationSize: 300,
-  mutationRate: 0.001,
-  crossoverProbability: 0.1,
-  triangleCount: 2,
+  triangleCount: 8,
   target: square,
-  selectionType: SelectionType.TOURNAMENT,
-  eliteCount: 0,
+  crossover: {
+    type: CrossoverType.UNIFORM,
+    prob: 1 / 50,
+  },
+  mutation: {
+    colorSigma: 0.005,
+    pointSigma: 0.005,
+    permuteProb: 0.1,
+  },
+  selection: {
+    type: SelectionType.TOURNAMENT,
+    eliteCount: 0,
+    tournamentSize: 2,
+  },
 };
 
 export const parametersSlice = createSlice({
@@ -21,20 +32,32 @@ export const parametersSlice = createSlice({
     setPopulationSize: (state, action) => {
       state.populationSize = action.payload;
     },
-    setMutationRate: (state, action) => {
-      state.mutationRate = action.payload;
-    },
-    setCrossoverProbability: (state, action) => {
-      state.crossoverProbability = action.payload;
-    },
     setTarget: (state, action) => {
       state.target = action.payload;
     },
     setTriangles: (state, action) => {
       state.triangleCount = action.payload;
     },
+    // Crossover
+    setCrossoverType: (state, action) => {
+      state.crossover.type = action.payload;
+    },
+    setCrossoverProbability: (state, action) => {
+      state.crossover.prob = action.payload;
+    },
+    // Mutation
+    setColorSigma: (state, action) => {
+      state.mutation.colorSigma = action.payload;
+    },
+    setPointSigma: (state, action) => {
+      state.mutation.pointSigma = action.payload;
+    },
+    setPermuteProb: (state, action) => {
+      state.mutation.permuteProb = action.payload;
+    },
+    // Selection
     setSelectionType: (state, action) => {
-      state.selectionType = action.payload;
+      state.selection.type = action.payload;
     },
     setEliteCount: (state, action) => {
       const count = action.payload;
@@ -42,17 +65,23 @@ export const parametersSlice = createSlice({
       if (count > popSize) {
         throw new Error(`Elite count ${count} cannot exceed population size ${popSize}`);
       }
-      state.eliteCount = count;
+      state.selection.eliteCount = count;
+    },
+    setTournamentSize: (state, action) => {
+      state.selection.tournamentSize = action.payload;
     },
   },
 });
 
 export const {
   setPopulationSize,
-  setMutationRate,
-  setCrossoverProbability,
   setTarget,
   setTriangles,
+  setCrossoverType,
+  setCrossoverProbability,
+  setColorSigma,
+  setPointSigma,
+  setPermuteProb,
   setSelectionType,
   setEliteCount,
 } = parametersSlice.actions;

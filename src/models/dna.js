@@ -46,18 +46,18 @@ const crossoverColor = (dna1, dna2, point) => {
 
 // DNA Mutation Helpers
 // ------------------------------------------------------------
-const tweakPoint = (noise, x, y) => [clamp(x + noise.next(), 0, 1), clamp(y + noise.next(), 0, 1)];
+const tweakPoint = (m, x, y) => [clamp(x + m.pointNudge(), 0, 1), clamp(y + m.pointNudge(), 0, 1)];
 
-const tweakColor = (noise, value) => clamp(value + noise.next() * maxColorValue, 0, maxColorValue);
+const tweakColor = (m, value) => clamp(value + m.colorNudge() * maxColorValue, 0, maxColorValue);
 
-const tweakAlpha = (noise, value) => clamp(value + noise.next(), 0, 1);
+const tweakAlpha = (m, value) => clamp(value + m.colorNudge(), 0, 1);
 
-const mutateColor = (color, noise) => {
+const mutateColor = (color, mutation) => {
   const func = (i) => (i < 3 ? tweakColor : tweakAlpha);
-  return color.map((c, i) => func(i)(noise, c));
+  return color.map((c, i) => func(i)(mutation, c));
 };
 
-const mutatePoints = (points, noise) => points.map((p) => tweakPoint(noise, ...p));
+const mutatePoints = (points, mutation) => points.map((p) => tweakPoint(mutation, ...p));
 
 /**
  * DNA
@@ -96,9 +96,9 @@ const DNA = {
     return [child1, child2];
   },
 
-  mutate: (dna, noise) => (DNA.create({
-    color: mutateColor(dna.color, noise),
-    points: mutatePoints(dna.points, noise),
+  mutate: (dna, mutation) => (DNA.create({
+    color: mutateColor(dna.color, mutation),
+    points: mutatePoints(dna.points, mutation),
   })),
 
   clone: (dna) => DNA.create({ points: dna.points.slice(), color: dna.color.slice() }),

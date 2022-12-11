@@ -1,19 +1,23 @@
 import RandomNoise from '../globals/randomNoise';
-import { flipCoin } from '../globals/utils';
+import { flipCoin } from '../globals/statsUtils';
 
 class Mutation {
-  constructor({ sigma, crossoverProb, permuteProb }) {
-    this.noise = new RandomNoise(sigma);
-    this.crossoverProb = crossoverProb;
+  constructor({ colorSigma, pointSigma, permuteProb }) {
+    this.colorNoise = new RandomNoise(colorSigma);
+    this.pointNoise = new RandomNoise(pointSigma);
     this.permuteProb = permuteProb;
-  }
-
-  doCrossover() {
-    return flipCoin(this.crossoverProb);
   }
 
   doPermute() {
     return flipCoin(this.permuteProb);
+  }
+
+  colorNudge() {
+    return this.colorNoise.next();
+  }
+
+  pointNudge() {
+    return this.pointNoise.next();
   }
 }
 

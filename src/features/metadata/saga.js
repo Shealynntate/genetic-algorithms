@@ -7,7 +7,6 @@ import {
 } from 'redux-saga/effects';
 import { addImageToDatabase, clearDatabase, initializeDBEntry } from '../../globals/database';
 import { targetFitness } from '../../constants';
-import RandomNoise from '../../globals/randomNoise';
 import { approxEqual, setSigFigs } from '../../globals/statsUtils';
 import { createImageData, shouldSaveGenImage } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
@@ -20,27 +19,22 @@ import {
   setGlobalBest,
   setTargetFitnessReached,
 } from './metadataSlice';
+import Mutation from '../../models/mutation';
+import Crossover from '../../models/crossover';
+import Selection from '../../models/selection';
 
 let population;
-let randomNoise;
 const fitnessSigFigs = 3;
-const stagnationThreshold = 200;
 
 clearDatabase();
 
 function* processNextGenerationSaga(gen) {
-  randomNoise.nextGeneration();
-
   // Update the list of maxFitness scores
   const { maxFitness } = gen;
   yield put(addMaxFitnessScore(setSigFigs(maxFitness, fitnessSigFigs)));
 }
 
 function* runGenerationSaga() {
-  const selectionType = yield select((state) => state.parameters.selectionType);
-  const eliteCount = yield select((state) => state.parameters.eliteCount);
-  const crossoverProb = yield select((state) => state.parameters.crossoverProbability);
-
   while (true) {
     const isRunning = yield select(isRunningSelector);
     if (!isRunning) return;
@@ -51,40 +45,40 @@ function* runGenerationSaga() {
       yield delay(10);
     }
     console.time('Run Generation');
-    const gen = yield population.runGeneration(
-      selectionType,
-      eliteCount,
-      crossoverProb,
-      randomNoise,
-    );
-    yield call(processNextGenerationSaga, gen);
+    const gen = yield population.runGeneration();
     console.timeEnd('Run Generation');
+    yield call(processNextGenerationSaga, gen);
     yield put(setCurrentGen(gen));
   }
 }
 
 function* runSimulationSaga() {
   const populationSize = yield select((state) => state.parameters.populationSize);
-  const eliteCount = yield select((state) => state.parameters.eliteCount);
-  const selectionType = yield select((state) => state.parameters.selectionType);
   const triangleCount = yield select((state) => state.parameters.triangleCount);
   const target = yield select((state) => state.parameters.target);
-  const mutation = yield select((state) => state.parameters.mutationRate);
+  const crossover = yield select((state) => state.parameters.crossover);
+  const mutation = yield select((state) => state.parameters.mutation);
+  const selection = yield select((state) => state.parameters.selection);
   if (!population) {
     // Store our parameters in the database
     yield call(initializeDBEntry, {
       triangleCount,
-      selectionType,
+      selection,
       populationSize,
-      eliteCount,
       mutation,
     });
     const { data } = yield createImageData(target);
     // Initialize the population
-    population = new Population(populationSize, triangleCount, data);
+    population = new Population({
+      size: populationSize,
+      genomeSize: triangleCount,
+      target: data,
+      crossover: new Crossover(crossover),
+      mutation: new Mutation(mutation),
+      selection: new Selection(selection),
+    });
     yield population.initialize();
   }
-  randomNoise = new RandomNoise(mutation);
 
   yield call(runGenerationSaga);
 }
@@ -120,22 +114,6 @@ function* updateGlobalBestSaga({ payload }) {
   }
 }
 
-function* stagnationDaemonSaga() {
-  const scores = yield select((state) => state.metadata.maxFitnessScores);
-  const start = scores.length - stagnationThreshold - 1;
-  if (start < 0 || randomNoise.inDecay) {
-    return;
-  }
-  for (let i = start; i < scores.length; ++i) {
-    if (scores[i] > scores[start]) {
-      // A generation's max score has improved within the threshold, don't disrupt
-      return;
-    }
-  }
-  // Create disruption event
-  // randomNoise.disrupt();
-}
-
 function* resetSimulationSaga() {
   yield put(setCurrentGen({}));
   yield put(clearMaxFitnessScores());
@@ -146,7 +124,6 @@ function* metadataSaga() {
   yield takeEvery(runSimulation, runSimulationSaga);
   yield takeEvery(setCurrentGen, updateGlobalBestSaga);
   yield takeEvery(resetSimulation, resetSimulationSaga);
-  yield takeEvery(addMaxFitnessScore, stagnationDaemonSaga);
 }
 
 export default metadataSaga;

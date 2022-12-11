@@ -31,6 +31,12 @@ export const SelectionTypeLabels = {
   [SelectionType.SUS]: 'SUS',
 };
 
+export const CrossoverType = {
+  ONE_POINT: 'ONE_POINT',
+  TWO_POINT: 'TWO_POINT',
+  UNIFORM: 'UNIFORM',
+};
+
 export const populationBounds = {
   max: 1e3,
   min: 2,

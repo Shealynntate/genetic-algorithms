@@ -8,7 +8,7 @@ import ParameterSlider from './ParameterSlider';
 function EliteSlider() {
   const dispatch = useDispatch();
 
-  const value = useSelector((state) => state.parameters.eliteCount);
+  const value = useSelector((state) => state.parameters.selection.eliteCount);
   const max = useSelector((state) => state.parameters.populationSize);
   const { min, step } = eliteCountBounds;
 

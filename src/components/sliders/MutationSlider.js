@@ -11,7 +11,7 @@ import { scaleLinear } from '@visx/scale';
 import { AreaClosed, LinePath } from '@visx/shape';
 import { Grid } from '@visx/grid';
 import ParameterSlider from './ParameterSlider';
-import { setMutationRate } from '../../features/parameters/parametersSlice';
+import { setColorSigma } from '../../features/parameters/parametersSlice';
 import NormalDistribution from '../../globals/normalDistribution';
 import { mutationBounds } from '../../constants';
 
@@ -40,14 +40,14 @@ const margin = {
 function MutationSlider() {
   const dispatch = useDispatch();
   const theme = useTheme();
-  const value = useSelector((state) => state.parameters.mutationRate);
+  const value = useSelector((state) => state.parameters.mutation.colorSigma);
   const { min, max, step } = mutationBounds;
   const { max: dataMax, dist } = createData(0, value);
   const [data, setData] = useState(dist);
   const [maxValue, setMaxValue] = useState(dataMax);
 
   const setValue = (v) => {
-    dispatch(setMutationRate(v));
+    dispatch(setColorSigma(v));
     // eslint-disable-next-line no-shadow
     const { max, dist } = createData(0, v);
     setData(dist);

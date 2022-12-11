@@ -50,7 +50,7 @@ const Genome = {
     }
   },
 
-  clone: (genome) => Genome.create({ size: genome.size, dna: genome.dna.map((d) => d.clone()) }),
+  clone: (genome) => Genome.create({ size: genome.size, dna: genome.dna.map((d) => DNA.clone(d)) }),
 };
 
 export default Genome;

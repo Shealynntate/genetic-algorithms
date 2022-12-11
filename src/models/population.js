@@ -15,10 +15,20 @@ class Population {
 
   // Instance Methods
   // ------------------------------------------------------------
-  constructor(size, genomeSize, target) {
+  constructor({
+    size,
+    genomeSize,
+    target,
+    crossover,
+    mutation,
+    selection,
+  }) {
     this.genId = Population.nextGenId;
     this.target = target;
     this.organisms = [...Array(size)].map(() => Organism.create({ size: genomeSize }));
+    this.crossover = crossover;
+    this.selection = selection;
+    this.mutation = mutation;
   }
 
   async initialize() {
@@ -29,12 +39,11 @@ class Population {
     this.organisms = await this.evaluateFitness();
   }
 
-  async runGeneration(selectionType, eliteCount, crossoverProb, mutationNoise) {
+  async runGeneration() {
     // Select all the parents for reproduction
-    const count = (this.size - eliteCount) / 2;
-    const parents = this.performSelection(selectionType, count);
+    const parents = this.performSelection(this.selection);
     // Replace old population with new generation
-    this.organisms = this.reproduce(parents, eliteCount, crossoverProb, mutationNoise);
+    this.organisms = this.reproduce(parents, this.selection, this.crossover, this.mutation);
     this.genId = Population.nextGenId;
     this.organisms = await this.evaluateFitness();
 
@@ -59,7 +68,6 @@ class Population {
           });
           this.workers[i].onmessage = (result) => {
             resolve(result.data);
-            // Population.worker.terminate();
           };
         } catch (error) {
           reject(error);
@@ -73,14 +81,14 @@ class Population {
       orgs = orgs.concat(results[i].updatedOrganisms);
     }
     if (orgs.length !== this.size) {
-      throw new Error(`[Population] evaluateFitness returned incorrect number of organisms ${orgs.length}`);
+      throw new Error(`evaluateFitness returned incorrect number of organisms ${orgs.length}`);
     }
     return orgs;
   }
 
-  performSelection(selectionType, count) {
-    const tournamentSize = 2;
-    switch (selectionType) {
+  performSelection({ type, tournamentSize, eliteCount }) {
+    const count = (this.size - eliteCount) / 2;
+    switch (type) {
       case SelectionType.ROULETTE:
         return this.rouletteSelection(count);
       case SelectionType.TOURNAMENT:
@@ -88,15 +96,16 @@ class Population {
       case SelectionType.SUS:
         return this.susSelection(count);
       default:
-        throw new Error(`[Population] Invalid SelectionType ${selectionType} provided`);
+        throw new Error(`Invalid SelectionType ${type} provided`);
     }
   }
 
-  reproduce(parents, eliteCount, crossoverProb, mutationNoise) {
+  reproduce(parents, selection, crossover, mutation) {
+    const { eliteCount } = selection;
     // Generate (N - eliteCount) offspring for the next generation
     const nextGen = this.getElites(eliteCount);
     parents.forEach(([p1, p2]) => {
-      const offspring = Organism.reproduce(p1, p2, crossoverProb, mutationNoise);
+      const offspring = Organism.reproduce(p1, p2, crossover, mutation);
       nextGen.push(...offspring);
     });
     return nextGen;
@@ -180,7 +189,7 @@ class Population {
     if (count === 0) return [];
 
     const organisms = this.organismsByFitness();
-    return organisms.slice(0, count).map((org) => org.clone());
+    return organisms.slice(0, count).map((org) => Organism.clone(org));
   }
 
   randomOrganism() {
