@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { useIsRunning } from '../hooks';
+import { useCurrentStats, useIsRunning } from '../hooks';
 import { createGif } from '../globals/utils';
 import { getCurrentImages } from '../globals/database';
 import HistoryDisplay from './HistoryDisplay';
@@ -24,10 +24,9 @@ StatusText.propTypes = {
 const fileName = 'ga-image-timelapse';
 
 function SimulationStatusPanel() {
-  const currentGen = useSelector((state) => state.metadata.currentGen);
   const globalBest = useSelector((state) => state.metadata.globalBest);
+  const stats = useCurrentStats();
   const isRunning = useIsRunning();
-  const { maxFitOrganism } = currentGen;
 
   const downloadGif = async () => {
     const history = await getCurrentImages();
@@ -42,9 +41,9 @@ function SimulationStatusPanel() {
     <Paper>
       <Stack direction="row">
         <Box>
-          <StatusText>{`Generation: ${currentGen.id || 0}`}</StatusText>
-          <StatusText>{`Fitness: ${maxFitOrganism?.fitness.toFixed(4) || 0}`}</StatusText>
-          <StatusText>{`Deviation: ${currentGen.deviation?.toFixed(4) || 0}`}</StatusText>
+          <StatusText>{`Generation: ${stats.genId || 0}`}</StatusText>
+          <StatusText>{`Fitness: ${stats.fitness || 0}`}</StatusText>
+          <StatusText>{`Deviation: ${stats.deviation || 0}`}</StatusText>
         </Box>
         <Button
           variant="contained"

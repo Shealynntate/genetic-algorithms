@@ -5,17 +5,18 @@ import {
   takeEvery,
   delay,
 } from 'redux-saga/effects';
+import { omit } from 'lodash';
 import { addImageToDatabase, clearDatabase, initializeDBEntry } from '../../globals/database';
 import { targetFitness } from '../../constants';
-import { approxEqual, setSigFigs } from '../../globals/statsUtils';
+import { approxEqual } from '../../globals/statsUtils';
 import { createImageData, shouldSaveGenImage } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
 import Population from '../../models/population';
 import { endSimulation, resetSimulation, runSimulation } from '../ux/uxSlice';
 import {
-  addMaxFitnessScore,
-  clearMaxFitnessScores,
-  setCurrentGen,
+  addGenStats,
+  clearGenStats,
+  setCurrentBest,
   setGlobalBest,
   setTargetFitnessReached,
 } from './metadataSlice';
@@ -24,19 +25,21 @@ import Crossover from '../../models/crossover';
 import Selection from '../../models/selection';
 
 let population;
-const fitnessSigFigs = 3;
 
 clearDatabase();
 
-function* processNextGenerationSaga(gen) {
-  // Update the list of maxFitness scores
-  const { maxFitness } = gen;
-  yield put(addMaxFitnessScore(setSigFigs(maxFitness, fitnessSigFigs)));
+function* targetReachedSaga({ fitness }) {
+  if (approxEqual(fitness, targetFitness)) {
+    yield put(setTargetFitnessReached());
+    yield put(endSimulation());
+  }
 }
 
 function* runGenerationSaga() {
   while (true) {
     const isRunning = yield select(isRunningSelector);
+    const globalBest = yield select((state) => state.metadata.globalBest);
+
     if (!isRunning) return;
 
     // Check if we should store a copy of the maxFitOrganism for Image History
@@ -47,8 +50,26 @@ function* runGenerationSaga() {
     console.time('Run Generation');
     const gen = yield population.runGeneration();
     console.timeEnd('Run Generation');
-    yield call(processNextGenerationSaga, gen);
-    yield put(setCurrentGen(gen));
+
+    // Update the list of maxFitness scores
+    const stats = omit(gen, ['maxFitOrganism']);
+    yield put(setCurrentBest({ organism: gen.maxFitOrganism, genId: gen.genId }));
+    yield put(addGenStats(stats));
+    const globalFitness = globalBest?.organism.fitness || -1;
+
+    // Check if the latest generation's most fit organism can beat our global best
+    if (gen.maxFitness > globalFitness) {
+      yield put(setGlobalBest({ genId: gen.genId, organism: gen.maxFitOrganism }));
+      // Check if we should store a copy of the maxFitOrganism for Image History
+      // if (shouldSaveGenImage(population.genId)) {
+      // if (population.genId >= lastSavedId + 10) {
+      //   lastSavedId = population.genId;
+      //   yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
+      //   yield delay(10);
+      // }
+      // Check if this new best reaches our target fitness
+      yield call(targetReachedSaga, gen.maxFitOrganism);
+    }
   }
 }
 
@@ -83,46 +104,15 @@ function* runSimulationSaga() {
   yield call(runGenerationSaga);
 }
 
-function* targetReachedSaga({ fitness }) {
-  if (approxEqual(fitness, targetFitness)) {
-    yield put(setTargetFitnessReached());
-    yield put(endSimulation());
-  }
-}
-
-// let lastSavedId = -10;
-
-function* updateGlobalBestSaga({ payload }) {
-  const { id, maxFitOrganism } = payload;
-  const globalBest = yield select((state) => state.metadata.globalBest);
-  // If we're resetting the state, the currentGen will be empty
-  if (!maxFitOrganism) return;
-
-  const currentBest = globalBest?.organism.fitness || -1;
-  // Check if the latest generation's most fit organism can beat our global best
-  if (maxFitOrganism.fitness > currentBest) {
-    yield put(setGlobalBest({ id, organism: maxFitOrganism }));
-    // Check if we should store a copy of the maxFitOrganism for Image History
-    // if (shouldSaveGenImage(population.genId)) {
-    // if (population.genId >= lastSavedId + 10) {
-    //   lastSavedId = population.genId;
-    //   yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
-    //   yield delay(10);
-    // }
-    // Check if this new best reaches our target fitness
-    yield call(targetReachedSaga, maxFitOrganism);
-  }
-}
-
 function* resetSimulationSaga() {
-  yield put(setCurrentGen({}));
-  yield put(clearMaxFitnessScores());
+  yield put(setCurrentBest({}));
+  yield put(setGlobalBest());
+  yield put(clearGenStats());
   yield call(clearDatabase);
 }
 
 function* metadataSaga() {
   yield takeEvery(runSimulation, runSimulationSaga);
-  yield takeEvery(setCurrentGen, updateGlobalBestSaga);
   yield takeEvery(resetSimulation, resetSimulationSaga);
 }
 

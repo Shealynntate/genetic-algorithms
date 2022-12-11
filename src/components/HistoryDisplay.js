@@ -7,15 +7,15 @@ import OrganismCanvas from './OrganismCanvas';
 import ImageCaption from './ImageCaption';
 
 function HistoryDisplay() {
-  const currentGen = useSelector((state) => state.metadata.currentGen);
+  const { organism, genId } = useSelector((state) => state.metadata.currentBest);
   const images = useImageDbQuery() || [];
-  const { maxFitOrganism, id: genId } = currentGen;
+
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-      {maxFitOrganism && (
+      {organism && (
       <Box px={1}>
-        <OrganismCanvas organism={maxFitOrganism} />
-        <ImageCaption gen={genId} fitness={maxFitOrganism.fitness} />
+        <OrganismCanvas organism={organism} />
+        <ImageCaption gen={genId} fitness={organism.fitness} />
       </Box>
       )}
       {images.slice().reverse().map(({ gen, fitness, imageData }) => (

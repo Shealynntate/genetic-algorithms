@@ -35,6 +35,11 @@ export const useMaxFitness = () => {
   return target.length;
 };
 
+export const useCurrentStats = () => {
+  const stats = useSelector((state) => state.metadata.genStats);
+  return stats.length ? stats[stats.length - 1] : {};
+};
+
 export const useTargetData = async () => {
   const target = useSelector((state) => state.parameters.target);
   const { data } = await createImageData(target);

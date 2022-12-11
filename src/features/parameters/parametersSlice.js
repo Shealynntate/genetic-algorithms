@@ -1,27 +1,27 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import { CrossoverType, SelectionType } from '../../constants';
-// import square from '../../assets/red_square_test.png';
-import square from '../../assets/test_grid.png';
-// import monaLisa from '../../assets/mona_lisa.jpeg';
+// import defaultTarget from '../../assets/red_square_test.png';
+// import defaultTarget from '../../assets/test_grid.png';
+import defaultTarget from '../../assets/mona_lisa.jpeg';
 
 const initialState = {
-  populationSize: 300,
-  triangleCount: 8,
-  target: square,
+  populationSize: 350,
+  triangleCount: 50,
+  target: defaultTarget,
   crossover: {
     type: CrossoverType.UNIFORM,
     prob: 1 / 50,
   },
   mutation: {
     colorSigma: 0.005,
-    pointSigma: 0.005,
+    pointSigma: 0.009,
     permuteProb: 0.1,
   },
   selection: {
     type: SelectionType.TOURNAMENT,
     eliteCount: 0,
-    tournamentSize: 2,
+    tournamentSize: 3,
   },
 };
 

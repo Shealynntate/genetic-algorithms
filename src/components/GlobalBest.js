@@ -18,7 +18,7 @@ function GlobalBest() {
       {globalBest ? (
         <>
           <OrganismCanvas organism={globalBest.organism} />
-          <ImageCaption gen={globalBest.id} fitness={globalBest.organism.fitness} />
+          <ImageCaption gen={globalBest.genId} fitness={globalBest.organism.fitness} />
         </>
       ) : (
         <Box sx={{

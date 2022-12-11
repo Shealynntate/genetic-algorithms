@@ -4,8 +4,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   targetFitnessReached: false,
   globalBest: null,
-  currentGen: {},
-  maxFitnessScores: [],
+  currentBest: {},
+  genStats: [],
 };
 
 export const metadataSlice = createSlice({
@@ -15,27 +15,27 @@ export const metadataSlice = createSlice({
     setGlobalBest: (state, action) => {
       state.globalBest = action.payload;
     },
-    setCurrentGen: (state, action) => {
-      state.currentGen = action.payload;
+    setCurrentBest: (state, action) => {
+      state.currentBest = action.payload;
     },
     setTargetFitnessReached: (state, action) => {
       state.targetFitnessReached = action.payload;
     },
-    addMaxFitnessScore: (state, action) => {
-      state.maxFitnessScores = [...state.maxFitnessScores, action.payload];
+    addGenStats: (state, action) => {
+      state.genStats = [...state.genStats, action.payload];
     },
-    clearMaxFitnessScores: (state) => {
-      state.maxFitnessScores = [];
+    clearGenStats: (state) => {
+      state.genStats = [];
     },
   },
 });
 
 export const {
   setGlobalBest,
-  setCurrentGen,
+  setCurrentBest,
   setTargetFitnessReached,
-  addMaxFitnessScore,
-  clearMaxFitnessScores,
+  addGenStats,
+  clearGenStats,
 } = metadataSlice.actions;
 
 export default metadataSlice.reducer;

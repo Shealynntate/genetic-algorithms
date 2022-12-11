@@ -1,11 +1,12 @@
 import { deviation } from 'd3-array';
 import Organism from './organism';
 import { SelectionType } from '../constants';
-import { randomFloat, randomIndex } from '../globals/statsUtils';
+import { randomFloat, randomIndex, setSigFigs } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 import createWorker from '../web-workers/phenotypeCreator';
 
 const batchSize = 30;
+const statsSigFigs = 4;
 
 class Population {
   static get nextGenId() {
@@ -228,11 +229,11 @@ class Population {
     const mean = total / this.size;
 
     return {
-      id: this.genId,
-      meanFitness: mean,
-      maxFitness: max,
-      minFitness: min,
-      deviation: deviation(this.organisms, (o) => o.fitness),
+      genId: this.genId,
+      meanFitness: setSigFigs(mean, statsSigFigs),
+      maxFitness: setSigFigs(max, statsSigFigs),
+      minFitness: setSigFigs(min, statsSigFigs),
+      deviation: setSigFigs(deviation(this.organisms, (o) => o.fitness), statsSigFigs),
       maxFitOrganism,
     };
   }

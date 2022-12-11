@@ -43,10 +43,10 @@ function ControlPanel() {
   return (
     <Box spacing={1} mt={2}>
       <Typography variant="button">Controls</Typography>
-      <ImagePanel />
-      <SelectionPanel />
-      <MutationPanel />
-      <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
+      <Stack
+        direction="row"
+        sx={{ display: 'flex', justifyContent: 'space-evenly', mb: 1 }}
+      >
         <PrimaryButton
           currentState={simulationState}
           callback={onClick}
@@ -61,6 +61,9 @@ function ControlPanel() {
           </Button>
         )}
       </Stack>
+      <ImagePanel />
+      <SelectionPanel />
+      <MutationPanel />
     </Box>
   );
 }
