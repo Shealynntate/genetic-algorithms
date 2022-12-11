@@ -1,10 +1,14 @@
 /* eslint-disable no-restricted-globals */
 export default () => {
   let phenotype = null;
-  const maxColorValue = 255;
 
   class Phenotype {
-    constructor({ canvas, numColorChannels, target }) {
+    constructor({
+      canvas,
+      numColorChannels,
+      maxColorValue,
+      target,
+    }) {
       this.ctx = canvas.getContext('2d', { willReadFrequently: true });
       this.width = canvas.width;
       this.height = canvas.height;
@@ -13,7 +17,6 @@ export default () => {
     }
 
     scalePoint(point) {
-      // return [point[0] * this.width, point[1] * this.height];
       return [Math.round(point[0] * this.width), Math.round(point[1] * this.height)];
     }
 
@@ -55,11 +58,17 @@ export default () => {
       canvas,
       organisms,
       numColorChannels,
+      maxColorValue,
       target,
     },
   }) => {
     if (canvas) {
-      phenotype = new Phenotype({ canvas, numColorChannels, target });
+      phenotype = new Phenotype({
+        canvas,
+        numColorChannels,
+        maxColorValue,
+        target,
+      });
       return;
     }
 

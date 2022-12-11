@@ -49,12 +49,6 @@ const Organism = {
   clone: (organism) => Organism.create({
     genome: Genome.clone(organism.genome),
   }),
-
-  evaluateFitness: (organism, target) => {
-    // eslint-disable-next-line no-param-reassign
-    organism.fitness = Genome.evaluateFitness(organism.genome, target);
-    return organism.fitness;
-  },
 };
 
 export default Organism;

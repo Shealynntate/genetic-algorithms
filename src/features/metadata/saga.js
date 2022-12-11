@@ -23,7 +23,6 @@ import {
 
 let population;
 let randomNoise;
-// const runDelay = 0;
 const fitnessSigFigs = 3;
 const stagnationThreshold = 200;
 
@@ -61,7 +60,6 @@ function* runGenerationSaga() {
     yield call(processNextGenerationSaga, gen);
     console.timeEnd('Run Generation');
     yield put(setCurrentGen(gen));
-    // yield delay(runDelay);
   }
 }
 
@@ -84,7 +82,7 @@ function* runSimulationSaga() {
     const { data } = yield createImageData(target);
     // Initialize the population
     population = new Population(populationSize, triangleCount, data);
-    yield population.init();
+    yield population.initialize();
   }
   randomNoise = new RandomNoise(mutation);
 

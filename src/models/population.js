@@ -1,31 +1,11 @@
 import { deviation } from 'd3-array';
 import Organism from './organism';
-import { canvasParameters, numColorChannels, SelectionType } from '../constants';
+import { SelectionType } from '../constants';
 import { randomFloat, randomIndex } from '../globals/statsUtils';
-import WorkerBuilder from '../web-workers/workerBuilder';
-import phenotypeWorker from '../web-workers/phenotypeWorker';
 import { genRange } from '../globals/utils';
-
-const { width, height } = canvasParameters;
+import createWorker from '../web-workers/phenotypeCreator';
 
 const batchSize = 30;
-
-const createWorker = (target) => {
-  // Create a new worker
-  const worker = new WorkerBuilder(phenotypeWorker);
-  // Create a canvas to transfer to the worker
-  const canvas = document.createElement('canvas', canvasParameters);
-  canvas.width = width;
-  canvas.height = height;
-  const canvasWorker = canvas.transferControlToOffscreen();
-  // Post an init message to the worker
-  worker.postMessage({
-    canvas: canvasWorker,
-    numColorChannels,
-    target,
-  }, [canvasWorker]);
-  return worker;
-};
 
 class Population {
   static get nextGenId() {
@@ -39,11 +19,12 @@ class Population {
     this.genId = Population.nextGenId;
     this.target = target;
     this.organisms = [...Array(size)].map(() => Organism.create({ size: genomeSize }));
-    const numWorkers = Math.ceil(size / batchSize);
-    this.workers = [...Array(numWorkers)].map(() => createWorker(target));
   }
 
-  async init() {
+  async initialize() {
+    // Setup web workers for evaluateFitness work
+    const numWorkers = Math.ceil(this.size / batchSize);
+    this.workers = [...Array(numWorkers)].map(() => createWorker(this.target));
     // Prep for the first call of runGeneration
     this.organisms = await this.evaluateFitness();
   }

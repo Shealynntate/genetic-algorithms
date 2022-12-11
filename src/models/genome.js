@@ -1,15 +1,6 @@
 import { flipCoin, randomIndex } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
-// import Phenotype from './phenotype';
 import DNA from './dna';
-import { canvasParameters, maxColorValue, numColorChannels } from '../constants';
-
-//
-const { width, height } = canvasParameters;
-
-const denominator = maxColorValue * numColorChannels * width * height;
-
-// const Phenome = new Phenotype(width, height);
 
 const Genome = {
   create: ({ size, dna }) => {
@@ -17,7 +8,6 @@ const Genome = {
     return {
       size,
       dna: bases,
-      // phenotype: Phenome.getImageData(bases),
     };
   },
 
@@ -48,22 +38,6 @@ const Genome = {
     });
 
     return [child1, child2];
-  },
-
-  evaluateFitness: (genome, target) => {
-    const { data: pixels } = genome.phenotype;
-    if (pixels.length !== target.length) {
-      throw new Error(`[Genome] target length ${target.length} does not match phenotype length ${pixels.length}`);
-    }
-
-    let difference = 0;
-    // Note: This for-loop is an order of magnitude faster than Array.prototype.forEach
-    // Super important here since each length is tens of thousands of pixels per organism
-    for (let i = 0; i < pixels.length; i++) {
-      difference += Math.abs(pixels[i] - target[i]);
-    }
-
-    return (1 - difference / denominator);
   },
 
   mutateOrder: (genome) => {

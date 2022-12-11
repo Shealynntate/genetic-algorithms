@@ -1,8 +1,9 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { canvasParameters } from '../constants';
 import Canvas from './Canvas';
+import ImageCaption from './ImageCaption';
 
 const { width, height } = canvasParameters;
 
@@ -14,10 +15,7 @@ function HistoryEntry({ genId, fitness, imageData }) {
         height={height}
         imageData={imageData}
       />
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography variant="caption">{`Gen: ${genId}`}</Typography>
-        <Typography variant="caption">{`Score: ${fitness.toFixed(3)}`}</Typography>
-      </Box>
+      <ImageCaption gen={genId} fitness={fitness} />
     </Box>
   );
 }
@@ -29,7 +27,7 @@ HistoryEntry.propTypes = {
 };
 
 const propsAreEqual = (prevProps, nextProps) => (
-  prevProps.genId === nextProps.id
+  prevProps.genId === nextProps.genId
 );
 
 export default memo(HistoryEntry, propsAreEqual);

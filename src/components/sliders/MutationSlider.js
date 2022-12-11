@@ -72,7 +72,7 @@ function MutationSlider() {
 
   return (
     <Box pb={4}>
-      {/* <Box sx={{ borderRadius: `${theme.shape.borderRadius}px`, overflow: 'hidden' }}>
+      <Box sx={{ borderRadius: `${theme.shape.borderRadius}px`, overflow: 'hidden' }}>
         <svg width={fullWidth} height={fullHeight}>
           <Group top={margin.top} left={margin.left}>
             <rect
@@ -140,7 +140,7 @@ function MutationSlider() {
             })}
           />
         </svg>
-      </Box> */}
+      </Box>
       <ParameterSlider
         value={value}
         setValue={setValue}

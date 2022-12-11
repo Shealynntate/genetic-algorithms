@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
 import OrganismCanvas from './OrganismCanvas';
 import { canvasParameters } from '../constants';
+import ImageCaption from './ImageCaption';
 
 const { width, height } = canvasParameters;
 
@@ -17,14 +18,7 @@ function GlobalBest() {
       {globalBest ? (
         <>
           <OrganismCanvas organism={globalBest.organism} />
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="caption">
-              {`Gen: ${globalBest.id}`}
-            </Typography>
-            <Typography variant="caption">
-              {`Score: ${globalBest.organism.fitness.toFixed(3)}`}
-            </Typography>
-          </Box>
+          <ImageCaption gen={globalBest.id} fitness={globalBest.organism.fitness} />
         </>
       ) : (
         <Box sx={{

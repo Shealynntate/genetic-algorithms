@@ -1,9 +1,10 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { useImageDbQuery } from '../hooks';
 import HistoryEntry from './HistoryEntry';
 import OrganismCanvas from './OrganismCanvas';
+import ImageCaption from './ImageCaption';
 
 function HistoryDisplay() {
   const currentGen = useSelector((state) => state.metadata.currentGen);
@@ -14,10 +15,7 @@ function HistoryDisplay() {
       {maxFitOrganism && (
       <Box px={1}>
         <OrganismCanvas organism={maxFitOrganism} />
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="caption">{`Gen: ${genId}`}</Typography>
-          <Typography variant="caption">{`Score: ${maxFitOrganism.fitness.toFixed(3)}`}</Typography>
-        </Box>
+        <ImageCaption gen={genId} fitness={maxFitOrganism.fitness} />
       </Box>
       )}
       {images.slice().reverse().map(({ gen, fitness, imageData }) => (
@@ -32,4 +30,4 @@ function HistoryDisplay() {
   );
 }
 
-export default memo(HistoryDisplay);
+export default HistoryDisplay;
