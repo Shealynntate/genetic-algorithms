@@ -1,7 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { clamp } from 'lodash';
 import { maxColorValue } from '../constants';
-import { flipCoin, randomInt, rand } from '../globals/statsUtils';
+import {
+  flipCoin,
+  randomInt,
+  rand,
+  // randomIndex,
+} from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 
 // DNA Initialization Helpers
@@ -12,7 +17,11 @@ const randomColor = () => [randCV(), randCV(), randCV(), rand()];
 
 const randomPoint = () => [rand(), rand()];
 
-const randomPoints = () => [randomPoint(), randomPoint(), randomPoint()];
+const randomPoints = (len) => genRange(len).map(() => randomPoint());
+// const randomPoints = (len) => {
+//   const pt = randomPoint();
+//   return genRange(len).map(() => pt.slice());
+// };
 
 // DNA Crossover Helpers
 // ------------------------------------------------------------
@@ -57,19 +66,29 @@ const mutateColor = (color, mutation) => {
   return color.map((c, i) => func(i)(mutation, c));
 };
 
+// Mutate all points
 const mutatePoints = (points, mutation) => points.map((p) => tweakPoint(mutation, ...p));
+
+// Mutate just one point
+// const mutatePoints = (points, mutation) => {
+//   const index = randomIndex(points.length);
+//   points[index] = tweakPoint(mutation, ...points[index]);
+//   return points;
+// };
+
+const numPoints = 3;
 
 /**
  * DNA
  */
 const DNA = {
   create: ({ color: col, points: pts } = {}) => ({
-    points: pts || randomPoints(),
+    points: pts || randomPoints(numPoints),
     color: col || randomColor(),
   }),
 
   onePointCrossover: (dna1, dna2) => {
-    const result = [dna1.clone(), dna2.clone()];
+    const result = [DNA.clone(dna1), DNA.clone(dna2)];
     if (flipCoin()) {
       const point = randomInt(0, dna1.points.length);
       crossoverPoint(...result, point);

@@ -27,6 +27,11 @@ export const metadataSlice = createSlice({
     clearGenStats: (state) => {
       state.genStats = [];
     },
+    updateCurrentGen: (state, action) => {
+      const { currentBest, genStats } = action.payload;
+      state.currentBest = currentBest;
+      state.genStats = [...state.genStats, genStats];
+    },
   },
 });
 
@@ -36,6 +41,7 @@ export const {
   setTargetFitnessReached,
   addGenStats,
   clearGenStats,
+  updateCurrentGen,
 } = metadataSlice.actions;
 
 export default metadataSlice.reducer;

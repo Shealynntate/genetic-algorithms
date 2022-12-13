@@ -6,22 +6,22 @@ import { CrossoverType, SelectionType } from '../../constants';
 import defaultTarget from '../../assets/mona_lisa.jpeg';
 
 const initialState = {
-  populationSize: 350,
-  triangleCount: 50,
+  populationSize: 125,
+  triangleCount: 60,
   target: defaultTarget,
   crossover: {
-    type: CrossoverType.UNIFORM,
-    prob: 1 / 50,
+    type: CrossoverType.ONE_POINT,
+    prob: 0.1,
   },
   mutation: {
-    colorSigma: 0.005,
-    pointSigma: 0.009,
-    permuteProb: 0.1,
+    colorSigma: 0.001,
+    pointSigma: 0.001,
+    permuteProb: 0.25,
   },
   selection: {
     type: SelectionType.TOURNAMENT,
     eliteCount: 0,
-    tournamentSize: 3,
+    tournamentSize: 2,
   },
 };
 

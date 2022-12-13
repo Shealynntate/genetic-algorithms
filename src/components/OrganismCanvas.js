@@ -24,8 +24,9 @@ function OrganismCanvas({
         ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
         ctx.beginPath();
         ctx.moveTo(...scalePoint(points[0]));
-        ctx.lineTo(...scalePoint(points[1]));
-        ctx.lineTo(...scalePoint(points[2]));
+        for (let i = 1; i < points.length; ++i) {
+          ctx.lineTo(...scalePoint(points[i]));
+        }
         ctx.closePath();
         ctx.fill();
       });

@@ -27,8 +27,9 @@ export default () => {
         this.ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
         this.ctx.beginPath();
         this.ctx.moveTo(...this.scalePoint(points[0]));
-        this.ctx.lineTo(...this.scalePoint(points[1]));
-        this.ctx.lineTo(...this.scalePoint(points[2]));
+        for (let i = 1; i < points.length; ++i) {
+          this.ctx.lineTo(...this.scalePoint(points[i]));
+        }
         this.ctx.closePath();
         this.ctx.fill();
       });

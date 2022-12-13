@@ -11,6 +11,24 @@ const Genome = {
     };
   },
 
+  onePointCrossover: (genome1, genome2, prob) => {
+    const child1 = [];
+    const child2 = [];
+    const index = flipCoin(prob) ? randomIndex(genome1.size) : -1;
+    genRange(genome1.size).forEach((i) => {
+      if (i >= index) {
+        // Perform a crossover event
+        child1.push(DNA.clone(genome2.dna[i]));
+        child2.push(DNA.clone(genome1.dna[i]));
+      } else {
+        child1.push(DNA.clone(genome1.dna[i]));
+        child2.push(DNA.clone(genome2.dna[i]));
+      }
+    });
+
+    return [child1, child2];
+  },
+
   uniformCrossover: (genome1, genome2, prob) => {
     const child1 = [];
     const child2 = [];
@@ -40,14 +58,21 @@ const Genome = {
     return [child1, child2];
   },
 
+  // mutateOrder: (genome) => {
+  //   const index1 = randomIndex(genome.size);
+  //   const index2 = randomIndex(genome.size);
+  //   if (index1 !== index2) {
+  //     const r1 = genome.dna.splice(index1, 1);
+  //     const r2 = genome.dna.splice(index2, 1, ...r1);
+  //     genome.dna.splice(index1, 0, ...r2);
+  //   }
+  // },
+
+  // Swap adjacent DNA objects in the array
   mutateOrder: (genome) => {
-    const index1 = randomIndex(genome.size);
-    const index2 = randomIndex(genome.size);
-    if (index1 !== index2) {
-      const r1 = genome.dna.splice(index1, 1);
-      const r2 = genome.dna.splice(index2, 1, ...r1);
-      genome.dna.splice(index1, 0, ...r2);
-    }
+    const index = randomIndex(genome.size - 1);
+    const r1 = genome.dna.splice(index, 1);
+    genome.dna.splice(index + 1, 0, ...r1);
   },
 
   clone: (genome) => Genome.create({ size: genome.size, dna: genome.dna.map((d) => DNA.clone(d)) }),

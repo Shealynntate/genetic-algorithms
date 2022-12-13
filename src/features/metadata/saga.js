@@ -14,11 +14,11 @@ import { isRunningSelector } from '../../hooks';
 import Population from '../../models/population';
 import { endSimulation, resetSimulation, runSimulation } from '../ux/uxSlice';
 import {
-  addGenStats,
   clearGenStats,
   setCurrentBest,
   setGlobalBest,
   setTargetFitnessReached,
+  updateCurrentGen,
 } from './metadataSlice';
 import Mutation from '../../models/mutation';
 import Crossover from '../../models/crossover';
@@ -39,6 +39,7 @@ function* runGenerationSaga() {
   while (true) {
     const isRunning = yield select(isRunningSelector);
     const globalBest = yield select((state) => state.metadata.globalBest);
+    const globalFitness = globalBest?.organism.fitness || -1;
 
     if (!isRunning) return;
 
@@ -47,15 +48,17 @@ function* runGenerationSaga() {
       yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
       yield delay(10);
     }
-    console.time('Run Generation');
+    // console.time('Run Generation');
     const gen = yield population.runGeneration();
-    console.timeEnd('Run Generation');
+    // console.timeEnd('Run Generation');
 
     // Update the list of maxFitness scores
     const stats = omit(gen, ['maxFitOrganism']);
-    yield put(setCurrentBest({ organism: gen.maxFitOrganism, genId: gen.genId }));
-    yield put(addGenStats(stats));
-    const globalFitness = globalBest?.organism.fitness || -1;
+    stats.isGlobalBest = gen.maxFitness > globalFitness;
+    yield put(updateCurrentGen({
+      currentBest: { organism: gen.maxFitOrganism, genId: gen.genId },
+      genStats: stats,
+    }));
 
     // Check if the latest generation's most fit organism can beat our global best
     if (gen.maxFitness > globalFitness) {

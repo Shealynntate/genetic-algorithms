@@ -5,7 +5,7 @@ import { randomFloat, randomIndex, setSigFigs } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 import createWorker from '../web-workers/phenotypeCreator';
 
-const batchSize = 30;
+const batchSize = 40;
 const statsSigFigs = 4;
 
 class Population {

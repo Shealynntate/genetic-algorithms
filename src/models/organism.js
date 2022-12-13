@@ -1,3 +1,4 @@
+import { CrossoverType } from '../constants';
 import DNA from './dna';
 import Genome from './genome';
 
@@ -16,12 +17,30 @@ const Organism = {
   }),
 
   reproduce: (parentA, parentB, crossover, mutation) => {
+    let newDNA1;
+    let newDNA2;
     // Crossover event
-    const [newDNA1, newDNA2] = Genome.uniformCrossover2(
-      parentA.genome,
-      parentB.genome,
-      crossover.prob,
-    );
+    switch (crossover.type) {
+      case CrossoverType.ONE_POINT:
+        [newDNA1, newDNA2] = Genome.onePointCrossover(
+          parentA.genome,
+          parentB.genome,
+          crossover.prob,
+        );
+        break;
+      case CrossoverType.TWO_POINT:
+        break;
+      case CrossoverType.UNIFORM:
+        [newDNA1, newDNA2] = Genome.uniformCrossover2(
+          parentA.genome,
+          parentB.genome,
+          crossover.prob,
+        );
+        break;
+      default:
+        throw new Error(`Unrecognized crossover type ${crossover.type}`);
+    }
+
     const size = newDNA1.length;
     // Mutation DNA
     for (let i = 0; i < size; ++i) {

@@ -42,8 +42,8 @@ function SimulationStatusPanel() {
       <Stack direction="row">
         <Box>
           <StatusText>{`Generation: ${stats.genId || 0}`}</StatusText>
-          <StatusText>{`Fitness: ${stats.fitness || 0}`}</StatusText>
-          <StatusText>{`Deviation: ${stats.deviation || 0}`}</StatusText>
+          <StatusText>{`Fitness: ${stats.maxFitness?.toFixed(4) || 0}`}</StatusText>
+          <StatusText>{`Deviation: ${stats.deviation?.toFixed(4) || 0}`}</StatusText>
         </Box>
         <Button
           variant="contained"

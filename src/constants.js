@@ -38,7 +38,7 @@ export const CrossoverType = {
 };
 
 export const populationBounds = {
-  max: 1e3,
+  max: 500,
   min: 2,
   step: 2,
 };
