@@ -2,12 +2,16 @@
 import { clamp } from 'lodash';
 import { maxColorValue } from '../constants';
 import {
-  flipCoin,
   randomInt,
   rand,
+  randomIndex,
   // randomIndex,
 } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
+
+const defaultNumSides = 3;
+
+const maxNumSides = 10;
 
 // DNA Initialization Helpers
 // ------------------------------------------------------------
@@ -61,64 +65,89 @@ const tweakColor = (m, value) => clamp(value + m.colorNudge() * maxColorValue, 0
 
 const tweakAlpha = (m, value) => clamp(value + m.colorNudge(), 0, 1);
 
-const mutateColor = (color, mutation) => {
-  const func = (i) => (i < 3 ? tweakColor : tweakAlpha);
-  return color.map((c, i) => func(i)(mutation, c));
+const addPointMutation = (dna) => {
+  if (dna.points.length >= maxNumSides) {
+    return;
+  }
+
+  const index = randomIndex(dna.points.length - 1);
+  const a = dna.points[index];
+  const b = dna.points[index + 1];
+  const x = (a[0] + b[0]) / 2;
+  const y = (a[1] + b[1]) / 2;
+  dna.points.splice(index + 1, 0, [x, y]);
+};
+
+const removePointMutation = (dna) => {
+  if (dna.points.length < defaultNumSides) {
+    return;
+  }
+  const index = randomIndex(dna.points.length - 1);
+  dna.points.splice(index, 1);
+};
+
+// Mutate all color values
+// const mutateColors = (color, mutation) => {
+//   const func = (i) => (i < 3 ? tweakColor : tweakAlpha);
+//   return color.map((c, i) => func(i)(mutation, c));
+// };
+
+// Mutate just one color value
+const mutateColor = (color, index, mutation) => {
+  if (index === 3) color[index] = tweakAlpha(mutation, color[index]);
+  else color[index] = tweakColor(mutation, color[index]);
+
+  return color;
 };
 
 // Mutate all points
 const mutatePoints = (points, mutation) => points.map((p) => tweakPoint(mutation, ...p));
 
 // Mutate just one point
-// const mutatePoints = (points, mutation) => {
-//   const index = randomIndex(points.length);
-//   points[index] = tweakPoint(mutation, ...points[index]);
-//   return points;
-// };
-
-const numPoints = 3;
+const mutatePoint = (points, index, mutation) => {
+  points[index] = tweakPoint(mutation, ...points[index]);
+  return points;
+};
 
 /**
  * DNA
  */
 const DNA = {
-  create: ({ color: col, points: pts } = {}) => ({
-    points: pts || randomPoints(numPoints),
+  create: ({ color: col, points: pts, numSides = defaultNumSides } = {}) => ({
+    points: pts || randomPoints(numSides),
     color: col || randomColor(),
   }),
 
-  onePointCrossover: (dna1, dna2) => {
-    const result = [DNA.clone(dna1), DNA.clone(dna2)];
-    if (flipCoin()) {
-      const point = randomInt(0, dna1.points.length);
-      crossoverPoint(...result, point);
+  // mutate: (dna, mutation) => (DNA.create({
+  //   color: mutateColors(dna.color, mutation),
+  //   points: mutatePoints(dna.points, mutation),
+  // })),
+
+  // mutate: (dna, mutation) => {
+  //   dna.color = dna.color.map((v, i) => (
+  //     mutation.doMutate() ? mutateColor(v, i, mutation) : v
+  //   ));
+  //   dna.points = dna.points.map((p, i) => (
+  //     mutation.doMutate() ? mutatePoint(p, i, mutation) : p
+  //   ));
+  // },
+
+  mutate: (dna, mutation) => {
+    const { color, points } = dna;
+    const index = randomIndex(color.length + points.length);
+    if (index < color.length) {
+      dna.color = mutateColor(color, index, mutation);
     } else {
-      const point = randomInt(0, dna1.points.length);
-      crossoverColor(...result, point);
+      dna.points = mutatePoint(points, index - color.length, mutation);
     }
-    return result;
+    if (mutation.doAddPoint()) {
+      addPointMutation(dna);
+    }
+    if (mutation.doRemovePoint()) {
+      removePointMutation(dna);
+    }
+    return dna;
   },
-
-  uniformCrossover: (dna1, dna2, prob) => {
-    const child1 = dna1.clone();
-    const child2 = dna2.clone();
-    genRange(dna1.points.length).forEach((i) => {
-      if (flipCoin(prob)) {
-        swapPoint(child1, child2, i);
-      }
-    });
-    genRange(dna1.color.length).forEach((i) => {
-      if (flipCoin(prob)) {
-        swapColor(child1, child2, i);
-      }
-    });
-    return [child1, child2];
-  },
-
-  mutate: (dna, mutation) => (DNA.create({
-    color: mutateColor(dna.color, mutation),
-    points: mutatePoints(dna.points, mutation),
-  })),
 
   clone: (dna) => DNA.create({ points: dna.points.slice(), color: dna.color.slice() }),
 };

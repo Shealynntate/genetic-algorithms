@@ -106,7 +106,7 @@ class Population {
     // Generate (N - eliteCount) offspring for the next generation
     const nextGen = this.getElites(eliteCount);
     parents.forEach(([p1, p2]) => {
-      const offspring = Organism.reproduce(p1, p2, crossover, mutation);
+      const offspring = Organism.reproduce(p1, p2, crossover, mutation, this.genId);
       nextGen.push(...offspring);
     });
     return nextGen;

@@ -2,8 +2,13 @@ import { CrossoverType } from '../constants';
 import DNA from './dna';
 import Genome from './genome';
 
-let count = -1;
+const CrossoverFunctions = {
+  [CrossoverType.ONE_POINT]: Genome.onePointCrossover,
+  [CrossoverType.TWO_POINT]: Genome.twoPointCrossover,
+  [CrossoverType.UNIFORM]: Genome.uniformCrossover,
+};
 
+let count = -1;
 const nextId = () => {
   count += 1;
   return count;
@@ -16,36 +21,24 @@ const Organism = {
     fitness: 0,
   }),
 
-  reproduce: (parentA, parentB, crossover, mutation) => {
-    let newDNA1;
-    let newDNA2;
+  // eslint-disable-next-line no-unused-vars
+  reproduce: (parentA, parentB, crossover, mutation, genId) => {
     // Crossover event
-    switch (crossover.type) {
-      case CrossoverType.ONE_POINT:
-        [newDNA1, newDNA2] = Genome.onePointCrossover(
-          parentA.genome,
-          parentB.genome,
-          crossover.prob,
-        );
-        break;
-      case CrossoverType.TWO_POINT:
-        break;
-      case CrossoverType.UNIFORM:
-        [newDNA1, newDNA2] = Genome.uniformCrossover2(
-          parentA.genome,
-          parentB.genome,
-          crossover.prob,
-        );
-        break;
-      default:
-        throw new Error(`Unrecognized crossover type ${crossover.type}`);
+    const crossoverFunc = CrossoverFunctions[crossover.type];
+    if (!crossoverFunc) {
+      throw new Error(`Unrecognized crossover type ${crossover.type}`);
     }
 
+    const [newDNA1, newDNA2] = crossoverFunc(parentA.genome, parentB.genome, crossover.prob);
     const size = newDNA1.length;
-    // Mutation DNA
+    // Mutate DNA
     for (let i = 0; i < size; ++i) {
-      newDNA1[i] = DNA.mutate(newDNA1[i], mutation);
-      newDNA2[i] = DNA.mutate(newDNA2[i], mutation);
+      if (mutation.doMutate()) {
+        newDNA1[i] = DNA.mutate(newDNA1[i], mutation);
+      }
+      if (mutation.doMutate()) {
+        newDNA2[i] = DNA.mutate(newDNA2[i], mutation);
+      }
     }
     // Mutate Genome
     const genomeA = Genome.create({ size, dna: newDNA1 });

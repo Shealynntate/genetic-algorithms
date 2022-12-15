@@ -7,16 +7,17 @@ import defaultTarget from '../../assets/mona_lisa.jpeg';
 
 const initialState = {
   populationSize: 125,
-  triangleCount: 60,
+  triangleCount: 50,
   target: defaultTarget,
   crossover: {
     type: CrossoverType.ONE_POINT,
-    prob: 0.1,
+    prob: 0.3,
   },
   mutation: {
-    colorSigma: 0.001,
-    pointSigma: 0.001,
-    permuteProb: 0.25,
+    prob: 1, // the probability of mutating DNA [0, 1]
+    colorSigma: 0.005, // 0.25 / n
+    pointSigma: 0.005,
+    permuteProb: 0.005,
   },
   selection: {
     type: SelectionType.TOURNAMENT,

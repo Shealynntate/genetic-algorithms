@@ -25,6 +25,7 @@ import Crossover from '../../models/crossover';
 import Selection from '../../models/selection';
 
 let population;
+let mutation;
 
 clearDatabase();
 
@@ -43,7 +44,7 @@ function* runGenerationSaga() {
 
     if (!isRunning) return;
 
-    // Check if we should store a copy of the maxFitOrganism for Image History
+    // Should we store a copy of the maxFitOrganism for Image History?
     if (shouldSaveGenImage(population.genId)) {
       yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
       yield delay(10);
@@ -54,11 +55,18 @@ function* runGenerationSaga() {
 
     // Update the list of maxFitness scores
     const stats = omit(gen, ['maxFitOrganism']);
-    stats.isGlobalBest = gen.maxFitness > globalFitness;
+    stats.isBest = gen.maxFitness > globalFitness;
     yield put(updateCurrentGen({
       currentBest: { organism: gen.maxFitOrganism, genId: gen.genId },
       genStats: stats,
     }));
+
+    // Upodate Mutation Rate
+    let prob = 0.5;
+    if (gen.genId > 4_000) prob = 0.25;
+    if (gen.genId > 10_000) prob = 0.1;
+    if (gen.genId > 15_000) prob = 0.05;
+    mutation.setProbability(prob);
 
     // Check if the latest generation's most fit organism can beat our global best
     if (gen.maxFitness > globalFitness) {
@@ -81,7 +89,7 @@ function* runSimulationSaga() {
   const triangleCount = yield select((state) => state.parameters.triangleCount);
   const target = yield select((state) => state.parameters.target);
   const crossover = yield select((state) => state.parameters.crossover);
-  const mutation = yield select((state) => state.parameters.mutation);
+  const mutationParams = yield select((state) => state.parameters.mutation);
   const selection = yield select((state) => state.parameters.selection);
   if (!population) {
     // Store our parameters in the database
@@ -89,16 +97,17 @@ function* runSimulationSaga() {
       triangleCount,
       selection,
       populationSize,
-      mutation,
+      mutation: mutationParams,
     });
     const { data } = yield createImageData(target);
+    mutation = new Mutation(mutationParams);
     // Initialize the population
     population = new Population({
       size: populationSize,
       genomeSize: triangleCount,
       target: data,
+      mutation,
       crossover: new Crossover(crossover),
-      mutation: new Mutation(mutation),
       selection: new Selection(selection),
     });
     yield population.initialize();
