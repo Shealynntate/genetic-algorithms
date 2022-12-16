@@ -20,8 +20,18 @@ class Mutation {
     this.prob = prob;
     this.genomeSize = genomeSize;
 
-    this.addPointProb = 0.005;
-    this.removePointProb = 0.005;
+    this.addPointProb = 0.008;
+    this.removePointProb = 0.008;
+  }
+
+  markNextGen(genId) {
+    if (genId > 100_000) {
+      this.prob = 0.0001; // TODO: placeholder
+    // Upodate Mutation Rate
+    // const prob = 0.03;
+    // if (gen.genId > 2_000) prob = 0.01;
+    // if (gen.genId > 4_000) prob = 0.01;
+    }
   }
 
   doMutate() {
@@ -58,6 +68,18 @@ class Mutation {
 
   setProbability(value) {
     this.prob = value;
+  }
+
+  setAddPointProb(value) {
+    this.addPointProb = value;
+  }
+
+  setRemovePointProb(value) {
+    this.removePointProb = value;
+  }
+
+  setPermuteProb(value) {
+    this.permuteProb = value;
   }
 }
 

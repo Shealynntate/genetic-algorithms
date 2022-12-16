@@ -33,12 +33,12 @@ const Organism = {
     const size = newDNA1.length;
     // Mutate DNA
     for (let i = 0; i < size; ++i) {
-      if (mutation.doMutate()) {
-        newDNA1[i] = DNA.mutate(newDNA1[i], mutation);
-      }
-      if (mutation.doMutate()) {
-        newDNA2[i] = DNA.mutate(newDNA2[i], mutation);
-      }
+      // if (mutation.doMutate()) {
+      newDNA1[i] = DNA.mutate(newDNA1[i], mutation);
+      // }
+      // if (mutation.doMutate()) {
+      newDNA2[i] = DNA.mutate(newDNA2[i], mutation);
+      // }
     }
     // Mutate Genome
     const genomeA = Genome.create({ size, dna: newDNA1 });

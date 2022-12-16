@@ -48,6 +48,10 @@ class Population {
     this.genId = Population.nextGenId;
     this.organisms = await this.evaluateFitness();
 
+    // Let Mutation and Crossover strategies update if needed
+    this.mutation.markNextGen(this.genId);
+    this.crossover.markNextGen(this.genId);
+
     return this.createStats();
   }
 

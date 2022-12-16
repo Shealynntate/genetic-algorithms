@@ -104,6 +104,7 @@ const mutateColor = (color, index, mutation) => {
 const mutatePoints = (points, mutation) => points.map((p) => tweakPoint(mutation, ...p));
 
 // Mutate just one point
+// eslint-disable-next-line no-unused-vars
 const mutatePoint = (points, index, mutation) => {
   points[index] = tweakPoint(mutation, ...points[index]);
   return points;
@@ -123,23 +124,22 @@ const DNA = {
   //   points: mutatePoints(dna.points, mutation),
   // })),
 
-  // mutate: (dna, mutation) => {
-  //   dna.color = dna.color.map((v, i) => (
-  //     mutation.doMutate() ? mutateColor(v, i, mutation) : v
-  //   ));
-  //   dna.points = dna.points.map((p, i) => (
-  //     mutation.doMutate() ? mutatePoint(p, i, mutation) : p
-  //   ));
-  // },
-
   mutate: (dna, mutation) => {
-    const { color, points } = dna;
-    const index = randomIndex(color.length + points.length);
-    if (index < color.length) {
-      dna.color = mutateColor(color, index, mutation);
-    } else {
-      dna.points = mutatePoint(points, index - color.length, mutation);
+    for (let i = 0; i < dna.color.length; ++i) {
+      if (mutation.doMutate()) {
+        if (i === 3) {
+          dna.color[i] = tweakAlpha(mutation, dna.color[i]);
+        } else {
+          dna.color[i] = tweakColor(mutation, dna.color[i]);
+        }
+      }
     }
+    for (let i = 0; i < dna.points.length; ++i) {
+      if (mutation.doMutate()) {
+        dna.points[i] = tweakPoint(mutation, ...dna.points[i]);
+      }
+    }
+
     if (mutation.doAddPoint()) {
       addPointMutation(dna);
     }
@@ -148,6 +148,24 @@ const DNA = {
     }
     return dna;
   },
+
+  // Exacly 1 mutation per DNA
+  // mutate: (dna, mutation) => {
+  //   const { color, points } = dna;
+  //   const index = randomIndex(color.length + points.length);
+  //   if (index < color.length) {
+  //     dna.color = mutateColor(color, index, mutation);
+  //   } else {
+  //     dna.points = mutatePoint(points, index - color.length, mutation);
+  //   }
+  //   if (mutation.doAddPoint()) {
+  //     addPointMutation(dna);
+  //   }
+  //   if (mutation.doRemovePoint()) {
+  //     removePointMutation(dna);
+  //   }
+  //   return dna;
+  // },
 
   clone: (dna) => DNA.create({ points: dna.points.slice(), color: dna.color.slice() }),
 };

@@ -25,7 +25,6 @@ import Crossover from '../../models/crossover';
 import Selection from '../../models/selection';
 
 let population;
-let mutation;
 
 clearDatabase();
 
@@ -61,13 +60,6 @@ function* runGenerationSaga() {
       genStats: stats,
     }));
 
-    // Upodate Mutation Rate
-    let prob = 0.5;
-    if (gen.genId > 4_000) prob = 0.25;
-    if (gen.genId > 10_000) prob = 0.1;
-    if (gen.genId > 15_000) prob = 0.05;
-    mutation.setProbability(prob);
-
     // Check if the latest generation's most fit organism can beat our global best
     if (gen.maxFitness > globalFitness) {
       yield put(setGlobalBest({ genId: gen.genId, organism: gen.maxFitOrganism }));
@@ -88,7 +80,7 @@ function* runSimulationSaga() {
   const populationSize = yield select((state) => state.parameters.populationSize);
   const triangleCount = yield select((state) => state.parameters.triangleCount);
   const target = yield select((state) => state.parameters.target);
-  const crossover = yield select((state) => state.parameters.crossover);
+  const crossoverParams = yield select((state) => state.parameters.crossover);
   const mutationParams = yield select((state) => state.parameters.mutation);
   const selection = yield select((state) => state.parameters.selection);
   if (!population) {
@@ -100,14 +92,14 @@ function* runSimulationSaga() {
       mutation: mutationParams,
     });
     const { data } = yield createImageData(target);
-    mutation = new Mutation(mutationParams);
+
     // Initialize the population
     population = new Population({
       size: populationSize,
       genomeSize: triangleCount,
       target: data,
-      mutation,
-      crossover: new Crossover(crossover),
+      mutation: new Mutation(mutationParams),
+      crossover: new Crossover(crossoverParams),
       selection: new Selection(selection),
     });
     yield population.initialize();
