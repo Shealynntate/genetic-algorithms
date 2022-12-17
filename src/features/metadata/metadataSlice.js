@@ -5,7 +5,7 @@ const initialState = {
   targetFitnessReached: false,
   globalBest: null,
   currentBest: {},
-  genStats: [],
+  currentStats: {},
 };
 
 export const metadataSlice = createSlice({
@@ -21,16 +21,16 @@ export const metadataSlice = createSlice({
     setTargetFitnessReached: (state, action) => {
       state.targetFitnessReached = action.payload;
     },
-    addGenStats: (state, action) => {
-      state.genStats = [...state.genStats, action.payload];
+    setGenStats: (state, action) => {
+      state.genStats = action.payload;
     },
     clearGenStats: (state) => {
       state.genStats = [];
     },
     updateCurrentGen: (state, action) => {
-      const { currentBest, genStats } = action.payload;
+      const { currentBest, stats } = action.payload;
       state.currentBest = currentBest;
-      state.genStats = [...state.genStats, genStats];
+      state.currentStats = stats;
     },
   },
 });
@@ -39,7 +39,7 @@ export const {
   setGlobalBest,
   setCurrentBest,
   setTargetFitnessReached,
-  addGenStats,
+  setGenStats,
   clearGenStats,
   updateCurrentGen,
 } = metadataSlice.actions;

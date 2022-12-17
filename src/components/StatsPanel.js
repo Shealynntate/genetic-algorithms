@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import { scaleLinear } from '@visx/scale';
 import { maxBy } from 'lodash';
 import StatsLine from './StatsLine';
+import { getCurrentStats } from '../globals/database';
 
 const margin = {
   top: 0,
@@ -15,7 +15,7 @@ const margin = {
 const genBestUpdateData = (data) => {
   let count = 0;
   return data.map((entry) => {
-    count = entry.isBest ? 0 : count + 1;
+    count = entry.isGlobalBest ? 0 : count + 1;
     return {
       x: entry.genId,
       y: count,
@@ -24,10 +24,20 @@ const genBestUpdateData = (data) => {
 };
 
 function StatsPanel({ width, height }) {
-  const stats = useSelector((state) => state.metadata.genStats);
-  // const globalBest = useSelector((state) => state.metadata.globalBest);
+  const [stats, setStats] = useState([]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const result = await getCurrentStats();
+      setStats(result);
+    };
+    fetchStats();
+  }, []);
+
   const data = stats.map((entry) => ({ x: entry.genId, y: entry.maxFitness }));
   const bestData = genBestUpdateData(stats);
+  const minY = stats.length ? stats[0].maxFitness : 0;
+  const maxY = bestData.length ? maxBy(bestData, (d) => d.y).y : 0;
 
   const xScale = useMemo(
     () => scaleLinear({
@@ -40,10 +50,12 @@ function StatsPanel({ width, height }) {
   const yScale = useMemo(
     () => scaleLinear({
       range: [height - margin.top, margin.bottom],
-      domain: [stats[0].maxFitness, maxBy(bestData, (d) => d.y).y],
+      domain: [minY, maxY],
     }),
-    [bestData, stats, height],
+    [minY, maxY, height],
   );
+
+  if (!stats.length) return null;
 
   return (
     <svg width={width} height={height}>

@@ -6,7 +6,12 @@ import {
   delay,
 } from 'redux-saga/effects';
 import { omit } from 'lodash';
-import { addImageToDatabase, clearDatabase, initializeDBEntry } from '../../globals/database';
+import {
+  addImageToDatabase,
+  addStatsToDatabase,
+  clearDatabase,
+  initializeDBEntry,
+} from '../../globals/database';
 import { targetFitness } from '../../constants';
 import { approxEqual } from '../../globals/statsUtils';
 import { createImageData, shouldSaveGenImage } from '../../globals/utils';
@@ -51,9 +56,10 @@ function* runGenerationSaga() {
 
     // Update the list of maxFitness scores
     const stats = omit(gen, ['maxFitOrganism']);
+    yield call(addStatsToDatabase, stats);
     yield put(updateCurrentGen({
       currentBest: { organism: gen.maxFitOrganism, genId: gen.genId },
-      genStats: stats,
+      stats,
     }));
 
     // Check if the latest generation's most fit organism can beat our global best

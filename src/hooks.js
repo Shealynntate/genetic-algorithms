@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { SimulationState } from './constants';
 import { createImageData } from './globals/utils';
-import database from './globals/database';
+import database, { getCurrentStats } from './globals/database';
 
 const SettingsDisabledStates = [
   SimulationState.RUNNING,
@@ -35,8 +35,8 @@ export const useMaxFitness = () => {
   return target.length;
 };
 
-export const useCurrentStats = () => {
-  const stats = useSelector((state) => state.metadata.genStats);
+export const useCurrentStats = async () => {
+  const stats = await getCurrentStats();
   return stats.length ? stats[stats.length - 1] : {};
 };
 

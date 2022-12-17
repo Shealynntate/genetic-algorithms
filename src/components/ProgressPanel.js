@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { useCurrentStats, useIsRunning } from '../hooks';
+import { useIsRunning } from '../hooks';
 import { createGif } from '../globals/utils';
 import { getCurrentImages } from '../globals/database';
 import HistoryDisplay from './HistoryDisplay';
@@ -25,7 +25,7 @@ const fileName = 'ga-image-timelapse';
 
 function SimulationStatusPanel() {
   const globalBest = useSelector((state) => state.metadata.globalBest);
-  const stats = useCurrentStats();
+  const stats = useSelector((state) => state.metadata.currentStats);
   const isRunning = useIsRunning();
 
   const downloadGif = async () => {
