@@ -6,8 +6,8 @@ import StatsLine from './StatsLine';
 import { getCurrentStats } from '../globals/database';
 
 const margin = {
-  top: 0,
-  bottom: 0,
+  top: 20,
+  bottom: 20,
   left: 0,
   right: 0,
 };
@@ -49,7 +49,7 @@ function StatsPanel({ width, height }) {
 
   const yScale = useMemo(
     () => scaleLinear({
-      range: [height - margin.top, margin.bottom],
+      range: [height - margin.top - margin.bottom, margin.bottom],
       domain: [minY, maxY],
     }),
     [minY, maxY, height],

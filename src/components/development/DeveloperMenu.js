@@ -9,13 +9,17 @@ import {
 import PropTypes from 'prop-types';
 import { omit } from 'lodash';
 import React, { useState } from 'react';
+import { Box } from '@mui/system';
 import { getCurrentImages, getCurrentMetadata } from '../../globals/database';
 import { downloadJSON } from '../../globals/utils';
+import store from '../../store';
+import JsonInput from '../JsonInput';
 
 function DeveloperMenu({ open, onClose }) {
   const [imageTitle, setImageTitle] = useState('');
+  const [stateTitle, setStateTitle] = useState('ga-simulation-state');
 
-  const onClick = async () => {
+  const onImageDownloadClick = async () => {
     const metadata = await getCurrentMetadata();
     const history = await getCurrentImages();
     // Strip out the unneeded data for the JSON file
@@ -26,25 +30,51 @@ function DeveloperMenu({ open, onClose }) {
     downloadJSON(imageTitle, contents);
   };
 
+  const onSimulationStateDownloadClick = () => {
+    downloadJSON(stateTitle, store.getState());
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md">
+    <Dialog open={open} onClose={onClose} maxWidth="lg">
       <DialogTitle>Developer Options</DialogTitle>
-      <DialogContent>
-        <DialogContentText>Download Image History</DialogContentText>
-        <TextField
-          label="Image Title"
-          value={imageTitle}
-          onChange={({ target }) => { setImageTitle(target.value); }}
-          required
-        />
-        <Button
-          variant="contained"
-          sx={{ display: 'block' }}
-          onClick={onClick}
-          disabled={!imageTitle}
-        >
-          Download
-        </Button>
+      <DialogContent sx={{ display: 'flex' }}>
+        <Box px={1}>
+          <DialogContentText>Download Image History</DialogContentText>
+          <TextField
+            label="Image Title"
+            value={imageTitle}
+            onChange={({ target }) => { setImageTitle(target.value); }}
+            required
+          />
+          <Button
+            variant="contained"
+            sx={{ display: 'block' }}
+            onClick={onImageDownloadClick}
+            disabled={!imageTitle}
+          >
+            Download
+          </Button>
+        </Box>
+        <Box px={1}>
+          <DialogContentText>Download Simulation State</DialogContentText>
+          <TextField
+            label="File Title"
+            value={stateTitle}
+            onChange={({ target }) => { setStateTitle(target.value); }}
+            required
+          />
+          <Button
+            variant="contained"
+            sx={{ display: 'block' }}
+            onClick={onSimulationStateDownloadClick}
+            disabled={!stateTitle}
+          >
+            Download
+          </Button>
+        </Box>
+        <Box>
+          <JsonInput />
+        </Box>
       </DialogContent>
     </Dialog>
   );

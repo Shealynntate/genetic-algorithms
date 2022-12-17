@@ -27,7 +27,7 @@ class Mutation {
 
   markNextGen({ genId, maxFitness }) {
     if (maxFitness >= 0.965) {
-      this.prob = 0.015;
+      // this.prob = 0.015;
     }
     if (genId > 100_000 || maxFitness > 0.99) {
       this.prob = 0.0001; // TODO: placeholder

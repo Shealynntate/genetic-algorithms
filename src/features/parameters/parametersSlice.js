@@ -14,7 +14,7 @@ const initialState = {
     prob: 0.6,
   },
   mutation: {
-    prob: 0.03, // the probability of mutating DNA [0, 1]
+    prob: 0.05, // the probability of mutating DNA [0, 1]
     colorSigma: 0.005, // 0.25 / n
     pointSigma: 0.005,
     permuteProb: 0.01,
@@ -71,6 +71,9 @@ export const parametersSlice = createSlice({
     setTournamentSize: (state, action) => {
       state.selection.tournamentSize = action.payload;
     },
+    rehydrateParameters: (state, action) => {
+      state = action.payload;
+    },
   },
 });
 
@@ -85,6 +88,7 @@ export const {
   setPermuteProb,
   setSelectionType,
   setEliteCount,
+  rehydrateParameters,
 } = parametersSlice.actions;
 
 export default parametersSlice.reducer;

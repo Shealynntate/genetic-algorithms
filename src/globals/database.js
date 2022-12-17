@@ -59,7 +59,7 @@ export async function initializeDBEntry({
 export const getCurrentMetadata = async () => db.table(metadataTable).get(currentMetadataId);
 
 export function addImageToDatabase(genId, maxFitOrganism) {
-  const { fitness, genome: { phenotype, dna } } = maxFitOrganism;
+  const { fitness, phenotype, genome: { dna } } = maxFitOrganism;
 
   return db[imagesTable].add({
     gen: genId,

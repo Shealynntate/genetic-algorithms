@@ -41,39 +41,38 @@ function* targetReachedSaga({ fitness }) {
 }
 
 function* runGenerationSaga() {
+  // Save the first generation image
+  yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
+  yield delay(10);
+
   while (true) {
     const isRunning = yield select(isRunningSelector);
     if (!isRunning) return;
 
-    // Should we store a copy of the maxFitOrganism for Image History?
-    if (shouldSaveGenImage(population.genId)) {
-      yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
-      yield delay(10);
-    }
     // console.time('Run Generation');
-    const gen = yield population.runGeneration();
+    // First run the next generation of the simulation
+    const { maxFitOrganism, ...stats } = yield population.runGeneration();
     // console.timeEnd('Run Generation');
 
+    // Should we store a copy of the maxFitOrganism for Image History?
+    if (shouldSaveGenImage(population.genId)) {
+      yield call(addImageToDatabase, population.genId, maxFitOrganism);
+      yield delay(10);
+    }
+
     // Update the list of maxFitness scores
-    const stats = omit(gen, ['maxFitOrganism']);
+    const organism = omit(maxFitOrganism, ['phenotype']);
     yield call(addStatsToDatabase, stats);
     yield put(updateCurrentGen({
-      currentBest: { organism: gen.maxFitOrganism, genId: gen.genId },
+      currentBest: { organism, genId: stats.genId },
       stats,
     }));
 
     // Check if the latest generation's most fit organism can beat our global best
     if (stats.isGlobalBest) {
-      yield put(setGlobalBest({ genId: gen.genId, organism: gen.maxFitOrganism }));
-      // Check if we should store a copy of the maxFitOrganism for Image History
-      // if (shouldSaveGenImage(population.genId)) {
-      // if (population.genId >= lastSavedId + 10) {
-      //   lastSavedId = population.genId;
-      //   yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
-      //   yield delay(10);
-      // }
+      yield put(setGlobalBest({ genId: stats.genId, organism }));
       // Check if this new best reaches our target fitness
-      yield call(targetReachedSaga, gen.maxFitOrganism);
+      yield call(targetReachedSaga, organism);
     }
   }
 }

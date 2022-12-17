@@ -76,7 +76,7 @@ export const downloadFile = (fileName, data, blobType, fileType) => {
 };
 
 export const downloadJSON = (fileName, data) => {
-  const json = JSON.stringify(data, null, 2);
+  const json = JSON.stringify(data);
   downloadFile(fileName, json, 'application/json', 'json');
 };
 
@@ -159,4 +159,25 @@ export const shouldSaveGenImage = (genId) => {
     mod = 20;
   }
   return (genId % mod) === 0;
+};
+
+// TODO: Move this!!
+const scalePoint = (point) => [Math.round(point[0] * width), Math.round(point[1] * height)];
+
+export const dnaToPhenotype = (dna) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  dna.forEach(({ color, points }) => {
+    ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
+    ctx.beginPath();
+    ctx.moveTo(...scalePoint(points[0]));
+    for (let i = 1; i < points.length; ++i) {
+      ctx.lineTo(...scalePoint(points[i]));
+    }
+    ctx.closePath();
+    ctx.fill();
+  });
+  return ctx.getImageData(0, 0, width, height);
 };

@@ -25,6 +25,9 @@ export const uxSlice = createSlice({
     resetSimulation: (state) => {
       state.simulationState = SimulationState.NONE;
     },
+    rehydrateUx: (state, action) => {
+      state = action.payload;
+    },
   },
 });
 
@@ -34,6 +37,7 @@ export const {
   pauseSimulation,
   endSimulation,
   resetSimulation,
+  rehydrateUx,
 } = uxSlice.actions;
 
 export default uxSlice.reducer;

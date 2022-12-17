@@ -79,8 +79,8 @@ export default () => {
         ...org,
         genome: {
           ...org.genome,
-          phenotype: data,
         },
+        phenotype: data,
         fitness: phenotype.evaluateFitness(data),
       };
     });

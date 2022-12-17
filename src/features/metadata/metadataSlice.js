@@ -32,6 +32,9 @@ export const metadataSlice = createSlice({
       state.currentBest = currentBest;
       state.currentStats = stats;
     },
+    rehydrateMetadata: (state, action) => {
+      state = action.payload;
+    },
   },
 });
 
@@ -42,6 +45,7 @@ export const {
   setGenStats,
   clearGenStats,
   updateCurrentGen,
+  rehydrateMetadata,
 } = metadataSlice.actions;
 
 export default metadataSlice.reducer;

@@ -28,7 +28,7 @@ function DisplayTabs() {
         <ProgressPanel />
       </TabPanel>
       <TabPanel index={1} value={value}>
-        <Paper sx={{ height: '400px', width: '550px' }}>
+        <Paper sx={{ height: '400px', width: '550px', boxSizing: 'border-box' }}>
           <ParentSize>
             {({ width, height }) => (
               <StatsPanel
