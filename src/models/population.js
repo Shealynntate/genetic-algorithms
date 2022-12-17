@@ -1,12 +1,9 @@
 import { deviation } from 'd3-array';
 import Organism from './organism';
-import { SelectionType } from '../constants';
+import { SelectionType, statsSigFigs, workerBatchSize } from '../constants';
 import { randomFloat, randomIndex, setSigFigs } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 import createWorker from '../web-workers/phenotypeCreator';
-
-const batchSize = 40;
-const statsSigFigs = 4;
 
 class Population {
   static get nextGenId() {
@@ -30,11 +27,12 @@ class Population {
     this.crossover = crossover;
     this.selection = selection;
     this.mutation = mutation;
+    this.best = null;
   }
 
   async initialize() {
     // Setup web workers for evaluateFitness work
-    const numWorkers = Math.ceil(this.size / batchSize);
+    const numWorkers = Math.ceil(this.size / workerBatchSize);
     this.workers = [...Array(numWorkers)].map(() => createWorker(this.target));
     // Prep for the first call of runGeneration
     this.organisms = await this.evaluateFitness();
@@ -48,11 +46,12 @@ class Population {
     this.genId = Population.nextGenId;
     this.organisms = await this.evaluateFitness();
 
+    const stats = this.createStats();
     // Let Mutation and Crossover strategies update if needed
-    this.mutation.markNextGen(this.genId);
-    this.crossover.markNextGen(this.genId);
+    this.mutation.markNextGen(stats);
+    this.crossover.markNextGen(stats);
 
-    return this.createStats();
+    return stats;
   }
 
   /**
@@ -64,8 +63,8 @@ class Population {
     const promises = [];
 
     for (let i = 0; i < this.workers.length; ++i) {
-      const start = i * batchSize;
-      const end = Math.min((i + 1) * batchSize, this.size);
+      const start = i * workerBatchSize;
+      const end = Math.min((i + 1) * workerBatchSize, this.size);
       promises.push(new Promise((resolve, reject) => {
         try {
           this.workers[i].postMessage({
@@ -231,7 +230,12 @@ class Population {
       total += fitness;
     }
     const mean = total / this.size;
-
+    // Update the overall best organism
+    let isGlobalBest = false;
+    if (!this.best || max > this.best.organism.fitness) {
+      this.best = { genId: this.genId, organism: maxFitOrganism };
+      isGlobalBest = true;
+    }
     return {
       genId: this.genId,
       meanFitness: setSigFigs(mean, statsSigFigs),
@@ -239,6 +243,7 @@ class Population {
       minFitness: setSigFigs(min, statsSigFigs),
       deviation: setSigFigs(deviation(this.organisms, (o) => o.fitness), statsSigFigs),
       maxFitOrganism,
+      isGlobalBest,
     };
   }
 

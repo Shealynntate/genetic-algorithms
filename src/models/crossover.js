@@ -7,7 +7,10 @@ class Crossover {
     this.prob = prob;
   }
 
-  markNextGen(genId) {
+  markNextGen({ genId, maxFitness }) {
+    if (maxFitness >= 0.965) {
+      this.prob *= 1;
+    }
     if (genId > 100_000) {
       this.prob = 0.0001; // TODO: placeholder
     // Upodate Mutation Rate

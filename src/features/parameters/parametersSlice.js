@@ -6,7 +6,7 @@ import { CrossoverType, SelectionType } from '../../constants';
 import defaultTarget from '../../assets/mona_lisa.jpeg';
 
 const initialState = {
-  populationSize: 250,
+  populationSize: 150,
   triangleCount: 50,
   target: defaultTarget,
   crossover: {
@@ -17,7 +17,7 @@ const initialState = {
     prob: 0.03, // the probability of mutating DNA [0, 1]
     colorSigma: 0.005, // 0.25 / n
     pointSigma: 0.005,
-    permuteProb: 0.0,
+    permuteProb: 0.01,
   },
   selection: {
     type: SelectionType.TOURNAMENT,

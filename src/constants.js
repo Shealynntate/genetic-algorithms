@@ -49,8 +49,8 @@ export const eliteCountBounds = {
 };
 
 export const mutationBounds = {
-  min: 0.001,
-  max: 1,
+  min: 0,
+  max: 0.5,
   step: 0.001,
 };
 
@@ -61,6 +61,10 @@ export const triangleBounds = {
 };
 
 export const targetFitness = 1;
+
+export const statsSigFigs = 5;
+
+export const workerBatchSize = 40;
 
 // ------------------------------------------------------------
 export const maxColorValue = 255;

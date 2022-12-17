@@ -6,6 +6,8 @@ import {
   DialogContentText,
   DialogTitle,
   Link,
+  List,
+  ListItem,
 } from '@mui/material';
 
 function About({ open, onClose }) {
@@ -25,7 +27,7 @@ function About({ open, onClose }) {
         </Link>
         <DialogContentText variant="h5">Goal</DialogContentText>
         <DialogContentText>
-          The aim is to recreate the target image as good as possible.
+          The aim is to match the target image pixel for pixel.
           The program checks each pixel to see how correct it is to the original.
         </DialogContentText>
         <DialogContentText variant="subtitle">DNA</DialogContentText>
@@ -37,6 +39,34 @@ function About({ open, onClose }) {
         <DialogContentText>
           Genome
         </DialogContentText>
+        <DialogContentText variant="h5">Resources</DialogContentText>
+        Here&apos;s a list of resources I used while working on this project
+        <List>
+          <ListItem>
+            <Link
+              href="https://cs.gmu.edu/~sean/book/metaheuristics/Essentials.pdf"
+              underline="hover"
+            >
+              Essentials of Metaheuristics
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link
+              href="https://www.egr.msu.edu/~kdeb/papers/k2012016.pdf"
+              underline="hover"
+            >
+              Analyzing Mutation Schemes for Real-Parameter Genetic Algorithms
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link
+              href="https://pdfs.semanticscholar.org/5a25/a4d30528160eef96adbce1d7b03507ebd3d7.pdf"
+              underline="hover"
+            >
+              Choosing Mutation and Crossover Ratios for Genetic Algorithms
+            </Link>
+          </ListItem>
+        </List>
       </DialogContent>
     </Dialog>
   );

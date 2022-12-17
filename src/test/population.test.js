@@ -1,7 +1,7 @@
 import { pickBy, values } from 'lodash';
 import * as utils from '../globals/utils';
 import { SelectionType } from '../constants';
-import RandomNoise from '../globals/randomNoise';
+import GaussianNoise from '../globals/gaussianNoise';
 import Population from '../models/population';
 import Organism from '../models/organism';
 
@@ -66,7 +66,7 @@ test('Roulette Parent Selection', () => {
 });
 
 test('Roulette Selection', () => {
-  const noise = new RandomNoise(0.1);
+  const noise = new GaussianNoise(0.1);
   jest.spyOn(Population.prototype, 'evaluateFitness').mockImplementation(mockEvaluateFitness);
   const population = new Population(popSize, 1, null);
 

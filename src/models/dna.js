@@ -125,6 +125,12 @@ const DNA = {
   // })),
 
   mutate: (dna, mutation) => {
+    if (mutation.doResetDNA()) {
+      dna.points = randomPoints(defaultNumSides);
+      dna.color = randomColor();
+      return dna;
+    }
+
     for (let i = 0; i < dna.color.length; ++i) {
       if (mutation.doMutate()) {
         if (i === 3) {

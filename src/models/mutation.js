@@ -1,4 +1,4 @@
-import RandomNoise from '../globals/randomNoise';
+import GaussianNoise from '../globals/gaussianNoise';
 import { flipCoin } from '../globals/statsUtils';
 
 /**
@@ -13,19 +13,23 @@ class Mutation {
     prob,
     genomeSize,
   }) {
-    this.colorDist = new RandomNoise(colorSigma);
-    this.pointDist = new RandomNoise(pointSigma);
-    this.permuteDist = new RandomNoise(permuteSigma);
+    this.colorDist = new GaussianNoise(colorSigma);
+    this.pointDist = new GaussianNoise(pointSigma);
+    this.permuteDist = new GaussianNoise(permuteSigma);
     this.permuteProb = permuteProb;
     this.prob = prob;
     this.genomeSize = genomeSize;
 
     this.addPointProb = 0.008;
     this.removePointProb = 0.008;
+    this.resetDNAProb = 0.0067;
   }
 
-  markNextGen(genId) {
-    if (genId > 100_000) {
+  markNextGen({ genId, maxFitness }) {
+    if (maxFitness >= 0.965) {
+      this.prob = 0.015;
+    }
+    if (genId > 100_000 || maxFitness > 0.99) {
       this.prob = 0.0001; // TODO: placeholder
     // Upodate Mutation Rate
     // const prob = 0.03;
@@ -48,6 +52,10 @@ class Mutation {
 
   doPermute() {
     return flipCoin(this.permuteProb);
+  }
+
+  doResetDNA() {
+    return flipCoin(this.resetDNAProb);
   }
 
   colorNudge() {

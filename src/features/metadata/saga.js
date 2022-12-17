@@ -38,9 +38,6 @@ function* targetReachedSaga({ fitness }) {
 function* runGenerationSaga() {
   while (true) {
     const isRunning = yield select(isRunningSelector);
-    const globalBest = yield select((state) => state.metadata.globalBest);
-    const globalFitness = globalBest?.organism.fitness || -1;
-
     if (!isRunning) return;
 
     // Should we store a copy of the maxFitOrganism for Image History?
@@ -54,14 +51,13 @@ function* runGenerationSaga() {
 
     // Update the list of maxFitness scores
     const stats = omit(gen, ['maxFitOrganism']);
-    stats.isBest = gen.maxFitness > globalFitness;
     yield put(updateCurrentGen({
       currentBest: { organism: gen.maxFitOrganism, genId: gen.genId },
       genStats: stats,
     }));
 
     // Check if the latest generation's most fit organism can beat our global best
-    if (gen.maxFitness > globalFitness) {
+    if (stats.isGlobalBest) {
       yield put(setGlobalBest({ genId: gen.genId, organism: gen.maxFitOrganism }));
       // Check if we should store a copy of the maxFitOrganism for Image History
       // if (shouldSaveGenImage(population.genId)) {

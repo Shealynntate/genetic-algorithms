@@ -4,7 +4,7 @@ import { setSigFigs } from './statsUtils';
 /**
  *
  */
-class RandomNoise {
+class GaussianNoise {
   constructor(sigma) {
     this.baseSigma = sigma;
     this.sigma = sigma;
@@ -54,4 +54,4 @@ class RandomNoise {
   }
 }
 
-export default RandomNoise;
+export default GaussianNoise;
