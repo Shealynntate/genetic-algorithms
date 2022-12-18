@@ -10,7 +10,7 @@ const { width, height } = canvasParameters;
 
 function GlobalBest() {
   const theme = useTheme();
-  const globalBest = useSelector((state) => state.metadata.globalBest);
+  const globalBest = useSelector((state) => state.simulation.globalBest);
 
   return (
     <div>

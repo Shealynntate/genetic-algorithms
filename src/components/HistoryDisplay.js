@@ -7,7 +7,7 @@ import OrganismCanvas from './OrganismCanvas';
 import ImageCaption from './ImageCaption';
 
 function HistoryDisplay() {
-  const { organism, genId } = useSelector((state) => state.metadata.currentBest);
+  const { organism, genId } = useSelector((state) => state.simulation.currentBest);
   const images = useImageDbQuery() || [];
 
   return (

@@ -20,6 +20,10 @@ class GaussianNoise {
     return setSigFigs(this.noise(), 4);
   }
 
+  getSigma() {
+    return this.sigma;
+  }
+
   setSigma(sigma) {
     this.noise = randomNormal(0, sigma);
   }

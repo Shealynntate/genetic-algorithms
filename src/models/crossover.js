@@ -2,9 +2,24 @@ import { flipCoin } from '../globals/statsUtils';
 
 //
 class Crossover {
-  constructor({ type, prob }) {
+  constructor(data) {
+    this.initialize(data);
+  }
+
+  initialize({ type, prob }) {
     this.type = type;
     this.prob = prob;
+  }
+
+  serialize() {
+    return {
+      type: this.type,
+      prob: this.prob,
+    };
+  }
+
+  deserialize(data) {
+    this.initialize(data);
   }
 
   markNextGen({ genId, maxFitness }) {

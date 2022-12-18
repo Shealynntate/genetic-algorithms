@@ -10,14 +10,17 @@ import PropTypes from 'prop-types';
 import { omit } from 'lodash';
 import React, { useState } from 'react';
 import { Box } from '@mui/system';
+import { useDispatch } from 'react-redux';
 import { getCurrentImages, getCurrentMetadata } from '../../globals/database';
 import { downloadJSON } from '../../globals/utils';
 import store from '../../store';
 import JsonInput from '../JsonInput';
+import { download } from '../../features/developer/developerSlice';
 
 function DeveloperMenu({ open, onClose }) {
   const [imageTitle, setImageTitle] = useState('');
   const [stateTitle, setStateTitle] = useState('ga-simulation-state');
+  const dispatch = useDispatch();
 
   const onImageDownloadClick = async () => {
     const metadata = await getCurrentMetadata();
@@ -31,7 +34,8 @@ function DeveloperMenu({ open, onClose }) {
   };
 
   const onSimulationStateDownloadClick = () => {
-    downloadJSON(stateTitle, store.getState());
+    // downloadJSON(stateTitle, store.getState());
+    dispatch(download(stateTitle, store.getState()));
   };
 
   return (

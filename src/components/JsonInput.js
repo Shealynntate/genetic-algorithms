@@ -5,8 +5,10 @@ import {
   Alert, Box, Snackbar, Typography,
 } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
+import { useDispatch } from 'react-redux';
 import { AlertState } from '../constants';
-import { rehydrate } from '../store';
+import { fileToText } from '../globals/utils';
+import { rehydrate } from '../features/developer/developerSlice';
 
 const AlertMessage = {
   error: 'Oops, unable to read the file provided',
@@ -15,6 +17,7 @@ const AlertMessage = {
 
 function JsonInput() {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const [alertState, setAlertState] = useState();
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -24,10 +27,10 @@ function JsonInput() {
     onDrop: async (acceptedFiles) => {
       if (acceptedFiles[0]) {
         try {
-          const data = JSON.parse(acceptedFiles[0]);
-          rehydrate(data);
+          const contents = await fileToText(acceptedFiles[0]);
+          const data = JSON.parse(contents);
+          dispatch(rehydrate(data));
         } catch (error) {
-          console.log('ERROR', error);
           setAlertState(AlertState.error);
         }
       }

@@ -6,7 +6,7 @@ import { CrossoverType, SelectionType } from '../../constants';
 import defaultTarget from '../../assets/mona_lisa.jpeg';
 
 const initialState = {
-  populationSize: 150,
+  populationSize: 250,
   triangleCount: 50,
   target: defaultTarget,
   crossover: {
@@ -17,6 +17,7 @@ const initialState = {
     prob: 0.05, // the probability of mutating DNA [0, 1]
     colorSigma: 0.005, // 0.25 / n
     pointSigma: 0.005,
+    permuteSigma: 0.005, // TODO
     permuteProb: 0.01,
   },
   selection: {
@@ -72,7 +73,9 @@ export const parametersSlice = createSlice({
       state.selection.tournamentSize = action.payload;
     },
     rehydrateParameters: (state, action) => {
-      state = action.payload;
+      Object.keys(action.payload).forEach((key) => {
+        state[key] = action.payload[key];
+      });
     },
   },
 });

@@ -52,6 +52,17 @@ export const fileToBase64 = async (file) => {
   return promise;
 };
 
+export const fileToText = async (file) => {
+  const reader = new FileReader();
+  const promise = new Promise((resolve, reject) => {
+    reader.onload = () => { resolve(reader.result); };
+    reader.onerror = (error) => { reject(error); };
+  });
+  reader.readAsText(file);
+
+  return promise;
+};
+
 const imageDataToImage = async (imageData) => {
   const canvas = document.createElement('canvas');
   canvas.width = imageData.width;

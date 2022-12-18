@@ -20,14 +20,12 @@ import Population from '../../models/population';
 import { endSimulation, resetSimulation, runSimulation } from '../ux/uxSlice';
 import {
   clearGenStats,
+  RESTORE_POPULATION,
   setCurrentBest,
   setGlobalBest,
   setTargetFitnessReached,
   updateCurrentGen,
-} from './metadataSlice';
-import Mutation from '../../models/mutation';
-import Crossover from '../../models/crossover';
-import Selection from '../../models/selection';
+} from './simulationSlice';
 
 let population;
 
@@ -83,12 +81,12 @@ function* runSimulationSaga() {
   const target = yield select((state) => state.parameters.target);
   const crossoverParams = yield select((state) => state.parameters.crossover);
   const mutationParams = yield select((state) => state.parameters.mutation);
-  const selection = yield select((state) => state.parameters.selection);
+  const selectionParams = yield select((state) => state.parameters.selection);
   if (!population) {
     // Store our parameters in the database
     yield call(initializeDBEntry, {
       triangleCount,
-      selection,
+      selection: selectionParams,
       populationSize,
       mutation: mutationParams,
     });
@@ -99,9 +97,9 @@ function* runSimulationSaga() {
       size: populationSize,
       genomeSize: triangleCount,
       target: data,
-      mutation: new Mutation(mutationParams),
-      crossover: new Crossover(crossoverParams),
-      selection: new Selection(selection),
+      mutation: mutationParams,
+      crossover: crossoverParams,
+      selection: selectionParams,
     });
     yield population.initialize();
   }
@@ -116,9 +114,19 @@ function* resetSimulationSaga() {
   yield call(clearDatabase);
 }
 
-function* metadataSaga() {
-  yield takeEvery(runSimulation, runSimulationSaga);
-  yield takeEvery(resetSimulation, resetSimulationSaga);
+export const serializePopulation = () => population.serialize();
+
+export function* restorePopulationSaga({ payload: populationData }) {
+  const target = yield select((state) => state.parameters.target);
+  const { data } = yield createImageData(target);
+  population = Population.restorePopulation({ target: data, ...populationData });
+  yield population.initialize();
 }
 
-export default metadataSaga;
+function* simulationSaga() {
+  yield takeEvery(runSimulation, runSimulationSaga);
+  yield takeEvery(resetSimulation, resetSimulationSaga);
+  yield takeEvery(RESTORE_POPULATION, restorePopulationSaga);
+}
+
+export default simulationSaga;

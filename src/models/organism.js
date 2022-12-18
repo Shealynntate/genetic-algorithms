@@ -60,6 +60,11 @@ const Organism = {
   clone: (organism) => Organism.create({
     genome: Genome.clone(organism.genome),
   }),
+
+  getLatestId: () => (count),
+
+  // This occurs when rehydrating
+  restoreId: (id) => { count = id; },
 };
 
 export default Organism;

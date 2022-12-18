@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { createSlice } from '@reduxjs/toolkit';
+import { createAction, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   targetFitnessReached: false,
@@ -8,8 +8,8 @@ const initialState = {
   currentStats: {},
 };
 
-export const metadataSlice = createSlice({
-  name: 'metadata',
+export const simulationSlice = createSlice({
+  name: 'simulation',
   initialState,
   reducers: {
     setGlobalBest: (state, action) => {
@@ -32,11 +32,23 @@ export const metadataSlice = createSlice({
       state.currentBest = currentBest;
       state.currentStats = stats;
     },
-    rehydrateMetadata: (state, action) => {
-      state = action.payload;
+    rehydrateSimulation: (state, action) => {
+      Object.keys(action.payload).forEach((key) => {
+        state[key] = action.payload[key];
+      });
     },
   },
 });
+
+export const RESTORE_POPULATION = 'simulation/restorePopulation';
+
+export const restorePopulation = createAction(
+  RESTORE_POPULATION,
+  (data) => ({
+    type: RESTORE_POPULATION,
+    payload: data,
+  }),
+);
 
 export const {
   setGlobalBest,
@@ -45,7 +57,7 @@ export const {
   setGenStats,
   clearGenStats,
   updateCurrentGen,
-  rehydrateMetadata,
-} = metadataSlice.actions;
+  rehydrateSimulation,
+} = simulationSlice.actions;
 
-export default metadataSlice.reducer;
+export default simulationSlice.reducer;

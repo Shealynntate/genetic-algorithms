@@ -26,7 +26,9 @@ export const uxSlice = createSlice({
       state.simulationState = SimulationState.NONE;
     },
     rehydrateUx: (state, action) => {
-      state = action.payload;
+      Object.keys(action.payload).forEach((key) => {
+        state[key] = action.payload[key];
+      });
     },
   },
 });

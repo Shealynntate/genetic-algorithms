@@ -5,13 +5,20 @@ import { flipCoin } from '../globals/statsUtils';
  * Mutation
  */
 class Mutation {
-  constructor({
+  constructor(data) {
+    this.initialize(data);
+  }
+
+  initialize({
     colorSigma,
     pointSigma,
     permuteSigma,
     permuteProb,
     prob,
     genomeSize,
+    addPointProb = 0.008,
+    removePointProb = 0.008,
+    resetDNAProb = 0.0067,
   }) {
     this.colorDist = new GaussianNoise(colorSigma);
     this.pointDist = new GaussianNoise(pointSigma);
@@ -19,10 +26,9 @@ class Mutation {
     this.permuteProb = permuteProb;
     this.prob = prob;
     this.genomeSize = genomeSize;
-
-    this.addPointProb = 0.008;
-    this.removePointProb = 0.008;
-    this.resetDNAProb = 0.0067;
+    this.addPointProb = addPointProb;
+    this.removePointProb = removePointProb;
+    this.resetDNAProb = resetDNAProb;
   }
 
   markNextGen({ genId, maxFitness }) {
@@ -36,6 +42,24 @@ class Mutation {
     // if (gen.genId > 2_000) prob = 0.01;
     // if (gen.genId > 4_000) prob = 0.01;
     }
+  }
+
+  serialize() {
+    return {
+      colorSigma: this.colorDist.getSigma(),
+      pointSigma: this.pointDist.getSigma(),
+      permuteSigma: this.permuteDist.getSigma(),
+      prob: this.prob,
+      permuteProb: this.permuteProb,
+      genomeSize: this.genomeSize,
+      addPointProb: this.addPointProb,
+      removePointProb: this.removePointProb,
+      resetDNAProb: this.resetDNAProb,
+    };
+  }
+
+  deserialize(data) {
+    this.initialize(data);
   }
 
   doMutate() {

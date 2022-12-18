@@ -1,27 +1,21 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
-import metadataReducer, { rehydrateMetadata } from './features/metadata/metadataSlice';
-import metadataSaga from './features/metadata/saga';
-import parametersReducer, { rehydrateParameters } from './features/parameters/parametersSlice';
-import uxReducer, { rehydrateUx } from './features/ux/uxSlice';
+import simulationReducer from './features/simulation/simulationSlice';
+import parametersReducer from './features/parameters/parametersSlice';
+import rootSaga from './features/rootSaga';
+import uxReducer from './features/ux/uxSlice';
 
 const sagaMiddleware = createSagaMiddleware();
 
 const store = configureStore({
   reducer: {
-    metadata: metadataReducer,
+    simulation: simulationReducer,
     parameters: parametersReducer,
     ux: uxReducer,
   },
   middleware: [sagaMiddleware],
 });
 
-export const rehydrate = (state) => {
-  rehydrateMetadata(state.metadata);
-  rehydrateParameters(state.parameters);
-  rehydrateUx(state.ux);
-};
-
-sagaMiddleware.run(metadataSaga);
+sagaMiddleware.run(rootSaga);
 
 export default store;

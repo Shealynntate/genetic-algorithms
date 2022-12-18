@@ -24,8 +24,8 @@ StatusText.propTypes = {
 const fileName = 'ga-image-timelapse';
 
 function SimulationStatusPanel() {
-  const globalBest = useSelector((state) => state.metadata.globalBest);
-  const stats = useSelector((state) => state.metadata.currentStats);
+  const globalBest = useSelector((state) => state.simulation.globalBest);
+  const stats = useSelector((state) => state.simulation.currentStats);
   const isRunning = useIsRunning();
 
   const downloadGif = async () => {

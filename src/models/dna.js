@@ -11,7 +11,7 @@ import { genRange } from '../globals/utils';
 
 const defaultNumSides = 3;
 
-const maxNumSides = 10;
+const maxNumSides = 12;
 
 // DNA Initialization Helpers
 // ------------------------------------------------------------
@@ -79,7 +79,7 @@ const addPointMutation = (dna) => {
 };
 
 const removePointMutation = (dna) => {
-  if (dna.points.length < defaultNumSides) {
+  if (dna.points.length <= defaultNumSides) {
     return;
   }
   const index = randomIndex(dna.points.length - 1);
@@ -131,6 +131,13 @@ const DNA = {
       return dna;
     }
 
+    if (mutation.doAddPoint()) {
+      addPointMutation(dna);
+    }
+    if (mutation.doRemovePoint()) {
+      removePointMutation(dna);
+    }
+
     for (let i = 0; i < dna.color.length; ++i) {
       if (mutation.doMutate()) {
         if (i === 3) {
@@ -144,13 +151,6 @@ const DNA = {
       if (mutation.doMutate()) {
         dna.points[i] = tweakPoint(mutation, ...dna.points[i]);
       }
-    }
-
-    if (mutation.doAddPoint()) {
-      addPointMutation(dna);
-    }
-    if (mutation.doRemovePoint()) {
-      removePointMutation(dna);
     }
     return dna;
   },

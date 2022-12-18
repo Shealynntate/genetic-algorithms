@@ -1,9 +1,13 @@
 import { deviation } from 'd3-array';
+import { omit } from 'lodash';
 import Organism from './organism';
 import { SelectionType, statsSigFigs, workerBatchSize } from '../constants';
 import { randomFloat, randomIndex, setSigFigs } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 import createWorker from '../web-workers/phenotypeCreator';
+import Mutation from './mutation';
+import Selection from './selection';
+import Crossover from './crossover';
 
 class Population {
   static get nextGenId() {
@@ -11,23 +15,49 @@ class Population {
     return Population.count;
   }
 
+  static restorePopulation(data) {
+    Population.count = data.genId;
+    Organism.restoreId(data.organismId);
+
+    return new Population(data);
+  }
+
   // Instance Methods
   // ------------------------------------------------------------
   constructor({
+    genId = Population.nextGenId,
     size,
     genomeSize,
     target,
     crossover,
     mutation,
     selection,
+    organisms = null,
+    best = null,
   }) {
-    this.genId = Population.nextGenId;
+    this.genId = genId;
     this.target = target;
-    this.organisms = [...Array(size)].map(() => Organism.create({ size: genomeSize }));
-    this.crossover = crossover;
-    this.selection = selection;
-    this.mutation = mutation;
-    this.best = null;
+    this.organisms = organisms ?? [...Array(size)].map(() => Organism.create({ size: genomeSize }));
+    this.crossover = new Crossover(crossover);
+    this.selection = new Selection(selection);
+    this.mutation = new Mutation(mutation);
+    this.best = best;
+  }
+
+  serialize() {
+    const { best } = this;
+    if (best) {
+      best.organism = omit(best.organism, ['phenotype']);
+    }
+    return {
+      genId: this.genId,
+      organisms: this.organisms.map((o) => omit(o, ['phenotype'])),
+      mutation: this.mutation.serialize(),
+      crossover: this.crossover.serialize(),
+      selection: this.selection.serialize(),
+      best,
+      organismId: Organism.getLatestId(),
+    };
   }
 
   async initialize() {
