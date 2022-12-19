@@ -4,17 +4,18 @@ import { CrossoverType, SelectionType } from '../../constants';
 // import defaultTarget from '../../assets/red_square_test.png';
 // import defaultTarget from '../../assets/test_grid.png';
 import defaultTarget from '../../assets/mona_lisa.jpeg';
+import { rehydrate } from '../developer/developerSlice';
 
 const initialState = {
   populationSize: 250,
-  triangleCount: 50,
+  triangleCount: 60,
   target: defaultTarget,
   crossover: {
-    type: CrossoverType.TWO_POINT,
+    type: CrossoverType.ONE_POINT,
     prob: 0.6,
   },
   mutation: {
-    prob: 0.05, // the probability of mutating DNA [0, 1]
+    prob: 0.01, // the probability of mutating Chromosome [0, 1]
     colorSigma: 0.005, // 0.25 / n
     pointSigma: 0.005,
     permuteSigma: 0.005, // TODO
@@ -72,11 +73,15 @@ export const parametersSlice = createSlice({
     setTournamentSize: (state, action) => {
       state.selection.tournamentSize = action.payload;
     },
-    rehydrateParameters: (state, action) => {
-      Object.keys(action.payload).forEach((key) => {
-        state[key] = action.payload[key];
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(rehydrate, (state, action) => {
+        const { parameters } = action.payload;
+        Object.keys(parameters).forEach((key) => {
+          state[key] = parameters[key];
+        });
       });
-    },
   },
 });
 
@@ -91,7 +96,6 @@ export const {
   setPermuteProb,
   setSelectionType,
   setEliteCount,
-  rehydrateParameters,
 } = parametersSlice.actions;
 
 export default parametersSlice.reducer;

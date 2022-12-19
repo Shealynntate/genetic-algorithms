@@ -18,7 +18,7 @@ class Mutation {
     genomeSize,
     addPointProb = 0.008,
     removePointProb = 0.008,
-    resetDNAProb = 0.0067,
+    resetChromosomeProb = 0.0067,
   }) {
     this.colorDist = new GaussianNoise(colorSigma);
     this.pointDist = new GaussianNoise(pointSigma);
@@ -28,7 +28,7 @@ class Mutation {
     this.genomeSize = genomeSize;
     this.addPointProb = addPointProb;
     this.removePointProb = removePointProb;
-    this.resetDNAProb = resetDNAProb;
+    this.resetChromosomeProb = resetChromosomeProb;
   }
 
   markNextGen({ genId, maxFitness }) {
@@ -54,7 +54,7 @@ class Mutation {
       genomeSize: this.genomeSize,
       addPointProb: this.addPointProb,
       removePointProb: this.removePointProb,
-      resetDNAProb: this.resetDNAProb,
+      resetChromosomeProb: this.resetChromosomeProb,
     };
   }
 
@@ -78,8 +78,8 @@ class Mutation {
     return flipCoin(this.permuteProb);
   }
 
-  doResetDNA() {
-    return flipCoin(this.resetDNAProb);
+  doResetChromosome() {
+    return flipCoin(this.resetChromosomeProb);
   }
 
   colorNudge() {

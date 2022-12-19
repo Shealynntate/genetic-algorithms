@@ -17,7 +17,7 @@ const imagesFields = [
   'metadataId',
   'gen',
   'fitness',
-  'dna',
+  'chromosomes',
   'imageData',
 ];
 
@@ -59,12 +59,12 @@ export async function initializeDBEntry({
 export const getCurrentMetadata = async () => db.table(metadataTable).get(currentMetadataId);
 
 export function addImageToDatabase(genId, maxFitOrganism) {
-  const { fitness, phenotype, genome: { dna } } = maxFitOrganism;
+  const { fitness, phenotype, genome: { chromosomes } } = maxFitOrganism;
 
   return db[imagesTable].add({
     gen: genId,
     fitness,
-    dna,
+    chromosomes,
     imageData: phenotype,
     metadataId: currentMetadataId,
   });

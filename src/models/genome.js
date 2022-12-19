@@ -1,13 +1,13 @@
 import { flipCoin, randomIndex } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
-import DNA from './dna';
+import Chromosome from './chromosome';
 
 const Genome = {
-  create: ({ size, dna }) => {
-    const bases = dna || genRange(size).map(() => DNA.create());
+  create: ({ size, chromosomes }) => {
+    const bases = chromosomes || genRange(size).map(() => Chromosome.create());
     return {
       size,
-      dna: bases,
+      chromosomes: bases,
     };
   },
 
@@ -18,11 +18,11 @@ const Genome = {
     genRange(genome1.size).forEach((i) => {
       if (i >= index) {
         // Perform a crossover event
-        child1.push(DNA.clone(genome2.dna[i]));
-        child2.push(DNA.clone(genome1.dna[i]));
+        child1.push(Chromosome.clone(genome2.chromosomes[i]));
+        child2.push(Chromosome.clone(genome1.chromosomes[i]));
       } else {
-        child1.push(DNA.clone(genome1.dna[i]));
-        child2.push(DNA.clone(genome2.dna[i]));
+        child1.push(Chromosome.clone(genome1.chromosomes[i]));
+        child2.push(Chromosome.clone(genome2.chromosomes[i]));
       }
     });
 
@@ -44,29 +44,29 @@ const Genome = {
     genRange(genome1.size).forEach((i) => {
       if (i >= index1 && i <= index2) {
         // Perform a crossover event
-        child1.push(DNA.clone(genome2.dna[i]));
-        child2.push(DNA.clone(genome1.dna[i]));
+        child1.push(Chromosome.clone(genome2.chromosomes[i]));
+        child2.push(Chromosome.clone(genome1.chromosomes[i]));
       } else {
-        child1.push(DNA.clone(genome1.dna[i]));
-        child2.push(DNA.clone(genome2.dna[i]));
+        child1.push(Chromosome.clone(genome1.chromosomes[i]));
+        child2.push(Chromosome.clone(genome2.chromosomes[i]));
       }
     });
 
     return [child1, child2];
   },
 
-  // Crossover at the Gene level - keep the DNA intact
+  // Crossover at the Gene level - keep the Chromosome intact
   uniformCrossover: (genome1, genome2, prob) => {
     const child1 = [];
     const child2 = [];
     genRange(genome1.size).forEach((i) => {
       if (flipCoin(prob)) {
         // Perform a crossover event
-        child1.push(DNA.clone(genome2.dna[i]));
-        child2.push(DNA.clone(genome1.dna[i]));
+        child1.push(Chromosome.clone(genome2.chromosomes[i]));
+        child2.push(Chromosome.clone(genome1.chromosomes[i]));
       } else {
-        child1.push(DNA.clone(genome1.dna[i]));
-        child2.push(DNA.clone(genome2.dna[i]));
+        child1.push(Chromosome.clone(genome1.chromosomes[i]));
+        child2.push(Chromosome.clone(genome2.chromosomes[i]));
       }
     });
 
@@ -77,27 +77,29 @@ const Genome = {
   //   const index1 = randomIndex(genome.size);
   //   const index2 = randomIndex(genome.size);
   //   if (index1 !== index2) {
-  //     const r1 = genome.dna.splice(index1, 1);
-  //     const r2 = genome.dna.splice(index2, 1, ...r1);
-  //     genome.dna.splice(index1, 0, ...r2);
+  //     const r1 = genome.chromosomes.splice(index1, 1);
+  //     const r2 = genome.chromosomes.splice(index2, 1, ...r1);
+  //     genome.chromosomes.splice(index1, 0, ...r2);
   //   }
   // },
 
-  // Swap adjacent DNA objects in the array
+  // Swap adjacent Chromosome objects in the array
   mutateOrder: (genome) => {
     const index = randomIndex(genome.size - 1);
-    const r1 = genome.dna.splice(index, 1);
-    genome.dna.splice(index + 1, 0, ...r1);
+    const r1 = genome.chromosomes.splice(index, 1);
+    genome.chromosomes.splice(index + 1, 0, ...r1);
   },
 
   mutateOrder2: (genome, mutation) => {
     const index = randomIndex(genome.size - 1);
     const [start, end] = mutation.permutationNudge(index);
-    const patch = genome.dna.splice(start, end - start).reverse();
-    genome.dna.splice(start, 0, ...patch);
+    const patch = genome.chromosomes.splice(start, end - start).reverse();
+    genome.chromosomes.splice(start, 0, ...patch);
   },
 
-  clone: (genome) => Genome.create({ size: genome.size, dna: genome.dna.map((d) => DNA.clone(d)) }),
+  clone: (genome) => Genome.create({
+    size: genome.size, chromosomes: genome.chromosomes.map((d) => Chromosome.clone(d)),
+  }),
 };
 
 export default Genome;

@@ -101,6 +101,7 @@ export const createGif = async (images, filename) => {
     {
       images: imgs,
       frameDuration: 3, // 10 = 1.0 seconds
+      sampleInterval: 1, // sampling rate for image quality, 1 is best, 10 is default
       gifWidth: width,
       gifHeight: height,
       numFrames: images.length,
@@ -175,12 +176,12 @@ export const shouldSaveGenImage = (genId) => {
 // TODO: Move this!!
 const scalePoint = (point) => [Math.round(point[0] * width), Math.round(point[1] * height)];
 
-export const dnaToPhenotype = (dna) => {
+export const chromosomesToPhenotype = (chromosomes) => {
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d');
-  dna.forEach(({ color, points }) => {
+  chromosomes.forEach(({ color, points }) => {
     ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
     ctx.beginPath();
     ctx.moveTo(...scalePoint(points[0]));

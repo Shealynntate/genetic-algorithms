@@ -20,10 +20,10 @@ export default () => {
       return [Math.round(point[0] * this.width), Math.round(point[1] * this.height)];
     }
 
-    getImageData(dna) {
+    getImageData(chromosomes) {
       this.ctx.clearRect(0, 0, this.width, this.height);
 
-      dna.forEach(({ color, points }) => {
+      chromosomes.forEach(({ color, points }) => {
         this.ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
         this.ctx.beginPath();
         this.ctx.moveTo(...this.scalePoint(points[0]));
@@ -74,7 +74,7 @@ export default () => {
     }
 
     const updatedOrganisms = organisms.map((org) => {
-      const data = phenotype.getImageData(org.genome.dna);
+      const data = phenotype.getImageData(org.genome.chromosomes);
       return {
         ...org,
         genome: {

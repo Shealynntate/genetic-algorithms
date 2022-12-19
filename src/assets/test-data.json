@@ -9,7 +9,7 @@
     {
       "gen": 0,
       "fitness": 0.7452795206971677,
-      "dna": [
+      "chromosomes": [
         {
           "points": [
             [
@@ -1337,7 +1337,7 @@
     {
       "gen": 20,
       "fitness": 0.8448278867102397,
-      "dna": [
+      "chromosomes": [
         {
           "points": [
             [
@@ -2665,7 +2665,7 @@
     {
       "gen": 40,
       "fitness": 0.870801394335512,
-      "dna": [
+      "chromosomes": [
         {
           "points": [
             [
@@ -3993,7 +3993,7 @@
     {
       "gen": 60,
       "fitness": 0.8823343790849674,
-      "dna": [
+      "chromosomes": [
         {
           "points": [
             [

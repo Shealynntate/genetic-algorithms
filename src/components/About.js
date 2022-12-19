@@ -30,7 +30,7 @@ function About({ open, onClose }) {
           The aim is to match the target image pixel for pixel.
           The program checks each pixel to see how correct it is to the original.
         </DialogContentText>
-        <DialogContentText variant="subtitle">DNA</DialogContentText>
+        <DialogContentText variant="subtitle">Chromosome</DialogContentText>
         <DialogContentText>
           An array of (x, y) coordinates and an rgb color value.
           Each instances forms a single triangle.

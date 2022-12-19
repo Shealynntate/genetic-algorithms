@@ -40,8 +40,10 @@ function* targetReachedSaga({ fitness }) {
 
 function* runGenerationSaga() {
   // Save the first generation image
-  yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
-  yield delay(10);
+  if (population.genId === 0) {
+    yield call(addImageToDatabase, population.genId, population.maxFitOrganism());
+    yield delay(10);
+  }
 
   while (true) {
     const isRunning = yield select(isRunningSelector);

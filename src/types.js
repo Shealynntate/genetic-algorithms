@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 
-export const DNAType = {
+export const ChromosomeType = {
   points: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),
   color: PropTypes.arrayOf(PropTypes.number),
 };
 
 export const GenomeType = {
   size: PropTypes.number,
-  dna: PropTypes.arrayOf(PropTypes.shape(DNAType)),
+  chromosome: PropTypes.arrayOf(PropTypes.shape(ChromosomeType)),
   phenotype: PropTypes.shape(ImageData),
 };
 

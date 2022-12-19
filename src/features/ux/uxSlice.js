@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import { SimulationState } from '../../constants';
+import { rehydrate } from '../developer/developerSlice';
 
 const initialState = {
   simulationState: SimulationState.NONE,
@@ -25,11 +26,15 @@ export const uxSlice = createSlice({
     resetSimulation: (state) => {
       state.simulationState = SimulationState.NONE;
     },
-    rehydrateUx: (state, action) => {
-      Object.keys(action.payload).forEach((key) => {
-        state[key] = action.payload[key];
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(rehydrate, (state, action) => {
+        const { ux } = action.payload;
+        Object.keys(ux).forEach((key) => {
+          state[key] = ux[key];
+        });
       });
-    },
   },
 });
 
@@ -39,7 +44,6 @@ export const {
   pauseSimulation,
   endSimulation,
   resetSimulation,
-  rehydrateUx,
 } = uxSlice.actions;
 
 export default uxSlice.reducer;

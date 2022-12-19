@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { canvasParameters } from '../constants';
 import { OrganismType } from '../types';
-// import DNA from '../models/dna';
+// import Chromosome from '../models/chromosomes';
 
 function OrganismCanvas({
   organism, width, height, willReadFrequently,
@@ -10,16 +10,16 @@ function OrganismCanvas({
   const scalePoint = (point) => [point[0] * width, point[1] * height];
 
   const canvasRef = useRef();
-  const { dna } = organism.genome;
+  const { chromosomes } = organism.genome;
 
   useEffect(() => {
-    if (canvasRef.current && dna) {
+    if (canvasRef.current && chromosomes) {
       const ctx = canvasRef.current.getContext('2d', { willReadFrequently });
       ctx.canvas.style.width = `${width}px`;
       ctx.canvas.style.height = `${height}px`;
 
       ctx.clearRect(0, 0, width, height);
-      dna.forEach((base) => {
+      chromosomes.forEach((base) => {
         const { color, points } = base;
         ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
         ctx.beginPath();
@@ -31,7 +31,7 @@ function OrganismCanvas({
         ctx.fill();
       });
     }
-  }, [dna]);
+  }, [chromosomes]);
 
   return (
     <canvas

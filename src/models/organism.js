@@ -1,5 +1,5 @@
 import { CrossoverType } from '../constants';
-import DNA from './dna';
+import Chromosome from './chromosome';
 import Genome from './genome';
 
 const CrossoverFunctions = {
@@ -29,20 +29,20 @@ const Organism = {
       throw new Error(`Unrecognized crossover type ${crossover.type}`);
     }
 
-    const [newDNA1, newDNA2] = crossoverFunc(parentA.genome, parentB.genome, crossover.prob);
-    const size = newDNA1.length;
-    // Mutate DNA
+    const [newChromosome1, newChromosome2] = crossoverFunc(
+      parentA.genome,
+      parentB.genome,
+      crossover.prob,
+    );
+    const size = newChromosome1.length;
+    // Mutate Chromosome
     for (let i = 0; i < size; ++i) {
-      // if (mutation.doMutate()) {
-      newDNA1[i] = DNA.mutate(newDNA1[i], mutation);
-      // }
-      // if (mutation.doMutate()) {
-      newDNA2[i] = DNA.mutate(newDNA2[i], mutation);
-      // }
+      newChromosome1[i] = Chromosome.mutate(newChromosome1[i], mutation);
+      newChromosome2[i] = Chromosome.mutate(newChromosome2[i], mutation);
     }
     // Mutate Genome
-    const genomeA = Genome.create({ size, dna: newDNA1 });
-    const genomeB = Genome.create({ size, dna: newDNA2 });
+    const genomeA = Genome.create({ size, chromosomes: newChromosome1 });
+    const genomeB = Genome.create({ size, chromosomes: newChromosome2 });
     if (mutation.doPermute()) {
       Genome.mutateOrder(genomeA);
     }

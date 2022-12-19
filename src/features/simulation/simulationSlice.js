@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createAction, createSlice } from '@reduxjs/toolkit';
+import { rehydrate } from '../developer/developerSlice';
 
 const initialState = {
   targetFitnessReached: false,
@@ -32,11 +33,15 @@ export const simulationSlice = createSlice({
       state.currentBest = currentBest;
       state.currentStats = stats;
     },
-    rehydrateSimulation: (state, action) => {
-      Object.keys(action.payload).forEach((key) => {
-        state[key] = action.payload[key];
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(rehydrate, (state, action) => {
+        const { simulation } = action.payload;
+        Object.keys(simulation).forEach((key) => {
+          state[key] = simulation[key];
+        });
       });
-    },
   },
 });
 
@@ -57,7 +62,6 @@ export const {
   setGenStats,
   clearGenStats,
   updateCurrentGen,
-  rehydrateSimulation,
 } = simulationSlice.actions;
 
 export default simulationSlice.reducer;

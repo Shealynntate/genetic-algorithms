@@ -1,6 +1,6 @@
 import { maxColorValue } from '../constants';
 import * as utils from '../globals/statsUtils';
-import DNA, { Test } from '../models/dna';
+import Chromosome, { Test } from '../models/chromosomes';
 
 const mockRandom = (outputs) => {
   let index = -1;
@@ -20,7 +20,7 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-describe('DNA Initialization', () => {
+describe('Chromosome Initialization', () => {
   test('Random Color Value Creation (Mock Random)', () => {
     // Check that the function is called once and returns the expected value
     const spy = jest.spyOn(utils, 'randomInt');
@@ -80,15 +80,15 @@ describe('DNA Initialization', () => {
   });
 });
 
-describe('DNA Crossover', () => {
+describe('Chromosome Crossover', () => {
   test('Crossover Point', () => {
     const points1 = [[1, 1], [1, 1], [1, 1]];
     const points2 = [[2, 2], [2, 2], [2, 2]];
-    const dna1 = DNA.create({ points: points1 });
-    const dna2 = DNA.create({ points: points2 });
+    const chromosomes1 = Chromosome.create({ points: points1 });
+    const chromosomes2 = Chromosome.create({ points: points2 });
 
-    Test.crossoverPoint(dna1, dna2, 1);
-    expect(dna1.points).toEqual([[1, 1], [2, 2], [2, 2]]);
-    expect(dna2.points).toEqual([[2, 2], [1, 1], [1, 1]]);
+    Test.crossoverPoint(chromosomes1, chromosomes2, 1);
+    expect(chromosomes1.points).toEqual([[1, 1], [2, 2], [2, 2]]);
+    expect(chromosomes2.points).toEqual([[2, 2], [1, 1], [1, 1]]);
   });
 });

@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useIsRunning } from '../hooks';
-import { createGif, dnaToPhenotype } from '../globals/utils';
+import { createGif, chromosomesToPhenotype } from '../globals/utils';
 import { getCurrentImages } from '../globals/database';
 import HistoryDisplay from './HistoryDisplay';
 
@@ -31,8 +31,8 @@ function SimulationStatusPanel() {
   const downloadGif = async () => {
     const history = await getCurrentImages();
     const imageData = history.map((entry) => entry.imageData);
-    const { dna } = globalBest.organism.genome;
-    const phenotype = dnaToPhenotype(dna);
+    const { chromosomes } = globalBest.organism.genome;
+    const phenotype = chromosomesToPhenotype(chromosomes);
     // Show the last image 4 times as long in the gif
     const result = [...imageData, phenotype, phenotype, phenotype, phenotype];
     createGif(result, fileName);

@@ -1,6 +1,6 @@
 // import Genome from '../models/genome';
 // import Organism from '../models/organism';
-// import { createImageData, DNA } from '../models/utils';
+// import { createImageData, Chromosome } from '../models/utils';
 // import square from '../assets/red_square_test.png';
 
 test('evaluate fitness', async () => {
@@ -10,9 +10,9 @@ test('evaluate fitness', async () => {
   // const target = await createImageData(square);
   // const points = [[0, 0], [0, 0], [0, 0]];
   // const color = [0, 0, 0, 0];
-  // const dna = new DNA(points, color);
+  // const chromosomes = new Chromosome(points, color);
   // const organism = new Organism({
-  //   genome: new Genome({ size: 1, dna }),
+  //   genome: new Genome({ size: 1, chromosomes }),
   // });
   // const result = organism.evaluateFitness(target);
   // console.log(result);
