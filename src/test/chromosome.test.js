@@ -1,6 +1,6 @@
 import { maxColorValue } from '../constants';
 import * as utils from '../globals/statsUtils';
-import Chromosome, { Test } from '../models/chromosomes';
+import Chromosome, { Test } from '../models/chromosome';
 
 const mockRandom = (outputs) => {
   let index = -1;
