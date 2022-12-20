@@ -37,9 +37,17 @@ const Organism = {
     const size = newChromosome1.length;
     // Mutate Chromosome
     for (let i = 0; i < size; ++i) {
-      newChromosome1[i] = Chromosome.mutate(newChromosome1[i], mutation);
-      newChromosome2[i] = Chromosome.mutate(newChromosome2[i], mutation);
+      if (mutation.doMutate()) {
+        newChromosome1[i] = Chromosome.mutate1(newChromosome1[i], mutation);
+      }
+      if (mutation.doMutate()) {
+        newChromosome2[i] = Chromosome.mutate1(newChromosome2[i], mutation);
+      }
     }
+    // for (let i = 0; i < size; ++i) {
+    //   newChromosome1[i] = Chromosome.mutate(newChromosome1[i], mutation);
+    //   newChromosome2[i] = Chromosome.mutate(newChromosome2[i], mutation);
+    // }
     // Mutate Genome
     const genomeA = Genome.create({ size, chromosomes: newChromosome1 });
     const genomeB = Genome.create({ size, chromosomes: newChromosome2 });

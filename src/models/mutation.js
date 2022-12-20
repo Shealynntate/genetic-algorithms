@@ -16,9 +16,9 @@ class Mutation {
     permuteProb,
     prob,
     genomeSize,
-    addPointProb = 0.008,
-    removePointProb = 0.008,
-    resetChromosomeProb = 0.0067,
+    addPointProb,
+    removePointProb,
+    resetChromosomeProb,
   }) {
     this.colorDist = new GaussianNoise(colorSigma);
     this.pointDist = new GaussianNoise(pointSigma);
@@ -32,8 +32,15 @@ class Mutation {
   }
 
   markNextGen({ genId, maxFitness }) {
-    if (maxFitness >= 0.965) {
-      // this.prob = 0.015;
+    if (maxFitness >= 0.95) {
+      this.prob = 0.5;
+      // this.addPointProb = 0.005;
+      // this.removePointProb = 0.005;
+      // this.permuteProb = 0.005;
+      // this.resetChromosomeProb = 0.005;
+    }
+    if (maxFitness >= 0.97) {
+      this.prob = 0.25;
     }
     if (genId > 100_000 || maxFitness > 0.99) {
       this.prob = 0.0001; // TODO: placeholder

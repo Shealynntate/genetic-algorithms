@@ -8,18 +8,24 @@ import { rehydrate } from '../developer/developerSlice';
 
 const initialState = {
   populationSize: 250,
-  triangleCount: 60,
+  triangleCount: 50,
   target: defaultTarget,
   crossover: {
     type: CrossoverType.ONE_POINT,
     prob: 0.6,
   },
   mutation: {
-    prob: 0.01, // the probability of mutating Chromosome [0, 1]
+    prob: 0.8, // the probability of mutating Chromosome [0, 1]
     colorSigma: 0.005, // 0.25 / n
     pointSigma: 0.005,
     permuteSigma: 0.005, // TODO
     permuteProb: 0.01,
+    // addPointProb: 0.008,
+    addPointProb: 0.01,
+    // removePointProb: 0.008,
+    removePointProb: 0.01,
+    // resetChromosomeProb: 0.0067,
+    resetChromosomeProb: 0.01,
   },
   selection: {
     type: SelectionType.TOURNAMENT,

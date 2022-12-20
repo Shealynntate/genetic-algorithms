@@ -11,7 +11,7 @@ import { genRange } from '../globals/utils';
 
 const defaultNumSides = 3;
 
-const maxNumSides = 8;
+const maxNumSides = 10;
 
 // Chromosome Initialization Helpers
 // ------------------------------------------------------------
@@ -156,22 +156,27 @@ const Chromosome = {
   },
 
   // Exacly 1 mutation per Chromosome
-  // mutate: (chromosomes, mutation) => {
-  //   const { color, points } = chromosomes;
-  //   const index = randomIndex(color.length + points.length);
-  //   if (index < color.length) {
-  //     chromosomes.color = mutateColor(color, index, mutation);
-  //   } else {
-  //     chromosomes.points = mutatePoint(points, index - color.length, mutation);
-  //   }
-  //   if (mutation.doAddPoint()) {
-  //     addPointMutation(chromosomes);
-  //   }
-  //   if (mutation.doRemovePoint()) {
-  //     removePointMutation(chromosomes);
-  //   }
-  //   return chromosomes;
-  // },
+  mutate1: (chromosomes, mutation) => {
+    if (mutation.doResetChromosome()) {
+      chromosomes.points = randomPoints(defaultNumSides);
+      chromosomes.color = randomColor();
+      return chromosomes;
+    }
+    const { color, points } = chromosomes;
+    const index = randomIndex(color.length + points.length);
+    if (index < color.length) {
+      chromosomes.color = mutateColor(color, index, mutation);
+    } else {
+      chromosomes.points = mutatePoint(points, index - color.length, mutation);
+    }
+    if (mutation.doAddPoint()) {
+      addPointMutation(chromosomes);
+    }
+    if (mutation.doRemovePoint()) {
+      removePointMutation(chromosomes);
+    }
+    return chromosomes;
+  },
 
   clone: (chromosomes) => Chromosome.create({
     points: chromosomes.points.slice(), color: chromosomes.color.slice(),
