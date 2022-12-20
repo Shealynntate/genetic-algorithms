@@ -1,24 +1,26 @@
 import Dexie from 'dexie';
 
 const databaseName = 'GA_Images';
-const metadataTable = 'metadata';
+const parametersTable = 'parameters';
 const imagesTable = 'images';
 const statsTable = 'stats';
+const simulationTable = 'simulation';
 
-const metadataFields = [
+const parametersFields = [
   'triangleCount',
   'selectionType',
   'populationSize',
   'eliteCount',
   'mutation',
+  'metadataId',
 ];
 
 const imagesFields = [
-  'metadataId',
   'gen',
   'fitness',
   'chromosomes',
   'imageData',
+  'metadataId',
 ];
 
 const statsFields = [
@@ -31,14 +33,21 @@ const statsFields = [
   'metadataId',
 ];
 
+const simulationFields = [
+  'population',
+  'reduxState',
+  'metadataId',
+];
+
 // --------------------------------------------------
 let currentMetadataId = '';
 const db = new Dexie(databaseName);
 
 db.version(1).stores({
-  [metadataTable]: `++id,${metadataFields.join()}`,
+  [parametersTable]: `++id,${parametersFields.join()}`,
   [imagesTable]: `++id,${imagesFields.join()}`,
   [statsTable]: `++id,${statsFields.join()}`,
+  [simulationFields]: `++id${simulationFields.join()}`,
 });
 
 export async function initializeDBEntry({
@@ -47,16 +56,17 @@ export async function initializeDBEntry({
   selection,
   mutation,
 }) {
-  currentMetadataId = await db[metadataTable].add({
+  currentMetadataId = await db[parametersTable].add({
     triangleCount,
     selection,
     populationSize,
     mutation,
+    metadataId: currentMetadataId,
   });
   return Promise.resolve();
 }
 
-export const getCurrentMetadata = async () => db.table(metadataTable).get(currentMetadataId);
+export const getCurrentParameters = async () => db.table(parametersTable).get(currentMetadataId);
 
 export function addImageToDatabase(genId, maxFitOrganism) {
   const { fitness, phenotype, genome: { chromosomes } } = maxFitOrganism;
@@ -82,10 +92,31 @@ export function getCurrentStats() {
   return db.table(statsTable).where('metadataId').equals(currentMetadataId).toArray();
 }
 
+// Simulation Table
+export function saveCurrentSimulation(population, reduxState) {
+  return db[simulationTable].add({
+    population,
+    reduxState,
+    metadataId: currentMetadataId,
+  });
+}
+
+export function getAllSimulations() {
+  return db.table(simulationTable).toArray();
+}
+
+export function deleteSimulation(id) {
+  return db.table(simulationTable).delete(id);
+}
+
+export function setCurrentSimulation(metadataId) {
+  currentMetadataId = metadataId;
+}
+
 export function clearDatabase() {
   return Promise.all([
     db.table(imagesTable).clear(),
-    db.table(metadataTable).clear(),
+    db.table(parametersTable).clear(),
     db.table(statsTable).clear(),
   ]);
 }

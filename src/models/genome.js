@@ -3,102 +3,112 @@ import { genRange } from '../globals/utils';
 import Chromosome from './chromosome';
 
 const Genome = {
-  create: ({ size, chromosomes }) => {
-    const bases = chromosomes || genRange(size).map(() => Chromosome.create());
-    return {
-      size,
-      chromosomes: bases,
-    };
-  },
+  create: ({ size, chromosomes }) => ({
+    chromosomes: chromosomes || genRange(size).map(() => Chromosome.create()),
+  }),
 
-  onePointCrossover: (genome1, genome2, prob) => {
+  onePointCrossover: (parent1, parent2, prob) => {
     const child1 = [];
     const child2 = [];
-    const index = flipCoin(prob) ? randomIndex(genome1.size) : -1;
-    genRange(genome1.size).forEach((i) => {
+    // Check if the parents have different length genomes
+    const minLength = Math.min(parent1.length, parent2.length);
+    const maxLength = Math.max(parent1.length, parent2.length);
+    // Choose a crossover index using the shorter of the two parents' lengths
+    const index = flipCoin(prob) ? randomIndex(minLength) : -1;
+
+    genRange(maxLength).forEach((i) => {
       if (i >= index) {
         // Perform a crossover event
-        child1.push(Chromosome.clone(genome2.chromosomes[i]));
-        child2.push(Chromosome.clone(genome1.chromosomes[i]));
+        child1.push(Chromosome.clone(parent2[i]));
+        child2.push(Chromosome.clone(parent1[i]));
       } else {
-        child1.push(Chromosome.clone(genome1.chromosomes[i]));
-        child2.push(Chromosome.clone(genome2.chromosomes[i]));
+        if (i < parent1.length) {
+          child1.push(Chromosome.clone(parent1[i]));
+        }
+        if (i < parent2.length) {
+          child2.push(Chromosome.clone(parent2[i]));
+        }
       }
     });
 
     return [child1, child2];
   },
 
-  twoPointCrossover: (genome1, genome2, prob) => {
+  twoPointCrossover: (parent1, parent2, prob) => {
     const child1 = [];
     const child2 = [];
+    // Check if the parents have different length genomes
+    const minLength = Math.min(parent1.length, parent2.length);
+    const maxLength = Math.max(parent1.length, parent2.length);
     const doCrossover = flipCoin(prob);
-    let index1 = doCrossover ? randomIndex(genome1.size) : -1;
-    let index2 = doCrossover ? randomIndex(genome1.size) : -1;
+    // Choose a crossover indices using the shorter of the two parents' lengths
+    let index1 = doCrossover ? randomIndex(minLength) : -1;
+    let index2 = doCrossover ? randomIndex(minLength) : -1;
     if (index2 < index1) {
       // Swap so index1 is always smaller than index2
       const temp = index1;
       index1 = index2;
       index2 = temp;
     }
-    genRange(genome1.size).forEach((i) => {
+    genRange(maxLength).forEach((i) => {
       if (i >= index1 && i <= index2) {
         // Perform a crossover event
-        child1.push(Chromosome.clone(genome2.chromosomes[i]));
-        child2.push(Chromosome.clone(genome1.chromosomes[i]));
+        child1.push(Chromosome.clone(parent2[i]));
+        child2.push(Chromosome.clone(parent1[i]));
       } else {
-        child1.push(Chromosome.clone(genome1.chromosomes[i]));
-        child2.push(Chromosome.clone(genome2.chromosomes[i]));
+        if (i < parent1.length) {
+          child1.push(Chromosome.clone(parent1[i]));
+        }
+        if (i < parent2.length) {
+          child2.push(Chromosome.clone(parent2[i]));
+        }
       }
     });
 
     return [child1, child2];
   },
 
-  // Crossover at the Gene level - keep the Chromosome intact
-  uniformCrossover: (genome1, genome2, prob) => {
+  uniformCrossover: (parent1, parent2, prob) => {
     const child1 = [];
     const child2 = [];
-    genRange(genome1.size).forEach((i) => {
-      if (flipCoin(prob)) {
+    // Check if the parents have different length genomes
+    const minLength = Math.min(parent1.length, parent2.length);
+    const maxLength = Math.max(parent1.length, parent2.length);
+
+    genRange(maxLength).forEach((i) => {
+      if (i < minLength && flipCoin(prob)) {
         // Perform a crossover event
-        child1.push(Chromosome.clone(genome2.chromosomes[i]));
-        child2.push(Chromosome.clone(genome1.chromosomes[i]));
+        child1.push(Chromosome.clone(parent2[i]));
+        child2.push(Chromosome.clone(parent1[i]));
       } else {
-        child1.push(Chromosome.clone(genome1.chromosomes[i]));
-        child2.push(Chromosome.clone(genome2.chromosomes[i]));
+        if (i < parent1.length) {
+          child1.push(Chromosome.clone(parent1[i]));
+        }
+        if (i < parent2.length) {
+          child2.push(Chromosome.clone(parent2[i]));
+        }
       }
     });
 
     return [child1, child2];
   },
-
-  // mutateOrder: (genome) => {
-  //   const index1 = randomIndex(genome.size);
-  //   const index2 = randomIndex(genome.size);
-  //   if (index1 !== index2) {
-  //     const r1 = genome.chromosomes.splice(index1, 1);
-  //     const r2 = genome.chromosomes.splice(index2, 1, ...r1);
-  //     genome.chromosomes.splice(index1, 0, ...r2);
-  //   }
-  // },
 
   // Swap adjacent Chromosome objects in the array
   mutateOrder: (genome) => {
-    const index = randomIndex(genome.size - 1);
+    const index = randomIndex(genome.chromosomes.length - 1);
     const r1 = genome.chromosomes.splice(index, 1);
     genome.chromosomes.splice(index + 1, 0, ...r1);
   },
 
   mutateOrder2: (genome, mutation) => {
-    const index = randomIndex(genome.size - 1);
+    const index = randomIndex(genome.chromosomes.length - 1);
     const [start, end] = mutation.permutationNudge(index);
     const patch = genome.chromosomes.splice(start, end - start).reverse();
     genome.chromosomes.splice(start, 0, ...patch);
   },
 
   clone: (genome) => Genome.create({
-    size: genome.size, chromosomes: genome.chromosomes.map((d) => Chromosome.clone(d)),
+    chromosomes: genome.chromosomes.map((d) => Chromosome.clone(d)),
   }),
 };
 

@@ -7,7 +7,7 @@ import defaultTarget from '../../assets/mona_lisa.jpeg';
 import { rehydrate } from '../developer/developerSlice';
 
 const initialState = {
-  populationSize: 250,
+  populationSize: 200,
   triangleCount: 50,
   target: defaultTarget,
   crossover: {

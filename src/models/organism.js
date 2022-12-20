@@ -30,8 +30,8 @@ const Organism = {
     }
 
     const [newChromosome1, newChromosome2] = crossoverFunc(
-      parentA.genome,
-      parentB.genome,
+      parentA.genome.chromosomes,
+      parentB.genome.chromosomes,
       crossover.prob,
     );
     const size = newChromosome1.length;

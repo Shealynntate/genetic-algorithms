@@ -22,6 +22,7 @@ function DisplayTabs() {
           <Tab label="Progress" />
           <Tab label="Stats" />
           <Tab label="Gallery" />
+          <Tab label="Database" />
         </Tabs>
       </Box>
       <TabPanel index={0} value={value}>

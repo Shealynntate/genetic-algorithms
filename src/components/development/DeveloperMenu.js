@@ -11,7 +11,7 @@ import { omit } from 'lodash';
 import React, { useState } from 'react';
 import { Box } from '@mui/system';
 import { useDispatch } from 'react-redux';
-import { getCurrentImages, getCurrentMetadata } from '../../globals/database';
+import { getCurrentImages, getCurrentParameters } from '../../globals/database';
 import { downloadJSON } from '../../globals/utils';
 import store from '../../store';
 import JsonInput from '../JsonInput';
@@ -23,7 +23,7 @@ function DeveloperMenu({ open, onClose }) {
   const dispatch = useDispatch();
 
   const onImageDownloadClick = async () => {
-    const metadata = await getCurrentMetadata();
+    const metadata = await getCurrentParameters();
     const history = await getCurrentImages();
     // Strip out the unneeded data for the JSON file
     const contents = omit(metadata, ['id']);
