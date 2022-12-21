@@ -1,18 +1,18 @@
 import Dexie from 'dexie';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 const databaseName = 'GA_Images';
-const parametersTable = 'parameters';
 const imagesTable = 'images';
 const statsTable = 'stats';
 const simulationTable = 'simulation';
 
-const parametersFields = [
-  'triangleCount',
-  'selectionType',
-  'populationSize',
-  'eliteCount',
-  'mutation',
-  'metadataId',
+const simulationFields = [
+  'isSaved',
+  'name',
+  'population',
+  'reduxState',
+  'createdOn',
+  'lastUpdated',
 ];
 
 const imagesFields = [
@@ -20,7 +20,7 @@ const imagesFields = [
   'fitness',
   'chromosomes',
   'imageData',
-  'metadataId',
+  'simulationId',
 ];
 
 const statsFields = [
@@ -30,44 +30,104 @@ const statsFields = [
   'minFitness',
   'deviation',
   'isGlobalBest',
-  'metadataId',
-];
-
-const simulationFields = [
-  'population',
-  'reduxState',
-  'metadataId',
+  'simulationId',
 ];
 
 // --------------------------------------------------
-let currentMetadataId = '';
+let currentSimulationId = '';
 const db = new Dexie(databaseName);
 
 db.version(1).stores({
-  [parametersTable]: `++id,${parametersFields.join()}`,
+  [simulationTable]: `++id,${simulationFields.join()}`,
   [imagesTable]: `++id,${imagesFields.join()}`,
   [statsTable]: `++id,${statsFields.join()}`,
-  [simulationFields]: `++id${simulationFields.join()}`,
 });
 
-export async function initializeDBEntry({
-  triangleCount,
-  populationSize,
-  selection,
-  mutation,
-}) {
-  currentMetadataId = await db[parametersTable].add({
-    triangleCount,
-    selection,
-    populationSize,
-    mutation,
-    metadataId: currentMetadataId,
+// Simulation Table
+// --------------------------------------------------
+export async function insertSimulation(population, reduxState) {
+  currentSimulationId = await db[simulationTable].add({
+    name: 'Unnamed Simulation',
+    population,
+    reduxState,
+    isSaved: 0,
+    createdOn: Date.now(),
+    lastUpdated: Date.now(),
   });
   return Promise.resolve();
 }
 
-export const getCurrentParameters = async () => db.table(parametersTable).get(currentMetadataId);
+export async function getSimulation(id) {
+  const [simEntry] = await db[simulationTable].where('id').equals(id).toArray();
+  return simEntry;
+}
 
+export function getAllSimulations() {
+  return db.table(simulationTable).toArray();
+}
+
+export function updateCurrentSimulation(population, reduxState, isSaved = 1) {
+  return db[simulationTable].update(currentSimulationId, {
+    population,
+    reduxState,
+    isSaved,
+    lastUpdated: Date.now(),
+  });
+}
+
+export function renameSimulation(simulationId, name) {
+  return db[simulationTable].update(simulationId, { name });
+}
+
+export async function setCurrentSimulation(simulationId) {
+  const [entry] = await db[simulationTable].where('id').equals(simulationId).toArray();
+  if (!entry) {
+    throw new Error(`No entry found for simulationId ${simulationId}`);
+  }
+  currentSimulationId = simulationId;
+  return entry;
+}
+
+export async function duplicateSimulation(simId) {
+  const simEntry = await getSimulation(simId);
+  const { name, population, reduxState } = Dexie.deepClone(simEntry);
+
+  const nextId = await db[simulationTable].add({
+    name: `${name} Copy`,
+    population,
+    reduxState,
+    isSaved: 1,
+    createdOn: Date.now(),
+    lastUpdated: Date.now(),
+  });
+
+  const imageData = await db.table(imagesTable).where('simulationId').equals(simId).toArray();
+  imageData.forEach(({ id, ...entry }) => {
+    db[imagesTable].add({ ...Dexie.deepClone(entry), simulationId: nextId });
+  });
+
+  const statsData = await db.table(statsTable).where('simulationId').equals(simId).toArray();
+  statsData.forEach(({ id, ...entry }) => {
+    db[statsTable].add({ ...Dexie.deepClone(entry), simulationId: nextId });
+  });
+}
+
+export async function deleteSimulation(id) {
+  const simEntry = await getSimulation(id);
+  if (simEntry.id === currentSimulationId) {
+    // Don't delete the current Simulation, it'll break things, just mark it as not saved
+    return updateCurrentSimulation(simEntry.population, simEntry.reduxState, 0);
+  }
+  // Delete all matching simulationId entries
+  return Promise.all([
+    db.table(simulationTable).delete(id),
+    db.table(imagesTable).where('simulationId').equals(id).delete(),
+    db.table(statsTable).where('simulationId').equals(id).delete(),
+  ]);
+}
+
+// Images Table
+// --------------------------------------------------
 export function addImageToDatabase(genId, maxFitOrganism) {
   const { fitness, phenotype, genome: { chromosomes } } = maxFitOrganism;
 
@@ -76,49 +136,43 @@ export function addImageToDatabase(genId, maxFitOrganism) {
     fitness,
     chromosomes,
     imageData: phenotype,
-    metadataId: currentMetadataId,
+    simulationId: currentSimulationId,
   });
 }
 
 export async function getCurrentImages() {
-  return db.table(imagesTable).where('metadataId').equals(currentMetadataId).toArray();
+  return db.table(imagesTable).where('simulationId').equals(currentSimulationId).toArray();
 }
 
 export function addStatsToDatabase(stats) {
-  return db[statsTable].add({ metadataId: currentMetadataId, ...stats });
+  return db[statsTable].add({ simulationId: currentSimulationId, ...stats });
 }
 
 export function getCurrentStats() {
-  return db.table(statsTable).where('metadataId').equals(currentMetadataId).toArray();
+  return db.table(statsTable).where('simulationId').equals(currentSimulationId).toArray();
 }
 
-// Simulation Table
-export function saveCurrentSimulation(population, reduxState) {
-  return db[simulationTable].add({
-    population,
-    reduxState,
-    metadataId: currentMetadataId,
+export async function clearDatabase() {
+  const promises = [];
+  const sims = await getAllSimulations();
+  sims.forEach(({ id, isSaved }) => {
+    if (!isSaved) {
+      promises.push(db.table(simulationTable).delete(id));
+      promises.push(db.table(imagesTable).where('simulationId').equals(id).delete());
+      promises.push(db.table(statsTable).where('simulationId').equals(id).delete());
+    }
   });
+  return Promise.all(promises);
 }
 
-export function getAllSimulations() {
-  return db.table(simulationTable).toArray();
-}
+// Hooks
+export const useImageDbQuery = () => useLiveQuery(
+  () => db.table(imagesTable).where('simulationId').equals(currentSimulationId).toArray(),
+  [currentSimulationId],
+);
 
-export function deleteSimulation(id) {
-  return db.table(simulationTable).delete(id);
-}
-
-export function setCurrentSimulation(metadataId) {
-  currentMetadataId = metadataId;
-}
-
-export function clearDatabase() {
-  return Promise.all([
-    db.table(imagesTable).clear(),
-    db.table(parametersTable).clear(),
-    db.table(statsTable).clear(),
-  ]);
-}
+export const useGetSavedSimulations = () => useLiveQuery(
+  () => db[simulationTable].where('isSaved').equals(1).reverse().toArray(),
+);
 
 export default db;

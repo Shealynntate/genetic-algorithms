@@ -1,11 +1,15 @@
 import { useSelector } from 'react-redux';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { SimulationState } from './constants';
 import { createImageData } from './globals/utils';
-import database, { getCurrentStats } from './globals/database';
+import { getCurrentStats } from './globals/database';
 
 const SettingsDisabledStates = [
   SimulationState.RUNNING,
+  SimulationState.PAUSED,
+  SimulationState.COMPLETE,
+];
+
+const SaveSimulationStates = [
   SimulationState.PAUSED,
   SimulationState.COMPLETE,
 ];
@@ -53,6 +57,7 @@ export const isRunningSelector = (state) => (
   currentStateSelector(state) === SimulationState.RUNNING
 );
 
-export const useImageDbQuery = () => (
-  useLiveQuery(() => database.images.toArray())
-);
+export const useDisableSaveSimulation = () => {
+  const simulationState = useSelector((state) => state.ux.simulationState);
+  return !SaveSimulationStates.includes(simulationState);
+};

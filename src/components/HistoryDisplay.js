@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Box } from '@mui/material';
-import { useImageDbQuery } from '../hooks';
 import HistoryEntry from './HistoryEntry';
 import OrganismCanvas from './OrganismCanvas';
 import ImageCaption from './ImageCaption';
+import { useImageDbQuery } from '../globals/database';
 
 function HistoryDisplay() {
   const { organism, genId } = useSelector((state) => state.simulation.currentBest);

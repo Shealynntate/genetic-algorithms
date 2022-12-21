@@ -7,6 +7,7 @@ import TabPanel from './TabPanel';
 import GalleryPanel from './GalleryPanel';
 import ProgressPanel from './ProgressPanel';
 import StatsPanel from './StatsPanel';
+import DatabasePanel from './DatabasePanel';
 
 function DisplayTabs() {
   const [value, setValue] = useState(0);
@@ -43,6 +44,9 @@ function DisplayTabs() {
       </TabPanel>
       <TabPanel index={2} value={value}>
         <GalleryPanel />
+      </TabPanel>
+      <TabPanel index={3} value={value}>
+        <DatabasePanel />
       </TabPanel>
     </Box>
   );

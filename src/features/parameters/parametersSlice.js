@@ -12,7 +12,7 @@ const initialState = {
   target: defaultTarget,
   crossover: {
     type: CrossoverType.ONE_POINT,
-    prob: 0.6,
+    prob: 0,
   },
   mutation: {
     prob: 0.8, // the probability of mutating Chromosome [0, 1]

@@ -10,7 +10,7 @@ import {
   addImageToDatabase,
   addStatsToDatabase,
   clearDatabase,
-  initializeDBEntry,
+  insertSimulation,
 } from '../../globals/database';
 import { targetFitness } from '../../constants';
 import { approxEqual } from '../../globals/statsUtils';
@@ -85,13 +85,6 @@ function* runSimulationSaga() {
   const mutationParams = yield select((state) => state.parameters.mutation);
   const selectionParams = yield select((state) => state.parameters.selection);
   if (!population) {
-    // Store our parameters in the database
-    yield call(initializeDBEntry, {
-      triangleCount,
-      selection: selectionParams,
-      populationSize,
-      mutation: mutationParams,
-    });
     const { data } = yield createImageData(target);
 
     // Initialize the population
@@ -104,6 +97,11 @@ function* runSimulationSaga() {
       selection: selectionParams,
     });
     yield population.initialize();
+
+    // Store our parameters in the database
+    // TODO: Use the context instead in DB
+    const store = yield select((state) => state);
+    yield call(insertSimulation, population.serialize(), store);
   }
 
   yield call(runGenerationSaga);

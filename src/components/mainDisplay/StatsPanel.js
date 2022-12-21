@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { scaleLinear } from '@visx/scale';
 import { maxBy } from 'lodash';
-import StatsLine from './StatsLine';
-import { getCurrentStats } from '../globals/database';
+import StatsLine from '../StatsLine';
+import { getCurrentStats } from '../../globals/database';
 
 const margin = {
   top: 20,

@@ -7,12 +7,9 @@ import {
   TextField,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { omit } from 'lodash';
 import React, { useState } from 'react';
 import { Box } from '@mui/system';
 import { useDispatch } from 'react-redux';
-import { getCurrentImages, getCurrentParameters } from '../../globals/database';
-import { downloadJSON } from '../../globals/utils';
 import store from '../../store';
 import JsonInput from '../JsonInput';
 import { download } from '../../features/developer/developerSlice';
@@ -21,17 +18,6 @@ function DeveloperMenu({ open, onClose }) {
   const [imageTitle, setImageTitle] = useState('');
   const [stateTitle, setStateTitle] = useState('ga-simulation-state');
   const dispatch = useDispatch();
-
-  const onImageDownloadClick = async () => {
-    const metadata = await getCurrentParameters();
-    const history = await getCurrentImages();
-    // Strip out the unneeded data for the JSON file
-    const contents = omit(metadata, ['id']);
-    contents.name = imageTitle;
-    contents.images = history.map((entry) => omit(entry, ['imageData']));
-
-    downloadJSON(imageTitle, contents);
-  };
 
   const onSimulationStateDownloadClick = () => {
     // downloadJSON(stateTitle, store.getState());
@@ -50,14 +36,6 @@ function DeveloperMenu({ open, onClose }) {
             onChange={({ target }) => { setImageTitle(target.value); }}
             required
           />
-          <Button
-            variant="contained"
-            sx={{ display: 'block' }}
-            onClick={onImageDownloadClick}
-            disabled={!imageTitle}
-          >
-            Download
-          </Button>
         </Box>
         <Box px={1}>
           <DialogContentText>Download Simulation State</DialogContentText>

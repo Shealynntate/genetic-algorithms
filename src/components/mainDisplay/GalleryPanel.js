@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Paper, Typography } from '@mui/material';
-import data from '../assets/test-data.json';
+import data from '../../assets/test-data.json';
 
 function Gallery() {
   const { name, images } = data;

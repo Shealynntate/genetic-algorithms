@@ -8,10 +8,10 @@ import {
   Typography,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { useIsRunning } from '../hooks';
-import { createGif, chromosomesToPhenotype } from '../globals/utils';
-import { getCurrentImages } from '../globals/database';
-import HistoryDisplay from './HistoryDisplay';
+import { useIsRunning } from '../../hooks';
+import { createGif, chromosomesToPhenotype } from '../../globals/utils';
+import { getCurrentImages } from '../../globals/database';
+import HistoryDisplay from '../HistoryDisplay';
 
 function StatusText({ children }) {
   return <Typography variant="caption" sx={{ display: 'block' }}>{children}</Typography>;

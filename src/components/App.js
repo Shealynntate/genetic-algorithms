@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Stack } from '@mui/material';
 import ControlPanel from './ControlPanel';
 import Header from './Header';
-import DisplayTabs from './DisplayTabs';
+import DisplayTabs from './mainDisplay/DisplayTabs';
 
 function App() {
   return (
