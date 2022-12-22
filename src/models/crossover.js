@@ -24,7 +24,7 @@ class Crossover {
 
   markNextGen({ genId, maxFitness }) {
     if (maxFitness >= 0.965) {
-      this.prob *= 1;
+      this.prob = 0.9;
     }
     if (genId > 100_000) {
       this.prob = 0.0001; // TODO: placeholder

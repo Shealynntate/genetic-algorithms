@@ -3,10 +3,18 @@ import { genRange } from '../globals/utils';
 import Chromosome from './chromosome';
 
 const Genome = {
+  // Creation Methods
+  // ------------------------------------------------------------
   create: ({ size, chromosomes }) => ({
     chromosomes: chromosomes || genRange(size).map(() => Chromosome.create()),
   }),
 
+  clone: (genome) => Genome.create({
+    chromosomes: genome.chromosomes.map((d) => Chromosome.clone(d)),
+  }),
+
+  // Crossover Methods
+  // ------------------------------------------------------------
   onePointCrossover: (parent1, parent2, prob) => {
     const child1 = [];
     const child2 = [];
@@ -17,7 +25,7 @@ const Genome = {
     const index = flipCoin(prob) ? randomIndex(minLength) : -1;
 
     genRange(maxLength).forEach((i) => {
-      if (i >= index) {
+      if (index >= 0 && i <= index) {
         // Perform a crossover event
         child1.push(Chromosome.clone(parent2[i]));
         child2.push(Chromosome.clone(parent1[i]));
@@ -93,6 +101,56 @@ const Genome = {
     return [child1, child2];
   },
 
+  // Mutation Methods
+  // ------------------------------------------------------------
+  mutate: (genome, mutation) => {
+    const { chromosomes } = genome;
+    const isSingleMutation = true;
+    const maxGenomeSize = mutation.getMaxGenomeSize();
+    // Mutate at the chromosomal level
+    for (let i = 0; i < chromosomes.length; ++i) {
+      // Check full reset mutation
+      if (mutation.doResetChromosome()) {
+        Chromosome.resetMutation(chromosomes[i]);
+      }
+      // Check add point mutation
+      if (mutation.doAddPoint()) {
+        if (!Chromosome.addPointMutation(chromosomes[i])) {
+          // Split into two
+          const daughters = Chromosome.mitosis(chromosomes[i]);
+          if (chromosomes.length < maxGenomeSize) {
+            chromosomes.splice(i, 1, ...daughters);
+          } else {
+            chromosomes.splice(i, 1, daughters[0]);
+          }
+        }
+      }
+      // Check remove point mutation
+      if (mutation.doRemovePoint()) {
+        if (!Chromosome.removePointMutation(chromosomes[i])) {
+          // Delete the chromosome
+          if (chromosomes.length > 1) {
+            chromosomes.splice(i, 1);
+            if (i >= chromosomes.length) break;
+          }
+        }
+      }
+      // Check tweak values mutation
+      if (isSingleMutation) {
+        if (mutation.doMutate()) {
+          chromosomes[i] = Chromosome.singleMutation(chromosomes[i], mutation);
+        }
+      } else {
+        chromosomes[i] = Chromosome.multiMutation(chromosomes[i], mutation);
+      }
+    }
+
+    // Mutate Genome
+    if (mutation.doPermute()) {
+      Genome.mutateOrder(genome);
+    }
+  },
+
   // Swap adjacent Chromosome objects in the array
   mutateOrder: (genome) => {
     const index = randomIndex(genome.chromosomes.length - 1);
@@ -106,10 +164,6 @@ const Genome = {
     const patch = genome.chromosomes.splice(start, end - start).reverse();
     genome.chromosomes.splice(start, 0, ...patch);
   },
-
-  clone: (genome) => Genome.create({
-    chromosomes: genome.chromosomes.map((d) => Chromosome.clone(d)),
-  }),
 };
 
 export default Genome;

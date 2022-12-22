@@ -9,19 +9,33 @@ import {
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { Box } from '@mui/system';
-import { useDispatch } from 'react-redux';
-import store from '../../store';
-import JsonInput from '../JsonInput';
-import { download } from '../../features/developer/developerSlice';
+import { useSelector } from 'react-redux';
+import { getCurrentImages } from '../../globals/database';
+import { chromosomesToPhenotype, createGif, downloadJSON } from '../../globals/utils';
 
 function DeveloperMenu({ open, onClose }) {
-  const [imageTitle, setImageTitle] = useState('');
-  const [stateTitle, setStateTitle] = useState('ga-simulation-state');
-  const dispatch = useDispatch();
+  const [entryTitle, setEntryTitle] = useState('Untitled');
+  const globalBest = useSelector((state) => state.simulation.globalBest);
+  const parameters = useSelector((state) => state.parameters);
+  const currentBest = useSelector((state) => state.simulation.currentBest);
 
-  const onSimulationStateDownloadClick = () => {
-    // downloadJSON(stateTitle, store.getState());
-    dispatch(download(stateTitle, store.getState()));
+  const onSimulationStateDownloadClick = async () => {
+    // Download for gallery
+    const history = await getCurrentImages();
+    const imageData = history.map((entry) => entry.imageData);
+    const { chromosomes } = globalBest.organism.genome;
+    const phenotype = chromosomesToPhenotype(chromosomes);
+    // Show the last image 4 times as long in the gif
+    const result = [...imageData, phenotype, phenotype, phenotype, phenotype];
+    const gif = await createGif(result);
+    const galleryData = {
+      name: entryTitle,
+      gif,
+      globalBest,
+      parameters,
+      totalGen: currentBest.genId,
+    };
+    downloadJSON(entryTitle, galleryData);
   };
 
   return (
@@ -29,34 +43,22 @@ function DeveloperMenu({ open, onClose }) {
       <DialogTitle>Developer Options</DialogTitle>
       <DialogContent sx={{ display: 'flex' }}>
         <Box px={1}>
-          <DialogContentText>Download Image History</DialogContentText>
+          <DialogContentText>Download Gallery Entry</DialogContentText>
           <TextField
-            label="Image Title"
-            value={imageTitle}
-            onChange={({ target }) => { setImageTitle(target.value); }}
+            label="Entry Title"
+            value={entryTitle}
+            onChange={({ target }) => { setEntryTitle(target.value); }}
             required
           />
         </Box>
-        <Box px={1}>
-          <DialogContentText>Download Simulation State</DialogContentText>
-          <TextField
-            label="File Title"
-            value={stateTitle}
-            onChange={({ target }) => { setStateTitle(target.value); }}
-            required
-          />
-          <Button
-            variant="contained"
-            sx={{ display: 'block' }}
-            onClick={onSimulationStateDownloadClick}
-            disabled={!stateTitle}
-          >
-            Download
-          </Button>
-        </Box>
-        <Box>
-          <JsonInput />
-        </Box>
+        <Button
+          variant="contained"
+          sx={{ display: 'block' }}
+          onClick={onSimulationStateDownloadClick}
+          disabled={!entryTitle}
+        >
+          Download
+        </Button>
       </DialogContent>
     </Dialog>
   );

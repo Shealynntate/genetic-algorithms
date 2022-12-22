@@ -29,21 +29,35 @@ class Mutation {
     this.addPointProb = addPointProb;
     this.removePointProb = removePointProb;
     this.resetChromosomeProb = resetChromosomeProb;
+    this.prevMaxFitness = 0;
   }
 
   markNextGen({ genId, maxFitness }) {
     if (maxFitness >= 0.945) {
       this.prob = 0.5;
-      // this.addPointProb = 0.005;
-      // this.removePointProb = 0.005;
+      this.addPointProb = 0.01;
+      this.removePointProb = 0.01;
       // this.permuteProb = 0.005;
       // this.resetChromosomeProb = 0.005;
     }
-    if (maxFitness >= 0.97) {
-      this.prob = 0.05;
-      this.addPointProb = 0.05;
-      this.removePointProb = 0.05;
-      this.permuteProb = 0.05;
+    if (this.prevMaxFitness < 0.96 && maxFitness >= 0.96) {
+      this.prob = 0.25;
+      this.addPointProb = 0.005;
+      this.removePointProb = 0.005;
+      console.log('switching to 96% phase');
+    }
+    if (this.prevMaxFitness < 0.97 && maxFitness >= 0.97) {
+      this.prob = 0.01;
+      // this.colorSigma = 0.003;
+      // this.pointSigma = 0.003;
+      // this.colorDist = new GaussianNoise(this.colorSigma);
+      // this.pointDist = new GaussianNoise(this.pointSigma);
+      console.log('switching to 97% phase');
+      // this.addPointProb = 0.001;
+      // this.removePointProb = 0.001;
+      // this.addPointProb = 0.05;
+      // this.removePointProb = 0.05;
+      this.permuteProb = 0.005;
     }
     if (genId > 100_000 || maxFitness > 0.99) {
       this.prob = 0.0001; // TODO: placeholder
@@ -52,6 +66,26 @@ class Mutation {
     // if (gen.genId > 2_000) prob = 0.01;
     // if (gen.genId > 4_000) prob = 0.01;
     }
+    this.prevMaxFitness = maxFitness;
+  }
+
+  getMaxGenomeSize() {
+    if (this.prevMaxFitness < 0.91) {
+      return 10;
+    }
+    if (this.prevMaxFitness < 0.93) {
+      return 20;
+    }
+    if (this.prevMaxFitness < 0.945) {
+      return 30;
+    }
+    if (this.prevMaxFitness < 0.955) {
+      return 40;
+    }
+    if (this.prevMaxFitness < 0.965) {
+      return 45;
+    }
+    return 50;
   }
 
   serialize() {

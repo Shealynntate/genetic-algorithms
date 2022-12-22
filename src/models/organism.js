@@ -1,5 +1,4 @@
 import { CrossoverType } from '../constants';
-import Chromosome from './chromosome';
 import Genome from './genome';
 
 const CrossoverFunctions = {
@@ -28,39 +27,18 @@ const Organism = {
     if (!crossoverFunc) {
       throw new Error(`Unrecognized crossover type ${crossover.type}`);
     }
-
+    // Perform Crossover
     const [newChromosome1, newChromosome2] = crossoverFunc(
       parentA.genome.chromosomes,
       parentB.genome.chromosomes,
       crossover.prob,
     );
-    const size = newChromosome1.length;
-    // Mutate Chromosome
-    for (let i = 0; i < size; ++i) {
-      if (mutation.doMutate()) {
-        newChromosome1[i] = Chromosome.mutate1(newChromosome1[i], mutation);
-      }
-      if (mutation.doMutate()) {
-        newChromosome2[i] = Chromosome.mutate1(newChromosome2[i], mutation);
-      }
-    }
-    // for (let i = 0; i < size; ++i) {
-    //   newChromosome1[i] = Chromosome.mutate(newChromosome1[i], mutation);
-    //   newChromosome2[i] = Chromosome.mutate(newChromosome2[i], mutation);
-    // }
-    // Mutate Genome
-    const genomeA = Genome.create({ size, chromosomes: newChromosome1 });
-    const genomeB = Genome.create({ size, chromosomes: newChromosome2 });
-    if (mutation.doPermute()) {
-      Genome.mutateOrder(genomeA);
-    }
-    if (mutation.doPermute()) {
-      Genome.mutateOrder(genomeB);
-    }
-
     // Create the child Organisms
-    const childA = Organism.create({ genome: genomeA });
-    const childB = Organism.create({ genome: genomeB });
+    const childA = Organism.create({ genome: Genome.create({ chromosomes: newChromosome1 }) });
+    const childB = Organism.create({ genome: Genome.create({ chromosomes: newChromosome2 }) });
+    // Mutate the new children
+    Genome.mutate(childA.genome, mutation);
+    Genome.mutate(childB.genome, mutation);
 
     return [childA, childB];
   },
@@ -68,6 +46,12 @@ const Organism = {
   clone: (organism) => Organism.create({
     genome: Genome.clone(organism.genome),
   }),
+
+  cloneAndMutate: (organism, mutation) => {
+    const copy = Organism.clone(organism);
+    Genome.mutate(copy.genome, mutation);
+    return copy;
+  },
 
   getLatestId: () => (count),
 

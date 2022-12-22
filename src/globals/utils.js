@@ -95,35 +95,41 @@ export const downloadGIF = (fileName, data) => {
   downloadFile(fileName, data, 'image/gif', 'gif');
 };
 
-export const createGif = async (images, filename) => {
+export const download = (filename, contents) => {
+  const a = document.createElement('a');
+  a.download = filename;
+  a.href = contents;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+export const createGif = async (images) => {
   const imgs = await Promise.all(images.map(async (image) => (imageDataToImage(image))));
-  gifshot.createGIF(
-    {
-      images: imgs,
-      frameDuration: 3, // 10 = 1.0 seconds
-      sampleInterval: 1, // sampling rate for image quality, 1 is best, 10 is default
-      gifWidth: width,
-      gifHeight: height,
-      numFrames: images.length,
-    },
-    ({
-      error,
-      errorCode,
-      errorMsg,
-      image, // base64 image (gif)
-    }) => {
-      if (error) {
-        throw new Error(`[Gifshot] ${errorCode}: ${errorMsg}`);
-      }
-      // Download the GIF
-      const a = document.createElement('a');
-      a.download = filename;
-      a.href = image;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    },
-  );
+  const promise = new Promise((resolve, reject) => {
+    gifshot.createGIF(
+      {
+        images: imgs,
+        frameDuration: 3, // 10 = 1.0 seconds
+        sampleInterval: 1, // sampling rate for image quality, 1 is best, 10 is default
+        gifWidth: width,
+        gifHeight: height,
+        numFrames: images.length,
+      },
+      ({
+        error,
+        errorCode,
+        errorMsg,
+        image, // base64 image (gif)
+      }) => {
+        if (error) {
+          reject(new Error(`[Gifshot] ${errorCode}: ${errorMsg}`));
+        }
+        resolve(image);
+      },
+    );
+  });
+  return promise;
 };
 
 export const fitnessBounds = (orgs) => {

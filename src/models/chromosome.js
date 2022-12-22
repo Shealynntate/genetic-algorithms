@@ -9,9 +9,9 @@ import {
 } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 
-const defaultNumSides = 3;
-
+const minNumSides = 3;
 const maxNumSides = 10;
+const defaultNumSides = 3;
 
 // Chromosome Initialization Helpers
 // ------------------------------------------------------------
@@ -65,32 +65,12 @@ const tweakColor = (m, value) => clamp(value + m.colorNudge() * maxColorValue, 0
 
 const tweakAlpha = (m, value) => clamp(value + m.colorNudge(), 0, 1);
 
-const addPointMutation = (chromosomes) => {
-  if (chromosomes.points.length >= maxNumSides) {
-    return;
-  }
-
-  const index = randomIndex(chromosomes.points.length - 1);
-  const a = chromosomes.points[index];
-  const b = chromosomes.points[index + 1];
-  const x = (a[0] + b[0]) / 2;
-  const y = (a[1] + b[1]) / 2;
-  chromosomes.points.splice(index + 1, 0, [x, y]);
-};
-
-const removePointMutation = (chromosomes) => {
-  if (chromosomes.points.length <= defaultNumSides) {
-    return;
-  }
-  const index = randomIndex(chromosomes.points.length - 1);
-  chromosomes.points.splice(index, 1);
-};
-
 // Mutate all color values
-// const mutateColors = (color, mutation) => {
-//   const func = (i) => (i < 3 ? tweakColor : tweakAlpha);
-//   return color.map((c, i) => func(i)(mutation, c));
-// };
+// eslint-disable-next-line no-unused-vars
+const mutateColors = (color, mutation) => {
+  const func = (i) => (i < 3 ? tweakColor : tweakAlpha);
+  return color.map((c, i) => func(i)(mutation, c));
+};
 
 // Mutate just one color value
 const mutateColor = (color, index, mutation) => {
@@ -119,25 +99,26 @@ const Chromosome = {
     color: col || randomColor(),
   }),
 
-  // mutate: (chromosomes, mutation) => (Chromosome.create({
+  clone: (chromosome) => Chromosome.create({
+    points: chromosome.points.slice(), color: chromosome.color.slice(),
+  }),
+
+  mitosis: (chromosome) => {
+    const half = Math.ceil(chromosome.points.length / 2);
+    const a = Chromosome.clone(chromosome);
+    const b = Chromosome.clone(chromosome);
+    a.points = a.points.slice(0, half);
+    b.points = b.points.slice(half);
+
+    return [a, b];
+  },
+
+  // totalMutation: (chromosomes, mutation) => (Chromosome.create({
   //   color: mutateColors(chromosomes.color, mutation),
   //   points: mutatePoints(chromosomes.points, mutation),
   // })),
 
-  mutate: (chromosomes, mutation) => {
-    if (mutation.doResetChromosome()) {
-      chromosomes.points = randomPoints(defaultNumSides);
-      chromosomes.color = randomColor();
-      return chromosomes;
-    }
-
-    if (mutation.doAddPoint()) {
-      addPointMutation(chromosomes);
-    }
-    if (mutation.doRemovePoint()) {
-      removePointMutation(chromosomes);
-    }
-
+  multiMutation: (chromosomes, mutation) => {
     for (let i = 0; i < chromosomes.color.length; ++i) {
       if (mutation.doMutate()) {
         if (i === 3) {
@@ -156,31 +137,54 @@ const Chromosome = {
   },
 
   // Exacly 1 mutation per Chromosome
-  mutate1: (chromosomes, mutation) => {
-    if (mutation.doResetChromosome()) {
-      chromosomes.points = randomPoints(defaultNumSides);
-      chromosomes.color = randomColor();
-      return chromosomes;
-    }
-    const { color, points } = chromosomes;
+  singleMutation: (chromosome, mutation) => {
+    const { color, points } = chromosome;
     const index = randomIndex(color.length + points.length);
     if (index < color.length) {
-      chromosomes.color = mutateColor(color, index, mutation);
+      chromosome.color = mutateColor(color, index, mutation);
+      // chromosome.color = mutateColors(color, mutation); // TODO: Temp test
     } else {
-      chromosomes.points = mutatePoint(points, index - color.length, mutation);
+      chromosome.points = mutatePoint(points, index - color.length, mutation);
     }
-    if (mutation.doAddPoint()) {
-      addPointMutation(chromosomes);
-    }
-    if (mutation.doRemovePoint()) {
-      removePointMutation(chromosomes);
-    }
-    return chromosomes;
+
+    return chromosome;
   },
 
-  clone: (chromosomes) => Chromosome.create({
-    points: chromosomes.points.slice(), color: chromosomes.color.slice(),
-  }),
+  /**
+   * Adds a randomly generated (x,y) point to the Chromosome if possible
+   * @param {*} chromosomes - an array of Chromosome objects
+   * @returns true if the add mutation was successful, false if the chromosome already has the
+   * maximum number of points allowed
+   */
+  addPointMutation: (chromosome) => {
+    if (chromosome.points.length >= maxNumSides) {
+      return false;
+    }
+
+    const index = randomIndex(chromosome.points.length - 1);
+    const a = chromosome.points[index];
+    const b = chromosome.points[index + 1];
+    const x = (a[0] + b[0]) / 2;
+    const y = (a[1] + b[1]) / 2;
+    chromosome.points.splice(index + 1, 0, [x, y]);
+
+    return true;
+  },
+
+  removePointMutation: (chromosome) => {
+    if (chromosome.points.length <= minNumSides) {
+      return false;
+    }
+    const index = randomIndex(chromosome.points.length - 1);
+    chromosome.points.splice(index, 1);
+
+    return true;
+  },
+
+  resetMutation: (chromosome) => {
+    chromosome.points = randomPoints(defaultNumSides);
+    chromosome.color = randomColor();
+  },
 };
 
 export const Test = {
