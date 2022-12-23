@@ -47,17 +47,18 @@ class Mutation {
       console.log('switching to 96% phase');
     }
     if (this.prevMaxFitness < 0.97 && maxFitness >= 0.97) {
-      this.prob = 0.01;
+      this.prob = 0.02;
       // this.colorSigma = 0.003;
       // this.pointSigma = 0.003;
       // this.colorDist = new GaussianNoise(this.colorSigma);
       // this.pointDist = new GaussianNoise(this.pointSigma);
       console.log('switching to 97% phase');
-      // this.addPointProb = 0.001;
-      // this.removePointProb = 0.001;
+      this.addPointProb = 0.001;
+      this.removePointProb = 0.001;
       // this.addPointProb = 0.05;
       // this.removePointProb = 0.05;
-      this.permuteProb = 0.005;
+      this.permuteProb = 0.002;
+      this.resetChromosomeProb = 0.0005;
     }
     if (genId > 100_000 || maxFitness > 0.99) {
       this.prob = 0.0001; // TODO: placeholder
