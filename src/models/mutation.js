@@ -18,6 +18,8 @@ class Mutation {
     addPointProb,
     removePointProb,
     resetChromosomeProb,
+    addChromosomeProb,
+    removeChromosomeProb,
     genomeSize,
   }) {
     this.colorDist = new GaussianNoise(colorSigma);
@@ -29,36 +31,38 @@ class Mutation {
     this.addPointProb = addPointProb;
     this.removePointProb = removePointProb;
     this.resetChromosomeProb = resetChromosomeProb;
+    this.addChromosomeProb = addChromosomeProb;
+    this.removeChromosomeProb = removeChromosomeProb;
     this.prevMaxFitness = 0;
   }
 
   markNextGen({ genId, maxFitness }) {
-    if (maxFitness >= 0.945) {
-      this.prob = 0.5;
-      this.addPointProb = 0.01;
-      this.removePointProb = 0.01;
-      // this.permuteProb = 0.005;
-      // this.resetChromosomeProb = 0.005;
-    }
+    // if (maxFitness >= 0.945) {
+    //   this.prob = 0.5;
+    //   this.addPointProb = 0.01;
+    //   this.removePointProb = 0.01;
+    //   // this.permuteProb = 0.005;
+    //   // this.resetChromosomeProb = 0.005;
+    // }
     if (this.prevMaxFitness < 0.96 && maxFitness >= 0.96) {
-      this.prob = 0.25;
-      this.addPointProb = 0.005;
-      this.removePointProb = 0.005;
+      // this.prob = 0.25;
+      // this.addPointProb = 0.005;
+      // this.removePointProb = 0.005;
       console.log('switching to 96% phase');
     }
     if (this.prevMaxFitness < 0.97 && maxFitness >= 0.97) {
-      this.prob = 0.02;
+      // this.prob = 0.02;
       // this.colorSigma = 0.003;
       // this.pointSigma = 0.003;
       // this.colorDist = new GaussianNoise(this.colorSigma);
       // this.pointDist = new GaussianNoise(this.pointSigma);
       console.log('switching to 97% phase');
-      this.addPointProb = 0.001;
-      this.removePointProb = 0.001;
-      // this.addPointProb = 0.05;
-      // this.removePointProb = 0.05;
-      this.permuteProb = 0.002;
-      this.resetChromosomeProb = 0.0005;
+      // this.addPointProb = 0.001;
+      // this.removePointProb = 0.001;
+      // // this.addPointProb = 0.05;
+      // // this.removePointProb = 0.05;
+      // this.permuteProb = 0.002;
+      // this.resetChromosomeProb = 0.0005;
     }
     if (genId > 100_000 || maxFitness > 0.99) {
       this.prob = 0.0001; // TODO: placeholder
@@ -70,22 +74,23 @@ class Mutation {
     this.prevMaxFitness = maxFitness;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getMaxGenomeSize() {
-    if (this.prevMaxFitness < 0.91) {
-      return 10;
-    }
-    if (this.prevMaxFitness < 0.93) {
-      return 20;
-    }
-    if (this.prevMaxFitness < 0.945) {
-      return 30;
-    }
-    if (this.prevMaxFitness < 0.955) {
-      return 40;
-    }
-    if (this.prevMaxFitness < 0.965) {
-      return 45;
-    }
+    // if (this.prevMaxFitness < 0.91) {
+    //   return 10;
+    // }
+    // if (this.prevMaxFitness < 0.93) {
+    //   return 20;
+    // }
+    // if (this.prevMaxFitness < 0.945) {
+    //   return 30;
+    // }
+    // if (this.prevMaxFitness < 0.955) {
+    //   return 40;
+    // }
+    // if (this.prevMaxFitness < 0.965) {
+    //   return 45;
+    // }
     return 50;
   }
 
@@ -107,24 +112,38 @@ class Mutation {
     this.initialize(data);
   }
 
-  doMutate() {
+  // eslint-disable-next-line no-unused-vars
+  doMutate(size) {
     return flipCoin(this.prob);
   }
 
-  doAddPoint() {
+  // eslint-disable-next-line no-unused-vars
+  doAddPoint(size) {
     return flipCoin(this.addPointProb);
   }
 
-  doRemovePoint() {
+  // eslint-disable-next-line no-unused-vars
+  doRemovePoint(size) {
     return flipCoin(this.removePointProb);
   }
 
-  doPermute() {
-    return flipCoin(this.permuteProb);
+  // eslint-disable-next-line no-unused-vars
+  doPermute(size) {
+    return flipCoin(this.permuteProb / size);
   }
 
   doResetChromosome() {
     return flipCoin(this.resetChromosomeProb);
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  doAddChromosome(size) {
+    return flipCoin(this.addChromosomeProb / size);
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  doRemoveChromosome(size) {
+    return flipCoin(this.removeChromosomeProb / size);
   }
 
   colorNudge() {

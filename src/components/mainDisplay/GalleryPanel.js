@@ -1,20 +1,25 @@
 import React from 'react';
-import { Box, Paper, Typography } from '@mui/material';
-import data from '../../assets/test-data.json';
+import { Paper, Typography } from '@mui/material';
+import data from '../../assets/test-gallery-file.json';
+import Canvas from '../Canvas';
+import { canvasParameters } from '../../constants';
+
+const { width, height } = canvasParameters;
 
 function Gallery() {
-  const { name, images } = data;
-  console.log(data);
+  const {
+    name, gif, globalBest, parameters,
+  } = data;
+  // console.log(data);
 
   return (
     <Paper>
-      <Typography>{name}</Typography>
-      {images.map(({ gen, fitness }) => (
-        <Box key={`gallery-entry-${gen}`}>
-          <Typography variant="caption">{gen}</Typography>
-          <Typography variant="caption">{fitness}</Typography>
-        </Box>
-      ))}
+      <Canvas width={width} height={height} imageData={parameters.target} />
+      <img src={gif} alt={`${name} gif`} />
+      <Paper elevation={2}>
+        <Typography>{name}</Typography>
+        <Typography>{`Top score ${globalBest.organism.fitness}`}</Typography>
+      </Paper>
     </Paper>
   );
 }

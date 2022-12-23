@@ -42,6 +42,17 @@ class Population {
     this.selection = new Selection(selection);
     this.mutation = new Mutation(mutation);
     this.best = best;
+    // If population is shrinking, keep the first <size> organisms
+    // If fitness has been evaluated, then they're the most fit, otherwise it's a random selection
+    if (this.organisms.length > size) {
+      this.organisms = this.organisms.slice(0, size);
+    }
+    // If the population is expanding, duplicate the first organism until we reach <size>
+    // It's either the most fit organism or a random selection
+    while (this.organisms.length < size) {
+      // Clone and mutate first organism
+      this.organisms.push(Organism.cloneAndMutate(this.organisms[0], this.mutation));
+    }
   }
 
   serialize() {
@@ -193,11 +204,16 @@ class Population {
   }
 
   tournamentSelectParent(size) {
+    const chromosomePenalty = 0; // 0.0001;
     let best = this.randomOrganism();
+    // TODO: Temp test length penalty on chromosomes
+    let fitA = best.fitness - (chromosomePenalty * best.genome.chromosomes.length);
     genRange(size).forEach(() => {
       const next = this.randomOrganism();
-      if (next.fitness > best.fitness) {
+      const fitB = next.fitness - (chromosomePenalty * next.genome.chromosomes.length);
+      if (fitB > fitA) {
         best = next;
+        fitA = fitB;
       }
     });
 

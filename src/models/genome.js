@@ -105,16 +105,30 @@ const Genome = {
   // ------------------------------------------------------------
   mutate: (genome, mutation) => {
     const { chromosomes } = genome;
-    const isSingleMutation = true;
+    const isSingleMutation = false;
     const maxGenomeSize = mutation.getMaxGenomeSize();
     // Mutate at the chromosomal level
+
+    // Check add chromosome mutation
+    if (chromosomes.length < maxGenomeSize && mutation.doAddChromosome(chromosomes.length)) {
+      chromosomes.push(Chromosome.create());
+    }
+
     for (let i = 0; i < chromosomes.length; ++i) {
       // Check full reset mutation
       if (mutation.doResetChromosome()) {
         Chromosome.resetMutation(chromosomes[i]);
       }
+      // Check remove chromosome mutation
+      if (mutation.doRemoveChromosome(chromosomes.length)) {
+        // Delete the chromosome
+        if (chromosomes.length > 1) {
+          chromosomes.splice(i, 1);
+          if (i >= chromosomes.length) break;
+        }
+      }
       // Check add point mutation
-      if (mutation.doAddPoint()) {
+      if (mutation.doAddPoint(chromosomes[i].points.length)) {
         if (!Chromosome.addPointMutation(chromosomes[i])) {
           // Split into two
           const daughters = Chromosome.mitosis(chromosomes[i]);
@@ -126,7 +140,7 @@ const Genome = {
         }
       }
       // Check remove point mutation
-      if (mutation.doRemovePoint()) {
+      if (mutation.doRemovePoint(chromosomes[i].points.length)) {
         if (!Chromosome.removePointMutation(chromosomes[i])) {
           // Delete the chromosome
           if (chromosomes.length > 1) {
@@ -137,7 +151,7 @@ const Genome = {
       }
       // Check tweak values mutation
       if (isSingleMutation) {
-        if (mutation.doMutate()) {
+        if (mutation.doMutate(chromosomes.length)) {
           chromosomes[i] = Chromosome.singleMutation(chromosomes[i], mutation);
         }
       } else {
@@ -146,7 +160,7 @@ const Genome = {
     }
 
     // Mutate Genome
-    if (mutation.doPermute()) {
+    if (mutation.doPermute(chromosomes.length)) {
       Genome.mutateOrder(genome);
     }
   },
