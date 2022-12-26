@@ -1,4 +1,4 @@
-import { flipCoin, randomIndex } from '../globals/statsUtils';
+import { randomIndex } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 import Chromosome from './chromosome';
 
@@ -15,14 +15,14 @@ const Genome = {
 
   // Crossover Methods
   // ------------------------------------------------------------
-  onePointCrossover: (parent1, parent2, prob) => {
+  onePointCrossover: (parent1, parent2, crossover) => {
     const child1 = [];
     const child2 = [];
     // Check if the parents have different length genomes
     const minLength = Math.min(parent1.length, parent2.length);
     const maxLength = Math.max(parent1.length, parent2.length);
     // Choose a crossover index using the shorter of the two parents' lengths
-    const index = flipCoin(prob) ? randomIndex(minLength) : -1;
+    const index = crossover.doCrossover() ? randomIndex(minLength) : -1;
 
     genRange(maxLength).forEach((i) => {
       if (index >= 0 && i <= index) {
@@ -42,13 +42,13 @@ const Genome = {
     return [child1, child2];
   },
 
-  twoPointCrossover: (parent1, parent2, prob) => {
+  twoPointCrossover: (parent1, parent2, crossover) => {
     const child1 = [];
     const child2 = [];
     // Check if the parents have different length genomes
     const minLength = Math.min(parent1.length, parent2.length);
     const maxLength = Math.max(parent1.length, parent2.length);
-    const doCrossover = flipCoin(prob);
+    const doCrossover = crossover.doCrossover();
     // Choose a crossover indices using the shorter of the two parents' lengths
     let index1 = doCrossover ? randomIndex(minLength) : -1;
     let index2 = doCrossover ? randomIndex(minLength) : -1;
@@ -76,7 +76,7 @@ const Genome = {
     return [child1, child2];
   },
 
-  uniformCrossover: (parent1, parent2, prob) => {
+  uniformCrossover: (parent1, parent2, crossover) => {
     const child1 = [];
     const child2 = [];
     // Check if the parents have different length genomes
@@ -84,7 +84,7 @@ const Genome = {
     const maxLength = Math.max(parent1.length, parent2.length);
 
     genRange(maxLength).forEach((i) => {
-      if (i < minLength && flipCoin(prob)) {
+      if (i < minLength && crossover.doCrossover()) {
         // Perform a crossover event
         child1.push(Chromosome.clone(parent2[i]));
         child2.push(Chromosome.clone(parent1[i]));
@@ -103,10 +103,9 @@ const Genome = {
 
   // Mutation Methods
   // ------------------------------------------------------------
-  mutate: (genome, mutation) => {
+  mutate: (genome, mutation, maxGenomeSize) => {
     const { chromosomes } = genome;
     const isSingleMutation = false;
-    const maxGenomeSize = mutation.getMaxGenomeSize();
     // Mutate at the chromosomal level
 
     // Check add chromosome mutation

@@ -7,28 +7,62 @@ import defaultTarget from '../../assets/mona_lisa.jpeg';
 import { rehydrate } from '../developer/developerSlice';
 
 const initialState = {
-  populationSize: 300,
+  populationSize: 200,
   triangleCount: 1,
+  maxTriangleCount: 50,
   target: defaultTarget,
   crossover: {
     type: CrossoverType.ONE_POINT,
-    prob: 0.9,
+    probMap: [
+      {
+        threshold: 0,
+        values: {
+          prob: 0.9,
+        },
+      },
+    ],
   },
   mutation: {
-    addChromosomeProb: 0.02,
-    removeChromosomeProb: 0.015,
-    resetChromosomeProb: 0, // 0.001,
-    prob: 0.004, // the probability of mutating Chromosome [0, 1]
-    permuteProb: 0.02,
-    addPointProb: 0.01,
-    removePointProb: 0.006,
-    // addPointProb: 0.008,
-    // removePointProb: 0.008,
-    // resetChromosomeProb: 0.0067,
     // Distribution Sigmas
     colorSigma: 0.01, // 0.25 / n
     pointSigma: 0.01,
     permuteSigma: 0.05, // TODO
+    probMap: [
+      {
+        threshold: 0,
+        values: {
+          // The probability of tweaking a chromosome point or color value
+          tweakProb: 0.005,
+          addChromosomeProb: 0.02,
+          removeChromosomeProb: 0.015,
+          resetChromosomeProb: 0.0002,
+          permuteProb: 0.005,
+          addPointProb: 0.01,
+          removePointProb: 0.006,
+        },
+      },
+      {
+        threshold: 0.96,
+        values: {
+          tweakProb: 0.003,
+        },
+      },
+      {
+        threshold: 0.97,
+        values: {
+          tweakProb: 0.0025,
+          permuteProb: 0.001,
+          addPointProb: 0.001,
+          removePointProb: 0.001,
+        },
+      },
+      {
+        threshold: 0.975,
+        values: {
+          tweakProb: 0.0015,
+        },
+      },
+    ],
   },
   selection: {
     type: SelectionType.TOURNAMENT,

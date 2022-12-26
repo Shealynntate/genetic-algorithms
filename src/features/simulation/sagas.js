@@ -80,6 +80,7 @@ function* runGenerationSaga() {
 function* runSimulationSaga() {
   const populationSize = yield select((state) => state.parameters.populationSize);
   const triangleCount = yield select((state) => state.parameters.triangleCount);
+  const maxTriangleCount = yield select((state) => state.parameters.maxTriangleCount);
   const target = yield select((state) => state.parameters.target);
   const crossoverParams = yield select((state) => state.parameters.crossover);
   const mutationParams = yield select((state) => state.parameters.mutation);
@@ -91,6 +92,7 @@ function* runSimulationSaga() {
     population = new Population({
       size: populationSize,
       genomeSize: triangleCount,
+      maxGenomeSize: maxTriangleCount,
       target: data,
       mutation: mutationParams,
       crossover: crossoverParams,

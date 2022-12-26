@@ -10,104 +10,30 @@ class Mutation {
   }
 
   initialize({
-    prob,
     colorSigma,
     pointSigma,
     permuteSigma,
-    permuteProb,
-    addPointProb,
-    removePointProb,
-    resetChromosomeProb,
-    addChromosomeProb,
-    removeChromosomeProb,
+    probMap,
     genomeSize,
   }) {
     this.colorDist = new GaussianNoise(colorSigma);
     this.pointDist = new GaussianNoise(pointSigma);
     this.permuteDist = new GaussianNoise(permuteSigma);
-    this.permuteProb = permuteProb;
-    this.prob = prob;
+    this.probMap = probMap;
     this.genomeSize = genomeSize;
-    this.addPointProb = addPointProb;
-    this.removePointProb = removePointProb;
-    this.resetChromosomeProb = resetChromosomeProb;
-    this.addChromosomeProb = addChromosomeProb;
-    this.removeChromosomeProb = removeChromosomeProb;
-    this.prevMaxFitness = 0;
+    this.prevMaxFitness = -1;
+    this.markNextGen({ maxFitness: 0 });
   }
 
-  markNextGen({ genId, maxFitness }) {
-    // if (maxFitness >= 0.945) {
-    //   this.prob = 0.5;
-    //   this.addPointProb = 0.01;
-    //   this.removePointProb = 0.01;
-    //   // this.permuteProb = 0.005;
-    //   // this.resetChromosomeProb = 0.005;
-    // }
-    if (this.prevMaxFitness < 0.96 && maxFitness >= 0.96) {
-      this.prob = 0.003;
-      // this.addPointProb = 0.005;
-      // this.removePointProb = 0.005;
-      console.log('switching to 96% phase');
-    }
-    if (this.prevMaxFitness < 0.97 && maxFitness >= 0.97) {
-      this.prob = 0.0025;
-      this.permuteProb = 0.001;
-      this.addPointProb = 0.001;
-      this.removePointProb = 0.001;
-      // this.permuteProb = 0.0015;
-      // this.addPointProb = 0.0015;
-      // this.removePointProb = 0.0015;
-      // this.addChromosomeProb = 0.01;
-      // this.removeChromosomeProb = 0.005;
-      // this.prob = 0.0015; // 54000 generations, 0.9757 top score
-      // this.colorSigma = 0.003;
-      // this.pointSigma = 0.003;
-      // this.colorDist = new GaussianNoise(this.colorSigma);
-      // this.pointDist = new GaussianNoise(this.pointSigma);
-      console.log('switching to 97% phase');
-      // this.addPointProb = 0.001;
-      // this.removePointProb = 0.001;
-      // // this.addPointProb = 0.05;
-      // // this.removePointProb = 0.05;
-      // this.permuteProb = 0.002;
-      // this.resetChromosomeProb = 0.0005;
-    }
-    if (this.prevMaxFitness < 0.975 && maxFitness >= 0.975) {
-      this.prob = 0.0015;
-      this.permuteProb = 0.001;
-      this.addPointProb = 0.001;
-      this.removePointProb = 0.001;
-      console.log('switching to 97.5% phase');
-    }
-    if (genId > 100_000 || maxFitness > 0.99) {
-      this.prob = 0.0001; // TODO: placeholder
-    // Upodate Mutation Rate
-    // const prob = 0.03;
-    // if (gen.genId > 2_000) prob = 0.01;
-    // if (gen.genId > 4_000) prob = 0.01;
-    }
+  markNextGen({ maxFitness }) {
+    this.probMap.forEach(({ threshold, values }) => {
+      if (this.prevMaxFitness < threshold && maxFitness >= threshold) {
+        Object.keys(values).forEach((prob) => {
+          this[prob] = values[prob];
+        });
+      }
+    });
     this.prevMaxFitness = maxFitness;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  getMaxGenomeSize() {
-    // if (this.prevMaxFitness < 0.91) {
-    //   return 10;
-    // }
-    // if (this.prevMaxFitness < 0.93) {
-    //   return 20;
-    // }
-    // if (this.prevMaxFitness < 0.945) {
-    //   return 30;
-    // }
-    // if (this.prevMaxFitness < 0.955) {
-    //   return 40;
-    // }
-    // if (this.prevMaxFitness < 0.965) {
-    //   return 45;
-    // }
-    return 50;
   }
 
   serialize() {
@@ -115,12 +41,8 @@ class Mutation {
       colorSigma: this.colorDist.getSigma(),
       pointSigma: this.pointDist.getSigma(),
       permuteSigma: this.permuteDist.getSigma(),
-      prob: this.prob,
-      permuteProb: this.permuteProb,
       genomeSize: this.genomeSize,
-      addPointProb: this.addPointProb,
-      removePointProb: this.removePointProb,
-      resetChromosomeProb: this.resetChromosomeProb,
+      probMap: this.probMap,
     };
   }
 
@@ -130,7 +52,7 @@ class Mutation {
 
   // eslint-disable-next-line no-unused-vars
   doMutate(size) {
-    return flipCoin(this.prob);
+    return flipCoin(this.tweakProb);
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -178,8 +100,8 @@ class Mutation {
     return [start, end];
   }
 
-  setProbability(value) {
-    this.prob = value;
+  setTweakProbability(value) {
+    this.tweakProb = value;
   }
 
   setAddPointProb(value) {

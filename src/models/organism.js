@@ -20,8 +20,7 @@ const Organism = {
     fitness: 0,
   }),
 
-  // eslint-disable-next-line no-unused-vars
-  reproduce: (parentA, parentB, crossover, mutation, genId) => {
+  reproduce: (parentA, parentB, crossover, mutation, maxGenomeSize) => {
     // Crossover event
     const crossoverFunc = CrossoverFunctions[crossover.type];
     if (!crossoverFunc) {
@@ -31,14 +30,14 @@ const Organism = {
     const [newChromosome1, newChromosome2] = crossoverFunc(
       parentA.genome.chromosomes,
       parentB.genome.chromosomes,
-      crossover.prob,
+      crossover,
     );
     // Create the child Organisms
     const childA = Organism.create({ genome: Genome.create({ chromosomes: newChromosome1 }) });
     const childB = Organism.create({ genome: Genome.create({ chromosomes: newChromosome2 }) });
     // Mutate the new children
-    Genome.mutate(childA.genome, mutation);
-    Genome.mutate(childB.genome, mutation);
+    Genome.mutate(childA.genome, mutation, maxGenomeSize);
+    Genome.mutate(childB.genome, mutation, maxGenomeSize);
 
     return [childA, childB];
   },

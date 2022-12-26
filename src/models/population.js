@@ -28,6 +28,7 @@ class Population {
     genId = Population.nextGenId,
     size,
     genomeSize,
+    maxGenomeSize,
     target,
     crossover,
     mutation,
@@ -41,6 +42,7 @@ class Population {
     this.crossover = new Crossover(crossover);
     this.selection = new Selection(selection);
     this.mutation = new Mutation(mutation);
+    this.maxGenomeSize = maxGenomeSize;
     this.best = best;
     // If population is shrinking, keep the first <size> organisms
     // If fitness has been evaluated, then they're the most fit, otherwise it's a random selection
@@ -150,7 +152,7 @@ class Population {
     // Generate (N - eliteCount) offspring for the next generation
     const nextGen = this.getElites(eliteCount);
     parents.forEach(([p1, p2]) => {
-      const offspring = Organism.reproduce(p1, p2, crossover, mutation, this.genId);
+      const offspring = Organism.reproduce(p1, p2, crossover, mutation, this.maxGenomeSize);
       nextGen.push(...offspring);
     });
     return nextGen;
