@@ -7,8 +7,8 @@ import { serializePopulation } from '../../features/simulation/sagas';
 import {
   deleteSimulation,
   duplicateSimulation,
-  setCurrentSimulation,
-  updateCurrentSimulation,
+  restoreSimulation,
+  saveCurrentSimulation,
   useGetSavedSimulations,
 } from '../../globals/database';
 import store from '../../store';
@@ -23,11 +23,11 @@ function DatabasePanel() {
   const saveSimulation = () => {
     const state = store.getState();
     const population = serializePopulation(); // TODO: Fix, move population into context
-    updateCurrentSimulation(population, state);
+    saveCurrentSimulation(population, state);
   };
 
   const onRestore = async (id) => {
-    const { population, reduxState } = await setCurrentSimulation(id);
+    const { population, reduxState } = await restoreSimulation(id);
     dispatch(rehydrate({ population, ...reduxState }));
   };
 
@@ -52,9 +52,15 @@ function DatabasePanel() {
       </Button>
       {simulations.length && (
         <List>
-          {simulations.map(({ id, name, createdOn }) => (
+          {simulations.map(({
+            id,
+            name,
+            createdOn,
+            lastUpdated,
+          }) => (
             <ListItem key={id}>
               <Typography>{name}</Typography>
+              <Typography>{new Date(lastUpdated).toLocaleString()}</Typography>
               <Typography>{new Date(createdOn).toLocaleString()}</Typography>
               <Button onClick={() => onRestore(id)}>Restore</Button>
               <Button onClick={() => onClone(id)}>Clone</Button>

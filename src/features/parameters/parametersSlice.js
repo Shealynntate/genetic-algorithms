@@ -7,7 +7,7 @@ import defaultTarget from '../../assets/mona_lisa.jpeg';
 import { rehydrate } from '../developer/developerSlice';
 
 const initialState = {
-  populationSize: 200,
+  populationSize: 300,
   triangleCount: 1,
   target: defaultTarget,
   crossover: {
@@ -16,19 +16,19 @@ const initialState = {
   },
   mutation: {
     addChromosomeProb: 0.02,
-    removeChromosomeProb: 0.012,
+    removeChromosomeProb: 0.015,
     resetChromosomeProb: 0, // 0.001,
-    prob: 0.0022, // the probability of mutating Chromosome [0, 1]
+    prob: 0.004, // the probability of mutating Chromosome [0, 1]
     permuteProb: 0.02,
-    // addPointProb: 0.008,
     addPointProb: 0.01,
+    removePointProb: 0.006,
+    // addPointProb: 0.008,
     // removePointProb: 0.008,
-    removePointProb: 0.005,
     // resetChromosomeProb: 0.0067,
     // Distribution Sigmas
     colorSigma: 0.01, // 0.25 / n
     pointSigma: 0.01,
-    permuteSigma: 0.005, // TODO
+    permuteSigma: 0.05, // TODO
   },
   selection: {
     type: SelectionType.TOURNAMENT,

@@ -8,29 +8,29 @@ const simulationTable = 'simulation';
 
 const simulationFields = [
   'isSaved',
-  'name',
-  'population',
-  'reduxState',
   'createdOn',
   'lastUpdated',
+  'name',
+  // 'population',
+  // 'reduxState',
 ];
 
 const imagesFields = [
-  'gen',
-  'fitness',
-  'chromosomes',
-  'imageData',
   'simulationId',
+  'gen',
+  // 'fitness',
+  // 'chromosomes',
+  // 'imageData',
 ];
 
 const statsFields = [
-  'genId',
-  'meanFitness',
-  'maxFitness',
-  'minFitness',
-  'deviation',
-  'isGlobalBest',
   'simulationId',
+  'genId',
+  'isGlobalBest',
+  // 'meanFitness',
+  // 'maxFitness',
+  // 'minFitness',
+  // 'deviation',
 ];
 
 // --------------------------------------------------
@@ -42,6 +42,8 @@ db.version(1).stores({
   [imagesTable]: `++id,${imagesFields.join()}`,
   [statsTable]: `++id,${statsFields.join()}`,
 });
+
+db.open();
 
 // Simulation Table
 // --------------------------------------------------
@@ -58,8 +60,7 @@ export async function insertSimulation(population, reduxState) {
 }
 
 export async function getSimulation(id) {
-  const [simEntry] = await db[simulationTable].where('id').equals(id).toArray();
-  return simEntry;
+  return db[simulationTable].get(id);
 }
 
 export function getAllSimulations() {
@@ -80,7 +81,7 @@ export function renameSimulation(simulationId, name) {
 }
 
 export async function setCurrentSimulation(simulationId) {
-  const [entry] = await db[simulationTable].where('id').equals(simulationId).toArray();
+  const entry = await db[simulationTable].get(simulationId);
   if (!entry) {
     throw new Error(`No entry found for simulationId ${simulationId}`);
   }
@@ -88,28 +89,45 @@ export async function setCurrentSimulation(simulationId) {
   return entry;
 }
 
-export async function duplicateSimulation(simId) {
-  const simEntry = await getSimulation(simId);
-  const { name, population, reduxState } = Dexie.deepClone(simEntry);
+export async function duplicateSimulation(simId, isSaved = 1) {
+  return db.transaction('rw', db[simulationTable], db[imagesTable], db[statsTable], async () => {
+    // First get the correct simulation entry
+    const simEntry = await db[simulationTable].get(simId);
+    const { name, population, reduxState } = Dexie.deepClone(simEntry);
+    // Create a copy and insert into the table as a new entry
+    const nextId = await db[simulationTable].add({
+      name,
+      population,
+      reduxState,
+      isSaved,
+      createdOn: Date.now(),
+      lastUpdated: Date.now(),
+    });
+    // Next, duplicate the image history for the simulation, using the new simulationId
+    const imageData = await db[imagesTable].where('simulationId').equals(simId).toArray();
+    imageData.forEach(({ id, ...entry }) => {
+      db[imagesTable].add({ ...Dexie.deepClone(entry), simulationId: nextId });
+    });
+    // Finally, duplicate the stats history for the simulation, using the new simulationId
+    const statsData = await db[statsTable].where('simulationId').equals(simId).toArray();
+    statsData.forEach(({ id, ...entry }) => {
+      db[statsTable].add({ ...Dexie.deepClone(entry), simulationId: nextId });
+    });
 
-  const nextId = await db[simulationTable].add({
-    name: `${name} Copy`,
-    population,
-    reduxState,
-    isSaved: 1,
-    createdOn: Date.now(),
-    lastUpdated: Date.now(),
+    return nextId;
   });
+}
 
-  const imageData = await db.table(imagesTable).where('simulationId').equals(simId).toArray();
-  imageData.forEach(({ id, ...entry }) => {
-    db[imagesTable].add({ ...Dexie.deepClone(entry), simulationId: nextId });
-  });
+export async function saveCurrentSimulation(population, reduxState) {
+  // First update the population values stored in the table
+  await updateCurrentSimulation(population, reduxState, 0);
+  // Then duplicate it, it'll be marked as saved
+  return duplicateSimulation(currentSimulationId);
+}
 
-  const statsData = await db.table(statsTable).where('simulationId').equals(simId).toArray();
-  statsData.forEach(({ id, ...entry }) => {
-    db[statsTable].add({ ...Dexie.deepClone(entry), simulationId: nextId });
-  });
+export async function restoreSimulation(simulationId) {
+  const newId = await duplicateSimulation(simulationId, 0);
+  return setCurrentSimulation(newId);
 }
 
 export async function deleteSimulation(id) {

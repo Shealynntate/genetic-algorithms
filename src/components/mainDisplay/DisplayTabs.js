@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Box, Paper, Tab, Tabs,
 } from '@mui/material';
-import ParentSize from '@visx/responsive/lib/components/ParentSizeModern';
+// import ParentSize from '@visx/responsive/lib/components/ParentSizeModern';
 import TabPanel from './TabPanel';
 import GalleryPanel from './GalleryPanel';
 import ProgressPanel from './ProgressPanel';
@@ -30,15 +30,11 @@ function DisplayTabs() {
         <ProgressPanel />
       </TabPanel>
       <TabPanel index={1} value={value}>
-        <Paper sx={{ height: '400px', width: '550px', boxSizing: 'border-box' }}>
-          <ParentSize>
-            {({ width, height }) => (
-              <StatsPanel
-                width={width}
-                height={height}
-              />
-            )}
-          </ParentSize>
+        <Paper sx={{ boxSizing: 'border-box' }}>
+          <StatsPanel
+            width={550}
+            height={400}
+          />
         </Paper>
         <StatsPanel />
       </TabPanel>

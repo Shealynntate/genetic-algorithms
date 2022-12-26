@@ -45,13 +45,22 @@ class Mutation {
     //   // this.resetChromosomeProb = 0.005;
     // }
     if (this.prevMaxFitness < 0.96 && maxFitness >= 0.96) {
-      // this.prob = 0.25;
+      this.prob = 0.003;
       // this.addPointProb = 0.005;
       // this.removePointProb = 0.005;
       console.log('switching to 96% phase');
     }
     if (this.prevMaxFitness < 0.97 && maxFitness >= 0.97) {
-      // this.prob = 0.02;
+      this.prob = 0.0025;
+      this.permuteProb = 0.001;
+      this.addPointProb = 0.001;
+      this.removePointProb = 0.001;
+      // this.permuteProb = 0.0015;
+      // this.addPointProb = 0.0015;
+      // this.removePointProb = 0.0015;
+      // this.addChromosomeProb = 0.01;
+      // this.removeChromosomeProb = 0.005;
+      // this.prob = 0.0015; // 54000 generations, 0.9757 top score
       // this.colorSigma = 0.003;
       // this.pointSigma = 0.003;
       // this.colorDist = new GaussianNoise(this.colorSigma);
@@ -63,6 +72,13 @@ class Mutation {
       // // this.removePointProb = 0.05;
       // this.permuteProb = 0.002;
       // this.resetChromosomeProb = 0.0005;
+    }
+    if (this.prevMaxFitness < 0.975 && maxFitness >= 0.975) {
+      this.prob = 0.0015;
+      this.permuteProb = 0.001;
+      this.addPointProb = 0.001;
+      this.removePointProb = 0.001;
+      console.log('switching to 97.5% phase');
     }
     if (genId > 100_000 || maxFitness > 0.99) {
       this.prob = 0.0001; // TODO: placeholder
