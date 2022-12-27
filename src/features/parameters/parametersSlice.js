@@ -44,22 +44,30 @@ const initialState = {
       {
         threshold: 0.96,
         values: {
-          tweakProb: 0.003,
+          tweakProb: 0.004,
         },
       },
       {
         threshold: 0.97,
         values: {
-          tweakProb: 0.0025,
-          permuteProb: 0.001,
-          addPointProb: 0.001,
-          removePointProb: 0.001,
+          tweakProb: 0.003,
+          addChromosomeProb: 0.01,
+          removeChromosomeProb: 0.01,
+          addPointProb: 0.005,
+          removePointProb: 0.01,
+          // tweakProb: 0.0025,
+          // permuteProb: 0.001,
+          // addPointProb: 0.001,
+          // removePointProb: 0.001,
         },
       },
       {
         threshold: 0.975,
         values: {
-          tweakProb: 0.0015,
+          // tweakProb: 0.002,
+          // permuteProb: 0.001,
+          // addPointProb: 0.001,
+          // removePointProb: 0.001,
         },
       },
     ],
