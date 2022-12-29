@@ -1,8 +1,10 @@
 export const SimulationState = {
   NONE: 'NONE',
   RUNNING: 'RUNNING',
+  RUNNING_EXPERIMENTS: 'RUNNING_EXPERIMENTS',
   PAUSED: 'PAUSED',
   COMPLETE: 'COMPLETE',
+  COMPLETE_EXPERIMENTS: 'COMPLETE_EXPERIMENTS',
 };
 
 export const primaryButtonLabels = {
@@ -35,6 +37,26 @@ export const CrossoverType = {
   ONE_POINT: 'ONE_POINT',
   TWO_POINT: 'TWO_POINT',
   UNIFORM: 'UNIFORM',
+};
+
+export const MutationProbabilityTypes = {
+  TWEAK: 'TWEAK',
+  ADD_POINT: 'ADD_POINT',
+  REMOVE_POINT: 'REMOVE_POINT',
+  ADD_CHROMOSOME: 'ADD_CHROMOSOME',
+  REMOVE_CHROMOSOME: 'REMOVE_CHROMOSOME',
+  RESET_CHROMOSOME: 'RESET_CHROMOSOME',
+  PERMUTE_CHROMOSOMES: 'PERMUTE_CHROMOSOMES',
+};
+
+export const MutationProbabilityLabels = {
+  [MutationProbabilityTypes.TWEAK]: 'Tweak',
+  [MutationProbabilityTypes.ADD_POINT]: 'Add Point',
+  [MutationProbabilityTypes.REMOVE_POINT]: 'Remove Point',
+  [MutationProbabilityTypes.ADD_CHROMOSOME]: 'Add Chromosome',
+  [MutationProbabilityTypes.REMOVE_CHROMOSOME]: 'Remove Chromosome',
+  [MutationProbabilityTypes.RESET_CHROMOSOME]: 'Reset Chromosome',
+  [MutationProbabilityTypes.PERMUTE_CHROMOSOMES]: 'Permute Chromosomes',
 };
 
 export const populationBounds = {

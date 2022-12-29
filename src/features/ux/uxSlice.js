@@ -2,6 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { SimulationState } from '../../constants';
 import { rehydrate } from '../developer/developerSlice';
+import { completeExperiments } from '../experimentation/experimentationSlice';
 
 const initialState = {
   simulationState: SimulationState.NONE,
@@ -16,6 +17,9 @@ export const uxSlice = createSlice({
     },
     runSimulation: (state) => {
       state.simulationState = SimulationState.RUNNING;
+    },
+    runExperiment: (state) => {
+      state.simulationState = SimulationState.RUNNING_EXPERIMENTS;
     },
     pauseSimulation: (state) => {
       state.simulationState = SimulationState.PAUSED;
@@ -34,6 +38,9 @@ export const uxSlice = createSlice({
         Object.keys(ux).forEach((key) => {
           state[key] = ux[key];
         });
+      })
+      .addCase(completeExperiments, (state) => {
+        state.simulationState = SimulationState.COMPLETE_EXPERIMENTS;
       });
   },
 });
@@ -41,6 +48,7 @@ export const uxSlice = createSlice({
 export const {
   setSimulationState,
   runSimulation,
+  runExperiment,
   pauseSimulation,
   endSimulation,
   resetSimulation,

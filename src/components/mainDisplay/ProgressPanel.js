@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { useIsRunning } from '../../hooks';
+import { useInExperimentationMode, useIsRunning } from '../../hooks';
 import { createGif, chromosomesToPhenotype, download } from '../../globals/utils';
 import { getCurrentImages } from '../../globals/database';
 import HistoryDisplay from '../HistoryDisplay';
@@ -27,6 +27,7 @@ function SimulationStatusPanel() {
   const globalBest = useSelector((state) => state.simulation.globalBest);
   const stats = useSelector((state) => state.simulation.currentStats);
   const isRunning = useIsRunning();
+  const isExperiment = useInExperimentationMode();
 
   const downloadGif = async () => {
     const history = await getCurrentImages();
@@ -38,6 +39,14 @@ function SimulationStatusPanel() {
     const gif = await createGif(result);
     download(fileName, gif);
   };
+
+  if (isExperiment) {
+    return (
+      <Paper>
+        <Typography>Running Experiments</Typography>
+      </Paper>
+    );
+  }
 
   return (
     <Paper>

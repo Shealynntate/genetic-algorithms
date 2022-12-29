@@ -17,7 +17,9 @@ import { approxEqual } from '../../globals/statsUtils';
 import { createImageData, shouldSaveGenImage } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
 import Population from '../../models/population';
-import { endSimulation, resetSimulation, runSimulation } from '../ux/uxSlice';
+import {
+  endSimulation, resetSimulation, runExperiment, runSimulation,
+} from '../ux/uxSlice';
 import {
   clearGenStats,
   RESTORE_POPULATION,
@@ -28,8 +30,6 @@ import {
 } from './simulationSlice';
 
 let population;
-
-clearDatabase();
 
 function* targetReachedSaga({ fitness }) {
   if (approxEqual(fitness, targetFitness)) {
@@ -49,10 +49,8 @@ function* runGenerationSaga() {
     const isRunning = yield select(isRunningSelector);
     if (!isRunning) return;
 
-    // console.time('Run Generation');
     // First run the next generation of the simulation
     const { maxFitOrganism, ...stats } = yield population.runGeneration();
-    // console.timeEnd('Run Generation');
 
     // Should we store a copy of the maxFitOrganism for Image History?
     if (shouldSaveGenImage(population.genId)) {
@@ -60,13 +58,7 @@ function* runGenerationSaga() {
       yield delay(10);
     }
 
-    // Update the list of maxFitness scores
     const organism = omit(maxFitOrganism, ['phenotype']);
-    yield call(addStatsToDatabase, stats);
-    yield put(updateCurrentGen({
-      currentBest: { organism, genId: stats.genId },
-      stats,
-    }));
 
     // Check if the latest generation's most fit organism can beat our global best
     if (stats.isGlobalBest) {
@@ -74,6 +66,12 @@ function* runGenerationSaga() {
       // Check if this new best reaches our target fitness
       yield call(targetReachedSaga, organism);
     }
+    // Update the list of maxFitness scores
+    yield call(addStatsToDatabase, stats);
+    yield put(updateCurrentGen({
+      currentBest: { organism, genId: stats.genId },
+      stats,
+    }));
   }
 }
 
@@ -127,6 +125,7 @@ export function* restorePopulationSaga({ payload: populationData }) {
 
 function* simulationSaga() {
   yield takeEvery(runSimulation, runSimulationSaga);
+  yield takeEvery(runExperiment, runSimulationSaga);
   yield takeEvery(resetSimulation, resetSimulationSaga);
   yield takeEvery(RESTORE_POPULATION, restorePopulationSaga);
 }

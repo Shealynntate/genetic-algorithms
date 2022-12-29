@@ -109,7 +109,7 @@ const Genome = {
     // Mutate at the chromosomal level
 
     // Check add chromosome mutation
-    if (chromosomes.length < maxGenomeSize && mutation.doAddChromosome(chromosomes.length)) {
+    if (chromosomes.length < maxGenomeSize && mutation.doAddChromosome()) {
       chromosomes.push(Chromosome.create());
     }
 
@@ -119,7 +119,7 @@ const Genome = {
         Chromosome.resetMutation(chromosomes[i]);
       }
       // Check remove chromosome mutation
-      if (mutation.doRemoveChromosome(chromosomes.length)) {
+      if (mutation.doRemoveChromosome()) {
         // Delete the chromosome
         if (chromosomes.length > 1) {
           chromosomes.splice(i, 1);
@@ -127,25 +127,25 @@ const Genome = {
         }
       }
       // Check add point mutation
-      if (mutation.doAddPoint(chromosomes[i].points.length)) {
+      if (mutation.doAddPoint()) {
         if (!Chromosome.addPointMutation(chromosomes[i])) {
-          // Split into two
-          const daughters = Chromosome.mitosis(chromosomes[i]);
-          if (chromosomes.length < maxGenomeSize) {
-            chromosomes.splice(i, 1, ...daughters);
-          } else {
-            chromosomes.splice(i, 1, daughters[0]);
-          }
+        //   // Split into two
+        //   const daughters = Chromosome.mitosis(chromosomes[i]);
+        //   if (chromosomes.length < maxGenomeSize) {
+        //     chromosomes.splice(i, 1, ...daughters);
+        //   } else {
+        //     chromosomes.splice(i, 1, daughters[0]);
+        //   }
         }
       }
       // Check remove point mutation
-      if (mutation.doRemovePoint(chromosomes[i].points.length)) {
+      if (mutation.doRemovePoint()) {
         if (!Chromosome.removePointMutation(chromosomes[i])) {
           // Delete the chromosome
-          if (chromosomes.length > 1) {
-            chromosomes.splice(i, 1);
-            if (i >= chromosomes.length) break;
-          }
+          // if (chromosomes.length > 1) {
+          //   chromosomes.splice(i, 1);
+          //   if (i >= chromosomes.length) break;
+          // }
         }
       }
       // Check tweak values mutation

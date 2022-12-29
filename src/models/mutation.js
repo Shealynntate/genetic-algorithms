@@ -1,5 +1,17 @@
+import { MutationProbabilityTypes } from '../constants';
 import GaussianNoise from '../globals/gaussianNoise';
 import { flipCoin } from '../globals/statsUtils';
+
+const computeProb = ({
+  startValue,
+  endValue,
+  startFitness,
+  endFitness,
+}, fitness) => {
+  if (fitness <= startFitness) return startValue;
+  if (fitness >= endFitness) return endValue;
+  return startValue + fitness * ((endValue - startValue) / (endFitness - startFitness));
+};
 
 /**
  * Mutation
@@ -21,19 +33,6 @@ class Mutation {
     this.permuteDist = new GaussianNoise(permuteSigma);
     this.probMap = probMap;
     this.genomeSize = genomeSize;
-    this.prevMaxFitness = -1;
-    this.markNextGen({ maxFitness: 0 });
-  }
-
-  markNextGen({ maxFitness }) {
-    this.probMap.forEach(({ threshold, values }) => {
-      if (this.prevMaxFitness < threshold && maxFitness >= threshold) {
-        Object.keys(values).forEach((prob) => {
-          this[prob] = values[prob];
-        });
-      }
-    });
-    this.prevMaxFitness = maxFitness;
   }
 
   serialize() {
@@ -50,38 +49,55 @@ class Mutation {
     this.initialize(data);
   }
 
-  // eslint-disable-next-line no-unused-vars
-  doMutate(size) {
-    return flipCoin(this.tweakProb);
+  markNextGen({ maxFitness }) {
+    this.maxFitness = maxFitness;
   }
 
-  // eslint-disable-next-line no-unused-vars
-  doAddPoint(size) {
-    return flipCoin(this.addPointProb);
+  doMutate() {
+    const prob = computeProb(this.probMap[MutationProbabilityTypes.TWEAK], this.maxFitness);
+    return flipCoin(prob);
   }
 
-  // eslint-disable-next-line no-unused-vars
-  doRemovePoint(size) {
-    return flipCoin(this.removePointProb);
+  doAddPoint() {
+    const prob = computeProb(this.probMap[MutationProbabilityTypes.ADD_POINT], this.maxFitness);
+    return flipCoin(prob);
   }
 
-  // eslint-disable-next-line no-unused-vars
-  doPermute(size) {
-    return flipCoin(this.permuteProb / size);
+  doRemovePoint() {
+    const prob = computeProb(this.probMap[MutationProbabilityTypes.REMOVE_POINT], this.maxFitness);
+    return flipCoin(prob);
+  }
+
+  doAddChromosome() {
+    const prob = computeProb(
+      this.probMap[MutationProbabilityTypes.ADD_CHROMOSOME],
+      this.maxFitness,
+    );
+    return flipCoin(prob);
+  }
+
+  doRemoveChromosome() {
+    const prob = computeProb(
+      this.probMap[MutationProbabilityTypes.REMOVE_CHROMOSOME],
+      this.maxFitness,
+    );
+    return flipCoin(prob);
   }
 
   doResetChromosome() {
-    return flipCoin(this.resetChromosomeProb);
+    const prob = computeProb(
+      this.probMap[MutationProbabilityTypes.RESET_CHROMOSOME],
+      this.maxFitness,
+    );
+    return flipCoin(prob);
   }
 
-  // eslint-disable-next-line no-unused-vars
-  doAddChromosome(size) {
-    return flipCoin(this.addChromosomeProb / size);
-  }
-
-  // eslint-disable-next-line no-unused-vars
-  doRemoveChromosome(size) {
-    return flipCoin(this.removeChromosomeProb / size);
+  doPermute() {
+    const prob = computeProb(
+      this.probMap[MutationProbabilityTypes.PERMUTE_CHROMOSOMES],
+      this.maxFitness,
+    );
+    return flipCoin(prob);
   }
 
   colorNudge() {
@@ -98,22 +114,6 @@ class Mutation {
     const end = dist > 0 ? Math.min(this.genomeSize - 1, index + dist) : index;
 
     return [start, end];
-  }
-
-  setTweakProbability(value) {
-    this.tweakProb = value;
-  }
-
-  setAddPointProb(value) {
-    this.addPointProb = value;
-  }
-
-  setRemovePointProb(value) {
-    this.removePointProb = value;
-  }
-
-  setPermuteProb(value) {
-    this.permuteProb = value;
   }
 }
 

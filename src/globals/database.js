@@ -5,6 +5,7 @@ const databaseName = 'GA_Images';
 const imagesTable = 'images';
 const statsTable = 'stats';
 const simulationTable = 'simulation';
+const experimentsTable = 'experiments';
 
 const simulationFields = [
   'isSaved',
@@ -33,17 +34,15 @@ const statsFields = [
   // 'deviation',
 ];
 
-// --------------------------------------------------
-let currentSimulationId = '';
+const experimentsFields = [
+  'createdOn',
+  // parameters,
+  // stopCriteria,
+  // results,
+];
+
 const db = new Dexie(databaseName);
-
-db.version(1).stores({
-  [simulationTable]: `++id,${simulationFields.join()}`,
-  [imagesTable]: `++id,${imagesFields.join()}`,
-  [statsTable]: `++id,${statsFields.join()}`,
-});
-
-db.open();
+let currentSimulationId = '';
 
 // Simulation Table
 // --------------------------------------------------
@@ -138,9 +137,9 @@ export async function deleteSimulation(id) {
   }
   // Delete all matching simulationId entries
   return Promise.all([
-    db.table(simulationTable).delete(id),
-    db.table(imagesTable).where('simulationId').equals(id).delete(),
-    db.table(statsTable).where('simulationId').equals(id).delete(),
+    db[simulationTable].delete(id),
+    db[imagesTable].where('simulationId').equals(id).delete(),
+    db[statsTable].where('simulationId').equals(id).delete(),
   ]);
 }
 
@@ -159,7 +158,7 @@ export function addImageToDatabase(genId, maxFitOrganism) {
 }
 
 export async function getCurrentImages() {
-  return db.table(imagesTable).where('simulationId').equals(currentSimulationId).toArray();
+  return db[imagesTable].where('simulationId').equals(currentSimulationId).toArray();
 }
 
 export function addStatsToDatabase(stats) {
@@ -167,30 +166,62 @@ export function addStatsToDatabase(stats) {
 }
 
 export function getCurrentStats() {
-  return db.table(statsTable).where('simulationId').equals(currentSimulationId).toArray();
+  return db[statsTable].where('simulationId').equals(currentSimulationId).toArray();
 }
 
+// Experiments Table
+// --------------------------------------------------
+export async function addExperimentToDatabase(parameters, stopCriteria) {
+  return db[experimentsTable].add({
+    createdOn: Date.now(),
+    parameters,
+    stopCriteria,
+  });
+}
+
+export async function addExperimentResults(id, results) {
+  return db[experimentsTable].update(id, { results });
+}
+
+// --------------------------------------------------
 export async function clearDatabase() {
   const promises = [];
   const sims = await getAllSimulations();
   sims.forEach(({ id, isSaved }) => {
     if (!isSaved) {
-      promises.push(db.table(simulationTable).delete(id));
-      promises.push(db.table(imagesTable).where('simulationId').equals(id).delete());
-      promises.push(db.table(statsTable).where('simulationId').equals(id).delete());
+      promises.push(db[simulationTable].delete(id));
+      promises.push(db[imagesTable].where('simulationId').equals(id).delete());
+      promises.push(db[statsTable].where('simulationId').equals(id).delete());
     }
   });
   return Promise.all(promises);
 }
 
 // Hooks
+// --------------------------------------------------
 export const useImageDbQuery = () => useLiveQuery(
-  () => db.table(imagesTable).where('simulationId').equals(currentSimulationId).toArray(),
+  () => db[imagesTable].where('simulationId').equals(currentSimulationId).toArray(),
   [currentSimulationId],
 );
 
 export const useGetSavedSimulations = () => useLiveQuery(
   () => db[simulationTable].where('isSaved').equals(1).reverse().toArray(),
 );
+
+export const useGetAllExperiments = () => useLiveQuery(
+  () => db[experimentsTable].toArray(),
+);
+
+// Database Setup
+// --------------------------------------------------
+db.version(1).stores({
+  [simulationTable]: `++id,${simulationFields.join()}`,
+  [imagesTable]: `++id,${imagesFields.join()}`,
+  [statsTable]: `++id,${statsFields.join()}`,
+  [experimentsTable]: `++id,${experimentsFields.join()}`,
+});
+
+db.open();
+clearDatabase();
 
 export default db;

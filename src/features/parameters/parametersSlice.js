@@ -1,10 +1,13 @@
 /* eslint-disable no-param-reassign */
-import { createSlice } from '@reduxjs/toolkit';
-import { CrossoverType, SelectionType } from '../../constants';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
+import { CrossoverType, MutationProbabilityTypes, SelectionType } from '../../constants';
 // import defaultTarget from '../../assets/red_square_test.png';
 // import defaultTarget from '../../assets/test_grid.png';
 import defaultTarget from '../../assets/mona_lisa.jpeg';
 import { rehydrate } from '../developer/developerSlice';
+import { setupExperiment } from '../experimentation/experimentationSlice';
+
+const TERMINATING_FITNESS = 1;
 
 const initialState = {
   populationSize: 200,
@@ -27,50 +30,50 @@ const initialState = {
     colorSigma: 0.01, // 0.25 / n
     pointSigma: 0.01,
     permuteSigma: 0.05, // TODO
-    probMap: [
-      {
-        threshold: 0,
-        values: {
-          // The probability of tweaking a chromosome point or color value
-          tweakProb: 0.005,
-          addChromosomeProb: 0.02,
-          removeChromosomeProb: 0.015,
-          resetChromosomeProb: 0.0002,
-          permuteProb: 0.005,
-          addPointProb: 0.01,
-          removePointProb: 0.006,
-        },
+    probMap: {
+      [MutationProbabilityTypes.TWEAK]: {
+        startValue: 0.01,
+        endValue: 0.004,
+        startFitness: 0,
+        endFitness: TERMINATING_FITNESS,
       },
-      {
-        threshold: 0.96,
-        values: {
-          tweakProb: 0.004,
-        },
+      [MutationProbabilityTypes.ADD_POINT]: {
+        startValue: 0.01,
+        endValue: 0.002,
+        startFitness: 0,
+        endFitness: TERMINATING_FITNESS,
       },
-      {
-        threshold: 0.97,
-        values: {
-          tweakProb: 0.003,
-          addChromosomeProb: 0.01,
-          removeChromosomeProb: 0.01,
-          addPointProb: 0.005,
-          removePointProb: 0.01,
-          // tweakProb: 0.0025,
-          // permuteProb: 0.001,
-          // addPointProb: 0.001,
-          // removePointProb: 0.001,
-        },
+      [MutationProbabilityTypes.REMOVE_POINT]: {
+        startValue: 0.002,
+        endValue: 0.002,
+        startFitness: 0,
+        endFitness: TERMINATING_FITNESS,
       },
-      {
-        threshold: 0.975,
-        values: {
-          // tweakProb: 0.002,
-          // permuteProb: 0.001,
-          // addPointProb: 0.001,
-          // removePointProb: 0.001,
-        },
+      [MutationProbabilityTypes.ADD_CHROMOSOME]: {
+        startValue: 0.005,
+        endValue: 0.003,
+        startFitness: 0,
+        endFitness: TERMINATING_FITNESS,
       },
-    ],
+      [MutationProbabilityTypes.REMOVE_CHROMOSOME]: {
+        startValue: 0.005,
+        endValue: 0.003,
+        startFitness: 0,
+        endFitness: TERMINATING_FITNESS,
+      },
+      [MutationProbabilityTypes.RESET_CHROMOSOME]: {
+        startValue: 0.0001,
+        endValue: 0.0003,
+        startFitness: 0,
+        endFitness: TERMINATING_FITNESS,
+      },
+      [MutationProbabilityTypes.PERMUTE_CHROMOSOMES]: {
+        startValue: 0.01,
+        endValue: 0.005,
+        startFitness: 0,
+        endFitness: TERMINATING_FITNESS,
+      },
+    },
   },
   selection: {
     type: SelectionType.TOURNAMENT,
@@ -96,8 +99,8 @@ export const parametersSlice = createSlice({
     setCrossoverType: (state, action) => {
       state.crossover.type = action.payload;
     },
-    setCrossoverProbability: (state, action) => {
-      state.crossover.prob = action.payload;
+    setCrossoverProbMap: (state, action) => {
+      state.crossover.probMap = { ...state.crossover.probMap, ...action.payload };
     },
     // Mutation
     setColorSigma: (state, action) => {
@@ -106,8 +109,8 @@ export const parametersSlice = createSlice({
     setPointSigma: (state, action) => {
       state.mutation.pointSigma = action.payload;
     },
-    setPermuteProb: (state, action) => {
-      state.mutation.permuteProb = action.payload;
+    setMutationProbMap: (state, action) => {
+      state.mutation.probMap = { ...state.mutation.probMap, ...action.payload };
     },
     // Selection
     setSelectionType: (state, action) => {
@@ -127,7 +130,7 @@ export const parametersSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(rehydrate, (state, action) => {
+      .addMatcher(isAnyOf(rehydrate, setupExperiment), (state, action) => {
         const { parameters } = action.payload;
         Object.keys(parameters).forEach((key) => {
           state[key] = parameters[key];
@@ -141,10 +144,10 @@ export const {
   setTarget,
   setTriangles,
   setCrossoverType,
-  setCrossoverProbability,
+  setCrossoverProbMap,
   setColorSigma,
   setPointSigma,
-  setPermuteProb,
+  setMutationProbMap,
   setSelectionType,
   setEliteCount,
 } = parametersSlice.actions;

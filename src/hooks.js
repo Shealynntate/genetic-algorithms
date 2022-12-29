@@ -5,8 +5,10 @@ import { getCurrentStats } from './globals/database';
 
 const SettingsDisabledStates = [
   SimulationState.RUNNING,
+  SimulationState.RUNNING_EXPERIMENTS,
   SimulationState.PAUSED,
   SimulationState.COMPLETE,
+  SimulationState.COMPLETE_EXPERIMENTS,
 ];
 
 const SaveSimulationStates = [
@@ -14,9 +16,19 @@ const SaveSimulationStates = [
   SimulationState.COMPLETE,
 ];
 
+const ExperimentationStates = [
+  SimulationState.RUNNING_EXPERIMENTS,
+  SimulationState.COMPLETE_EXPERIMENTS,
+];
+
+const RunningStates = [
+  SimulationState.RUNNING,
+  SimulationState.RUNNING_EXPERIMENTS,
+];
+
 export const useIsRunning = () => {
   const simulationState = useSelector((state) => state.ux.simulationState);
-  return simulationState === SimulationState.RUNNING;
+  return RunningStates.includes(simulationState);
 };
 
 export const useIsComplete = () => {
@@ -51,10 +63,19 @@ export const useTargetData = async () => {
   return data;
 };
 
+export const useInExperimentationMode = () => {
+  const simulationState = useSelector((state) => state.ux.simulationState);
+  return ExperimentationStates.includes(simulationState);
+};
+
 const currentStateSelector = ({ ux }) => (ux.simulationState);
 
 export const isRunningSelector = (state) => (
-  currentStateSelector(state) === SimulationState.RUNNING
+  RunningStates.includes(currentStateSelector(state))
+);
+
+export const isExperimentationModeSelector = (state) => (
+  ExperimentationStates.includes(currentStateSelector(state))
 );
 
 export const useDisableSaveSimulation = () => {

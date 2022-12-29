@@ -8,6 +8,7 @@ import GalleryPanel from './GalleryPanel';
 import ProgressPanel from './ProgressPanel';
 import StatsPanel from './StatsPanel';
 import DatabasePanel from './DatabasePanel';
+import ExperimentationPanel from './ExperimentationPanel';
 
 function DisplayTabs() {
   const [value, setValue] = useState(0);
@@ -24,6 +25,7 @@ function DisplayTabs() {
           <Tab label="Stats" />
           <Tab label="Gallery" />
           <Tab label="Database" />
+          <Tab label="Experimentation" />
         </Tabs>
       </Box>
       <TabPanel index={0} value={value}>
@@ -43,6 +45,9 @@ function DisplayTabs() {
       </TabPanel>
       <TabPanel index={3} value={value}>
         <DatabasePanel />
+      </TabPanel>
+      <TabPanel index={4} value={value}>
+        <ExperimentationPanel />
       </TabPanel>
     </Box>
   );
