@@ -171,11 +171,12 @@ export function getCurrentStats() {
 
 // Experiments Table
 // --------------------------------------------------
-export async function addExperimentToDatabase(parameters, stopCriteria) {
+export async function addExperimentToDatabase(parameters, stopCriteria, results) {
   return db[experimentsTable].add({
     createdOn: Date.now(),
     parameters,
     stopCriteria,
+    results,
   });
 }
 

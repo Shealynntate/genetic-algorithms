@@ -75,7 +75,30 @@ function* runGenerationSaga() {
   }
 }
 
-function* runSimulationSaga() {
+function* runExperimentationGenerationSaga() {
+  while (true) {
+    const isRunning = yield select(isRunningSelector);
+    if (!isRunning) return;
+
+    // First run the next generation of the simulation
+    const { maxFitOrganism, ...stats } = yield population.runGeneration();
+    const organism = omit(maxFitOrganism, ['phenotype']);
+
+    // Check if the latest generation's most fit organism can beat our global best
+    if (stats.isGlobalBest) {
+      yield put(setGlobalBest({ genId: stats.genId, organism }));
+      // Check if this new best reaches our target fitness
+      yield call(targetReachedSaga, organism);
+    }
+    // Update the list of maxFitness scores
+    yield put(updateCurrentGen({
+      currentBest: { organism, genId: stats.genId },
+      stats,
+    }));
+  }
+}
+
+function* runSimulationSaga(isExperimentationMode) {
   const populationSize = yield select((state) => state.parameters.populationSize);
   const triangleCount = yield select((state) => state.parameters.triangleCount);
   const maxTriangleCount = yield select((state) => state.parameters.maxTriangleCount);
@@ -104,7 +127,11 @@ function* runSimulationSaga() {
     yield call(insertSimulation, population.serialize(), store);
   }
 
-  yield call(runGenerationSaga);
+  if (isExperimentationMode) {
+    yield call(runExperimentationGenerationSaga);
+  } else {
+    yield call(runGenerationSaga);
+  }
 }
 
 function* resetSimulationSaga() {
@@ -124,8 +151,8 @@ export function* restorePopulationSaga({ payload: populationData }) {
 }
 
 function* simulationSaga() {
-  yield takeEvery(runSimulation, runSimulationSaga);
-  yield takeEvery(runExperiment, runSimulationSaga);
+  yield takeEvery(runSimulation, runSimulationSaga, false);
+  yield takeEvery(runExperiment, runSimulationSaga, true);
   yield takeEvery(resetSimulation, resetSimulationSaga);
   yield takeEvery(RESTORE_POPULATION, restorePopulationSaga);
 }

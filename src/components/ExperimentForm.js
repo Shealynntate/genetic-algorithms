@@ -117,7 +117,7 @@ const genExperiments = ({
         },
         stopCriteria: {
           targetFitness: 0.98,
-          maxGenerations: 40_000,
+          maxGenerations: 4_0,
         },
       });
     }

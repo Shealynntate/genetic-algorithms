@@ -30,11 +30,9 @@ function ExperimentationPanel() {
         stopCriteria,
         results,
       }) => (
-        <div>
+        <div key={createdOn}>
+          {console.log({ parameters, stopCriteria, results })}
           <Typography>{new Date(createdOn).toLocaleTimeString()}</Typography>
-          <div>{parameters}</div>
-          <div>{stopCriteria}</div>
-          <div>{results}</div>
         </div>
       ))}
       <Button startIcon={<Add />} variant="contained" onClick={onAddExperiment}>
