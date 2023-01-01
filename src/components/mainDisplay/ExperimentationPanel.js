@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import {
-  Box, Button, Paper, Typography,
+  Box, Button, IconButton, List, ListItem, Paper, Stack, Typography,
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
-import { useGetAllExperiments } from '../../globals/database';
+import { deleteExperiment, useGetAllExperiments } from '../../globals/database';
 import ExperimentForm from '../ExperimentForm';
 import { startExperiments } from '../../features/experimentation/experimentationSlice';
 
@@ -17,6 +18,10 @@ function ExperimentationPanel() {
     setOpenForm(true);
   };
 
+  const onDeleteExperiment = (id) => {
+    deleteExperiment(id);
+  };
+
   const onCloseForm = (tests) => {
     setOpenForm(false);
     if (tests) {
@@ -26,25 +31,43 @@ function ExperimentationPanel() {
 
   return (
     <Paper>
-      {experiments.map(({
-        createdOn,
-        parameters,
-        stopCriteria,
-        results,
-      }) => (
-        <Box key={createdOn} style={{ display: 'flex', justifyContent: 'space-evenly', marginBottom: '1rem' }}>
-          {console.log({ stopCriteria })}
-          <Typography>{new Date(createdOn).toLocaleTimeString()}</Typography>
-          <Typography>{`Start: ${parameters.mutation.probMap.TWEAK.startValue}`}</Typography>
-          <Typography>{`End: ${parameters.mutation.probMap.TWEAK.endValue}`}</Typography>
-          {results.map(({ stats }) => (
-            <React.Fragment key={stats.maxFitness}>
-              <Typography>{`Gen: ${stats.genId}`}</Typography>
-              <Typography>{`Max Fitness: ${stats.maxFitness}`}</Typography>
-            </React.Fragment>
-          ))}
-        </Box>
-      ))}
+      <List>
+        {experiments.map(({
+          id,
+          createdOn,
+          parameters,
+          stopCriteria,
+          results,
+        }) => (
+          <ListItem key={id} sx={{ display: 'block' }}>
+            <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
+              <Typography>{new Date(createdOn).toLocaleString()}</Typography>
+              <IconButton color="error" onClick={() => onDeleteExperiment(id)}>
+                <DeleteIcon />
+              </IconButton>
+            </Stack>
+            <Stack direction="row">
+              <Box>
+                <Typography variant="subtitle1">Parameters</Typography>
+                <Typography>{`Start: ${parameters.mutation.probMap.TWEAK.startValue}`}</Typography>
+                <Typography>{`End: ${parameters.mutation.probMap.TWEAK.endValue}`}</Typography>
+                <Typography variant="subtitle1">Stop Criteria</Typography>
+                <Typography>{`Target fitness: ${stopCriteria.targetFitness}`}</Typography>
+                <Typography>{`Max Generations: ${stopCriteria.maxGenerations}`}</Typography>
+              </Box>
+              <Box>
+                <Typography variant="subtitle1">Results</Typography>
+                {results.map(({ stats }) => (
+                  <React.Fragment key={stats.maxFitness}>
+                    <Typography>{`Gen: ${stats.genId}`}</Typography>
+                    <Typography>{`Max Fitness: ${stats.maxFitness}`}</Typography>
+                  </React.Fragment>
+                ))}
+              </Box>
+            </Stack>
+          </ListItem>
+        ))}
+      </List>
       <Button startIcon={<Add />} variant="contained" onClick={onAddExperiment}>
         Add Experiment
       </Button>

@@ -184,6 +184,8 @@ export async function addExperimentResults(id, results) {
   return db[experimentsTable].update(id, { results });
 }
 
+export const deleteExperiment = async (id) => db[experimentsTable].delete(id);
+
 // --------------------------------------------------
 export async function clearDatabase() {
   const promises = [];
