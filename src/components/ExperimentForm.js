@@ -13,6 +13,7 @@ import {
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import _ from 'lodash';
 import { CrossoverType, MutationProbabilityTypes, SelectionType } from '../constants';
 import ProbabilityInput from './inputs/ProbabilityInput';
 // import ProbabilityInput from './inputs/ProbabilityInput';
@@ -100,24 +101,23 @@ const genExperiments = ({
   startRange,
   endRange,
   stepSize,
-  type,
+  path,
 }) => {
   const experiments = [];
   for (let i = startRange[1]; i < startRange[0]; i += stepSize) {
     for (let j = endRange[1]; j < endRange[0]; j += stepSize) {
+      const parameters = _.cloneDeep(initialState);
+      _.set(parameters, path, {
+        startValue: i,
+        endValue: j,
+        startFitness: 0,
+        endFitness: TERMINATING_FITNESS,
+      });
       experiments.push({
-        parameters: {
-          ...initialState,
-          [type]: {
-            startValue: i,
-            endValue: j,
-            startFitness: 0,
-            endFitness: TERMINATING_FITNESS,
-          },
-        },
+        parameters,
         stopCriteria: {
           targetFitness: 0.98,
-          maxGenerations: 20_000,
+          maxGenerations: 16_000,
         },
       });
     }
@@ -133,10 +133,10 @@ function ExperimentForm({ open, onClose }) {
     // Send to database and close form
     console.log(data);
     const experimentField = {
-      type: MutationProbabilityTypes.TWEAK,
+      path: `mutation.probMap.${MutationProbabilityTypes.TWEAK}`,
       startRange: [0.1, 0.005],
       endRange: [0.01, 0.001],
-      stepSize: 0.001,
+      stepSize: 0.005,
     };
     onClose(genExperiments(experimentField));
   };

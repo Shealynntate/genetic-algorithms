@@ -33,8 +33,10 @@ function ExperimentationPanel() {
         results,
       }) => (
         <Box key={createdOn} style={{ display: 'flex', justifyContent: 'space-evenly', marginBottom: '1rem' }}>
-          {console.log({ parameters, stopCriteria, results })}
+          {console.log({ stopCriteria })}
           <Typography>{new Date(createdOn).toLocaleTimeString()}</Typography>
+          <Typography>{`Start: ${parameters.mutation.probMap.TWEAK.startValue}`}</Typography>
+          <Typography>{`End: ${parameters.mutation.probMap.TWEAK.endValue}`}</Typography>
           {results.map(({ stats }) => (
             <React.Fragment key={stats.maxFitness}>
               <Typography>{`Gen: ${stats.genId}`}</Typography>
