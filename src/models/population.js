@@ -22,6 +22,10 @@ class Population {
     return new Population(data);
   }
 
+  static reset() {
+    Population.count = null;
+  }
+
   // Instance Methods
   // ------------------------------------------------------------
   constructor({

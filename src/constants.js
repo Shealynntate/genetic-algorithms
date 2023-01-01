@@ -3,15 +3,23 @@ export const SimulationState = {
   RUNNING: 'RUNNING',
   RUNNING_EXPERIMENTS: 'RUNNING_EXPERIMENTS',
   PAUSED: 'PAUSED',
+  PAUSED_EXPERIMENTS: 'PAUSED_EXPERIMENTS',
   COMPLETE: 'COMPLETE',
   COMPLETE_EXPERIMENTS: 'COMPLETE_EXPERIMENTS',
 };
+
+export const PausedStates = [
+  SimulationState.PAUSED,
+  SimulationState.PAUSED_EXPERIMENTS,
+];
 
 export const primaryButtonLabels = {
   [SimulationState.NONE]: 'Run',
   [SimulationState.RUNNING]: 'Pause',
   [SimulationState.PAUSED]: 'Resume',
   [SimulationState.COMPLETE]: 'Reset',
+  [SimulationState.RUNNING_EXPERIMENTS]: 'Pause Experiments',
+  [SimulationState.PAUSED_EXPERIMENTS]: 'Resume Experiments',
 };
 
 export const statusLabels = {

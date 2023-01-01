@@ -18,6 +18,7 @@ const SaveSimulationStates = [
 
 const ExperimentationStates = [
   SimulationState.RUNNING_EXPERIMENTS,
+  SimulationState.PAUSED_EXPERIMENTS,
   SimulationState.COMPLETE_EXPERIMENTS,
 ];
 

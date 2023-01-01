@@ -6,15 +6,18 @@ import App from './components/App';
 import reportWebVitals from './reportWebVitals';
 import store from './store';
 import theme from './theme';
+import poulationService, { PopulationContext } from './features/population-context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <App />
-      </ThemeProvider>
+      <PopulationContext.Provider value={poulationService}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <App />
+        </ThemeProvider>
+      </PopulationContext.Provider>
     </Provider>
   </React.StrictMode>,
 );

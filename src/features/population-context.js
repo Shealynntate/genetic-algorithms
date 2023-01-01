@@ -1,42 +1,37 @@
-import React, {
-  createContext, useCallback, useContext, useMemo, useState,
-} from 'react';
-import PropTypes from 'prop-types';
+import { createContext } from 'react';
 import Population from '../models/population';
 
-const PopulationContext = createContext();
+class PopulationService {
+  constructor() {
+    this.population = null;
+  }
 
-// TODO: Might not need this, can delete
-function PopulationProvider({ children }) {
-  const [population, setPopulation] = useState();
+  async create(params) {
+    this.population = new Population(params);
+    return this.population.initialize();
+  }
 
-  const create = useCallback(async (params) => {
-    const pop = new Population(params);
-    await pop.initialize();
-    setPopulation(pop);
-  });
+  serialize() {
+    return this.population.serialize();
+  }
 
-  const serialize = useCallback(() => population.serialize());
+  async restore(params) {
+    this.population = Population.restorePopulation(params);
+    return this.population.initialize();
+  }
 
-  const value = useMemo(() => ({ population, create, serialize }), [population]);
+  reset() {
+    Population.reset();
+    this.population = null;
+  }
 
-  return (
-    <PopulationContext.Provider value={value}>
-      {children}
-    </PopulationContext.Provider>
-  );
+  getPopulation() {
+    return this.population;
+  }
 }
 
-PopulationProvider.propTypes = {
-  children: PropTypes.element.isRequired,
-};
+const populationService = new PopulationService();
 
-const usePopulation = () => {
-  const context = useContext(PopulationContext);
-  if (context === undefined) {
-    throw new Error('usePopulation must be used within a PopulationProvider');
-  }
-  return context;
-};
+export const PopulationContext = createContext(populationService);
 
-export { PopulationProvider, usePopulation };
+export default populationService;

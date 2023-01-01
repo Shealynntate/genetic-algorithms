@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Paper, Typography } from '@mui/material';
+import {
+  Box, Button, Paper, Typography,
+} from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { useGetAllExperiments } from '../../globals/database';
@@ -30,10 +32,16 @@ function ExperimentationPanel() {
         stopCriteria,
         results,
       }) => (
-        <div key={createdOn}>
+        <Box key={createdOn} style={{ display: 'flex', justifyContent: 'space-evenly', marginBottom: '1rem' }}>
           {console.log({ parameters, stopCriteria, results })}
           <Typography>{new Date(createdOn).toLocaleTimeString()}</Typography>
-        </div>
+          {results.map(({ stats }) => (
+            <React.Fragment key={stats.maxFitness}>
+              <Typography>{`Gen: ${stats.genId}`}</Typography>
+              <Typography>{`Max Fitness: ${stats.maxFitness}`}</Typography>
+            </React.Fragment>
+          ))}
+        </Box>
       ))}
       <Button startIcon={<Add />} variant="contained" onClick={onAddExperiment}>
         Add Experiment

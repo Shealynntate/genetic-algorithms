@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Button, Container, Divider, Grid, IconButton, Paper, Tooltip, Typography,
 } from '@mui/material';
@@ -7,7 +7,6 @@ import FileCopyIcon from '@mui/icons-material/FileCopy';
 import RestoreIcon from '@mui/icons-material/Restore';
 import { useDispatch } from 'react-redux';
 import { useTheme } from '@emotion/react';
-import { serializePopulation } from '../../features/simulation/sagas';
 import {
   deleteSimulation,
   duplicateSimulation,
@@ -18,16 +17,18 @@ import {
 import store from '../../store';
 import { useDisableSaveSimulation } from '../../hooks';
 import { rehydrate } from '../../features/developer/developerSlice';
+import { PopulationContext } from '../../features/population-context';
 
 function DatabasePanel() {
   const simulations = useGetSavedSimulations() || [];
   const isSaveDisabled = useDisableSaveSimulation();
   const dispatch = useDispatch();
+  const populationService = useContext(PopulationContext);
   const theme = useTheme();
 
   const saveSimulation = () => {
     const state = store.getState();
-    const population = serializePopulation(); // TODO: Fix, move population into context
+    const population = populationService.serialize();
     saveCurrentSimulation(population, state);
   };
 

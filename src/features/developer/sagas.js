@@ -1,14 +1,14 @@
-import { put, takeEvery } from 'redux-saga/effects';
+import { getContext, put, takeEvery } from 'redux-saga/effects';
 import { downloadJSON } from '../../globals/utils';
 import { restorePopulation } from '../simulation/simulationSlice';
-import { serializePopulation } from '../simulation/sagas';
 import { DOWNLOAD, REHYDRATE } from './developerSlice';
 
-function downloadSaga({ payload: { fileName, state } }) {
+function* downloadSaga({ payload: { fileName, state } }) {
+  const populationService = yield getContext('populationService');
   downloadJSON(
     fileName,
     {
-      population: serializePopulation(),
+      population: populationService.serialize(),
       ...state,
     },
   );

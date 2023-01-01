@@ -6,9 +6,11 @@ import {
   Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { SimulationState } from '../constants';
+import { PausedStates, SimulationState } from '../constants';
 import PrimaryButton from './PrimaryButton';
-import { pauseSimulation, resetSimulation, runSimulation } from '../features/ux/uxSlice';
+import {
+  pauseExperiment, pauseSimulation, resetSimulation, runExperiments, runSimulation,
+} from '../features/ux/uxSlice';
 import ImagePanel from './settingsPanels/ImagePanel';
 import SelectionPanel from './settingsPanels/SelectionPanel';
 import MutationPanel from './settingsPanels/MutationPanel';
@@ -16,7 +18,7 @@ import MutationPanel from './settingsPanels/MutationPanel';
 function ControlPanel() {
   const simulationState = useSelector((state) => state.ux.simulationState);
   const dispatch = useDispatch();
-  const isPaused = simulationState === SimulationState.PAUSED;
+  const isPaused = PausedStates.includes(simulationState);
 
   const onReset = () => {
     dispatch(resetSimulation());
@@ -33,6 +35,12 @@ function ControlPanel() {
         break;
       case SimulationState.COMPLETE:
         action = resetSimulation;
+        break;
+      case SimulationState.RUNNING_EXPERIMENTS:
+        action = pauseExperiment;
+        break;
+      case SimulationState.PAUSED_EXPERIMENTS:
+        action = runExperiments;
         break;
       default:
         action = runSimulation;
