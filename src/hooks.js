@@ -1,31 +1,14 @@
 import { useSelector } from 'react-redux';
-import { SimulationState } from './constants';
+import {
+  ExperimentationStates,
+  PausedStates,
+  RunningStates,
+  SaveSimulationStates,
+  SettingsDisabledStates,
+  SimulationState,
+} from './constants';
 import { createImageData } from './globals/utils';
 import { getCurrentStats } from './globals/database';
-
-const SettingsDisabledStates = [
-  SimulationState.RUNNING,
-  SimulationState.RUNNING_EXPERIMENTS,
-  SimulationState.PAUSED,
-  SimulationState.COMPLETE,
-  SimulationState.COMPLETE_EXPERIMENTS,
-];
-
-const SaveSimulationStates = [
-  SimulationState.PAUSED,
-  SimulationState.COMPLETE,
-];
-
-const ExperimentationStates = [
-  SimulationState.RUNNING_EXPERIMENTS,
-  SimulationState.PAUSED_EXPERIMENTS,
-  SimulationState.COMPLETE_EXPERIMENTS,
-];
-
-const RunningStates = [
-  SimulationState.RUNNING,
-  SimulationState.RUNNING_EXPERIMENTS,
-];
 
 export const useIsRunning = () => {
   const simulationState = useSelector((state) => state.ux.simulationState);
@@ -73,6 +56,10 @@ const currentStateSelector = ({ ux }) => (ux.simulationState);
 
 export const isRunningSelector = (state) => (
   RunningStates.includes(currentStateSelector(state))
+);
+
+export const isPausedSelector = (state) => (
+  PausedStates.includes(currentStateSelector(state))
 );
 
 export const isExperimentationModeSelector = (state) => (

@@ -9,7 +9,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { PausedStates, SimulationState } from '../constants';
 import PrimaryButton from './PrimaryButton';
 import {
-  pauseExperiment, pauseSimulation, resetSimulation, runExperiments, runSimulation,
+  pauseExperiments,
+  pauseSimulation,
+  resetExperiments,
+  resetSimulation,
+  runExperiments,
+  runSimulation,
 } from '../features/ux/uxSlice';
 import ImagePanel from './settingsPanels/ImagePanel';
 import SelectionPanel from './settingsPanels/SelectionPanel';
@@ -21,7 +26,18 @@ function ControlPanel() {
   const isPaused = PausedStates.includes(simulationState);
 
   const onReset = () => {
-    dispatch(resetSimulation());
+    let action;
+    switch (simulationState) {
+      case SimulationState.PAUSED:
+        action = resetSimulation;
+        break;
+      case SimulationState.PAUSED_EXPERIMENTS:
+        action = resetExperiments;
+        break;
+      default:
+        throw new Error(`Unrecognized state ${simulationState} when onReset called`);
+    }
+    dispatch(action());
   };
 
   const onClick = () => {
@@ -37,7 +53,7 @@ function ControlPanel() {
         action = resetSimulation;
         break;
       case SimulationState.RUNNING_EXPERIMENTS:
-        action = pauseExperiment;
+        action = pauseExperiments;
         break;
       case SimulationState.PAUSED_EXPERIMENTS:
         action = runExperiments;

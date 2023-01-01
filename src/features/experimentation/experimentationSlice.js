@@ -2,7 +2,6 @@
 import { createAction, createSlice } from '@reduxjs/toolkit';
 
 export const START_EXPERIMENTS = 'experimentation/startExperiments';
-export const STOP_EXPERIMENT = 'experimentation/stopExperiment';
 export const COMPLETE_EXPERIMENTS = 'experimentation/completeExperiments';
 
 export const startExperiments = createAction(
@@ -10,14 +9,6 @@ export const startExperiments = createAction(
   (experiments) => ({
     type: START_EXPERIMENTS,
     payload: experiments,
-  }),
-);
-
-export const stopExperiment = createAction(
-  STOP_EXPERIMENT,
-  (isSuccess) => ({
-    type: STOP_EXPERIMENT,
-    payload: isSuccess,
   }),
 );
 

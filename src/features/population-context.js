@@ -24,10 +24,6 @@ class PopulationService {
     Population.reset();
     this.population = null;
   }
-
-  getPopulation() {
-    return this.population;
-  }
 }
 
 const populationService = new PopulationService();

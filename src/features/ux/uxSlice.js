@@ -24,13 +24,16 @@ export const uxSlice = createSlice({
     pauseSimulation: (state) => {
       state.simulationState = SimulationState.PAUSED;
     },
-    pauseExperiment: (state) => {
+    pauseExperiments: (state) => {
       state.simulationState = SimulationState.PAUSED_EXPERIMENTS;
     },
     endSimulation: (state) => {
       state.simulationState = SimulationState.COMPLETE;
     },
     resetSimulation: (state) => {
+      state.simulationState = SimulationState.NONE;
+    },
+    resetExperiments: (state) => {
       state.simulationState = SimulationState.NONE;
     },
   },
@@ -53,9 +56,10 @@ export const {
   runSimulation,
   runExperiments,
   pauseSimulation,
-  pauseExperiment,
+  pauseExperiments,
   endSimulation,
   resetSimulation,
+  resetExperiments,
 } = uxSlice.actions;
 
 export default uxSlice.reducer;

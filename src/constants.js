@@ -8,6 +8,30 @@ export const SimulationState = {
   COMPLETE_EXPERIMENTS: 'COMPLETE_EXPERIMENTS',
 };
 
+export const SettingsDisabledStates = [
+  SimulationState.RUNNING,
+  SimulationState.RUNNING_EXPERIMENTS,
+  SimulationState.PAUSED,
+  SimulationState.COMPLETE,
+  SimulationState.COMPLETE_EXPERIMENTS,
+];
+
+export const SaveSimulationStates = [
+  SimulationState.PAUSED,
+  SimulationState.COMPLETE,
+];
+
+export const ExperimentationStates = [
+  SimulationState.RUNNING_EXPERIMENTS,
+  SimulationState.PAUSED_EXPERIMENTS,
+  SimulationState.COMPLETE_EXPERIMENTS,
+];
+
+export const RunningStates = [
+  SimulationState.RUNNING,
+  SimulationState.RUNNING_EXPERIMENTS,
+];
+
 export const PausedStates = [
   SimulationState.PAUSED,
   SimulationState.PAUSED_EXPERIMENTS,

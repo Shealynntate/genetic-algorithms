@@ -3,20 +3,24 @@ import {
   call,
   getContext,
   put,
+  race,
   select,
+  take,
   takeEvery,
 } from 'redux-saga/effects';
-import { SimulationState } from '../../constants';
 import { addExperimentToDatabase } from '../../globals/database';
 import { createImageData } from '../../globals/utils';
-import { isExperimentationModeSelector, isRunningSelector } from '../../hooks';
+import { isRunningSelector } from '../../hooks';
 import { setGlobalBest } from '../simulation/simulationSlice';
 import {
-  pauseSimulation, runExperiments, setSimulationState,
+  resetExperiments,
+  runExperiments,
 } from '../ux/uxSlice';
 import {
   addResults,
-  completeExperiments, setupExperiment, startExperiments, stopExperiment,
+  completeExperiments,
+  setupExperiment,
+  startExperiments,
 } from './experimentationSlice';
 
 function* resetExperimentSaga() {
@@ -25,14 +29,11 @@ function* resetExperimentSaga() {
   populationService.reset();
 }
 
-function* experimentDaemonSaga({ currentBest, stats }) {
-  const isExperimentationMode = yield select(isExperimentationModeSelector);
+function* generationResultsCheckSaga({ currentBest, stats }) {
   const globalBest = yield select((state) => state.simulation.globalBest);
   const parameters = yield select((state) => state.experimentation.parameters);
   const stopCriteria = yield select((state) => state.experimentation.stopCriteria);
   const results = yield select((state) => state.experimentation.results);
-  // Make sure we're in experimentation mode before doing anything
-  if (!isExperimentationMode) return;
 
   const { targetFitness, maxGenerations } = stopCriteria;
   const isSuccess = globalBest ? globalBest.organism.fitness >= targetFitness : false;
@@ -48,54 +49,63 @@ function* experimentDaemonSaga({ currentBest, stats }) {
   // Check if the experiment is over
   if (isStopping) {
     // Stop experiment and add experiment results to database
-    yield put(pauseSimulation());
-    yield call(
-      addExperimentToDatabase,
-      parameters,
-      stopCriteria,
-      [...results, { threshold: currentMax, stats }],
-    );
+    const fullResults = [...results, { threshold: currentMax, stats }];
+    yield call(addExperimentToDatabase, parameters, stopCriteria, fullResults);
     yield call(resetExperimentSaga);
-    // TODO: Make this less clunky, maybe combine sagas and/or move Population into context
-    yield put(setSimulationState(SimulationState.PAUSED_EXPERIMENTS));
-    yield put(stopExperiment(isSuccess));
+    return true;
   }
+  return false;
 }
 
 function* runExperimentSaga(experimentData) {
   // Set parameters in redux
   yield put(setupExperiment(experimentData));
-  // Run the experiment
-  yield put(runExperiments());
   const populationService = yield getContext('population');
-  const populationSize = yield select((state) => state.parameters.populationSize);
-  const triangleCount = yield select((state) => state.parameters.triangleCount);
-  const maxTriangleCount = yield select((state) => state.parameters.maxTriangleCount);
-  const target = yield select((state) => state.parameters.target);
-  const crossoverParams = yield select((state) => state.parameters.crossover);
-  const mutationParams = yield select((state) => state.parameters.mutation);
-  const selectionParams = yield select((state) => state.parameters.selection);
+
+  // Initialize the population if we're starting a new run
   if (!populationService.population) {
+    const {
+      parameters: {
+        crossover,
+        maxTriangleCount,
+        mutation,
+        populationSize,
+        selection,
+        target,
+        triangleCount,
+      },
+    } = experimentData;
     const { data } = yield createImageData(target);
 
-    // Initialize the population
     yield populationService.create({
       size: populationSize,
       genomeSize: triangleCount,
       maxGenomeSize: maxTriangleCount,
       target: data,
-      mutation: mutationParams,
-      crossover: crossoverParams,
-      selection: selectionParams,
+      mutation,
+      crossover,
+      selection,
     });
   }
 
+  yield put(runExperiments());
+  // Run the experiment in a loop until one of the stop criteria is met
   while (true) {
-    const isRunning = yield select(isRunningSelector);
-    if (!isRunning) break;
+    // If the experiment has been paused, wait until a resume or reset action has been fired
+    if (!(yield select(isRunningSelector))) {
+      const { reset } = yield race({
+        resume: take(runExperiments),
+        reset: take(resetExperiments),
+      });
+      // Reset was called, exit early
+      if (reset) {
+        yield call(resetExperimentSaga);
+        return false;
+      }
+    }
 
     // First run the next generation of the simulation
-    const { maxFitOrganism, ...stats } = yield populationService.getPopulation().runGeneration();
+    const { maxFitOrganism, ...stats } = yield populationService.population.runGeneration();
     const organism = omit(maxFitOrganism, ['phenotype']);
 
     // Check if the latest generation's most fit organism can beat our global best
@@ -103,16 +113,20 @@ function* runExperimentSaga(experimentData) {
       yield put(setGlobalBest({ genId: stats.genId, organism }));
     }
     // Update the list of maxFitness scores
-    yield call(experimentDaemonSaga, {
+    const result = yield call(generationResultsCheckSaga, {
       currentBest: { organism, genId: stats.genId },
       stats,
     });
+    // The experiment has met one of the stop criteria, signal that it's complete
+    if (result) return true;
   }
 }
 
 function* runExperimentsSaga({ payload: tests }) {
   for (let i = 0; i < tests.length; ++i) {
-    yield call(runExperimentSaga, tests[i]);
+    const doContinue = yield call(runExperimentSaga, tests[i]);
+    // If user reset experiments, exit early and don't mark them complete
+    if (!doContinue) return;
   }
   yield put(completeExperiments());
 }
