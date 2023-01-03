@@ -8,6 +8,7 @@ import {
   take,
   takeEvery,
 } from 'redux-saga/effects';
+import { minExperimentThreshold } from '../../constants';
 import { addExperimentToDatabase } from '../../globals/database';
 import { createImageData } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
@@ -40,10 +41,10 @@ function* generationResultsCheckSaga({ currentBest, stats }) {
   const isStopping = isSuccess || currentBest.genId >= maxGenerations;
 
   // Store results if needed
-  const latestThreshold = results.length ? results[results.length - 1].threshold : 1;
-  const currentMax = Math.trunc(stats.maxFitness * 100);
-  if (currentMax > Math.trunc(latestThreshold * 100)) {
-    yield put(addResults({ threshold: currentMax / 100, stats }));
+  const latestThreshold = results.length ? results[results.length - 1].threshold : 0;
+  const currentMax = Math.trunc(stats.maxFitness * 100) / 100;
+  if (currentMax > latestThreshold && currentMax >= minExperimentThreshold) {
+    yield put(addResults({ threshold: currentMax, stats }));
   }
 
   // Check if the experiment is over

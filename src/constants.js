@@ -120,6 +120,8 @@ export const statsSigFigs = 5;
 
 export const workerBatchSize = 40;
 
+export const minExperimentThreshold = 0.93;
+
 // ------------------------------------------------------------
 export const maxColorValue = 255;
 
