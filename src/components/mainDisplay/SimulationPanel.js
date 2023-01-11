@@ -33,12 +33,13 @@ import { createImageData } from '../../globals/utils';
 import Canvas from '../Canvas';
 import GlobalBest from '../GlobalBest';
 import SimulationChart from '../SimulationChart';
-import PrimaryButton from '../PrimaryButton';
+import SimulationButtons from '../SimulationButtons';
 
 const { width, height } = canvasParameters;
 
 function SimulationPanel() {
   const target = useSelector((state) => state.parameters.population.target);
+
   const [imageData, setImageData] = useState();
   const runningSimulation = useGetCurrentSimulation();
   const completedSimulations = useGetCompletedSimulations() || [];
@@ -133,7 +134,7 @@ function SimulationPanel() {
     <Paper>
       <Stack direction="row">
         <Stack>
-          <PrimaryButton
+          <SimulationButtons
             runsDisabled={!pendingSimulations.length}
           />
           {runningSimulation && (

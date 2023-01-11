@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { PausedStates, AppState } from '../constants';
-import PrimaryButton from './PrimaryButton';
+import PrimaryButton from './SimulationButtons';
 import {
   pauseSimulations,
   resetSimulations,

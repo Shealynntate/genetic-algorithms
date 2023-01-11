@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { AppState, primaryButtonLabels } from '../constants';
 import {
   pauseSimulations,
@@ -9,9 +9,11 @@ import {
   resumeSimulations,
   runSimulations,
 } from '../features/ux/uxSlice';
+import { useIsPaused } from '../hooks';
 
 function PrimaryButton({ runsDisabled }) {
   const simulationState = useSelector((state) => state.ux.simulationState);
+  const isPaused = useIsPaused();
   const dispatch = useDispatch();
   const isDisabled = runsDisabled && simulationState === AppState.NONE;
 
@@ -33,15 +35,38 @@ function PrimaryButton({ runsDisabled }) {
     dispatch(action());
   };
 
+  const onReset = () => {
+    let action;
+    switch (simulationState) {
+      case AppState.PAUSED:
+        action = resetSimulations;
+        break;
+      default:
+        throw new Error(`Unrecognized state ${simulationState} when onReset called`);
+    }
+    dispatch(action());
+  };
+
   return (
-    <Button
-      variant="contained"
-      onClick={onClick}
-      size="large"
-      disabled={isDisabled}
-    >
-      {primaryButtonLabels[simulationState]}
-    </Button>
+    <Box>
+      <Button
+        variant="contained"
+        onClick={onClick}
+        size="large"
+        disabled={isDisabled}
+      >
+        {primaryButtonLabels[simulationState]}
+      </Button>
+      {isPaused && (
+        <Button
+          variant="outlined"
+          onClick={onReset}
+          size="large"
+        >
+          Reset
+        </Button>
+      )}
+    </Box>
   );
 }
 
