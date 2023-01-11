@@ -6,15 +6,13 @@ import {
   Typography,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { PausedStates, SimulationState } from '../constants';
+import { PausedStates, AppState } from '../constants';
 import PrimaryButton from './PrimaryButton';
 import {
-  pauseExperiments,
-  pauseSimulation,
-  resetExperiments,
-  resetSimulation,
-  runExperiments,
-  runSimulation,
+  pauseSimulations,
+  resetSimulations,
+  resumeSimulations,
+  runSimulations,
 } from '../features/ux/uxSlice';
 import ImagePanel from './settingsPanels/ImagePanel';
 import SelectionPanel from './settingsPanels/SelectionPanel';
@@ -28,11 +26,8 @@ function ControlPanel() {
   const onReset = () => {
     let action;
     switch (simulationState) {
-      case SimulationState.PAUSED:
-        action = resetSimulation;
-        break;
-      case SimulationState.PAUSED_EXPERIMENTS:
-        action = resetExperiments;
+      case AppState.PAUSED:
+        action = resetSimulations;
         break;
       default:
         throw new Error(`Unrecognized state ${simulationState} when onReset called`);
@@ -43,23 +38,17 @@ function ControlPanel() {
   const onClick = () => {
     let action;
     switch (simulationState) {
-      case SimulationState.RUNNING:
-        action = pauseSimulation;
+      case AppState.RUNNING:
+        action = pauseSimulations;
         break;
-      case SimulationState.PAUSED:
-        action = runSimulation;
+      case AppState.PAUSED:
+        action = resumeSimulations;
         break;
-      case SimulationState.COMPLETE:
-        action = resetSimulation;
-        break;
-      case SimulationState.RUNNING_EXPERIMENTS:
-        action = pauseExperiments;
-        break;
-      case SimulationState.PAUSED_EXPERIMENTS:
-        action = runExperiments;
+      case AppState.COMPLETE:
+        action = resetSimulations;
         break;
       default:
-        action = runSimulation;
+        action = runSimulations;
     }
     dispatch(action());
   };

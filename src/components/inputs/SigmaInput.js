@@ -9,8 +9,8 @@ const SigmaInput = forwardRef(({
   onBlur,
   onChange,
 }, ref) => (
-  <Box sx={{ display: 'flex' }}>
-    <Typography>{label}</Typography>
+  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+    <Typography sx={{ pr: 2 }}>{label}</Typography>
     <Input
       defaultValue={defaultValue}
       onBlur={onBlur}

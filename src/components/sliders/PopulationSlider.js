@@ -9,7 +9,7 @@ function PopulationSlider() {
   const dispatch = useDispatch();
   const { max, min, step } = populationBounds;
 
-  const value = useSelector((state) => state.parameters.populationSize);
+  const value = useSelector((state) => state.parameters.population.size);
 
   const setValue = (v) => {
     dispatch(setPopulationSize(v));

@@ -19,7 +19,7 @@ function DeveloperMenu({ open, onClose }) {
   const parameters = useSelector((state) => state.parameters);
   const currentBest = useSelector((state) => state.simulation.currentBest);
 
-  const onSimulationStateDownloadClick = async () => {
+  const onAppStateDownloadClick = async () => {
     // Download for gallery
     const history = await getCurrentImages();
     const imageData = history.map((entry) => entry.imageData);
@@ -54,7 +54,7 @@ function DeveloperMenu({ open, onClose }) {
         <Button
           variant="contained"
           sx={{ display: 'block' }}
-          onClick={onSimulationStateDownloadClick}
+          onClick={onAppStateDownloadClick}
           disabled={!entryTitle}
         >
           Download

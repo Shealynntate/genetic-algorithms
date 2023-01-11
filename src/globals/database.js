@@ -1,19 +1,21 @@
 import Dexie from 'dexie';
 import { useLiveQuery } from 'dexie-react-hooks';
+import _ from 'lodash';
+import { SimulationStatus } from '../constants';
 
-const databaseName = 'GA_Images';
+const databaseName = 'GeneticAlgorithmsDB';
 const imagesTable = 'images';
-const statsTable = 'stats';
-const simulationTable = 'simulation';
-const experimentsTable = 'experiments';
+const simulationsTable = 'simulations';
 
-const simulationFields = [
-  'isSaved',
+const simulationsFields = [
   'createdOn',
-  'lastUpdated',
+  'status',
   'name',
+  'lastUpdated',
+  // 'parameters',
+  // 'stopCriteria',
+  // 'results',
   // 'population',
-  // 'reduxState',
 ];
 
 const imagesFields = [
@@ -24,34 +26,23 @@ const imagesFields = [
   // 'imageData',
 ];
 
-const statsFields = [
-  'simulationId',
-  'genId',
-  'isGlobalBest',
-  // 'meanFitness',
-  // 'maxFitness',
-  // 'minFitness',
-  // 'deviation',
-];
-
-const experimentsFields = [
-  'createdOn',
-  // parameters,
-  // stopCriteria,
-  // results,
-];
-
 const db = new Dexie(databaseName);
 let currentSimulationId = '';
 
-// Simulation Table
+// Simulations Table
 // --------------------------------------------------
-export async function insertSimulation(population, reduxState) {
-  currentSimulationId = await db[simulationTable].add({
+export async function insertSimulation({
+  population,
+  parameters,
+  stopCriteria,
+  status = SimulationStatus.UNKNOWN,
+}) {
+  currentSimulationId = await db[simulationsTable].add({
     name: 'Unnamed Simulation',
     population,
-    reduxState,
-    isSaved: 0,
+    parameters,
+    status,
+    stopCriteria,
     createdOn: Date.now(),
     lastUpdated: Date.now(),
   });
@@ -59,28 +50,59 @@ export async function insertSimulation(population, reduxState) {
 }
 
 export async function getSimulation(id) {
-  return db[simulationTable].get(id);
+  return db[simulationsTable].get(id);
+}
+
+export async function getCurrentSimulation() {
+  return db[simulationsTable].get(currentSimulationId);
 }
 
 export function getAllSimulations() {
-  return db.table(simulationTable).toArray();
+  return db[simulationsTable].toArray();
 }
 
-export function updateCurrentSimulation(population, reduxState, isSaved = 1) {
-  return db[simulationTable].update(currentSimulationId, {
-    population,
-    reduxState,
-    isSaved,
+export const getPendingSimulations = async () => (
+  db[simulationsTable].where('status').equals(SimulationStatus.PENDING).toArray()
+);
+
+export const updateSimulation = (id, params) => {
+  // Whitelist the appropriate data
+  const data = _.pick(params, [
+    'population',
+    'parameters',
+    'status',
+    'stopCriteria',
+    'name',
+    'results',
+  ]);
+  return db[simulationsTable].update(id, {
     lastUpdated: Date.now(),
+    ...data,
   });
-}
+};
+
+export const queuePendingSimulations = async () => {
+  const sims = await getPendingSimulations();
+  sims.forEach((sim) => updateSimulation(sim.id, { status: SimulationStatus.QUEUED }));
+  return sims;
+};
+
+export const updateCurrentSimulation = (params) => updateSimulation(currentSimulationId, params);
 
 export function renameSimulation(simulationId, name) {
-  return db[simulationTable].update(simulationId, { name });
+  return db[simulationsTable].update(simulationId, { name });
+}
+
+export async function addResultsToCurrentSimulation(entry) {
+  const simEntry = await getSimulation(currentSimulationId);
+  const results = simEntry.results || [];
+  results.push(entry);
+
+  return updateCurrentSimulation({ results });
 }
 
 export async function setCurrentSimulation(simulationId) {
-  const entry = await db[simulationTable].get(simulationId);
+  const entry = await db[simulationsTable].get(simulationId);
   if (!entry) {
     throw new Error(`No entry found for simulationId ${simulationId}`);
   }
@@ -89,12 +111,12 @@ export async function setCurrentSimulation(simulationId) {
 }
 
 export async function duplicateSimulation(simId, isSaved = 1) {
-  return db.transaction('rw', db[simulationTable], db[imagesTable], db[statsTable], async () => {
+  return db.transaction('rw', db[simulationsTable], db[imagesTable], async () => {
     // First get the correct simulation entry
-    const simEntry = await db[simulationTable].get(simId);
+    const simEntry = await db[simulationsTable].get(simId);
     const { name, population, reduxState } = Dexie.deepClone(simEntry);
     // Create a copy and insert into the table as a new entry
-    const nextId = await db[simulationTable].add({
+    const nextId = await db[simulationsTable].add({
       name,
       population,
       reduxState,
@@ -106,11 +128,6 @@ export async function duplicateSimulation(simId, isSaved = 1) {
     const imageData = await db[imagesTable].where('simulationId').equals(simId).toArray();
     imageData.forEach(({ id, ...entry }) => {
       db[imagesTable].add({ ...Dexie.deepClone(entry), simulationId: nextId });
-    });
-    // Finally, duplicate the stats history for the simulation, using the new simulationId
-    const statsData = await db[statsTable].where('simulationId').equals(simId).toArray();
-    statsData.forEach(({ id, ...entry }) => {
-      db[statsTable].add({ ...Dexie.deepClone(entry), simulationId: nextId });
     });
 
     return nextId;
@@ -131,15 +148,14 @@ export async function restoreSimulation(simulationId) {
 
 export async function deleteSimulation(id) {
   const simEntry = await getSimulation(id);
-  if (simEntry.id === currentSimulationId) {
+  if (simEntry.id === currentSimulationId || simEntry.status === SimulationStatus.RUNNING) {
     // Don't delete the current Simulation, it'll break things, just mark it as not saved
-    return updateCurrentSimulation(simEntry.population, simEntry.reduxState, 0);
+    throw new Error(`Cannot delete a running simulation ${id}`);
   }
   // Delete all matching simulationId entries
   return Promise.all([
-    db[simulationTable].delete(id),
+    db[simulationsTable].delete(id),
     db[imagesTable].where('simulationId').equals(id).delete(),
-    db[statsTable].where('simulationId').equals(id).delete(),
   ]);
 }
 
@@ -161,40 +177,14 @@ export async function getCurrentImages() {
   return db[imagesTable].where('simulationId').equals(currentSimulationId).toArray();
 }
 
-export function addStatsToDatabase(stats) {
-  return db[statsTable].add({ simulationId: currentSimulationId, ...stats });
-}
-
-export function getCurrentStats() {
-  return db[statsTable].where('simulationId').equals(currentSimulationId).toArray();
-}
-
-// Experiments Table
-// --------------------------------------------------
-export async function addExperimentToDatabase(parameters, stopCriteria, results) {
-  return db[experimentsTable].add({
-    createdOn: Date.now(),
-    parameters,
-    stopCriteria,
-    results,
-  });
-}
-
-export async function addExperimentResults(id, results) {
-  return db[experimentsTable].update(id, { results });
-}
-
-export const deleteExperiment = async (id) => db[experimentsTable].delete(id);
-
 // --------------------------------------------------
 export async function clearDatabase() {
   const promises = [];
   const sims = await getAllSimulations();
   sims.forEach(({ id, isSaved }) => {
     if (!isSaved) {
-      promises.push(db[simulationTable].delete(id));
+      promises.push(db[simulationsTable].delete(id));
       promises.push(db[imagesTable].where('simulationId').equals(id).delete());
-      promises.push(db[statsTable].where('simulationId').equals(id).delete());
     }
   });
   return Promise.all(promises);
@@ -207,21 +197,27 @@ export const useImageDbQuery = () => useLiveQuery(
   [currentSimulationId],
 );
 
-export const useGetSavedSimulations = () => useLiveQuery(
-  () => db[simulationTable].where('isSaved').equals(1).reverse().toArray(),
+export const useGetCurrentSimulation = () => useLiveQuery(
+  () => db[simulationsTable].get({ status: SimulationStatus.RUNNING }),
 );
 
-export const useGetAllExperiments = () => useLiveQuery(
-  () => db[experimentsTable].toArray(),
+export const useGetCompletedSimulations = () => useLiveQuery(
+  () => db[simulationsTable].where('status').equals(SimulationStatus.COMPLETE).toArray(),
+);
+
+export const useGetPendingSimulations = () => useLiveQuery(
+  () => db[simulationsTable].where('status').equals(SimulationStatus.PENDING).toArray(),
+);
+
+export const useGetSavedSimulations = () => useLiveQuery(
+  () => db[simulationsTable].where('isSaved').equals(1).reverse().toArray(),
 );
 
 // Database Setup
 // --------------------------------------------------
 db.version(1).stores({
-  [simulationTable]: `++id,${simulationFields.join()}`,
+  [simulationsTable]: `++id,${simulationsFields.join()}`,
   [imagesTable]: `++id,${imagesFields.join()}`,
-  [statsTable]: `++id,${statsFields.join()}`,
-  [experimentsTable]: `++id,${experimentsFields.join()}`,
 });
 
 db.open();

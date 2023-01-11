@@ -1,42 +1,37 @@
+import { CrossoverProbabilities, ProbabilityTypes } from '../constants';
 import { flipCoin } from '../globals/statsUtils';
+import { computeProb } from '../globals/utils';
 
-//
+/**
+ * Crossover
+ */
 class Crossover {
-  constructor(data) {
-    this.initialize(data);
-  }
-
-  initialize({ type, probMap }) {
+  constructor({ type, probabilities }) {
     this.type = type;
-    this.probMap = probMap;
-    this.prevMaxFitness = -1;
-    this.markNextGen({ maxFitness: 0 });
+    this.probabilities = probabilities;
+    this.computeProbabilities(0);
   }
 
   serialize() {
     return {
       type: this.type,
-      probMap: this.probMap,
+      probabilities: this.probabilities,
     };
   }
 
-  deserialize(data) {
-    this.initialize(data);
+  computeProbabilities(maxFitness) {
+    CrossoverProbabilities.forEach((type) => {
+      this[type] = computeProb(this.probabilities[type], maxFitness);
+    });
   }
 
   markNextGen({ maxFitness }) {
-    this.probMap.forEach(({ threshold, values }) => {
-      if (this.prevMaxFitness < threshold && maxFitness >= threshold) {
-        Object.keys(values).forEach((prob) => {
-          this[prob] = values[prob];
-        });
-      }
-    });
-    this.prevMaxFitness = maxFitness;
+    // Recompute probabilities
+    this.computeProbabilities(maxFitness);
   }
 
   doCrossover() {
-    return flipCoin(this.prob);
+    return flipCoin(this[ProbabilityTypes.SWAP]);
   }
 }
 

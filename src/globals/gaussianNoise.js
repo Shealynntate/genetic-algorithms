@@ -1,6 +1,8 @@
 import { randomNormal } from 'd3';
 import { setSigFigs } from './statsUtils';
 
+const sigFigs = 5;
+
 /**
  *
  */
@@ -17,7 +19,7 @@ class GaussianNoise {
   }
 
   next() {
-    return setSigFigs(this.noise(), 4);
+    return setSigFigs(this.noise(), sigFigs);
   }
 
   getSigma() {

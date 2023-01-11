@@ -1,103 +1,72 @@
-import { MutationProbabilityTypes } from '../constants';
+import { DistributionTypes, MutationProbabilities, ProbabilityTypes } from '../constants';
 import GaussianNoise from '../globals/gaussianNoise';
 import { flipCoin } from '../globals/statsUtils';
-
-const computeProb = ({
-  startValue,
-  endValue,
-  startFitness,
-  endFitness,
-}, fitness) => {
-  if (fitness <= startFitness) return startValue;
-  if (fitness >= endFitness) return endValue;
-  return startValue + fitness * ((endValue - startValue) / (endFitness - startFitness));
-};
+import { computeProb } from '../globals/utils';
 
 /**
  * Mutation
  */
 class Mutation {
-  constructor(data) {
-    this.initialize(data);
-  }
-
-  initialize({
-    colorSigma,
-    pointSigma,
-    permuteSigma,
-    probMap,
+  constructor({
+    probabilities,
     genomeSize,
+    ...params
   }) {
-    this.colorDist = new GaussianNoise(colorSigma);
-    this.pointDist = new GaussianNoise(pointSigma);
-    this.permuteDist = new GaussianNoise(permuteSigma);
-    this.probMap = probMap;
+    this.colorDist = new GaussianNoise(params[DistributionTypes.COLOR_SIGMA]);
+    this.pointDist = new GaussianNoise(params[DistributionTypes.POINT_SIGMA]);
+    this.permuteDist = new GaussianNoise(params[DistributionTypes.PERMUTE_SIGMA]);
+    this.probabilities = probabilities;
     this.genomeSize = genomeSize;
+    this.computeProbabilities(0);
   }
 
   serialize() {
     return {
-      colorSigma: this.colorDist.getSigma(),
-      pointSigma: this.pointDist.getSigma(),
-      permuteSigma: this.permuteDist.getSigma(),
+      [DistributionTypes.COLOR_SIGMA]: this.colorDist.getSigma(),
+      [DistributionTypes.POINT_SIGMA]: this.pointDist.getSigma(),
+      [DistributionTypes.PERMUTE_SIGMA]: this.permuteDist.getSigma(),
       genomeSize: this.genomeSize,
-      probMap: this.probMap,
+      probabilities: this.probabilities,
     };
   }
 
-  deserialize(data) {
-    this.initialize(data);
+  computeProbabilities(maxFitness) {
+    MutationProbabilities.forEach((type) => {
+      this[type] = computeProb(this.probabilities[type], maxFitness);
+    });
   }
 
   markNextGen({ maxFitness }) {
-    this.maxFitness = maxFitness;
+    // Recompute probabilities
+    this.computeProbabilities(maxFitness);
   }
 
   doMutate() {
-    const prob = computeProb(this.probMap[MutationProbabilityTypes.TWEAK], this.maxFitness);
-    return flipCoin(prob);
+    return flipCoin(this[ProbabilityTypes.TWEAK]);
   }
 
   doAddPoint() {
-    const prob = computeProb(this.probMap[MutationProbabilityTypes.ADD_POINT], this.maxFitness);
-    return flipCoin(prob);
+    return flipCoin(this[ProbabilityTypes.ADD_POINT]);
   }
 
   doRemovePoint() {
-    const prob = computeProb(this.probMap[MutationProbabilityTypes.REMOVE_POINT], this.maxFitness);
-    return flipCoin(prob);
+    return flipCoin(this[ProbabilityTypes.REMOVE_POINT]);
   }
 
   doAddChromosome() {
-    const prob = computeProb(
-      this.probMap[MutationProbabilityTypes.ADD_CHROMOSOME],
-      this.maxFitness,
-    );
-    return flipCoin(prob);
+    return flipCoin(this[ProbabilityTypes.ADD_CHROMOSOME]);
   }
 
   doRemoveChromosome() {
-    const prob = computeProb(
-      this.probMap[MutationProbabilityTypes.REMOVE_CHROMOSOME],
-      this.maxFitness,
-    );
-    return flipCoin(prob);
+    return flipCoin(this[ProbabilityTypes.REMOVE_CHROMOSOME]);
   }
 
   doResetChromosome() {
-    const prob = computeProb(
-      this.probMap[MutationProbabilityTypes.RESET_CHROMOSOME],
-      this.maxFitness,
-    );
-    return flipCoin(prob);
+    return flipCoin(this[ProbabilityTypes.RESET_CHROMOSOME]);
   }
 
   doPermute() {
-    const prob = computeProb(
-      this.probMap[MutationProbabilityTypes.PERMUTE_CHROMOSOMES],
-      this.maxFitness,
-    );
-    return flipCoin(prob);
+    return flipCoin(this[ProbabilityTypes.PERMUTE_CHROMOSOMES]);
   }
 
   colorNudge() {

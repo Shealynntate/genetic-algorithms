@@ -21,7 +21,7 @@ function ImageInput() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const isDisabled = useDisableSettings();
-  const target = useSelector((state) => state.parameters.target);
+  const target = useSelector((state) => state.parameters.population.target);
   const [imageData, setImageData] = useState();
   const [alertState, setAlertState] = useState();
 

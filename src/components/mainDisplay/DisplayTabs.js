@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import {
-  Box, Paper, Tab, Tabs,
+  Box,
+  Tab,
+  Tabs,
 } from '@mui/material';
-// import ParentSize from '@visx/responsive/lib/components/ParentSizeModern';
 import TabPanel from './TabPanel';
 import GalleryPanel from './GalleryPanel';
 import ProgressPanel from './ProgressPanel';
-import StatsPanel from './StatsPanel';
 import DatabasePanel from './DatabasePanel';
-import ExperimentationPanel from './ExperimentationPanel';
+import ExperimentationPanel from './SimulationPanel';
 
 function DisplayTabs() {
   const [value, setValue] = useState(0);
@@ -21,33 +21,23 @@ function DisplayTabs() {
     <Box>
       <Box>
         <Tabs onChange={onChange} value={value}>
+          <Tab label="Simulations" />
           <Tab label="Progress" />
-          <Tab label="Stats" />
           <Tab label="Gallery" />
           <Tab label="Database" />
-          <Tab label="Experimentation" />
         </Tabs>
       </Box>
       <TabPanel index={0} value={value}>
-        <ProgressPanel />
+        <ExperimentationPanel />
       </TabPanel>
       <TabPanel index={1} value={value}>
-        <Paper sx={{ boxSizing: 'border-box' }}>
-          <StatsPanel
-            width={550}
-            height={400}
-          />
-        </Paper>
-        <StatsPanel />
+        <ProgressPanel />
       </TabPanel>
       <TabPanel index={2} value={value}>
         <GalleryPanel />
       </TabPanel>
       <TabPanel index={3} value={value}>
         <DatabasePanel />
-      </TabPanel>
-      <TabPanel index={4} value={value}>
-        <ExperimentationPanel />
       </TabPanel>
     </Box>
   );

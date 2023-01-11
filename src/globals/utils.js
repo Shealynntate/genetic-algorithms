@@ -199,3 +199,14 @@ export const chromosomesToPhenotype = (chromosomes) => {
   });
   return ctx.getImageData(0, 0, width, height);
 };
+
+export const computeProb = ({
+  startValue,
+  endValue,
+  startFitness,
+  endFitness,
+}, fitness) => {
+  if (fitness <= startFitness) return startValue;
+  if (fitness >= endFitness) return endValue;
+  return startValue + fitness * ((endValue - startValue) / (endFitness - startFitness));
+};

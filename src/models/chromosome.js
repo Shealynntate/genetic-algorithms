@@ -61,7 +61,9 @@ const crossoverColor = (chromosomes1, chromosomes2, point) => {
 // ------------------------------------------------------------
 const tweakPoint = (m, x, y) => [clamp(x + m.pointNudge(), 0, 1), clamp(y + m.pointNudge(), 0, 1)];
 
-const tweakColor = (m, value) => clamp(value + m.colorNudge() * maxColorValue, 0, maxColorValue);
+// const tweakColor = (m, value) => clamp(value + m.colorNudge() * maxColorValue, 0, maxColorValue);
+const mv = maxColorValue;
+const tweakColor = (m, value) => ((mv + value + m.colorNudge() * mv) % mv);
 
 const tweakAlpha = (m, value) => clamp(value + m.colorNudge(), 0, 1);
 

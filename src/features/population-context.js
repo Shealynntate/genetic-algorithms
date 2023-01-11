@@ -8,7 +8,8 @@ class PopulationService {
 
   async create(params) {
     this.population = new Population(params);
-    return this.population.initialize();
+    await this.population.initialize();
+    return this.population;
   }
 
   serialize() {
@@ -17,12 +18,17 @@ class PopulationService {
 
   async restore(params) {
     this.population = Population.restorePopulation(params);
-    return this.population.initialize();
+    await this.population.initialize();
+    return this.population;
   }
 
   reset() {
     Population.reset();
     this.population = null;
+  }
+
+  getPopulation() {
+    return this.population;
   }
 }
 

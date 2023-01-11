@@ -17,7 +17,7 @@ export default () => {
     }
 
     scalePoint(point) {
-      return [Math.round(point[0] * this.width), Math.round(point[1] * this.height)];
+      return [point[0] * this.width, point[1] * this.height];
     }
 
     getImageData(chromosomes) {

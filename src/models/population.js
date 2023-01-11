@@ -31,7 +31,7 @@ class Population {
   constructor({
     genId = Population.nextGenId,
     size,
-    genomeSize,
+    minGenomeSize,
     maxGenomeSize,
     target,
     crossover,
@@ -42,7 +42,9 @@ class Population {
   }) {
     this.genId = genId;
     this.target = target;
-    this.organisms = organisms ?? [...Array(size)].map(() => Organism.create({ size: genomeSize }));
+    this.organisms = organisms ?? [...Array(size)].map(
+      () => Organism.create({ size: minGenomeSize }),
+    );
     this.crossover = new Crossover(crossover);
     this.selection = new Selection(selection);
     this.mutation = new Mutation(mutation);

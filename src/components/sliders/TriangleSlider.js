@@ -2,17 +2,17 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ChangeHistoryTwoToneIcon from '@mui/icons-material/ChangeHistoryTwoTone';
 import { triangleBounds } from '../../constants';
-import { setTriangles } from '../../features/parameters/parametersSlice';
+import { setMinPolygons } from '../../features/parameters/parametersSlice';
 import ParameterSlider from './ParameterSlider';
 
 function TriangleSlider() {
   const dispatch = useDispatch();
   const { min, max, step } = triangleBounds;
 
-  const value = useSelector((state) => state.parameters.triangleCount);
+  const value = useSelector((state) => state.parameters.population.minPolygons);
 
   const setValue = (v) => {
-    dispatch(setTriangles(v));
+    dispatch(setMinPolygons(v));
   };
 
   return (

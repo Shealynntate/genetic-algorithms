@@ -17,7 +17,7 @@ function Gallery() {
   useEffect(() => {
     let isMounted = true;
     const updateImage = async () => {
-      const result = await createImageData(parameters.target);
+      const result = await createImageData(parameters.population.target);
       if (isMounted) {
         setImageData(result);
       }

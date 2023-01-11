@@ -14,7 +14,6 @@ function GlobalBest() {
 
   return (
     <div>
-      <Typography pb={1}>All Time Best</Typography>
       {globalBest ? (
         <>
           <OrganismCanvas organism={globalBest.organism} />

@@ -13,7 +13,7 @@ import { Grid } from '@visx/grid';
 import ParameterSlider from './ParameterSlider';
 import { setColorSigma } from '../../features/parameters/parametersSlice';
 import NormalDistribution from '../../globals/normalDistribution';
-import { mutationBounds } from '../../constants';
+import { DistributionTypes, mutationBounds } from '../../constants';
 
 const createData = (mean, sigma) => {
   const dist = new NormalDistribution(mean, sigma);
@@ -40,7 +40,7 @@ const margin = {
 function MutationSlider() {
   const dispatch = useDispatch();
   const theme = useTheme();
-  const value = useSelector((state) => state.parameters.mutation.colorSigma);
+  const value = useSelector((state) => state.parameters.mutation[DistributionTypes.COLOR_SIGMA]);
   const { min, max, step } = mutationBounds;
   const { max: dataMax, dist } = createData(0, value);
   const [data, setData] = useState(dist);

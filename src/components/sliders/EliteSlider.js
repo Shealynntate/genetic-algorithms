@@ -9,7 +9,7 @@ function EliteSlider() {
   const dispatch = useDispatch();
 
   const value = useSelector((state) => state.parameters.selection.eliteCount);
-  const max = useSelector((state) => state.parameters.populationSize);
+  const max = useSelector((state) => state.parameters.population.size);
   const { min, step } = eliteCountBounds;
 
   const setValue = (v) => {

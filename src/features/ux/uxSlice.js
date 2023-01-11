@@ -1,40 +1,34 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { SimulationState } from '../../constants';
+import { AppState } from '../../constants';
 import { rehydrate } from '../developer/developerSlice';
 import { completeExperiments } from '../experimentation/experimentationSlice';
 
 const initialState = {
-  simulationState: SimulationState.NONE,
+  simulationState: AppState.NONE,
 };
 
 export const uxSlice = createSlice({
   name: 'ux',
   initialState,
   reducers: {
-    setSimulationState: (state, action) => {
+    setAppState: (state, action) => {
       state.simulationState = action.payload;
     },
-    runSimulation: (state) => {
-      state.simulationState = SimulationState.RUNNING;
+    runSimulations: (state) => {
+      state.simulationState = AppState.RUNNING;
     },
-    runExperiments: (state) => {
-      state.simulationState = SimulationState.RUNNING_EXPERIMENTS;
+    pauseSimulations: (state) => {
+      state.simulationState = AppState.PAUSED;
     },
-    pauseSimulation: (state) => {
-      state.simulationState = SimulationState.PAUSED;
+    resumeSimulations: (state) => {
+      state.simulationState = AppState.RUNNING;
     },
-    pauseExperiments: (state) => {
-      state.simulationState = SimulationState.PAUSED_EXPERIMENTS;
+    endSimulations: (state) => {
+      state.simulationState = AppState.COMPLETE;
     },
-    endSimulation: (state) => {
-      state.simulationState = SimulationState.COMPLETE;
-    },
-    resetSimulation: (state) => {
-      state.simulationState = SimulationState.NONE;
-    },
-    resetExperiments: (state) => {
-      state.simulationState = SimulationState.NONE;
+    resetSimulations: (state) => {
+      state.simulationState = AppState.NONE;
     },
   },
   extraReducers: (builder) => {
@@ -46,20 +40,18 @@ export const uxSlice = createSlice({
         });
       })
       .addCase(completeExperiments, (state) => {
-        state.simulationState = SimulationState.COMPLETE_EXPERIMENTS;
+        state.simulationState = AppState.COMPLETE_EXPERIMENTS;
       });
   },
 });
 
 export const {
-  setSimulationState,
-  runSimulation,
-  runExperiments,
-  pauseSimulation,
-  pauseExperiments,
-  endSimulation,
-  resetSimulation,
-  resetExperiments,
+  setAppState,
+  runSimulations,
+  pauseSimulations,
+  resumeSimulations,
+  endSimulations,
+  resetSimulations,
 } = uxSlice.actions;
 
 export default uxSlice.reducer;
