@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
   Button,
-  Checkbox,
   Divider,
-  IconButton,
   Paper,
   Stack,
   Typography,
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
 import {
@@ -25,15 +17,13 @@ import {
   useGetPendingSimulations,
 } from '../../globals/database';
 import SimulationForm from '../SimulationForm';
-import {
-  canvasParameters,
-  DistributionTypes, ProbabilityTypes, SimulationStatus,
-} from '../../constants';
+import { canvasParameters, SimulationStatus } from '../../constants';
 import { createImageData } from '../../globals/utils';
 import Canvas from '../Canvas';
 import GlobalBest from '../GlobalBest';
 import SimulationChart from '../SimulationChart';
 import SimulationButtons from '../SimulationButtons';
+import SimulationEntry from '../SimulationEntry';
 
 const { width, height } = canvasParameters;
 
@@ -106,7 +96,7 @@ function SimulationPanel() {
   };
 
   // eslint-disable-next-line max-len
-  const filteredExperiments = completedSimulations.filter((entry) => checkedExperiments.includes(entry.id));
+  const filteredExperiments = [...completedSimulations, runningSimulation].filter((entry) => (entry ? checkedExperiments.includes(entry.id) : false));
 
   const isChecked = (id) => checkedExperiments.includes(id);
 
@@ -138,19 +128,17 @@ function SimulationPanel() {
             runsDisabled={!pendingSimulations.length}
           />
           {runningSimulation && (
-            <Accordion sx={{ padding: 0 }}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                sx={{
-                  '& .MuiAccordionSummary-content': {
-                    margin: 0,
-                    alignItems: 'center',
-                  },
-                }}
-              >
-                <Typography pr={2}>{`Running Test ${runningSimulation.id}`}</Typography>
-              </AccordionSummary>
-            </Accordion>
+            <SimulationEntry
+              key={runningSimulation.id}
+              id={runningSimulation.id}
+              createdOn={runningSimulation.createdOn}
+              name={runningSimulation.name}
+              status={SimulationStatus.RUNNING}
+              isChecked={isChecked(runningSimulation.id)}
+              onClick={onChangeCheckbox}
+              onDelete={onDeleteQueuedExperiment}
+              color={getCheckboxColor(runningSimulation.id)}
+            />
           )}
           <Stack direction="row">
             <Stack>
@@ -162,163 +150,39 @@ function SimulationPanel() {
               <Typography variant="caption" pb={1}>Current Best</Typography>
             </Stack>
           </Stack>
+          {pendingSimulations.map(({ id, createdOn, name }) => (
+            <SimulationEntry
+              key={id}
+              id={id}
+              createdOn={createdOn}
+              name={name}
+              status={SimulationStatus.PENDING}
+              isChecked={isChecked(id)}
+              onClick={onChangeCheckbox}
+              onDelete={onDeleteQueuedExperiment}
+              color={getCheckboxColor(id)}
+            />
+          ))}
+          <Divider />
           <Button startIcon={<Add />} variant="contained" onClick={onAddSimulation}>
             Add Simulation
           </Button>
-          {pendingSimulations.map(({ id, parameters, stopCriteria }) => (
-            <Accordion sx={{ padding: 0 }}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                sx={{
-                  '& .MuiAccordionSummary-content': {
-                    margin: 0,
-                    alignItems: 'center',
-                  },
-                }}
-              >
-                <Typography pr={2}>{`Pending Test ${id}`}</Typography>
-                <IconButton color="error" onClick={() => onDeleteQueuedExperiment(id)}>
-                  <DeleteIcon />
-                </IconButton>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
-                  <Box>
-                    <Typography variant="subtitle1">Parameters</Typography>
-                    <Divider />
-                    <Stack direction="row">
-                      <Box pr={1}>
-                        <Typography>Selection</Typography>
-                        <Typography>{`Type: ${parameters.selection.type}`}</Typography>
-                        <Typography>{`Elites: ${parameters.selection.eliteCount}`}</Typography>
-                        <Typography>{`Tournament Size: ${parameters.selection.tournamentSize}`}</Typography>
-                      </Box>
-                      <Box>
-                        <Typography>Mutation</Typography>
-                        <Typography>{`color sigma: ${parameters.mutation[DistributionTypes.COLOR_SIGMA]}`}</Typography>
-                        <Typography>{`point sigma: ${parameters.mutation[DistributionTypes.POINT_SIGMA]}`}</Typography>
-                        {Object.keys(parameters.mutation.probabilities).map((probKey) => (
-                          <React.Fragment key={probKey}>
-                            <Typography>{ProbabilityTypes[probKey]}</Typography>
-                            <Typography variant="body2">
-                              {`${parameters.mutation.probabilities[probKey].startValue} -->
-                                ${parameters.mutation.probabilities[probKey].endValue}
-                              `}
-                            </Typography>
-                          </React.Fragment>
-                        ))}
-                      </Box>
-                    </Stack>
-                  </Box>
-                  <Box>
-                    <Box>
-                      <Typography variant="subtitle1">Stop Criteria</Typography>
-                      <Divider />
-                      <Typography>{`Target fitness: ${stopCriteria.targetFitness}`}</Typography>
-                      <Typography>{`Max Generations: ${stopCriteria.maxGenerations}`}</Typography>
-                    </Box>
-                  </Box>
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
-          ))}
-          <Divider />
           {completedSimulations.map(({
             id,
             createdOn,
-            parameters,
-            stopCriteria,
-            results,
+            name,
           }) => (
-            <Accordion key={id} sx={{ padding: 0 }}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                sx={{
-                  '& .MuiAccordionSummary-content': {
-                    margin: 0,
-                    alignItems: 'center',
-                  },
-                }}
-              >
-                <Checkbox
-                  checked={isChecked(id)}
-                  onClick={(event) => onChangeCheckbox(event, id)}
-                  sx={{
-                    color: getCheckboxColor(id),
-                    '&.Mui-checked': {
-                      color: getCheckboxColor(id),
-                    },
-                  }}
-                />
-                <Typography pr={2}>{`Test ${id}`}</Typography>
-                <Typography sx={{ color: theme.palette.text.secondary, pr: 2 }}>
-                  {new Date(createdOn).toLocaleString()}
-                </Typography>
-                <IconButton color="error" onClick={() => onDeleteSimulation(id)}>
-                  <DeleteIcon />
-                </IconButton>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
-                  <Box>
-                    <Typography variant="subtitle1">Parameters</Typography>
-                    <Divider />
-                    <Stack direction="row">
-                      <Box pr={1}>
-                        <Typography>Population</Typography>
-                        <Typography>{`Size: ${parameters.population.size}`}</Typography>
-                        <Typography>Selection</Typography>
-                        <Typography>{`Type: ${parameters.selection.type}`}</Typography>
-                        <Typography>{`Elites: ${parameters.selection.eliteCount}`}</Typography>
-                        <Typography>{`Tournament Size: ${parameters.selection.tournamentSize}`}</Typography>
-                      </Box>
-                      <Box>
-                        <Typography>Mutation</Typography>
-                        <Typography>{`color sigma: ${parameters.mutation[DistributionTypes.COLOR_SIGMA]}`}</Typography>
-                        <Typography>{`point sigma: ${parameters.mutation[DistributionTypes.POINT_SIGMA]}`}</Typography>
-                        {Object.keys(parameters.mutation.probabilities).map((probKey) => (
-                          <React.Fragment key={probKey}>
-                            <Typography>{ProbabilityTypes[probKey]}</Typography>
-                            <Typography variant="body2">
-                              {`${parameters.mutation.probabilities[probKey].startValue} -->
-                                ${parameters.mutation.probabilities[probKey].endValue}
-                              `}
-                            </Typography>
-                          </React.Fragment>
-                        ))}
-                      </Box>
-                    </Stack>
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle1">Results</Typography>
-                    <Divider />
-                    <Stack
-                      direction="row"
-                      sx={{ justifyContent: 'space-between' }}
-                    >
-                      <Typography variant="subtitle1">Gen</Typography>
-                      <Typography variant="subtitle1">Best</Typography>
-                    </Stack>
-                    {results.map(({ stats }) => (
-                      <Stack
-                        key={stats.maxFitness}
-                        direction="row"
-                        sx={{ justifyContent: 'space-between' }}
-                      >
-                        <Typography variant="body2">{stats.genId}</Typography>
-                        <Typography variant="body2">{stats.maxFitness}</Typography>
-                      </Stack>
-                    ))}
-                    <Box>
-                      <Typography variant="subtitle1">Stop Criteria</Typography>
-                      <Divider />
-                      <Typography>{`Target fitness: ${stopCriteria.targetFitness}`}</Typography>
-                      <Typography>{`Max Generations: ${stopCriteria.maxGenerations}`}</Typography>
-                    </Box>
-                  </Box>
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
+            <SimulationEntry
+              key={id}
+              id={id}
+              createdOn={createdOn}
+              name={name}
+              status={SimulationStatus.COMPLETE}
+              isChecked={isChecked(id)}
+              onClick={onChangeCheckbox}
+              onDelete={onDeleteSimulation}
+              color={getCheckboxColor(id)}
+            />
           ))}
         </Stack>
         <SimulationChart

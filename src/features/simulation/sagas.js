@@ -13,20 +13,21 @@ import { minExperimentThreshold, SimulationStatus } from '../../constants';
 import {
   addImageToDatabase,
   addResultsToCurrentSimulation,
-  queuePendingSimulations,
+  getNextPendingSimulation,
   updateCurrentSimulation,
 } from '../../globals/database';
 import { approxEqual } from '../../globals/statsUtils';
 import { createImageData, shouldSaveGenImage } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
-import { RESTORE_POPULATION, setGlobalBest, updateCurrentGen } from './simulationSlice';
+import {
+  RESTORE_POPULATION, setGenStats, setGlobalBest, updateCurrentGen,
+} from './simulationSlice';
 import {
   endSimulations,
   resetSimulations,
   resumeSimulations,
   runSimulations,
 } from '../ux/uxSlice';
-import { addResults } from '../experimentation/experimentationSlice';
 
 function* restorePopulationSaga({ payload: populationData }) {
   const target = yield select((state) => state.parameters.target);
@@ -55,18 +56,18 @@ function* generationResultsCheckSaga({
 }) {
   const { population } = yield getContext('population');
   const globalBest = yield select((state) => state.simulation.globalBest);
-  const results = yield select((state) => state.experimentation.results);
+  const currentStats = yield select((state) => state.simulation.currentStats);
 
   const { targetFitness, maxGenerations } = stopCriteria;
   const isSuccess = hasReachedTarget(globalBest, targetFitness);
   const isStopping = isSuccess || currentBest.genId >= maxGenerations;
 
   // Store results if needed
-  const latestThreshold = results.length ? results[results.length - 1].threshold : 0;
+  const latestThreshold = currentStats.threshold ?? 0;
   const currentMax = Math.trunc(stats.maxFitness * 1000) / 1000;
   if (currentMax > latestThreshold && currentMax >= minExperimentThreshold) {
-    yield put(addResults({ threshold: currentMax, stats }));
     yield addResultsToCurrentSimulation({ threshold: currentMax, stats });
+    yield put(setGenStats({ threshold: currentMax, stats }));
   }
 
   // Check if the simulation is over
@@ -167,13 +168,16 @@ function* runSimulationSaga({ parameters, stopCriteria }) {
 }
 
 function* runSimulationsSaga() {
-  const pendingSimulations = yield queuePendingSimulations();
+  let pendingSimulation = yield getNextPendingSimulation();
 
-  for (let i = 0; i < pendingSimulations.length; ++i) {
-    const doContinue = yield call(runSimulationSaga, pendingSimulations[i]);
+  while (pendingSimulation) {
+    const doContinue = yield call(runSimulationSaga, pendingSimulation);
     // If user reset simulations, exit early and don't mark them complete
     if (!doContinue) return;
+
+    pendingSimulation = yield getNextPendingSimulation();
   }
+
   yield put(endSimulations());
 }
 

@@ -1,13 +1,11 @@
 /* eslint-disable no-param-reassign */
-import { createSlice, isAnyOf } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import {
   DistributionTypes,
 } from '../../constants';
 // import defaultTarget from '../../assets/red_square_test.png';
 // import defaultTarget from '../../assets/test_grid.png';
 import defaultParameters from '../../globals/defaultParameters';
-import { rehydrate } from '../developer/developerSlice';
-import { setupExperiment } from '../experimentation/experimentationSlice';
 
 export const parametersSlice = createSlice({
   name: 'parameters',
@@ -62,15 +60,6 @@ export const parametersSlice = createSlice({
     setTournamentSize: (state, action) => {
       state.selection.tournamentSize = action.payload;
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addMatcher(isAnyOf(rehydrate, setupExperiment), (state, action) => {
-        const { parameters } = action.payload;
-        Object.keys(parameters).forEach((key) => {
-          state[key] = parameters[key];
-        });
-      });
   },
 });
 

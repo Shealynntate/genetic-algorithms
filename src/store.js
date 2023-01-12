@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
-import experimentationReducer from './features/experimentation/experimentationSlice';
 import parametersReducer from './features/parameters/parametersSlice';
 import populationService from './features/population-context';
 import rootSaga from './features/rootSaga';
@@ -15,7 +14,6 @@ const sagaMiddleware = createSagaMiddleware({
 
 const store = configureStore({
   reducer: {
-    experimentation: experimentationReducer,
     parameters: parametersReducer,
     simulation: simulationReducer,
     ux: uxReducer,

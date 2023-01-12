@@ -43,6 +43,7 @@ export async function insertSimulation({
     parameters,
     status,
     stopCriteria,
+    results: [],
     createdOn: Date.now(),
     lastUpdated: Date.now(),
   });
@@ -65,6 +66,8 @@ export const getPendingSimulations = async () => (
   db[simulationsTable].where('status').equals(SimulationStatus.PENDING).toArray()
 );
 
+export const getNextPendingSimulation = async () => db[simulationsTable].where('status').equals(SimulationStatus.PENDING).first();
+
 export const updateSimulation = (id, params) => {
   // Whitelist the appropriate data
   const data = _.pick(params, [
@@ -79,12 +82,6 @@ export const updateSimulation = (id, params) => {
     lastUpdated: Date.now(),
     ...data,
   });
-};
-
-export const queuePendingSimulations = async () => {
-  const sims = await getPendingSimulations();
-  sims.forEach((sim) => updateSimulation(sim.id, { status: SimulationStatus.QUEUED }));
-  return sims;
 };
 
 export const updateCurrentSimulation = (params) => updateSimulation(currentSimulationId, params);

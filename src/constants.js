@@ -173,7 +173,6 @@ export const AlertState = {
 export const SimulationStatus = {
   UNKNOWN: 'UNKNOWN',
   PENDING: 'PENDING', // Created simulations waiting to be run or deleted
-  QUEUED: 'QUEUED', // Simulations in a run queue to be processed on their turn
   RUNNING: 'RUNNING', // Only one simuation is actively running at a time
   COMPLETE: 'COMPLETE', // Simulation has reached one of the stop criteria
 };
