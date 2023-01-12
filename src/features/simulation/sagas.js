@@ -74,7 +74,10 @@ function* generationResultsCheckSaga({
   if (isStopping) {
     // Stop the simulation and add the results to database
     yield addResultsToCurrentSimulation({ threshold: currentMax, stats });
-    yield updateCurrentSimulation({ population, status: SimulationStatus.COMPLETE });
+    yield updateCurrentSimulation({
+      population: population.serialize(),
+      status: SimulationStatus.COMPLETE,
+    });
     yield call(resetSimulationsSaga);
     return true;
   }

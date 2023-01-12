@@ -91,7 +91,7 @@ export function renameSimulation(simulationId, name) {
 }
 
 export async function addResultsToCurrentSimulation(entry) {
-  const simEntry = await getSimulation(currentSimulationId);
+  const simEntry = await getCurrentSimulation();
   const results = simEntry.results || [];
   results.push(entry);
 
@@ -178,8 +178,8 @@ export async function getCurrentImages() {
 export async function clearDatabase() {
   const promises = [];
   const sims = await getAllSimulations();
-  sims.forEach(({ id, isSaved }) => {
-    if (!isSaved) {
+  sims.forEach(({ id, status }) => {
+    if (status === SimulationStatus.RUNNING) {
       promises.push(db[simulationsTable].delete(id));
       promises.push(db[imagesTable].where('simulationId').equals(id).delete());
     }

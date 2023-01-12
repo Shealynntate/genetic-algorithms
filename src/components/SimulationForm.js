@@ -43,7 +43,7 @@ const genExperiment = (data) => {
     parameters,
     stopCriteria: {
       targetFitness: 0.98,
-      maxGenerations: 20_000,
+      maxGenerations: 2_0,
     },
   };
 };
