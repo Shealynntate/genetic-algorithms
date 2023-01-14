@@ -37,7 +37,7 @@ export async function insertSimulation({
   stopCriteria,
   status = SimulationStatus.UNKNOWN,
 }) {
-  currentSimulationId = await db[simulationsTable].add({
+  return db[simulationsTable].add({
     name: 'Unnamed Simulation',
     population,
     parameters,
@@ -47,7 +47,6 @@ export async function insertSimulation({
     createdOn: Date.now(),
     lastUpdated: Date.now(),
   });
-  return Promise.resolve();
 }
 
 export async function getSimulation(id) {
@@ -99,6 +98,12 @@ export async function addResultsToCurrentSimulation(entry) {
 }
 
 export async function setCurrentSimulation(simulationId) {
+  if (simulationId == null) {
+    // Clear out current simulation state
+    currentSimulationId = null;
+    return null;
+  }
+
   const entry = await db[simulationsTable].get(simulationId);
   if (!entry) {
     throw new Error(`No entry found for simulationId ${simulationId}`);

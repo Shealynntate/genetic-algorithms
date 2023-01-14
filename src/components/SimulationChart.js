@@ -22,7 +22,7 @@ const margin = {
 const fullWidth = graphWidth + margin.left + margin.right;
 const fullHeight = graphHeight + margin.top + margin.bottom;
 
-function SimulationChart({ checkedExperiments }) {
+function SimulationChart({ simulations }) {
   const theme = useTheme();
 
   const bgColor = theme.palette.background.default;
@@ -91,7 +91,7 @@ function SimulationChart({ checkedExperiments }) {
           stroke="white"
           strokeOpacity={0.10}
         />
-        {checkedExperiments.map(({ id, results }, index) => (
+        {simulations.map(({ id, results }, index) => (
           <ExperimentLine
             key={`graph-${id}`}
             data={genData(results)}
@@ -134,13 +134,13 @@ function SimulationChart({ checkedExperiments }) {
 }
 
 SimulationChart.propTypes = {
-  checkedExperiments: PropTypes.arrayOf(
+  simulations: PropTypes.arrayOf(
     PropTypes.objectOf(PropTypes.number),
   ),
 };
 
 SimulationChart.defaultProps = {
-  checkedExperiments: [],
+  simulations: [],
 };
 
 export default SimulationChart;

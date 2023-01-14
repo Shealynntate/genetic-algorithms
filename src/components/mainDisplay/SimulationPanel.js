@@ -9,6 +9,7 @@ import {
 import { Add } from '@mui/icons-material';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
+import _ from 'lodash';
 import {
   deleteSimulation,
   insertSimulation,
@@ -24,18 +25,19 @@ import GlobalBest from '../GlobalBest';
 import SimulationChart from '../SimulationChart';
 import SimulationButtons from '../SimulationButtons';
 import SimulationEntry from '../SimulationEntry';
+import SimulationDetails from '../SimulationDetails';
 
 const { width, height } = canvasParameters;
 
 function SimulationPanel() {
   const target = useSelector((state) => state.parameters.population.target);
-
-  const [imageData, setImageData] = useState();
   const runningSimulation = useGetCurrentSimulation();
   const completedSimulations = useGetCompletedSimulations() || [];
   const pendingSimulations = useGetPendingSimulations() || [];
+  const [imageData, setImageData] = useState();
   const [openForm, setOpenForm] = useState(false);
   const [checkedExperiments, setCheckedExperiments] = useState([]);
+  const [selectedSimulation, setSelectedSimulation] = useState(null);
   const theme = useTheme();
 
   useEffect(() => {
@@ -76,6 +78,11 @@ function SimulationPanel() {
     theme.palette.success.dark,
   ];
 
+  const idToSimulation = (id) => {
+    const all = [...completedSimulations, ...pendingSimulations, runningSimulation];
+    return _.find(all, (e) => e?.id === id);
+  };
+
   const onAddSimulation = () => {
     setOpenForm(true);
   };
@@ -110,6 +117,10 @@ function SimulationPanel() {
     }
   };
 
+  const onSelect = (id) => {
+    setSelectedSimulation(id);
+  };
+
   const getCheckboxColor = (id) => {
     const index = checkedExperiments.indexOf(id);
     if (index < 0) return theme.palette.primary.main;
@@ -128,17 +139,22 @@ function SimulationPanel() {
             runsDisabled={!pendingSimulations.length}
           />
           {runningSimulation && (
-            <SimulationEntry
-              key={runningSimulation.id}
-              id={runningSimulation.id}
-              createdOn={runningSimulation.createdOn}
-              name={runningSimulation.name}
-              status={SimulationStatus.RUNNING}
-              isChecked={isChecked(runningSimulation.id)}
-              onClick={onChangeCheckbox}
-              onDelete={onDeleteQueuedExperiment}
-              color={getCheckboxColor(runningSimulation.id)}
-            />
+            <>
+              <Typography>Running Simulation</Typography>
+              <SimulationEntry
+                key={runningSimulation.id}
+                id={runningSimulation.id}
+                createdOn={runningSimulation.createdOn}
+                name={runningSimulation.name}
+                status={SimulationStatus.RUNNING}
+                isChecked={isChecked(runningSimulation.id)}
+                isSelected={selectedSimulation === runningSimulation.id}
+                onCheck={onChangeCheckbox}
+                onDelete={onDeleteQueuedExperiment}
+                onSelect={onSelect}
+                color={getCheckboxColor(runningSimulation.id)}
+              />
+            </>
           )}
           <Stack direction="row">
             <Stack>
@@ -158,8 +174,10 @@ function SimulationPanel() {
               name={name}
               status={SimulationStatus.PENDING}
               isChecked={isChecked(id)}
-              onClick={onChangeCheckbox}
+              isSelected={selectedSimulation === id}
+              onCheck={onChangeCheckbox}
               onDelete={onDeleteQueuedExperiment}
+              onSelect={onSelect}
               color={getCheckboxColor(id)}
             />
           ))}
@@ -167,6 +185,7 @@ function SimulationPanel() {
           <Button startIcon={<Add />} variant="contained" onClick={onAddSimulation}>
             Add Simulation
           </Button>
+          <Typography>Completed Simulations</Typography>
           {completedSimulations.map(({
             id,
             createdOn,
@@ -179,15 +198,18 @@ function SimulationPanel() {
               name={name}
               status={SimulationStatus.COMPLETE}
               isChecked={isChecked(id)}
-              onClick={onChangeCheckbox}
+              onCheck={onChangeCheckbox}
+              isSelected={selectedSimulation === id}
               onDelete={onDeleteSimulation}
+              onSelect={onSelect}
               color={getCheckboxColor(id)}
             />
           ))}
         </Stack>
-        <SimulationChart
-          checkedExperiments={filteredExperiments}
-        />
+        <Stack direction="column">
+          <SimulationChart simulations={filteredExperiments} />
+          <SimulationDetails simulation={idToSimulation(selectedSimulation)} />
+        </Stack>
       </Stack>
       <SimulationForm open={openForm} onClose={onCloseForm} />
     </Paper>

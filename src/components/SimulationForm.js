@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Divider,
   Input,
   InputLabel,
   MenuItem,
@@ -32,6 +31,8 @@ import {
 import SigmaInput from './inputs/SigmaInput';
 import ProbabilityInput from './inputs/ProbabilityInput';
 import defaultParameters from '../globals/defaultParameters';
+import ImageInput from './ImageInput';
+import Panel from './settingsPanels/Panel';
 
 // Create the experiments
 const genExperiment = (data) => {
@@ -43,143 +44,189 @@ const genExperiment = (data) => {
     parameters,
     stopCriteria: {
       targetFitness: 0.98,
-      maxGenerations: 2_0,
+      maxGenerations: 20_000,
     },
   };
 };
 
 function SimulationForm({ open, onClose }) {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
 
   const onSubmit = (data) => {
     // Send to database and close form
     onClose(genExperiment(data));
   };
 
+  const onImageChange = (image) => {
+    setValue('population.target', image);
+  };
+
   return (
     <Dialog open={open} onClose={() => onClose()} maxWidth="xl">
-      <DialogTitle>Experiment Form</DialogTitle>
+      <DialogTitle sx={{ py: 0.5 }}>Simulation Setup</DialogTitle>
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack direction="row">
+          <Stack direction="row" spacing={1}>
             <Box>
-              <Typography>Population</Typography>
-              <Divider />
-              <Box sx={{ display: 'flex' }}>
-                <Typography>Size: </Typography>
-                {/* <Input
-                  defaultValue={defaultParameters.population.size}
-                  {...register('population.size', { valueAsNumber: true })}
-                  inputProps={{
-                    min: 2,
-                    max: 500,
-                    step: 2,
-                    type: 'number',
-                  }}
-                /> */}
-              </Box>
-              <Typography>Selection</Typography>
-              <Divider />
-              <InputLabel id="select-label">Selection Type</InputLabel>
-              <Select
-                labelId="select-label"
-                label="Selection Type"
-                defaultValue={defaultParameters.selection.type}
-                {...register('selection.type')}
-              >
-                {Object.keys(SelectionType).map((type) => (
-                  <MenuItem key={type} value={type}>
-                    {SelectionTypeLabels[type]}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Typography>Elite Count: </Typography>
-              <Input
-                defaultValue={defaultParameters.selection.eliteCount}
-                inputProps={{
-                  min: 0,
-                  max: 500,
-                  step: 2,
-                  type: 'number',
-                }}
-                {...register('selection.eliteCount', { valueAsNumber: true })}
-              />
-              <Typography>Tournament Size: </Typography>
-              <Input
-                defaultValue={defaultParameters.selection.tournamentSize}
-                inputProps={{
-                  min: 2,
-                  max: 500,
-                  step: 2,
-                  type: 'number',
-                }}
-                {...register('selection.tournamentSize', { valueAsNumber: true })}
-              />
-              <Typography>Crossover</Typography>
-              <InputLabel id="crossover-label">Crossover Type</InputLabel>
-              <Select
-                labelId="crossover-label"
-                label="Crossover Type"
-                defaultValue={defaultParameters.crossover.type}
-                {...register('crossover.type')}
-              >
-                {Object.keys(CrossoverType).map((type) => (
-                  <MenuItem key={type} value={type}>
-                    {CrossoverTypeLabels[type]}
-                  </MenuItem>
-                ))}
-              </Select>
-              <ProbabilityInput
-                defaultValues={defaultParameters.crossover.probabilities[ProbabilityTypes.SWAP]}
-                register={register}
-                label={ProbabilityLabels[ProbabilityTypes.SWAP]}
-                path={`crossover.probabilities.${ProbabilityTypes.SWAP}`}
-              />
+              <Panel label="Population">
+                <ImageInput
+                  defaultTarget={defaultParameters.population.target}
+                  onChange={onImageChange}
+                />
+                <Input
+                  defaultValue={defaultParameters.population.target}
+                  sx={{ display: 'none' }}
+                  {...register('population.target')}
+                />
+                <Box sx={{ display: 'flex' }}>
+                  <Typography>Size: </Typography>
+                  <Input
+                    defaultValue={defaultParameters.population.size}
+                    {...register('population.size', { valueAsNumber: true })}
+                    inputProps={{
+                      min: 2,
+                      max: 500,
+                      step: 2,
+                      type: 'number',
+                    }}
+                  />
+                  <Typography>Min Polygons: </Typography>
+                  <Input
+                    defaultValue={defaultParameters.population.minPolygons}
+                    {...register('population.minPolygons', { valueAsNumber: true })}
+                    inputProps={{
+                      min: 1,
+                      max: 100,
+                      step: 1,
+                      type: 'number',
+                    }}
+                  />
+                  <Typography>Max Polygons: </Typography>
+                  <Input
+                    defaultValue={defaultParameters.population.maxPolygons}
+                    {...register('population.maxPolygons', { valueAsNumber: true })}
+                    inputProps={{
+                      min: 1,
+                      max: 100,
+                      step: 1,
+                      type: 'number',
+                    }}
+                  />
+                </Box>
+              </Panel>
+              <Panel label="Selection">
+                <Box display="inline-block">
+                  <InputLabel id="select-label">Type</InputLabel>
+                  <Select
+                    labelId="select-label"
+                    label="Selection Type"
+                    defaultValue={defaultParameters.selection.type}
+                    {...register('selection.type')}
+                  >
+                    {Object.keys(SelectionType).map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {SelectionTypeLabels[type]}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+                <Box>
+                  <Typography display="inline-block" pr={1}>Elite Count: </Typography>
+                  <Input
+                    defaultValue={defaultParameters.selection.eliteCount}
+                    inputProps={{
+                      min: 0,
+                      max: 500,
+                      step: 2,
+                      type: 'number',
+                    }}
+                    {...register('selection.eliteCount', { valueAsNumber: true })}
+                  />
+                </Box>
+                <Box>
+                  <Typography display="inline-block" pr={1}>Tournament Size: </Typography>
+                  <Input
+                    defaultValue={defaultParameters.selection.tournamentSize}
+                    inputProps={{
+                      min: 2,
+                      max: 500,
+                      step: 2,
+                      type: 'number',
+                    }}
+                    {...register('selection.tournamentSize', { valueAsNumber: true })}
+                  />
+                </Box>
+              </Panel>
+              <Panel label="Crossover">
+                <InputLabel id="crossover-label">Type</InputLabel>
+                <Select
+                  labelId="crossover-label"
+                  label="Crossover Type"
+                  defaultValue={defaultParameters.crossover.type}
+                  {...register('crossover.type')}
+                >
+                  {Object.keys(CrossoverType).map((type) => (
+                    <MenuItem key={type} value={type}>
+                      {CrossoverTypeLabels[type]}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <ProbabilityInput
+                  defaultValues={defaultParameters.crossover.probabilities[ProbabilityTypes.SWAP]}
+                  register={register}
+                  label={ProbabilityLabels[ProbabilityTypes.SWAP]}
+                  path={`crossover.probabilities.${ProbabilityTypes.SWAP}`}
+                />
+              </Panel>
             </Box>
             <Box>
-              <Typography variant="subtitle1">Mutation</Typography>
-              <Divider />
-              <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
-                <Box>
-                  <Typography>Distributions</Typography>
-                </Box>
-                <Box>
-                  <SigmaInput
-                    label={DistSigmaLabels[DistributionTypes.COLOR_SIGMA]}
-                    defaultValue={0.01}
-                    {...register(`mutation.${DistributionTypes.COLOR_SIGMA}`, { valueAsNumber: true })}
-                  />
-                  <SigmaInput
-                    label={DistSigmaLabels[DistributionTypes.POINT_SIGMA]}
-                    defaultValue={0.01}
-                    {...register(`mutation.${DistributionTypes.POINT_SIGMA}`, { valueAsNumber: true })}
-                  />
-                  <SigmaInput
-                    label={DistSigmaLabels[DistributionTypes.PERMUTE_SIGMA]}
-                    defaultValue={0.01}
-                    {...register(`mutation.${DistributionTypes.PERMUTE_SIGMA}`, { valueAsNumber: true })}
-                  />
-                </Box>
-              </Stack>
-              <Stack direction="row" sx={{ justifyContent: 'space-between', pt: 1 }}>
-                <Box sx={{ pr: 1 }}>
-                  <Typography>Probabilities</Typography>
-                </Box>
-                <Stack direction="column" sx={{ alignItems: 'end' }}>
-                  {MutationProbabilities.map((key) => (
-                    <ProbabilityInput
-                      key={key}
-                      defaultValues={defaultParameters.mutation.probabilities[key]}
-                      register={register}
-                      label={ProbabilityLabels[key]}
-                      path={`mutation.probabilities.${key}`}
+              <Panel label="Mutation">
+                <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
+                  <Box>
+                    <Typography>Distributions</Typography>
+                  </Box>
+                  <Box>
+                    <SigmaInput
+                      label={DistSigmaLabels[DistributionTypes.COLOR_SIGMA]}
+                      defaultValue={0.01}
+                      {...register(`mutation.${DistributionTypes.COLOR_SIGMA}`, { valueAsNumber: true })}
                     />
-                  ))}
+                    <SigmaInput
+                      label={DistSigmaLabels[DistributionTypes.POINT_SIGMA]}
+                      defaultValue={0.01}
+                      {...register(`mutation.${DistributionTypes.POINT_SIGMA}`, { valueAsNumber: true })}
+                    />
+                    <SigmaInput
+                      label={DistSigmaLabels[DistributionTypes.PERMUTE_SIGMA]}
+                      defaultValue={0.01}
+                      {...register(`mutation.${DistributionTypes.PERMUTE_SIGMA}`, { valueAsNumber: true })}
+                    />
+                  </Box>
                 </Stack>
-              </Stack>
+                <Stack direction="row" sx={{ justifyContent: 'space-between', pt: 1 }}>
+                  <Box sx={{ pr: 1 }}>
+                    <Typography>Probabilities</Typography>
+                  </Box>
+                  <Stack direction="column" sx={{ alignItems: 'end' }}>
+                    {MutationProbabilities.map((key) => (
+                      <ProbabilityInput
+                        key={key}
+                        defaultValues={defaultParameters.mutation.probabilities[key]}
+                        register={register}
+                        label={ProbabilityLabels[key]}
+                        path={`mutation.probabilities.${key}`}
+                      />
+                    ))}
+                  </Stack>
+                </Stack>
+              </Panel>
+              <Panel label="Stop Criteria">
+                <Typography>Max Generations</Typography>
+                <Typography>Target Fitness</Typography>
+              </Panel>
+              <Button type="submit" variant="contained">Save</Button>
             </Box>
           </Stack>
-          <Button type="submit" variant="contained">Save</Button>
         </form>
       </DialogContent>
     </Dialog>

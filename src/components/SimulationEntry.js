@@ -16,22 +16,25 @@ function SimulationEntry({
   createdOn,
   name,
   isChecked,
-  onClick,
+  onCheck,
   onDelete,
+  onSelect,
   color,
+  isSelected,
   status,
 }) {
   const theme = useTheme();
   const hasCheckbox = status !== SimulationStatus.PENDING;
   const hasDelete = status !== SimulationStatus.RUNNING;
+  const elevation = isSelected ? 8 : 2;
 
   return (
-    <Paper elevation={2} sx={{ px: 1 }}>
-      <Stack direction="row">
+    <Paper elevation={elevation} sx={{ px: 1 }} onClick={() => onSelect(id)}>
+      <Stack direction="row" sx={{ alignItems: 'center' }}>
         {hasCheckbox && (
           <Checkbox
             checked={isChecked}
-            onClick={(event) => onClick(event, id)}
+            onClick={(event) => onCheck(event, id)}
             sx={{
               color: color || theme.palette.primary.main,
               '&.Mui-checked': {
@@ -60,15 +63,19 @@ SimulationEntry.propTypes = {
   name: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
   isChecked: PropTypes.bool,
-  onClick: PropTypes.func,
+  isSelected: PropTypes.bool,
+  onCheck: PropTypes.func,
   onDelete: PropTypes.func,
+  onSelect: PropTypes.func,
   color: PropTypes.string,
 };
 
 SimulationEntry.defaultProps = {
   isChecked: false,
-  onClick: () => {},
+  isSelected: false,
+  onCheck: () => {},
   onDelete: () => {},
+  onSelect: () => {},
   color: null,
 };
 

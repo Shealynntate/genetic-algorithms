@@ -14,6 +14,7 @@ import {
   addImageToDatabase,
   addResultsToCurrentSimulation,
   getNextPendingSimulation,
+  setCurrentSimulation,
   updateCurrentSimulation,
 } from '../../globals/database';
 import { approxEqual } from '../../globals/statsUtils';
@@ -171,7 +172,9 @@ function* runSimulationSaga({ parameters, stopCriteria }) {
 }
 
 function* runSimulationsSaga() {
+  // TODO: Combine into one call
   let pendingSimulation = yield getNextPendingSimulation();
+  yield setCurrentSimulation(pendingSimulation.id);
 
   while (pendingSimulation) {
     const doContinue = yield call(runSimulationSaga, pendingSimulation);
@@ -179,8 +182,10 @@ function* runSimulationsSaga() {
     if (!doContinue) return;
 
     pendingSimulation = yield getNextPendingSimulation();
+    yield setCurrentSimulation(pendingSimulation.id);
   }
 
+  yield setCurrentSimulation(null);
   yield put(endSimulations());
 }
 

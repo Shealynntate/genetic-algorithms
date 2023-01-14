@@ -1,12 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
 import { Alert, Box, Snackbar } from '@mui/material';
-import React, { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useDispatch, useSelector } from 'react-redux';
-import { useDisableSettings } from '../hooks';
 import { AlertState, canvasParameters } from '../constants';
-import { setTarget } from '../features/parameters/parametersSlice';
 import { createImageData, fileToBase64 } from '../globals/utils';
 import Canvas from './Canvas';
 
@@ -17,11 +15,9 @@ const AlertMessage = {
   warning: 'Only single, image files (.png, .jpg, .jpeg) are accepted',
 };
 
-function ImageInput() {
+function ImageInput({ defaultTarget, onChange }) {
   const theme = useTheme();
-  const dispatch = useDispatch();
-  const isDisabled = useDisableSettings();
-  const target = useSelector((state) => state.parameters.population.target);
+  const [target, setTarget] = useState(defaultTarget);
   const [imageData, setImageData] = useState();
   const [alertState, setAlertState] = useState();
 
@@ -48,7 +44,8 @@ function ImageInput() {
       if (acceptedFiles[0]) {
         try {
           const data = await fileToBase64(acceptedFiles[0]);
-          dispatch(setTarget(data));
+          setTarget(data);
+          onChange(data);
         } catch (error) {
           setAlertState(AlertState.error);
         }
@@ -57,7 +54,6 @@ function ImageInput() {
     onDropRejected: () => {
       setAlertState(AlertState.warning);
     },
-    disabled: isDisabled,
     maxFiles: 1,
   });
 
@@ -80,5 +76,14 @@ function ImageInput() {
     </Box>
   );
 }
+
+ImageInput.propTypes = {
+  defaultTarget: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
+};
+
+ImageInput.defaultProps = {
+  onChange: () => {},
+};
 
 export default ImageInput;
