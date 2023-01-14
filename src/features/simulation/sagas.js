@@ -29,6 +29,7 @@ import {
   resumeSimulations,
   runSimulations,
 } from '../ux/uxSlice';
+import { setSimulationParameters } from '../parameters/parametersSlice';
 
 function* restorePopulationSaga({ payload: populationData }) {
   const target = yield select((state) => state.parameters.target);
@@ -85,7 +86,7 @@ function* generationResultsCheckSaga({
   return false;
 }
 
-function* runSimulationSaga({ parameters, stopCriteria }) {
+function* runSimulationSaga({ parameters }) {
   const populationService = yield getContext('population');
   let population = populationService.getPopulation();
 
@@ -119,6 +120,7 @@ function* runSimulationSaga({ parameters, stopCriteria }) {
     status: SimulationStatus.RUNNING,
     population: population.serialize(),
   });
+  yield put(setSimulationParameters({ parameters }));
   // Run the experiment in a loop until one of the stop criteria is met
   while (true) {
     // If the experiment has been paused, wait until a resume or reset action has been fired
@@ -164,7 +166,7 @@ function* runSimulationSaga({ parameters, stopCriteria }) {
     const result = yield call(generationResultsCheckSaga, {
       currentBest: { organism, genId: stats.genId },
       stats,
-      stopCriteria,
+      stopCriteria: parameters.stopCriteria,
     });
     // The experiment has met one of the stop criteria, signal that it's complete
     if (result) return true;
@@ -177,12 +179,12 @@ function* runSimulationsSaga() {
   yield setCurrentSimulation(pendingSimulation.id);
 
   while (pendingSimulation) {
+    yield setCurrentSimulation(pendingSimulation.id);
     const doContinue = yield call(runSimulationSaga, pendingSimulation);
     // If user reset simulations, exit early and don't mark them complete
     if (!doContinue) return;
 
     pendingSimulation = yield getNextPendingSimulation();
-    yield setCurrentSimulation(pendingSimulation.id);
   }
 
   yield setCurrentSimulation(null);

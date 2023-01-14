@@ -79,6 +79,10 @@ const parameters = {
       },
     },
   },
+  stopCriteria: {
+    targetFitness: 1,
+    maxGenerations: 20_000,
+  },
 };
 
 export default parameters;

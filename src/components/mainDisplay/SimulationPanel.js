@@ -11,7 +11,6 @@ import { useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
 import _ from 'lodash';
 import {
-  deleteSimulation,
   insertSimulation,
   useGetCompletedSimulations,
   useGetCurrentSimulation,
@@ -87,17 +86,12 @@ function SimulationPanel() {
     setOpenForm(true);
   };
 
-  const onDeleteSimulation = (id) => {
-    deleteSimulation(id);
-  };
-
-  const onCloseForm = (data) => {
+  const onCloseForm = (parameters) => {
     setOpenForm(false);
-    if (data) {
+    if (parameters) {
       insertSimulation({
-        parameters: data.parameters,
+        parameters,
         status: SimulationStatus.PENDING,
-        stopCriteria: data.stopCriteria,
       });
     }
   };
@@ -127,10 +121,6 @@ function SimulationPanel() {
     return lineColors[index % lineColors.length];
   };
 
-  const onDeleteQueuedExperiment = (id) => {
-    deleteSimulation(id);
-  };
-
   return (
     <Paper>
       <Stack direction="row">
@@ -150,7 +140,6 @@ function SimulationPanel() {
                 isChecked={isChecked(runningSimulation.id)}
                 isSelected={selectedSimulation === runningSimulation.id}
                 onCheck={onChangeCheckbox}
-                onDelete={onDeleteQueuedExperiment}
                 onSelect={onSelect}
                 color={getCheckboxColor(runningSimulation.id)}
               />
@@ -176,7 +165,6 @@ function SimulationPanel() {
               isChecked={isChecked(id)}
               isSelected={selectedSimulation === id}
               onCheck={onChangeCheckbox}
-              onDelete={onDeleteQueuedExperiment}
               onSelect={onSelect}
               color={getCheckboxColor(id)}
             />
@@ -200,7 +188,6 @@ function SimulationPanel() {
               isChecked={isChecked(id)}
               onCheck={onChangeCheckbox}
               isSelected={selectedSimulation === id}
-              onDelete={onDeleteSimulation}
               onSelect={onSelect}
               color={getCheckboxColor(id)}
             />

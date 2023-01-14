@@ -15,7 +15,6 @@ import {
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import _ from 'lodash';
 import {
   CrossoverType,
   DistSigmaLabels,
@@ -27,34 +26,25 @@ import {
   SelectionTypeLabels,
   CrossoverTypeLabels,
 } from '../constants';
-// import ProbabilityInput from './inputs/ProbabilityInput';
 import SigmaInput from './inputs/SigmaInput';
 import ProbabilityInput from './inputs/ProbabilityInput';
 import defaultParameters from '../globals/defaultParameters';
 import ImageInput from './ImageInput';
 import Panel from './settingsPanels/Panel';
 
-// Create the experiments
-const genExperiment = (data) => {
-  const parameters = _.cloneDeep(defaultParameters);
-  Object.keys(data).forEach((path) => {
-    _.set(parameters, path, data[path]);
-  });
-  return {
-    parameters,
-    stopCriteria: {
-      targetFitness: 0.98,
-      maxGenerations: 20_000,
-    },
-  };
-};
-
 function SimulationForm({ open, onClose }) {
   const { register, handleSubmit, setValue } = useForm();
+  const {
+    population,
+    selection,
+    crossover,
+    mutation,
+    stopCriteria,
+  } = defaultParameters;
 
   const onSubmit = (data) => {
     // Send to database and close form
-    onClose(genExperiment(data));
+    onClose(data);
   };
 
   const onImageChange = (image) => {
@@ -70,18 +60,18 @@ function SimulationForm({ open, onClose }) {
             <Box>
               <Panel label="Population">
                 <ImageInput
-                  defaultTarget={defaultParameters.population.target}
+                  defaultTarget={population.target}
                   onChange={onImageChange}
                 />
                 <Input
-                  defaultValue={defaultParameters.population.target}
+                  defaultValue={population.target}
                   sx={{ display: 'none' }}
                   {...register('population.target')}
                 />
                 <Box sx={{ display: 'flex' }}>
                   <Typography>Size: </Typography>
                   <Input
-                    defaultValue={defaultParameters.population.size}
+                    defaultValue={population.size}
                     {...register('population.size', { valueAsNumber: true })}
                     inputProps={{
                       min: 2,
@@ -92,7 +82,7 @@ function SimulationForm({ open, onClose }) {
                   />
                   <Typography>Min Polygons: </Typography>
                   <Input
-                    defaultValue={defaultParameters.population.minPolygons}
+                    defaultValue={population.minPolygons}
                     {...register('population.minPolygons', { valueAsNumber: true })}
                     inputProps={{
                       min: 1,
@@ -103,7 +93,7 @@ function SimulationForm({ open, onClose }) {
                   />
                   <Typography>Max Polygons: </Typography>
                   <Input
-                    defaultValue={defaultParameters.population.maxPolygons}
+                    defaultValue={population.maxPolygons}
                     {...register('population.maxPolygons', { valueAsNumber: true })}
                     inputProps={{
                       min: 1,
@@ -120,7 +110,7 @@ function SimulationForm({ open, onClose }) {
                   <Select
                     labelId="select-label"
                     label="Selection Type"
-                    defaultValue={defaultParameters.selection.type}
+                    defaultValue={selection.type}
                     {...register('selection.type')}
                   >
                     {Object.keys(SelectionType).map((type) => (
@@ -133,7 +123,7 @@ function SimulationForm({ open, onClose }) {
                 <Box>
                   <Typography display="inline-block" pr={1}>Elite Count: </Typography>
                   <Input
-                    defaultValue={defaultParameters.selection.eliteCount}
+                    defaultValue={selection.eliteCount}
                     inputProps={{
                       min: 0,
                       max: 500,
@@ -146,7 +136,7 @@ function SimulationForm({ open, onClose }) {
                 <Box>
                   <Typography display="inline-block" pr={1}>Tournament Size: </Typography>
                   <Input
-                    defaultValue={defaultParameters.selection.tournamentSize}
+                    defaultValue={selection.tournamentSize}
                     inputProps={{
                       min: 2,
                       max: 500,
@@ -162,7 +152,7 @@ function SimulationForm({ open, onClose }) {
                 <Select
                   labelId="crossover-label"
                   label="Crossover Type"
-                  defaultValue={defaultParameters.crossover.type}
+                  defaultValue={crossover.type}
                   {...register('crossover.type')}
                 >
                   {Object.keys(CrossoverType).map((type) => (
@@ -172,7 +162,7 @@ function SimulationForm({ open, onClose }) {
                   ))}
                 </Select>
                 <ProbabilityInput
-                  defaultValues={defaultParameters.crossover.probabilities[ProbabilityTypes.SWAP]}
+                  defaultValues={crossover.probabilities[ProbabilityTypes.SWAP]}
                   register={register}
                   label={ProbabilityLabels[ProbabilityTypes.SWAP]}
                   path={`crossover.probabilities.${ProbabilityTypes.SWAP}`}
@@ -211,7 +201,7 @@ function SimulationForm({ open, onClose }) {
                     {MutationProbabilities.map((key) => (
                       <ProbabilityInput
                         key={key}
-                        defaultValues={defaultParameters.mutation.probabilities[key]}
+                        defaultValues={mutation.probabilities[key]}
                         register={register}
                         label={ProbabilityLabels[key]}
                         path={`mutation.probabilities.${key}`}
@@ -222,7 +212,27 @@ function SimulationForm({ open, onClose }) {
               </Panel>
               <Panel label="Stop Criteria">
                 <Typography>Max Generations</Typography>
+                <Input
+                  defaultValue={stopCriteria.maxGenerations}
+                  {...register('stopCriteria.maxGenerations', { valueAsNumber: true })}
+                  inputProps={{
+                    min: 1,
+                    max: 100_000,
+                    step: 1,
+                    type: 'number',
+                  }}
+                />
                 <Typography>Target Fitness</Typography>
+                <Input
+                  defaultValue={stopCriteria.targetFitness}
+                  {...register('stopCriteria.targetFitness', { valueAsNumber: true })}
+                  inputProps={{
+                    min: 0,
+                    max: 1,
+                    step: 0.001,
+                    type: 'number',
+                  }}
+                />
               </Panel>
               <Button type="submit" variant="contained">Save</Button>
             </Box>

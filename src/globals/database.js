@@ -13,7 +13,6 @@ const simulationsFields = [
   'name',
   'lastUpdated',
   // 'parameters',
-  // 'stopCriteria',
   // 'results',
   // 'population',
 ];
@@ -27,14 +26,13 @@ const imagesFields = [
 ];
 
 const db = new Dexie(databaseName);
-let currentSimulationId = '';
+let currentSimulationId = null;
 
 // Simulations Table
 // --------------------------------------------------
 export async function insertSimulation({
   population,
   parameters,
-  stopCriteria,
   status = SimulationStatus.UNKNOWN,
 }) {
   return db[simulationsTable].add({
@@ -42,7 +40,6 @@ export async function insertSimulation({
     population,
     parameters,
     status,
-    stopCriteria,
     results: [],
     createdOn: Date.now(),
     lastUpdated: Date.now(),
@@ -73,7 +70,6 @@ export const updateSimulation = (id, params) => {
     'population',
     'parameters',
     'status',
-    'stopCriteria',
     'name',
     'results',
   ]);
@@ -176,6 +172,8 @@ export function addImageToDatabase(genId, maxFitOrganism) {
 }
 
 export async function getCurrentImages() {
+  if (currentSimulationId == null) return [];
+
   return db[imagesTable].where('simulationId').equals(currentSimulationId).toArray();
 }
 
@@ -195,7 +193,11 @@ export async function clearDatabase() {
 // Hooks
 // --------------------------------------------------
 export const useImageDbQuery = () => useLiveQuery(
-  () => db[imagesTable].where('simulationId').equals(currentSimulationId).toArray(),
+  () => {
+    if (currentSimulationId == null) return [];
+
+    return db[imagesTable].where('simulationId').equals(currentSimulationId).toArray();
+  },
   [currentSimulationId],
 );
 

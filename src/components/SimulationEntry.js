@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SimulationStatus } from '../constants';
+import { deleteSimulation } from '../globals/database';
 
 function SimulationEntry({
   id,
@@ -17,7 +18,6 @@ function SimulationEntry({
   name,
   isChecked,
   onCheck,
-  onDelete,
   onSelect,
   color,
   isSelected,
@@ -28,8 +28,13 @@ function SimulationEntry({
   const hasDelete = status !== SimulationStatus.RUNNING;
   const elevation = isSelected ? 8 : 2;
 
+  const onDelete = (event) => {
+    event.stopPropagation();
+    deleteSimulation(id);
+  };
+
   return (
-    <Paper elevation={elevation} sx={{ px: 1 }} onClick={() => onSelect(id)}>
+    <Paper elevation={elevation} sx={{ p: 1 }} onClick={() => onSelect(id)}>
       <Stack direction="row" sx={{ alignItems: 'center' }}>
         {hasCheckbox && (
           <Checkbox
@@ -48,7 +53,7 @@ function SimulationEntry({
           {new Date(createdOn).toLocaleString()}
         </Typography>
         {hasDelete && (
-          <IconButton color="error" onClick={() => onDelete(id)}>
+          <IconButton color="error" onClick={onDelete}>
             <DeleteIcon />
           </IconButton>
         )}
@@ -65,7 +70,6 @@ SimulationEntry.propTypes = {
   isChecked: PropTypes.bool,
   isSelected: PropTypes.bool,
   onCheck: PropTypes.func,
-  onDelete: PropTypes.func,
   onSelect: PropTypes.func,
   color: PropTypes.string,
 };
@@ -74,7 +78,6 @@ SimulationEntry.defaultProps = {
   isChecked: false,
   isSelected: false,
   onCheck: () => {},
-  onDelete: () => {},
   onSelect: () => {},
   color: null,
 };
