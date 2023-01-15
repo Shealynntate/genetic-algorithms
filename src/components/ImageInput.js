@@ -15,11 +15,18 @@ const AlertMessage = {
   warning: 'Only single, image files (.png, .jpg, .jpeg) are accepted',
 };
 
-function ImageInput({ defaultTarget, onChange }) {
+function ImageInput({ defaultTarget, onChange, readOnly }) {
   const theme = useTheme();
   const [target, setTarget] = useState(defaultTarget);
   const [imageData, setImageData] = useState();
   const [alertState, setAlertState] = useState();
+
+  useEffect(() => {
+    // If in readOnly mode, the defaultTarget can change
+    if (readOnly && target !== defaultTarget) {
+      setTarget(defaultTarget);
+    }
+  }, [defaultTarget]);
 
   useEffect(() => {
     let isMounted = true;
@@ -55,6 +62,7 @@ function ImageInput({ defaultTarget, onChange }) {
       setAlertState(AlertState.warning);
     },
     maxFiles: 1,
+    disabled: readOnly,
   });
 
   return (
@@ -68,7 +76,7 @@ function ImageInput({ defaultTarget, onChange }) {
         border: `1px dashed ${theme.palette.grey[600]}`,
       }}
     >
-      <input {...getInputProps()} />
+      <input {...getInputProps()} disabled={readOnly} />
       <Canvas width={width} height={height} imageData={imageData} />
       <Snackbar open={!!alertState} autoHideDuration={6e3} onClose={() => setAlertState()}>
         {alertState && <Alert severity={alertState}>{AlertMessage[alertState]}</Alert>}
@@ -80,10 +88,12 @@ function ImageInput({ defaultTarget, onChange }) {
 ImageInput.propTypes = {
   defaultTarget: PropTypes.string.isRequired,
   onChange: PropTypes.func,
+  readOnly: PropTypes.bool,
 };
 
 ImageInput.defaultProps = {
   onChange: () => {},
+  readOnly: false,
 };
 
 export default ImageInput;

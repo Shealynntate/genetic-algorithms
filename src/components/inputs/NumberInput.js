@@ -5,7 +5,7 @@ import { Input, Stack, Typography } from '@mui/material';
 import _ from 'lodash';
 import defaultParameters, { ParameterBounds, ParameterLabels } from '../../globals/defaultParameters';
 
-function NumberInput({ path, register }) {
+function NumberInput({ path, register, readOnly }) {
   const { min, max, step } = _.get(ParameterBounds, path);
 
   return (
@@ -14,6 +14,7 @@ function NumberInput({ path, register }) {
       <Input
         defaultValue={_.get(defaultParameters, path)}
         {...register(path, { valueAsNumber: true })}
+        readOnly={readOnly}
         inputProps={{
           min,
           max,
@@ -28,6 +29,11 @@ function NumberInput({ path, register }) {
 NumberInput.propTypes = {
   path: PropTypes.string.isRequired,
   register: PropTypes.func.isRequired,
+  readOnly: PropTypes.bool,
+};
+
+NumberInput.defaultProps = {
+  readOnly: false,
 };
 
 export default NumberInput;

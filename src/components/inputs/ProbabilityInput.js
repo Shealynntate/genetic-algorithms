@@ -13,6 +13,7 @@ function ProbabilityInput({
   label,
   path,
   register,
+  readOnly,
 }) {
   const {
     startValue, endValue, startFitness, endFitness,
@@ -23,6 +24,7 @@ function ProbabilityInput({
       <Stack sx={{ textAlign: 'center' }}>
         <Input
           defaultValue={startValue}
+          readOnly={readOnly}
           {...register(`${path}.startValue`, { valueAsNumber: true })}
           inputProps={{
             min: 0,
@@ -33,6 +35,7 @@ function ProbabilityInput({
         />
         <Input
           defaultValue={startFitness}
+          readOnly={readOnly}
           {...register(`${path}.startFitness`, { valueAsNumber: true })}
           inputProps={{
             min: 0,
@@ -49,6 +52,7 @@ function ProbabilityInput({
       <Stack>
         <Input
           defaultValue={endValue}
+          readOnly={readOnly}
           {...register(`${path}.endValue`, { valueAsNumber: true })}
           inputProps={{
             min: 0,
@@ -59,6 +63,7 @@ function ProbabilityInput({
         />
         <Input
           defaultValue={endFitness}
+          readOnly={readOnly}
           {...register(`${path}.endFitness`, { valueAsNumber: true })}
           inputProps={{
             min: 0,
@@ -82,6 +87,11 @@ ProbabilityInput.propTypes = {
   label: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
   register: PropTypes.func.isRequired,
+  readOnly: PropTypes.bool,
+};
+
+ProbabilityInput.defaultProps = {
+  readOnly: false,
 };
 
 export default ProbabilityInput;

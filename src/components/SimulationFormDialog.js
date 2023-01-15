@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import SimulationForm from './SimulationForm';
 
-function SimulationDialog({ open, onClose }) {
+function SimulationFormDialog({ open, onClose }) {
+  // Send to database and close form
   const onSubmit = (data) => {
     onClose(data);
   };
@@ -20,14 +21,14 @@ function SimulationDialog({ open, onClose }) {
   );
 }
 
-SimulationDialog.propTypes = {
+SimulationFormDialog.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func,
 };
 
-SimulationDialog.defaultProps = {
+SimulationFormDialog.defaultProps = {
   open: false,
   onClose: () => {},
 };
 
-export default SimulationDialog;
+export default SimulationFormDialog;

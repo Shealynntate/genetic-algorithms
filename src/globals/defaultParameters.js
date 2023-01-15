@@ -1,4 +1,5 @@
-import defaultTarget from '../assets/mona_lisa.jpeg';
+// import defaultTarget from '../assets/mona_lisa.jpeg';
+import defaultTarget from '../assets/composition_II.png';
 import {
   CrossoverType,
   DistributionTypes,

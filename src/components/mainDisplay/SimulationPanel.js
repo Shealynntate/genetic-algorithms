@@ -16,7 +16,6 @@ import {
   useGetCurrentSimulation,
   useGetPendingSimulations,
 } from '../../globals/database';
-import SimulationForm from '../SimulationForm';
 import { canvasParameters, SimulationStatus } from '../../constants';
 import { createImageData } from '../../globals/utils';
 import Canvas from '../Canvas';
@@ -25,6 +24,7 @@ import SimulationChart from '../SimulationChart';
 import SimulationButtons from '../SimulationButtons';
 import SimulationEntry from '../SimulationEntry';
 import SimulationDetails from '../SimulationDetails';
+import SimulationFormDialog from '../SimulationFormDialog';
 
 const { width, height } = canvasParameters;
 
@@ -198,7 +198,7 @@ function SimulationPanel() {
           <SimulationDetails simulation={idToSimulation(selectedSimulation)} />
         </Stack>
       </Stack>
-      <SimulationForm open={openForm} onClose={onCloseForm} />
+      <SimulationFormDialog open={openForm} onClose={onCloseForm} />
     </Paper>
   );
 }

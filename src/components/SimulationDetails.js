@@ -1,31 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import { ParametersType } from '../types';
+import SimulationForm from './SimulationForm';
 
 function SimulationDetails({ simulation }) {
   if (!simulation) return null;
 
-  const { id, name } = simulation;
+  const { id, name, parameters } = simulation;
 
   return (
     <Box>
       <Typography>{`${id}. ${name}`}</Typography>
-      <Stack direction="row">
-        <Stack>
-          <Typography>Population</Typography>
-          <Typography>Selection</Typography>
-        </Stack>
-        <Stack>
-          <Typography>Crossover</Typography>
-          <Typography>Mutation</Typography>
-        </Stack>
-      </Stack>
+      <SimulationForm readOnly defaultValues={parameters} />
     </Box>
   );
 }
 
 SimulationDetails.propTypes = {
-  simulation: PropTypes.objectOf(PropTypes.number),
+  simulation: PropTypes.shape(ParametersType),
 };
 
 SimulationDetails.defaultProps = {

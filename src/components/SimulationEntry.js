@@ -64,7 +64,7 @@ function SimulationEntry({
 
 SimulationEntry.propTypes = {
   id: PropTypes.number.isRequired,
-  createdOn: PropTypes.string.isRequired,
+  createdOn: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
   isChecked: PropTypes.bool,

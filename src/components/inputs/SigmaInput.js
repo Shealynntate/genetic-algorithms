@@ -8,6 +8,7 @@ const SigmaInput = forwardRef(({
   name,
   onBlur,
   onChange,
+  readOnly,
 }, ref) => (
   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
     <Typography sx={{ pr: 2 }}>{label}</Typography>
@@ -17,6 +18,7 @@ const SigmaInput = forwardRef(({
       onChange={onChange}
       name={name}
       ref={ref}
+      readOnly={readOnly}
       inputProps={{
         min: 0,
         max: 1,
@@ -33,6 +35,7 @@ SigmaInput.propTypes = {
   onBlur: PropTypes.func,
   onChange: PropTypes.func,
   name: PropTypes.string.isRequired,
+  readOnly: PropTypes.bool,
 };
 
 SigmaInput.defaultProps = {
@@ -40,6 +43,7 @@ SigmaInput.defaultProps = {
   label: '',
   onBlur: () => {},
   onChange: () => {},
+  readOnly: false,
 };
 
 export default SigmaInput;
