@@ -31,6 +31,7 @@ import ProbabilityInput from './inputs/ProbabilityInput';
 import defaultParameters from '../globals/defaultParameters';
 import ImageInput from './ImageInput';
 import Panel from './settingsPanels/Panel';
+import NumberInput from './inputs/NumberInput';
 
 function SimulationForm({ open, onClose }) {
   const { register, handleSubmit, setValue } = useForm();
@@ -39,7 +40,6 @@ function SimulationForm({ open, onClose }) {
     selection,
     crossover,
     mutation,
-    stopCriteria,
   } = defaultParameters;
 
   const onSubmit = (data) => {
@@ -59,93 +59,89 @@ function SimulationForm({ open, onClose }) {
           <Stack direction="row" spacing={1}>
             <Box>
               <Panel label="Population">
-                <ImageInput
-                  defaultTarget={population.target}
-                  onChange={onImageChange}
-                />
-                <Input
-                  defaultValue={population.target}
-                  sx={{ display: 'none' }}
-                  {...register('population.target')}
-                />
-                <Box sx={{ display: 'flex' }}>
-                  <Typography>Size: </Typography>
-                  <Input
-                    defaultValue={population.size}
-                    {...register('population.size', { valueAsNumber: true })}
-                    inputProps={{
-                      min: 2,
-                      max: 500,
-                      step: 2,
-                      type: 'number',
-                    }}
+                <Stack direction="row">
+                  <ImageInput
+                    defaultTarget={population.target}
+                    onChange={onImageChange}
                   />
-                  <Typography>Min Polygons: </Typography>
                   <Input
-                    defaultValue={population.minPolygons}
-                    {...register('population.minPolygons', { valueAsNumber: true })}
-                    inputProps={{
-                      min: 1,
-                      max: 100,
-                      step: 1,
-                      type: 'number',
-                    }}
+                    defaultValue={population.target}
+                    sx={{ display: 'none' }}
+                    {...register('population.target')}
                   />
-                  <Typography>Max Polygons: </Typography>
-                  <Input
-                    defaultValue={population.maxPolygons}
-                    {...register('population.maxPolygons', { valueAsNumber: true })}
-                    inputProps={{
-                      min: 1,
-                      max: 100,
-                      step: 1,
-                      type: 'number',
-                    }}
-                  />
-                </Box>
+                  <Stack direction="column">
+                    <NumberInput path="population.size" register={register} />
+                    <Typography>Min Polygons: </Typography>
+                    <Input
+                      defaultValue={population.minPolygons}
+                      {...register('population.minPolygons', { valueAsNumber: true })}
+                      inputProps={{
+                        min: 1,
+                        max: 100,
+                        step: 1,
+                        type: 'number',
+                      }}
+                    />
+                    <Typography>Max Polygons: </Typography>
+                    <Input
+                      defaultValue={population.maxPolygons}
+                      {...register('population.maxPolygons', { valueAsNumber: true })}
+                      inputProps={{
+                        min: 1,
+                        max: 100,
+                        step: 1,
+                        type: 'number',
+                      }}
+                    />
+                  </Stack>
+                </Stack>
               </Panel>
               <Panel label="Selection">
-                <Box display="inline-block">
-                  <InputLabel id="select-label">Type</InputLabel>
-                  <Select
-                    labelId="select-label"
-                    label="Selection Type"
-                    defaultValue={selection.type}
-                    {...register('selection.type')}
-                  >
-                    {Object.keys(SelectionType).map((type) => (
-                      <MenuItem key={type} value={type}>
-                        {SelectionTypeLabels[type]}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Box>
-                <Box>
-                  <Typography display="inline-block" pr={1}>Elite Count: </Typography>
-                  <Input
-                    defaultValue={selection.eliteCount}
-                    inputProps={{
-                      min: 0,
-                      max: 500,
-                      step: 2,
-                      type: 'number',
-                    }}
-                    {...register('selection.eliteCount', { valueAsNumber: true })}
-                  />
-                </Box>
-                <Box>
-                  <Typography display="inline-block" pr={1}>Tournament Size: </Typography>
-                  <Input
-                    defaultValue={selection.tournamentSize}
-                    inputProps={{
-                      min: 2,
-                      max: 500,
-                      step: 2,
-                      type: 'number',
-                    }}
-                    {...register('selection.tournamentSize', { valueAsNumber: true })}
-                  />
-                </Box>
+                <Stack direction="row">
+                  <Box display="inline-block">
+                    <InputLabel id="select-label">Type</InputLabel>
+                    <Select
+                      labelId="select-label"
+                      label="Selection Type"
+                      defaultValue={selection.type}
+                      {...register('selection.type')}
+                    >
+                      {Object.keys(SelectionType).map((type) => (
+                        <MenuItem key={type} value={type}>
+                          {SelectionTypeLabels[type]}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Box>
+                  <Box>
+                    <Box>
+                      <Typography display="inline-block" pr={1}>Elite Count: </Typography>
+                      <Input
+                        defaultValue={selection.eliteCount}
+                        inputProps={{
+                          min: 0,
+                          max: 500,
+                          step: 2,
+                          type: 'number',
+                        }}
+                        {...register('selection.eliteCount', { valueAsNumber: true })}
+                      />
+                    </Box>
+                    <Box>
+                      <Typography display="inline-block" pr={1}>Tournament Size: </Typography>
+                      <Input
+                        defaultValue={selection.tournamentSize}
+                        inputProps={{
+                          min: 2,
+                          max: 500,
+                          step: 2,
+                          type: 'number',
+                        }}
+                        {...register('selection.tournamentSize', { valueAsNumber: true })}
+                      />
+                    </Box>
+                  </Box>
+                </Stack>
               </Panel>
               <Panel label="Crossover">
                 <InputLabel id="crossover-label">Type</InputLabel>
@@ -167,6 +163,10 @@ function SimulationForm({ open, onClose }) {
                   label={ProbabilityLabels[ProbabilityTypes.SWAP]}
                   path={`crossover.probabilities.${ProbabilityTypes.SWAP}`}
                 />
+              </Panel>
+              <Panel label="Stop Criteria">
+                <NumberInput path="stopCriteria.targetFitness" register={register} />
+                <NumberInput path="stopCriteria.maxGenerations" register={register} />
               </Panel>
             </Box>
             <Box>
@@ -209,30 +209,6 @@ function SimulationForm({ open, onClose }) {
                     ))}
                   </Stack>
                 </Stack>
-              </Panel>
-              <Panel label="Stop Criteria">
-                <Typography>Max Generations</Typography>
-                <Input
-                  defaultValue={stopCriteria.maxGenerations}
-                  {...register('stopCriteria.maxGenerations', { valueAsNumber: true })}
-                  inputProps={{
-                    min: 1,
-                    max: 100_000,
-                    step: 1,
-                    type: 'number',
-                  }}
-                />
-                <Typography>Target Fitness</Typography>
-                <Input
-                  defaultValue={stopCriteria.targetFitness}
-                  {...register('stopCriteria.targetFitness', { valueAsNumber: true })}
-                  inputProps={{
-                    min: 0,
-                    max: 1,
-                    step: 0.001,
-                    type: 'number',
-                  }}
-                />
               </Panel>
               <Button type="submit" variant="contained">Save</Button>
             </Box>

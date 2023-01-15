@@ -7,6 +7,69 @@ import {
   targetFitness,
 } from '../constants';
 
+export const ParameterBounds = {
+  population: {
+    size: {
+      min: 2,
+      max: 500,
+      step: 2,
+    },
+  },
+  selection: {},
+  crossover: {},
+  mutation: {},
+  stopCriteria: {
+    targetFitness: {
+      min: 0,
+      max: 1,
+      step: 0.001,
+    },
+    maxGenerations: {
+      min: 1,
+      max: 100_000,
+      step: 1,
+    },
+  },
+};
+
+export const ParameterLabels = {
+  population: {
+    size: 'Population Size',
+    minPolygons: 'Min Polygons',
+    maxPolygons: 'Max Polygons',
+    target: 'Target Image',
+  },
+  selection: {
+    type: 'Type',
+    eliteCount: 'Elite Count',
+    tournamentSize: 'Tournament Size',
+  },
+  crossover: {
+    type: 'Type',
+    probabilities: {
+      [ProbabilityTypes.SWAP]: 'Swap',
+    },
+  },
+  mutation: {
+    [DistributionTypes.COLOR_SIGMA]: 'Color',
+    [DistributionTypes.POINT_SIGMA]: 'Point',
+    [DistributionTypes.PERMUTE_SIGMA]: 'Permute',
+    probabilities: {
+      [ProbabilityTypes.TWEAK]: 'Tweak',
+      [ProbabilityTypes.ADD_POINT]: 'Add Point',
+      [ProbabilityTypes.REMOVE_POINT]: 'Remove Point',
+      [ProbabilityTypes.ADD_CHROMOSOME]: 'Add Chromosome',
+      [ProbabilityTypes.REMOVE_CHROMOSOME]: 'Remove Chromosome',
+      [ProbabilityTypes.RESET_CHROMOSOME]: 'Reset Chromosome',
+      [ProbabilityTypes.PERMUTE_CHROMOSOMES]: 'Permute Chromosomes',
+    },
+  },
+  stopCriteria: {
+    targetFitness: 'Target Fitness',
+    maxGenerations: 'Max Generations',
+  },
+};
+
 const parameters = {
   population: {
     size: 200,
