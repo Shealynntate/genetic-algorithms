@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Button,
   Divider,
@@ -7,7 +7,6 @@ import {
   Typography,
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
 import _ from 'lodash';
 import {
@@ -16,43 +15,25 @@ import {
   useGetCurrentSimulation,
   useGetPendingSimulations,
 } from '../../globals/database';
-import { canvasParameters, SimulationStatus } from '../../constants';
-import { createImageData } from '../../globals/utils';
-import Canvas from '../Canvas';
-import GlobalBest from '../GlobalBest';
+import { SimulationStatus } from '../../constants';
 import SimulationChart from '../SimulationChart';
 import SimulationButtons from '../SimulationButtons';
 import SimulationEntry from '../SimulationEntry';
 import SimulationDetails from '../SimulationDetails';
 import SimulationFormDialog from '../SimulationFormDialog';
-
-const { width, height } = canvasParameters;
+import RunningSimulationDisplay from '../RunningSimulationDisplay';
+import defaultParameters from '../../globals/defaultParameters';
 
 function SimulationPanel() {
-  const target = useSelector((state) => state.parameters.population.target);
   const runningSimulation = useGetCurrentSimulation();
   const completedSimulations = useGetCompletedSimulations() || [];
   const pendingSimulations = useGetPendingSimulations() || [];
-  const [imageData, setImageData] = useState();
   const [openForm, setOpenForm] = useState(false);
   const [checkedExperiments, setCheckedExperiments] = useState([]);
   const [selectedSimulation, setSelectedSimulation] = useState(null);
+  const formData = useRef(defaultParameters);
+
   const theme = useTheme();
-
-  useEffect(() => {
-    let isMounted = true;
-    const updateImage = async () => {
-      const result = await createImageData(target);
-      if (isMounted) {
-        setImageData(result);
-      }
-    };
-    updateImage();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [target]);
 
   const lineColors = [
     theme.palette.primary.main,
@@ -88,6 +69,7 @@ function SimulationPanel() {
 
   const onCloseForm = (parameters) => {
     setOpenForm(false);
+    formData.current = defaultParameters;
     if (parameters) {
       insertSimulation({
         parameters,
@@ -115,6 +97,14 @@ function SimulationPanel() {
     setSelectedSimulation(id);
   };
 
+  const onDuplicate = (event, id) => {
+    event.stopPropagation();
+
+    const sim = idToSimulation(id);
+    formData.current = sim.parameters;
+    setOpenForm(true);
+  };
+
   const getCheckboxColor = (id) => {
     const index = checkedExperiments.indexOf(id);
     if (index < 0) return theme.palette.primary.main;
@@ -128,45 +118,27 @@ function SimulationPanel() {
           <SimulationButtons
             runsDisabled={!pendingSimulations.length}
           />
-          {runningSimulation && (
-            <>
-              <Typography>Running Simulation</Typography>
-              <SimulationEntry
-                key={runningSimulation.id}
-                id={runningSimulation.id}
-                createdOn={runningSimulation.createdOn}
-                name={runningSimulation.name}
-                status={SimulationStatus.RUNNING}
-                isChecked={isChecked(runningSimulation.id)}
-                isSelected={selectedSimulation === runningSimulation.id}
-                onCheck={onChangeCheckbox}
-                onSelect={onSelect}
-                color={getCheckboxColor(runningSimulation.id)}
-              />
-            </>
-          )}
-          <Stack direction="row">
-            <Stack>
-              <Canvas width={width} height={height} imageData={imageData} />
-              <Typography variant="caption" pb={1}>Target</Typography>
-            </Stack>
-            <Stack>
-              <GlobalBest />
-              <Typography variant="caption" pb={1}>Current Best</Typography>
-            </Stack>
-          </Stack>
-          {pendingSimulations.map(({ id, createdOn, name }) => (
+          <RunningSimulationDisplay
+            color={getCheckboxColor(runningSimulation?.id)}
+            isChecked={isChecked(runningSimulation?.id)}
+            isSelected={selectedSimulation === runningSimulation?.id}
+            onDuplicate={onDuplicate}
+            onCheck={onChangeCheckbox}
+            onSelect={onSelect}
+            simulation={runningSimulation}
+          />
+          {pendingSimulations.length && <Typography>Waiting to be run</Typography>}
+          {pendingSimulations.map((simulation) => (
             <SimulationEntry
-              key={id}
-              id={id}
-              createdOn={createdOn}
-              name={name}
+              key={simulation.id}
+              simulation={simulation}
               status={SimulationStatus.PENDING}
-              isChecked={isChecked(id)}
-              isSelected={selectedSimulation === id}
+              isChecked={isChecked(simulation.id)}
+              isSelected={selectedSimulation === simulation.id}
+              onDuplicate={onDuplicate}
               onCheck={onChangeCheckbox}
               onSelect={onSelect}
-              color={getCheckboxColor(id)}
+              color={getCheckboxColor(simulation.id)}
             />
           ))}
           <Divider />
@@ -174,22 +146,17 @@ function SimulationPanel() {
             Add Simulation
           </Button>
           <Typography>Completed Simulations</Typography>
-          {completedSimulations.map(({
-            id,
-            createdOn,
-            name,
-          }) => (
+          {completedSimulations.map((simulation) => (
             <SimulationEntry
-              key={id}
-              id={id}
-              createdOn={createdOn}
-              name={name}
+              key={simulation.id}
+              simulation={simulation}
               status={SimulationStatus.COMPLETE}
-              isChecked={isChecked(id)}
+              isChecked={isChecked(simulation.id)}
+              isSelected={selectedSimulation === simulation.id}
+              onDuplicate={onDuplicate}
               onCheck={onChangeCheckbox}
-              isSelected={selectedSimulation === id}
               onSelect={onSelect}
-              color={getCheckboxColor(id)}
+              color={getCheckboxColor(simulation.id)}
             />
           ))}
         </Stack>
@@ -198,7 +165,11 @@ function SimulationPanel() {
           <SimulationDetails simulation={idToSimulation(selectedSimulation)} />
         </Stack>
       </Stack>
-      <SimulationFormDialog open={openForm} onClose={onCloseForm} />
+      <SimulationFormDialog
+        defaultValues={formData.current}
+        open={openForm}
+        onClose={onCloseForm}
+      />
     </Paper>
   );
 }

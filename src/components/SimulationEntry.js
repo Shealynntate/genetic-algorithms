@@ -8,21 +8,23 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SimulationStatus } from '../constants';
 import { deleteSimulation } from '../globals/database';
+import { ParametersType } from '../types';
 
 function SimulationEntry({
-  id,
-  createdOn,
-  name,
+  simulation,
   isChecked,
   onCheck,
+  onDuplicate,
   onSelect,
   color,
   isSelected,
   status,
 }) {
+  const { id, createdOn, name } = simulation;
   const theme = useTheme();
   const hasCheckbox = status !== SimulationStatus.PENDING;
   const hasDelete = status !== SimulationStatus.RUNNING;
@@ -52,6 +54,9 @@ function SimulationEntry({
         <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
           {new Date(createdOn).toLocaleString()}
         </Typography>
+        <IconButton onClick={(event) => onDuplicate(event, id)}>
+          <ContentCopyIcon />
+        </IconButton>
         {hasDelete && (
           <IconButton color="error" onClick={onDelete}>
             <DeleteIcon />
@@ -63,13 +68,12 @@ function SimulationEntry({
 }
 
 SimulationEntry.propTypes = {
-  id: PropTypes.number.isRequired,
-  createdOn: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
+  simulation: PropTypes.shape(ParametersType).isRequired,
   status: PropTypes.string.isRequired,
   isChecked: PropTypes.bool,
   isSelected: PropTypes.bool,
   onCheck: PropTypes.func,
+  onDuplicate: PropTypes.func,
   onSelect: PropTypes.func,
   color: PropTypes.string,
 };
@@ -78,6 +82,7 @@ SimulationEntry.defaultProps = {
   isChecked: false,
   isSelected: false,
   onCheck: () => {},
+  onDuplicate: () => {},
   onSelect: () => {},
   color: null,
 };

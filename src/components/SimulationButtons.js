@@ -48,7 +48,7 @@ function PrimaryButton({ runsDisabled }) {
   };
 
   return (
-    <Box>
+    <Box sx={{ textAlign: 'center' }}>
       <Button
         variant="contained"
         onClick={onClick}

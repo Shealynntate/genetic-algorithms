@@ -43,6 +43,7 @@ function SimulationForm({ defaultValues, onSubmit, readOnly }) {
     selection,
     crossover,
     mutation,
+    stopCriteria,
   } = defaultValues;
 
   const onImageChange = (image) => {
@@ -173,8 +174,18 @@ function SimulationForm({ defaultValues, onSubmit, readOnly }) {
             />
           </Panel>
           <Panel label="Stop Criteria">
-            <NumberInput path="stopCriteria.targetFitness" register={register} readOnly={readOnly} />
-            <NumberInput path="stopCriteria.maxGenerations" register={register} readOnly={readOnly} />
+            <NumberInput
+              defaultValue={stopCriteria.targetFitness}
+              path="stopCriteria.targetFitness"
+              register={register}
+              readOnly={readOnly}
+            />
+            <NumberInput
+              defaultValue={stopCriteria.maxGenerations}
+              path="stopCriteria.maxGenerations"
+              register={register}
+              readOnly={readOnly}
+            />
           </Panel>
         </Box>
         <Box>

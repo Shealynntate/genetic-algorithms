@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import SimulationForm from './SimulationForm';
+import { ParametersType } from '../types';
+import defaultParameters from '../globals/defaultParameters';
 
-function SimulationFormDialog({ open, onClose }) {
+function SimulationFormDialog({ defaultValues, open, onClose }) {
   // Send to database and close form
   const onSubmit = (data) => {
     onClose(data);
@@ -14,6 +16,7 @@ function SimulationFormDialog({ open, onClose }) {
       <DialogTitle sx={{ py: 0.5 }}>Simulation Setup</DialogTitle>
       <DialogContent>
         <SimulationForm
+          defaultValues={defaultValues}
           onSubmit={onSubmit}
         />
       </DialogContent>
@@ -22,11 +25,13 @@ function SimulationFormDialog({ open, onClose }) {
 }
 
 SimulationFormDialog.propTypes = {
+  defaultValues: PropTypes.shape(ParametersType),
   open: PropTypes.bool,
   onClose: PropTypes.func,
 };
 
 SimulationFormDialog.defaultProps = {
+  defaultValues: defaultParameters,
   open: false,
   onClose: () => {},
 };

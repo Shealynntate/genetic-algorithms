@@ -3,16 +3,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Input, Stack, Typography } from '@mui/material';
 import _ from 'lodash';
-import defaultParameters, { ParameterBounds, ParameterLabels } from '../../globals/defaultParameters';
+import { ParameterBounds, ParameterLabels } from '../../globals/defaultParameters';
 
-function NumberInput({ path, register, readOnly }) {
+function NumberInput({
+  defaultValue,
+  path,
+  register,
+  readOnly,
+}) {
   const { min, max, step } = _.get(ParameterBounds, path);
 
   return (
     <Stack direction="row">
       <Typography pr={1}>{_.get(ParameterLabels, path)}</Typography>
       <Input
-        defaultValue={_.get(defaultParameters, path)}
+        defaultValue={defaultValue}
         {...register(path, { valueAsNumber: true })}
         readOnly={readOnly}
         inputProps={{
@@ -27,6 +32,7 @@ function NumberInput({ path, register, readOnly }) {
 }
 
 NumberInput.propTypes = {
+  defaultValue: PropTypes.number.isRequired,
   path: PropTypes.string.isRequired,
   register: PropTypes.func.isRequired,
   readOnly: PropTypes.bool,
