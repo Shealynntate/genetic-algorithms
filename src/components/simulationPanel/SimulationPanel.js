@@ -4,7 +4,6 @@ import {
   Button,
   Paper,
   Stack,
-  Typography,
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useTheme } from '@emotion/react';
@@ -128,25 +127,26 @@ function SimulationPanel() {
             onSelect={onSelect}
             simulation={runningSimulation}
           />
-          {pendingSimulations.length ? <Typography>Waiting to be run</Typography> : null}
-          {pendingSimulations.map((simulation) => (
-            <SimulationEntry
-              key={simulation.id}
-              simulation={simulation}
-              status={SimulationStatus.PENDING}
-              isChecked={isChecked(simulation.id)}
-              isSelected={selectedSimulation === simulation.id}
-              onDuplicate={onDuplicate}
-              onCheck={onChangeCheckbox}
-              onSelect={onSelect}
-              color={getCheckboxColor(simulation.id)}
-            />
-          ))}
-          <Box sx={{ textAlign: 'center' }}>
-            <Button startIcon={<Add />} variant="outlined" color="secondary" onClick={onAddSimulation}>
-              Add Simulation
-            </Button>
-          </Box>
+          <Panel label="Queued Runs">
+            {pendingSimulations.map((simulation) => (
+              <SimulationEntry
+                key={simulation.id}
+                simulation={simulation}
+                status={SimulationStatus.PENDING}
+                isChecked={isChecked(simulation.id)}
+                isSelected={selectedSimulation === simulation.id}
+                onDuplicate={onDuplicate}
+                onCheck={onChangeCheckbox}
+                onSelect={onSelect}
+                color={getCheckboxColor(simulation.id)}
+              />
+            ))}
+            <Box sx={{ textAlign: 'center' }}>
+              <Button startIcon={<Add />} variant="outlined" color="secondary" onClick={onAddSimulation}>
+                Add Simulation
+              </Button>
+            </Box>
+          </Panel>
           <Panel label="Completed Runs">
             {completedSimulations.map((simulation) => (
               <SimulationEntry

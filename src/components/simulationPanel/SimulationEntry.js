@@ -72,12 +72,12 @@ function SimulationEntry({
         <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
           {new Date(createdOn).toLocaleString()}
         </Typography>
-        <IconButton onClick={(event) => onDuplicate(event, id)}>
-          <ContentCopyIcon />
+        <IconButton onClick={(event) => onDuplicate(event, id)} size="small">
+          <ContentCopyIcon fontSize="inherit" />
         </IconButton>
         {hasDelete && (
-          <IconButton color="error" onClick={onDelete}>
-            <DeleteIcon />
+          <IconButton color="error" onClick={onDelete} size="small">
+            <DeleteIcon fontSize="inherit" />
           </IconButton>
         )}
       </Stack>

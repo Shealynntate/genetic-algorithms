@@ -38,9 +38,10 @@ function Panel({ label, children, variant }) {
       {label && <SectionTitle variant={variant}>{label}</SectionTitle>}
       <Box sx={{
         border: `1px solid ${theme.palette[variant].dark}`,
-        borderRadius: theme.shape.borderRadius,
+        borderRadius: `${theme.shape.borderRadius}px`,
         pt: 1.5,
         px: 1,
+        pb: 1,
       }}
       >
         {children}

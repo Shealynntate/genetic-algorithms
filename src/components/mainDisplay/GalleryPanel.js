@@ -1,44 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { Paper, Typography } from '@mui/material';
-import data from '../../assets/test-gallery-file.json';
-import Canvas from '../Canvas';
-import { canvasParameters } from '../../constants';
-import { createImageData } from '../../globals/utils';
-
-const { width, height } = canvasParameters;
+import React from 'react';
+import { Paper } from '@mui/material';
+import testData from '../../assets/test-gallery-file.json';
+import { useGetGalleryEntries } from '../../globals/database';
+import GalleryEntry from '../GalleryEntry';
 
 function Gallery() {
-  const [imageData, setImageData] = useState();
+  const entriesJSON = useGetGalleryEntries() || [];
 
-  const {
-    name, gif, globalBest, parameters,
-  } = data;
-
-  useEffect(() => {
-    let isMounted = true;
-    const updateImage = async () => {
-      const result = await createImageData(parameters.population.target);
-      if (isMounted) {
-        setImageData(result);
-      }
-    };
-    updateImage();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [parameters.target]);
-
-  // console.log(data);
+  const entriesParsed = entriesJSON.map(({ id, createdOn, json }) => ({
+    id,
+    createdOn,
+    data: JSON.parse(json),
+  }));
 
   return (
     <Paper>
-      <Canvas width={width} height={height} imageData={imageData} />
-      <img src={gif} alt={`${name} gif`} />
-      <Paper elevation={2}>
-        <Typography>{name}</Typography>
-        <Typography>{`Top score ${globalBest.organism.fitness}`}</Typography>
-      </Paper>
+      <GalleryEntry data={testData} />
+      {entriesParsed.map(({ id, data }) => (
+        <GalleryEntry key={id} id={id} data={data} />
+      ))}
     </Paper>
   );
 }

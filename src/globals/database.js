@@ -6,6 +6,7 @@ import { SimulationStatus } from '../constants';
 const databaseName = 'GeneticAlgorithmsDB';
 const imagesTable = 'images';
 const simulationsTable = 'simulations';
+const galleryTable = 'gallery';
 
 const simulationsFields = [
   'createdOn',
@@ -23,6 +24,11 @@ const imagesFields = [
   // 'fitness',
   // 'chromosomes',
   // 'imageData',
+];
+
+const galleryFields = [
+  'createdOn',
+  // 'json',
 ];
 
 const db = new Dexie(databaseName);
@@ -171,12 +177,24 @@ export function addImageToDatabase(genId, maxFitOrganism) {
   });
 }
 
-export async function getCurrentImages() {
+export const getImages = (simulationId) => db[imagesTable].where('simulationId').equals(simulationId).toArray();
+
+export const getCurrentImages = async () => {
   if (currentSimulationId == null) return [];
 
-  return db[imagesTable].where('simulationId').equals(currentSimulationId).toArray();
-}
+  return getImages(currentSimulationId);
+};
 
+// Gallery Table
+// --------------------------------------------------
+export const addGalleryEntry = (json) => db[galleryTable].add({
+  createdOn: Date.now(),
+  json,
+});
+
+export const deleteGalleryEntry = (id) => db[galleryTable].delete(id);
+
+// All Tables
 // --------------------------------------------------
 export async function clearDatabase() {
   const promises = [];
@@ -217,11 +235,16 @@ export const useGetSavedSimulations = () => useLiveQuery(
   () => db[simulationsTable].where('isSaved').equals(1).reverse().toArray(),
 );
 
+export const useGetGalleryEntries = () => useLiveQuery(
+  () => db[galleryTable].toArray(),
+);
+
 // Database Setup
 // --------------------------------------------------
 db.version(1).stores({
   [simulationsTable]: `++id,${simulationsFields.join()}`,
   [imagesTable]: `++id,${imagesFields.join()}`,
+  [galleryTable]: `++id,${galleryFields.join()}`,
 });
 
 db.open();

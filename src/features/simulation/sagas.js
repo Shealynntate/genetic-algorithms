@@ -11,14 +11,19 @@ import {
 } from 'redux-saga/effects';
 import { minExperimentThreshold, SimulationStatus } from '../../constants';
 import {
+  addGalleryEntry,
   addImageToDatabase,
   addResultsToCurrentSimulation,
+  getCurrentImages,
+  getCurrentSimulation,
   getNextPendingSimulation,
   setCurrentSimulation,
   updateCurrentSimulation,
 } from '../../globals/database';
 import { approxEqual } from '../../globals/statsUtils';
-import { createImageData, shouldSaveGenImage } from '../../globals/utils';
+import {
+  chromosomesToPhenotype, createGif, createImageData, shouldSaveGenImage,
+} from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
 import {
   RESTORE_POPULATION, setGenStats, setGlobalBest, updateCurrentGen,
@@ -51,6 +56,26 @@ function* resetSimulationsSaga() {
   populationService.reset();
 }
 
+function* createGalleryEntrySaga({ totalGen, globalBest }) {
+  const { name, parameters } = yield getCurrentSimulation();
+  const history = yield getCurrentImages();
+  const imageData = history.map((entry) => entry.imageData);
+  const { chromosomes } = globalBest.organism.genome;
+  const phenotype = chromosomesToPhenotype(chromosomes);
+  // Show the last image 4 times as long in the gif
+  const result = [...imageData, phenotype, phenotype, phenotype, phenotype];
+  const gif = yield createGif(result);
+  const galleryData = {
+    name,
+    gif,
+    globalBest,
+    parameters,
+    totalGen,
+  };
+  const json = JSON.stringify(galleryData);
+  yield addGalleryEntry(json);
+}
+
 function* generationResultsCheckSaga({
   stopCriteria,
   currentBest,
@@ -74,6 +99,11 @@ function* generationResultsCheckSaga({
 
   // Check if the simulation is over
   if (isStopping) {
+    // Create a Gallery Entry for the run
+    yield call(createGalleryEntrySaga, {
+      totalGen: currentBest.genId,
+      globalBest,
+    });
     // Stop the simulation and add the results to database
     yield addResultsToCurrentSimulation({ threshold: currentMax, stats });
     yield updateCurrentSimulation({

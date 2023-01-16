@@ -23,9 +23,6 @@ const theme = createTheme({
       // paper: '#FFFFFF',
     },
   },
-  shape: {
-    borderRadius: 1,
-  },
   components: {
     MuiPaper: {
       styleOverrides: {
