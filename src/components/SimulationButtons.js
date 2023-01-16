@@ -27,7 +27,7 @@ function PrimaryButton({ runsDisabled }) {
         action = resumeSimulations;
         break;
       case AppState.COMPLETE:
-        action = resetSimulations;
+        action = runSimulations;
         break;
       default:
         action = runSimulations;

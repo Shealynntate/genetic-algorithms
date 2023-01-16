@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
-  Box, Paper, Stack, Typography,
+  Paper, Stack, Typography,
 } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import { ParametersType } from '../types';
@@ -11,6 +11,7 @@ import { canvasParameters, SimulationStatus } from '../constants';
 import GlobalBest from './GlobalBest';
 import Canvas from './Canvas';
 import { createImageData } from '../globals/utils';
+import Panel from './settingsPanels/Panel';
 
 const { width, height } = canvasParameters;
 
@@ -52,8 +53,17 @@ function RunningSimulationDisplay({
   }
 
   return (
-    <Box>
-      <Typography>Running Simulation</Typography>
+    <Panel label="In Progress">
+      <Stack direction="row" spacing={1}>
+        <Stack>
+          <Typography variant="caption" pt={1}>Target</Typography>
+          <Canvas width={width} height={height} imageData={imageData} />
+        </Stack>
+        <Stack>
+          <Typography variant="caption" pt={1}>Current Best</Typography>
+          <GlobalBest />
+        </Stack>
+      </Stack>
       <SimulationEntry
         simulation={simulation}
         status={SimulationStatus.RUNNING}
@@ -64,17 +74,7 @@ function RunningSimulationDisplay({
         onSelect={onSelect}
         color={color}
       />
-      <Stack direction="row">
-        <Stack>
-          <Typography variant="caption" pb={1}>Target</Typography>
-          <Canvas width={width} height={height} imageData={imageData} />
-        </Stack>
-        <Stack>
-          <Typography variant="caption" pb={1}>Current Best</Typography>
-          <GlobalBest />
-        </Stack>
-      </Stack>
-    </Box>
+    </Panel>
   );
 }
 

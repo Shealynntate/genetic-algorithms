@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import {
+  Box,
   Button,
-  Divider,
   Paper,
   Stack,
   Typography,
@@ -23,6 +23,7 @@ import SimulationDetails from '../SimulationDetails';
 import SimulationFormDialog from '../SimulationFormDialog';
 import RunningSimulationDisplay from '../RunningSimulationDisplay';
 import defaultParameters from '../../globals/defaultParameters';
+import Panel from '../settingsPanels/Panel';
 
 function SimulationPanel() {
   const runningSimulation = useGetCurrentSimulation();
@@ -127,7 +128,7 @@ function SimulationPanel() {
             onSelect={onSelect}
             simulation={runningSimulation}
           />
-          {pendingSimulations.length && <Typography>Waiting to be run</Typography>}
+          {pendingSimulations.length ? <Typography>Waiting to be run</Typography> : null}
           {pendingSimulations.map((simulation) => (
             <SimulationEntry
               key={simulation.id}
@@ -141,24 +142,26 @@ function SimulationPanel() {
               color={getCheckboxColor(simulation.id)}
             />
           ))}
-          <Divider />
-          <Button startIcon={<Add />} variant="contained" onClick={onAddSimulation}>
-            Add Simulation
-          </Button>
-          <Typography>Completed Simulations</Typography>
-          {completedSimulations.map((simulation) => (
-            <SimulationEntry
-              key={simulation.id}
-              simulation={simulation}
-              status={SimulationStatus.COMPLETE}
-              isChecked={isChecked(simulation.id)}
-              isSelected={selectedSimulation === simulation.id}
-              onDuplicate={onDuplicate}
-              onCheck={onChangeCheckbox}
-              onSelect={onSelect}
-              color={getCheckboxColor(simulation.id)}
-            />
-          ))}
+          <Box sx={{ textAlign: 'center' }}>
+            <Button startIcon={<Add />} variant="outlined" color="secondary" onClick={onAddSimulation}>
+              Add Simulation
+            </Button>
+          </Box>
+          <Panel label="Completed Runs">
+            {completedSimulations.map((simulation) => (
+              <SimulationEntry
+                key={simulation.id}
+                simulation={simulation}
+                status={SimulationStatus.COMPLETE}
+                isChecked={isChecked(simulation.id)}
+                isSelected={selectedSimulation === simulation.id}
+                onDuplicate={onDuplicate}
+                onCheck={onChangeCheckbox}
+                onSelect={onSelect}
+                color={getCheckboxColor(simulation.id)}
+              />
+            ))}
+          </Panel>
         </Stack>
         <Stack direction="column">
           <SimulationChart simulations={filteredExperiments} />

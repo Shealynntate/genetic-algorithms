@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
 import {
@@ -6,12 +6,13 @@ import {
   IconButton,
   Paper,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SimulationStatus } from '../constants';
-import { deleteSimulation } from '../globals/database';
+import { deleteSimulation, renameSimulation } from '../globals/database';
 import { ParametersType } from '../types';
 
 function SimulationEntry({
@@ -26,17 +27,29 @@ function SimulationEntry({
 }) {
   const { id, createdOn, name } = simulation;
   const theme = useTheme();
+  const [nameValue, setNameValue] = useState(name);
   const hasCheckbox = status !== SimulationStatus.PENDING;
   const hasDelete = status !== SimulationStatus.RUNNING;
-  const elevation = isSelected ? 8 : 2;
+  const elevation = isSelected ? 2 : 2;
+  const border = isSelected ? `1px solid ${theme.palette.primary.main}` : 'none';
 
   const onDelete = (event) => {
     event.stopPropagation();
     deleteSimulation(id);
   };
 
+  const onChangeName = async (event) => {
+    const { value } = event.target;
+    setNameValue(value);
+    await renameSimulation(id, value);
+  };
+
   return (
-    <Paper elevation={elevation} sx={{ p: 1 }} onClick={() => onSelect(id)}>
+    <Paper
+      elevation={elevation}
+      sx={{ p: 1, border }}
+      onClick={() => onSelect(id)}
+    >
       <Stack direction="row" sx={{ alignItems: 'center' }}>
         {hasCheckbox && (
           <Checkbox
@@ -50,7 +63,13 @@ function SimulationEntry({
             }}
           />
         )}
-        <Typography variant="body2" pr={1}>{`${id}. ${name}`}</Typography>
+        <Typography variant="body2" pr={1}>{`${id}.`}</Typography>
+        <TextField
+          defaultValue={name}
+          value={nameValue}
+          onChange={onChangeName}
+          variant="standard"
+        />
         <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
           {new Date(createdOn).toLocaleString()}
         </Typography>

@@ -58,7 +58,7 @@ function SimulationForm({ defaultValues, onSubmit, readOnly }) {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack direction="row" spacing={1}>
         <Box>
-          <Panel label="Population">
+          <Panel label="Population" variant="secondary">
             <Stack direction="row">
               <ImageInput
                 defaultTarget={population.target}
@@ -100,7 +100,7 @@ function SimulationForm({ defaultValues, onSubmit, readOnly }) {
               </Stack>
             </Stack>
           </Panel>
-          <Panel label="Selection">
+          <Panel label="Selection" variant="secondary">
             <Stack direction="row">
               <Box display="inline-block">
                 <InputLabel id="select-label">Type</InputLabel>
@@ -150,7 +150,7 @@ function SimulationForm({ defaultValues, onSubmit, readOnly }) {
               </Box>
             </Stack>
           </Panel>
-          <Panel label="Crossover">
+          <Panel label="Crossover" variant="secondary">
             <InputLabel id="crossover-label">Type</InputLabel>
             <Select
               labelId="crossover-label"
@@ -173,7 +173,7 @@ function SimulationForm({ defaultValues, onSubmit, readOnly }) {
               path={`crossover.probabilities.${ProbabilityTypes.SWAP}`}
             />
           </Panel>
-          <Panel label="Stop Criteria">
+          <Panel label="Stop Criteria" variant="secondary">
             <NumberInput
               defaultValue={stopCriteria.targetFitness}
               path="stopCriteria.targetFitness"
@@ -189,7 +189,7 @@ function SimulationForm({ defaultValues, onSubmit, readOnly }) {
           </Panel>
         </Box>
         <Box>
-          <Panel label="Mutation">
+          <Panel label="Mutation" variant="secondary">
             <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
               <Box>
                 <Typography>Distributions</Typography>
