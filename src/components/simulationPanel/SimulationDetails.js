@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Typography } from '@mui/material';
-import { ParametersType } from '../types';
+import { ParametersType } from '../../types';
 import SimulationForm from './SimulationForm';
 
 function SimulationDetails({ simulation }) {
@@ -12,7 +12,12 @@ function SimulationDetails({ simulation }) {
   return (
     <Box>
       <Typography>{`${id}. ${name}`}</Typography>
-      <SimulationForm readOnly defaultValues={parameters} />
+      <SimulationForm
+        imageWidth={130}
+        imageHeight={130}
+        readOnly
+        defaultValues={parameters}
+      />
     </Box>
   );
 }

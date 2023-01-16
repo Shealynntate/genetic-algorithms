@@ -1,8 +1,6 @@
 import gifshot from 'gifshot';
 import { canvasParameters } from '../constants';
 
-const { width, height } = canvasParameters;
-
 export const genRange = (max) => ([...Array(max).keys()]);
 
 export const genMinMaxRange = (min, max) => ([...Array(max).keys()].slice(min));
@@ -29,8 +27,9 @@ export const createImage = (src) => new Promise((resolve, reject) => {
   image.src = src;
 });
 
-export const createImageData = async (src) => {
+export const createImageData = async (src, options = {}) => {
   const image = await createImage(src);
+  const { width = canvasParameters.width, height = canvasParameters.height } = options;
 
   const canvas = document.createElement('canvas', { width, height });
   const ctx = canvas.getContext('2d');
@@ -105,6 +104,7 @@ export const download = (filename, contents) => {
 };
 
 export const createGif = async (images) => {
+  const { width, height } = canvasParameters;
   const imgs = await Promise.all(images.map(async (image) => (imageDataToImage(image))));
   const promise = new Promise((resolve, reject) => {
     gifshot.createGIF(
@@ -180,6 +180,7 @@ export const shouldSaveGenImage = (genId) => {
 };
 
 // TODO: Move this!!
+const { width, height } = canvasParameters;
 const scalePoint = (point) => [Math.round(point[0] * width), Math.round(point[1] * height)];
 
 export const chromosomesToPhenotype = (chromosomes) => {

@@ -22,16 +22,23 @@ import {
   SelectionType,
   SelectionTypeLabels,
   CrossoverTypeLabels,
-} from '../constants';
-import SigmaInput from './inputs/SigmaInput';
-import ProbabilityInput from './inputs/ProbabilityInput';
-import defaultParameters from '../globals/defaultParameters';
-import ImageInput from './ImageInput';
-import Panel from './settingsPanels/Panel';
-import NumberInput from './inputs/NumberInput';
-import { ParametersType } from '../types';
+  canvasParameters,
+} from '../../constants';
+import SigmaInput from '../inputs/SigmaInput';
+import ProbabilityInput from '../inputs/ProbabilityInput';
+import defaultParameters from '../../globals/defaultParameters';
+import ImageInput from '../ImageInput';
+import Panel from '../settingsPanels/Panel';
+import NumberInput from '../inputs/NumberInput';
+import { ParametersType } from '../../types';
 
-function SimulationForm({ defaultValues, onSubmit, readOnly }) {
+function SimulationForm({
+  defaultValues,
+  imageHeight,
+  imageWidth,
+  onSubmit,
+  readOnly,
+}) {
   const {
     register,
     handleSubmit,
@@ -62,8 +69,10 @@ function SimulationForm({ defaultValues, onSubmit, readOnly }) {
             <Stack direction="row">
               <ImageInput
                 defaultTarget={population.target}
+                height={imageHeight}
                 onChange={onImageChange}
                 readOnly={readOnly}
+                width={imageWidth}
               />
               <Input
                 readOnly={readOnly}
@@ -241,12 +250,16 @@ function SimulationForm({ defaultValues, onSubmit, readOnly }) {
 }
 
 SimulationForm.propTypes = {
+  imageHeight: PropTypes.number,
+  imageWidth: PropTypes.number,
   onSubmit: PropTypes.func,
   defaultValues: PropTypes.shape(ParametersType),
   readOnly: PropTypes.bool,
 };
 
 SimulationForm.defaultProps = {
+  imageHeight: canvasParameters.height,
+  imageWidth: canvasParameters.width,
   onSubmit: () => {},
   defaultValues: defaultParameters,
   readOnly: false,

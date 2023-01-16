@@ -2,14 +2,14 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Box, Button } from '@mui/material';
-import { AppState, primaryButtonLabels } from '../constants';
+import { AppState, primaryButtonLabels } from '../../constants';
 import {
   pauseSimulations,
   resetSimulations,
   resumeSimulations,
   runSimulations,
-} from '../features/ux/uxSlice';
-import { useIsPaused } from '../hooks';
+} from '../../features/ux/uxSlice';
+import { useIsPaused } from '../../hooks';
 
 function PrimaryButton({ runsDisabled }) {
   const simulationState = useSelector((state) => state.ux.simulationState);

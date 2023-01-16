@@ -11,9 +11,9 @@ import {
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { SimulationStatus } from '../constants';
-import { deleteSimulation, renameSimulation } from '../globals/database';
-import { ParametersType } from '../types';
+import { SimulationStatus } from '../../constants';
+import { deleteSimulation, renameSimulation } from '../../globals/database';
+import { ParametersType } from '../../types';
 
 function SimulationEntry({
   simulation,
@@ -31,7 +31,7 @@ function SimulationEntry({
   const hasCheckbox = status !== SimulationStatus.PENDING;
   const hasDelete = status !== SimulationStatus.RUNNING;
   const elevation = isSelected ? 2 : 2;
-  const border = isSelected ? `1px solid ${theme.palette.primary.main}` : 'none';
+  const border = isSelected ? `1px dashed ${theme.palette.primary.main}` : 'none';
 
   const onDelete = (event) => {
     event.stopPropagation();
@@ -65,7 +65,6 @@ function SimulationEntry({
         )}
         <Typography variant="body2" pr={1}>{`${id}.`}</Typography>
         <TextField
-          defaultValue={name}
           value={nameValue}
           onChange={onChangeName}
           variant="standard"

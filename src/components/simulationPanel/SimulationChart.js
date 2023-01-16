@@ -5,9 +5,9 @@ import { useTheme } from '@emotion/react';
 import { Grid } from '@visx/grid';
 import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
-import { minExperimentThreshold } from '../constants';
-import ExperimentLine from './ExperimentLine';
-import { ParametersType } from '../types';
+import { minExperimentThreshold } from '../../constants';
+import ExperimentLine from '../ExperimentLine';
+import { ParametersType } from '../../types';
 
 const graphWidth = 650;
 const graphHeight = 500;

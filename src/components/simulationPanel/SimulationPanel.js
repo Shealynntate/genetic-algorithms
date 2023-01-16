@@ -16,12 +16,12 @@ import {
   useGetPendingSimulations,
 } from '../../globals/database';
 import { SimulationStatus } from '../../constants';
-import SimulationChart from '../SimulationChart';
-import SimulationButtons from '../SimulationButtons';
-import SimulationEntry from '../SimulationEntry';
-import SimulationDetails from '../SimulationDetails';
-import SimulationFormDialog from '../SimulationFormDialog';
-import RunningSimulationDisplay from '../RunningSimulationDisplay';
+import SimulationChart from './SimulationChart';
+import SimulationButtons from './SimulationButtons';
+import SimulationEntry from './SimulationEntry';
+import SimulationDetails from './SimulationDetails';
+import SimulationFormDialog from './SimulationFormDialog';
+import RunningSimulationDisplay from './RunningSimulationDisplay';
 import defaultParameters from '../../globals/defaultParameters';
 import Panel from '../settingsPanels/Panel';
 

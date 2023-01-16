@@ -5,13 +5,13 @@ import {
   Paper, Stack, Typography,
 } from '@mui/material';
 import { useTheme } from '@emotion/react';
-import { ParametersType } from '../types';
+import { ParametersType } from '../../types';
 import SimulationEntry from './SimulationEntry';
-import { canvasParameters, SimulationStatus } from '../constants';
-import GlobalBest from './GlobalBest';
-import Canvas from './Canvas';
-import { createImageData } from '../globals/utils';
-import Panel from './settingsPanels/Panel';
+import { canvasParameters, SimulationStatus } from '../../constants';
+import GlobalBest from '../GlobalBest';
+import Canvas from '../Canvas';
+import { createImageData } from '../../globals/utils';
+import Panel from '../settingsPanels/Panel';
 
 const { width, height } = canvasParameters;
 

@@ -8,7 +8,7 @@ import TabPanel from './TabPanel';
 import GalleryPanel from './GalleryPanel';
 import ProgressPanel from './ProgressPanel';
 import DatabasePanel from './DatabasePanel';
-import ExperimentationPanel from './SimulationPanel';
+import ExperimentationPanel from '../simulationPanel/SimulationPanel';
 
 function DisplayTabs() {
   const [value, setValue] = useState(0);

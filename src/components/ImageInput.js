@@ -8,14 +8,18 @@ import { AlertState, canvasParameters } from '../constants';
 import { createImageData, fileToBase64 } from '../globals/utils';
 import Canvas from './Canvas';
 
-const { width, height } = canvasParameters;
-
 const AlertMessage = {
   error: 'Oops, unable to read the file provided',
   warning: 'Only single, image files (.png, .jpg, .jpeg) are accepted',
 };
 
-function ImageInput({ defaultTarget, onChange, readOnly }) {
+function ImageInput({
+  defaultTarget,
+  onChange,
+  readOnly,
+  width,
+  height,
+}) {
   const theme = useTheme();
   const [target, setTarget] = useState(defaultTarget);
   const [imageData, setImageData] = useState();
@@ -31,7 +35,7 @@ function ImageInput({ defaultTarget, onChange, readOnly }) {
   useEffect(() => {
     let isMounted = true;
     const updateImage = async () => {
-      const result = await createImageData(target);
+      const result = await createImageData(target, { width, height });
       if (isMounted) {
         setImageData(result);
       }
@@ -87,13 +91,17 @@ function ImageInput({ defaultTarget, onChange, readOnly }) {
 
 ImageInput.propTypes = {
   defaultTarget: PropTypes.string.isRequired,
+  height: PropTypes.number,
   onChange: PropTypes.func,
   readOnly: PropTypes.bool,
+  width: PropTypes.number,
 };
 
 ImageInput.defaultProps = {
+  height: canvasParameters.height,
   onChange: () => {},
   readOnly: false,
+  width: canvasParameters.width,
 };
 
 export default ImageInput;
