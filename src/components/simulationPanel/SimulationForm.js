@@ -172,22 +172,6 @@ function SimulationForm({
               path={`crossover.probabilities.${ProbabilityTypes.SWAP}`}
             />
           </Panel>
-          <Panel label="Stop Criteria" variant="secondary">
-            <NumberInput
-              errors={errors}
-              getValues={getValues}
-              path="stopCriteria.targetFitness"
-              register={register}
-              readOnly={readOnly}
-            />
-            <NumberInput
-              errors={errors}
-              getValues={getValues}
-              path="stopCriteria.maxGenerations"
-              register={register}
-              readOnly={readOnly}
-            />
-          </Panel>
         </Box>
         <Box>
           <Panel label="Mutation" variant="secondary">
@@ -231,6 +215,22 @@ function SimulationForm({
                 ))}
               </Stack>
             </Stack>
+          </Panel>
+          <Panel label="Stop Criteria" variant="secondary">
+            <NumberInput
+              errors={errors}
+              getValues={getValues}
+              path="stopCriteria.targetFitness"
+              register={register}
+              readOnly={readOnly}
+            />
+            <NumberInput
+              errors={errors}
+              getValues={getValues}
+              path="stopCriteria.maxGenerations"
+              register={register}
+              readOnly={readOnly}
+            />
           </Panel>
           {!readOnly && <Button type="submit" variant="contained">Save</Button>}
         </Box>
