@@ -7,7 +7,6 @@ import {
 import TabPanel from './TabPanel';
 import GalleryPanel from './GalleryPanel';
 import ProgressPanel from './ProgressPanel';
-import DatabasePanel from './DatabasePanel';
 import ExperimentationPanel from '../simulationPanel/SimulationPanel';
 
 function DisplayTabs() {
@@ -24,7 +23,6 @@ function DisplayTabs() {
           <Tab label="Simulations" />
           <Tab label="Progress" />
           <Tab label="Gallery" />
-          <Tab label="Database" />
         </Tabs>
       </Box>
       <TabPanel index={0} value={value}>
@@ -35,9 +33,6 @@ function DisplayTabs() {
       </TabPanel>
       <TabPanel index={2} value={value}>
         <GalleryPanel />
-      </TabPanel>
-      <TabPanel index={3} value={value}>
-        <DatabasePanel />
       </TabPanel>
     </Box>
   );

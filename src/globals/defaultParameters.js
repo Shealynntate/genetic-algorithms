@@ -15,8 +15,24 @@ export const ParameterBounds = {
       max: 500,
       step: 2,
     },
+    minPolygons: {
+      min: 1,
+      max: 100,
+      step: 1,
+    },
+    maxPolygons: {
+      min: 1,
+      max: 100,
+      step: 1,
+    },
   },
-  selection: {},
+  selection: {
+    eliteCount: {
+      min: 0,
+      max: 500,
+      step: 2,
+    },
+  },
   crossover: {},
   mutation: {},
   stopCriteria: {
@@ -33,17 +49,29 @@ export const ParameterBounds = {
   },
 };
 
+export const ParameterValidation = {
+  population: {
+    size: (v) => ((v % 2 === 0) || 'Population size must be even'),
+    minPolygons: (v, gv) => ((v <= gv('population.maxPolygons')) || 'Min polygons can\'t be greater than max polygons'),
+    maxPolygons: (v, gv) => ((v >= gv('population.minPolygons')) || 'Max polygons can\'t be less than min polygons'),
+  },
+  selection: {
+    eliteCount: (v, gv) => (((v % 2 === 0) && v < gv('population.size')) || 'Elite count must be even and less than the population size'),
+    tournamentSize: (v, gv) => ((v < gv('population.size')) || 'Tournament size must be less than the population size'),
+  },
+};
+
 export const ParameterLabels = {
   population: {
-    size: 'Population Size',
-    minPolygons: 'Min Polygons',
-    maxPolygons: 'Max Polygons',
+    size: 'Size',
+    minPolygons: 'Min △',
+    maxPolygons: 'Max △',
     target: 'Target Image',
   },
   selection: {
     type: 'Type',
     eliteCount: 'Elite Count',
-    tournamentSize: 'Tournament Size',
+    tournamentSize: 'Tourney Size',
   },
   crossover: {
     type: 'Type',

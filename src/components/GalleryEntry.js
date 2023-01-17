@@ -4,7 +4,9 @@ import {
   Box, IconButton, Paper, Typography,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DownloadIcon from '@mui/icons-material/Download';
 import { deleteGalleryEntry } from '../globals/database';
+import { download } from '../globals/utils';
 
 function GalleryEntry({ id, data }) {
   // console.log(data);
@@ -35,6 +37,10 @@ function GalleryEntry({ id, data }) {
     deleteGalleryEntry(id);
   };
 
+  const onDownload = () => {
+    download(name, gif);
+  };
+
   return (
     <Box sx={{ display: 'inline-block' }}>
       <img src={gif} alt={`${name} gif`} />
@@ -43,6 +49,9 @@ function GalleryEntry({ id, data }) {
         <Typography>{`Top score ${globalBest.organism.fitness}`}</Typography>
         <Typography>{`Total generations ${totalGen}`}</Typography>
       </Paper>
+      <IconButton onClick={onDownload}>
+        <DownloadIcon />
+      </IconButton>
       <IconButton color="error" onClick={onDelete}>
         <DeleteIcon />
       </IconButton>

@@ -3,11 +3,10 @@ import React from 'react';
 import {
   Box, Input, Stack, Typography,
 } from '@mui/material';
-import CasinoIcon from '@mui/icons-material/Casino';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
-import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import PropTypes from 'prop-types';
 
+// Note: Start and End fitness are available as inputs here, currently not setting them
 function ProbabilityInput({
   defaultValues,
   label,
@@ -20,7 +19,7 @@ function ProbabilityInput({
   } = defaultValues;
   return (
     <Box sx={{ display: 'flex' }}>
-      <Typography sx={{ pr: 2 }}>{label}</Typography>
+      <Typography variant="body2" sx={{ pr: 2 }}>{label}</Typography>
       <Stack sx={{ textAlign: 'center' }}>
         <Input
           defaultValue={startValue}
@@ -44,6 +43,7 @@ function ProbabilityInput({
             type: 'number',
           }}
           disableUnderline
+          sx={{ display: 'none' }}
         />
       </Stack>
       <Stack sx={{ justifyContent: 'center' }}>
@@ -72,11 +72,8 @@ function ProbabilityInput({
             type: 'number',
           }}
           disableUnderline
+          sx={{ display: 'none' }}
         />
-      </Stack>
-      <Stack sx={{ justifyContent: 'center' }}>
-        <CasinoIcon color="disabled" fontSize="small" />
-        <FitnessCenterIcon color="disabled" fontSize="small" />
       </Stack>
     </Box>
   );

@@ -26,7 +26,7 @@ import {
 } from '../../constants';
 import SigmaInput from '../inputs/SigmaInput';
 import ProbabilityInput from '../inputs/ProbabilityInput';
-import defaultParameters from '../../globals/defaultParameters';
+import defaultParameters, { ParameterLabels } from '../../globals/defaultParameters';
 import ImageInput from '../ImageInput';
 import Panel from '../settingsPanels/Panel';
 import NumberInput from '../inputs/NumberInput';
@@ -40,9 +40,11 @@ function SimulationForm({
   readOnly,
 }) {
   const {
-    register,
+    formState: { errors },
     handleSubmit,
     setValue,
+    getValues,
+    register,
     reset,
   } = useForm();
   const {
@@ -50,7 +52,6 @@ function SimulationForm({
     selection,
     crossover,
     mutation,
-    stopCriteria,
   } = defaultValues;
 
   const onImageChange = (image) => {
@@ -66,7 +67,7 @@ function SimulationForm({
       <Stack direction="row" spacing={1}>
         <Box>
           <Panel label="Population" variant="secondary">
-            <Stack direction="row">
+            <Stack direction="row" spacing={1}>
               <ImageInput
                 defaultTarget={population.target}
                 height={imageHeight}
@@ -81,30 +82,26 @@ function SimulationForm({
                 {...register('population.target')}
               />
               <Stack direction="column">
-                <NumberInput path="population.size" register={register} readOnly={readOnly} />
-                <Typography>Min Polygons: </Typography>
-                <Input
-                  defaultValue={population.minPolygons}
+                <NumberInput
+                  errors={errors}
+                  getValues={getValues}
+                  path="population.size"
                   readOnly={readOnly}
-                  {...register('population.minPolygons', { valueAsNumber: true })}
-                  inputProps={{
-                    min: 1,
-                    max: 100,
-                    step: 1,
-                    type: 'number',
-                  }}
+                  register={register}
                 />
-                <Typography>Max Polygons: </Typography>
-                <Input
-                  defaultValue={population.maxPolygons}
+                <NumberInput
+                  errors={errors}
+                  getValues={getValues}
+                  path="population.minPolygons"
                   readOnly={readOnly}
-                  {...register('population.maxPolygons', { valueAsNumber: true })}
-                  inputProps={{
-                    min: 1,
-                    max: 100,
-                    step: 1,
-                    type: 'number',
-                  }}
+                  register={register}
+                />
+                <NumberInput
+                  errors={errors}
+                  getValues={getValues}
+                  path="population.maxPolygons"
+                  readOnly={readOnly}
+                  register={register}
                 />
               </Stack>
             </Stack>
@@ -128,22 +125,15 @@ function SimulationForm({
                 </Select>
               </Box>
               <Box>
+                <NumberInput
+                  errors={errors}
+                  getValues={getValues}
+                  path="selection.eliteCount"
+                  register={register}
+                  readOnly={readOnly}
+                />
                 <Box>
-                  <Typography display="inline-block" pr={1}>Elite Count: </Typography>
-                  <Input
-                    defaultValue={selection.eliteCount}
-                    readOnly={readOnly}
-                    inputProps={{
-                      min: 0,
-                      max: 500,
-                      step: 2,
-                      type: 'number',
-                    }}
-                    {...register('selection.eliteCount', { valueAsNumber: true })}
-                  />
-                </Box>
-                <Box>
-                  <Typography display="inline-block" pr={1}>Tournament Size: </Typography>
+                  <Typography display="inline-block" pr={1}>{ParameterLabels.selection.tournamentSize}</Typography>
                   <Input
                     defaultValue={selection.tournamentSize}
                     readOnly={readOnly}
@@ -184,13 +174,15 @@ function SimulationForm({
           </Panel>
           <Panel label="Stop Criteria" variant="secondary">
             <NumberInput
-              defaultValue={stopCriteria.targetFitness}
+              errors={errors}
+              getValues={getValues}
               path="stopCriteria.targetFitness"
               register={register}
               readOnly={readOnly}
             />
             <NumberInput
-              defaultValue={stopCriteria.maxGenerations}
+              errors={errors}
+              getValues={getValues}
               path="stopCriteria.maxGenerations"
               register={register}
               readOnly={readOnly}
@@ -224,10 +216,8 @@ function SimulationForm({
                 />
               </Box>
             </Stack>
+            <Typography>Probabilities</Typography>
             <Stack direction="row" sx={{ justifyContent: 'space-between', pt: 1 }}>
-              <Box sx={{ pr: 1 }}>
-                <Typography>Probabilities</Typography>
-              </Box>
               <Stack direction="column" sx={{ alignItems: 'end' }}>
                 {MutationProbabilities.map((key) => (
                   <ProbabilityInput

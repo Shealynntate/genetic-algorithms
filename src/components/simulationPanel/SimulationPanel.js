@@ -163,7 +163,7 @@ function SimulationPanel() {
             ))}
           </Panel>
         </Stack>
-        <Stack direction="column">
+        <Stack direction="column" spacing={1}>
           <SimulationChart simulations={filteredExperiments} />
           <SimulationDetails simulation={idToSimulation(selectedSimulation)} />
         </Stack>
