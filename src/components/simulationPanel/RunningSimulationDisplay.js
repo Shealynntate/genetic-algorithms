@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -12,11 +12,11 @@ import GlobalBest from '../GlobalBest';
 import Canvas from '../Canvas';
 import { createImageData } from '../../globals/utils';
 import Panel from '../settingsPanels/Panel';
+import GraphContext from '../../contexts/graphContext';
 
 const { width, height } = canvasParameters;
 
 function RunningSimulationDisplay({
-  color,
   isChecked,
   isSelected,
   onCheck,
@@ -27,6 +27,8 @@ function RunningSimulationDisplay({
   const target = useSelector((state) => state.parameters.population.target);
   const [imageData, setImageData] = useState();
   const theme = useTheme();
+  const graphContext = useContext(GraphContext);
+  const color = graphContext.getColor(simulation?.id);
 
   useEffect(() => {
     let isMounted = true;
@@ -79,7 +81,6 @@ function RunningSimulationDisplay({
 }
 
 RunningSimulationDisplay.propTypes = {
-  color: PropTypes.string,
   isChecked: PropTypes.bool,
   isSelected: PropTypes.bool,
   onCheck: PropTypes.func,
@@ -89,7 +90,6 @@ RunningSimulationDisplay.propTypes = {
 };
 
 RunningSimulationDisplay.defaultProps = {
-  color: null,
   isChecked: false,
   isSelected: false,
   onCheck: () => {},

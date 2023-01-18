@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -6,7 +6,6 @@ import {
   Stack,
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { useTheme } from '@emotion/react';
 import _ from 'lodash';
 import {
   insertSimulation,
@@ -23,6 +22,7 @@ import SimulationFormDialog from './SimulationFormDialog';
 import RunningSimulationDisplay from './RunningSimulationDisplay';
 import defaultParameters from '../../globals/defaultParameters';
 import Panel from '../settingsPanels/Panel';
+import GraphContext from '../../contexts/graphContext';
 
 function SimulationPanel() {
   const runningSimulation = useGetCurrentSimulation();
@@ -32,31 +32,7 @@ function SimulationPanel() {
   const [checkedExperiments, setCheckedExperiments] = useState([]);
   const [selectedSimulation, setSelectedSimulation] = useState(null);
   const formData = useRef(defaultParameters);
-
-  const theme = useTheme();
-
-  const lineColors = [
-    theme.palette.primary.main,
-    theme.palette.secondary.main,
-    theme.palette.error.main,
-    theme.palette.warning.main,
-    theme.palette.info.main,
-    theme.palette.success.main,
-
-    theme.palette.primary.light,
-    theme.palette.secondary.light,
-    theme.palette.error.light,
-    theme.palette.warning.light,
-    theme.palette.info.light,
-    theme.palette.success.light,
-
-    theme.palette.primary.dark,
-    theme.palette.secondary.dark,
-    theme.palette.error.dark,
-    theme.palette.warning.dark,
-    theme.palette.info.dark,
-    theme.palette.success.dark,
-  ];
+  const graphContext = useContext(GraphContext);
 
   const idToSimulation = (id) => {
     const all = [...completedSimulations, ...pendingSimulations, runningSimulation];
@@ -87,8 +63,10 @@ function SimulationPanel() {
     event.stopPropagation();
 
     if (event.target.checked) {
+      graphContext.addColor(id);
       setCheckedExperiments([...checkedExperiments, id]);
     } else {
+      graphContext.removeColor(id);
       setCheckedExperiments(checkedExperiments.filter((item) => item !== id));
     }
   };
@@ -105,12 +83,6 @@ function SimulationPanel() {
     setOpenForm(true);
   };
 
-  const getCheckboxColor = (id) => {
-    const index = checkedExperiments.indexOf(id);
-    if (index < 0) return theme.palette.primary.main;
-    return lineColors[index % lineColors.length];
-  };
-
   return (
     <Paper>
       <Stack direction="row">
@@ -119,7 +91,6 @@ function SimulationPanel() {
             runsDisabled={!pendingSimulations.length}
           />
           <RunningSimulationDisplay
-            color={getCheckboxColor(runningSimulation?.id)}
             isChecked={isChecked(runningSimulation?.id)}
             isSelected={selectedSimulation === runningSimulation?.id}
             onDuplicate={onDuplicate}
@@ -138,7 +109,6 @@ function SimulationPanel() {
                 onDuplicate={onDuplicate}
                 onCheck={onChangeCheckbox}
                 onSelect={onSelect}
-                color={getCheckboxColor(simulation.id)}
               />
             ))}
             <Box sx={{ textAlign: 'center' }}>
@@ -158,7 +128,6 @@ function SimulationPanel() {
                 onDuplicate={onDuplicate}
                 onCheck={onChangeCheckbox}
                 onSelect={onSelect}
-                color={getCheckboxColor(simulation.id)}
               />
             ))}
           </Panel>

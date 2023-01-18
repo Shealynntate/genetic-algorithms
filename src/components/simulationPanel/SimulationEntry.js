@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
 import {
@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
+import GraphContext from '../../contexts/graphContext';
 import { SimulationStatus } from '../../constants';
 import { deleteSimulation, renameSimulation } from '../../globals/database';
 import { ParametersType } from '../../types';
@@ -21,17 +22,18 @@ function SimulationEntry({
   onCheck,
   onDuplicate,
   onSelect,
-  color,
   isSelected,
   status,
 }) {
   const { id, createdOn, name } = simulation;
   const theme = useTheme();
+  const graph = useContext(GraphContext);
   const [nameValue, setNameValue] = useState(name);
   const hasCheckbox = status !== SimulationStatus.PENDING;
   const hasDelete = status !== SimulationStatus.RUNNING;
   const elevation = isSelected ? 2 : 2;
   const border = isSelected ? `1px dashed ${theme.palette.primary.main}` : 'none';
+  const color = graph.getColor(id);
 
   const onDelete = (event) => {
     event.stopPropagation();
@@ -93,7 +95,6 @@ SimulationEntry.propTypes = {
   onCheck: PropTypes.func,
   onDuplicate: PropTypes.func,
   onSelect: PropTypes.func,
-  color: PropTypes.string,
 };
 
 SimulationEntry.defaultProps = {
@@ -102,7 +103,6 @@ SimulationEntry.defaultProps = {
   onCheck: () => {},
   onDuplicate: () => {},
   onSelect: () => {},
-  color: null,
 };
 
 export default SimulationEntry;

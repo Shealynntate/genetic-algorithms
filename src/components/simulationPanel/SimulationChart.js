@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { scaleLinear } from '@visx/scale';
 import { useTheme } from '@emotion/react';
@@ -7,9 +7,10 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
 import { minExperimentThreshold } from '../../constants';
 import ExperimentLine from '../ExperimentLine';
+import GraphContext from '../../contexts/graphContext';
 import { ParametersType } from '../../types';
 
-const graphWidth = 650;
+const graphWidth = 625;
 const graphHeight = 500;
 const maxGenerations = 20_000;
 
@@ -25,32 +26,10 @@ const fullHeight = graphHeight + margin.top + margin.bottom;
 
 function SimulationChart({ simulations }) {
   const theme = useTheme();
+  const graphContext = useContext(GraphContext);
 
   const bgColor = theme.palette.background.default;
   const axisColor = theme.palette.grey[400];
-
-  const lineColors = [
-    theme.palette.primary.main,
-    theme.palette.secondary.main,
-    theme.palette.error.main,
-    theme.palette.warning.main,
-    theme.palette.info.main,
-    theme.palette.success.main,
-
-    theme.palette.primary.light,
-    theme.palette.secondary.light,
-    theme.palette.error.light,
-    theme.palette.warning.light,
-    theme.palette.info.light,
-    theme.palette.success.light,
-
-    theme.palette.primary.dark,
-    theme.palette.secondary.dark,
-    theme.palette.error.dark,
-    theme.palette.warning.dark,
-    theme.palette.info.dark,
-    theme.palette.success.dark,
-  ];
 
   const genData = (results) => results.map(({ stats }) => ({
     x: stats.genId,
@@ -92,13 +71,13 @@ function SimulationChart({ simulations }) {
           stroke="white"
           strokeOpacity={0.10}
         />
-        {simulations.map(({ id, results }, index) => (
+        {simulations.map(({ id, results }) => (
           <ExperimentLine
             key={`graph-${id}`}
             data={genData(results)}
             xScale={xScale}
             yScale={yScale}
-            color={lineColors[index % lineColors.length]}
+            color={graphContext.getColor(id)}
           />
         ))}
       </Group>
