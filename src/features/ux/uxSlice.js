@@ -4,6 +4,7 @@ import { AppState } from '../../constants';
 import { rehydrate } from '../developer/developerSlice';
 
 export const END_SIMULATION_EARLY = 'ux/endSimulationEarly';
+export const DELETE_RUNNING_SIMULATION = 'ux/deleteRunningSimulation';
 
 const initialState = {
   simulationState: AppState.NONE,
@@ -13,6 +14,13 @@ export const endSimulationEarly = createAction(
   END_SIMULATION_EARLY,
   () => ({
     type: END_SIMULATION_EARLY,
+  }),
+);
+
+export const deleteRunningSimulation = createAction(
+  DELETE_RUNNING_SIMULATION,
+  () => ({
+    type: DELETE_RUNNING_SIMULATION,
   }),
 );
 

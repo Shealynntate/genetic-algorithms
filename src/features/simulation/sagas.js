@@ -14,6 +14,7 @@ import {
   addGalleryEntry,
   addImageToDatabase,
   addResultsToCurrentSimulation,
+  deleteCurrentSimulation,
   getCurrentImages,
   getCurrentSimulation,
   getNextPendingSimulation,
@@ -29,6 +30,7 @@ import {
   RESTORE_POPULATION, setGenStats, setGlobalBest, updateCurrentGen,
 } from './simulationSlice';
 import {
+  DELETE_RUNNING_SIMULATION,
   endSimulations,
   END_SIMULATION_EARLY,
   resumeSimulations,
@@ -181,13 +183,19 @@ function* runSimulationSaga({ parameters }) {
   while (true) {
     // If the experiment has been paused, wait until a resume or endEarly action has been fired
     if (!(yield select(isRunningSelector))) {
-      const { end } = yield race({
+      const { endSim, deleteSim } = yield race({
         resume: take(resumeSimulations),
-        end: take(END_SIMULATION_EARLY),
+        endSim: take(END_SIMULATION_EARLY),
+        deleteSim: take(DELETE_RUNNING_SIMULATION),
       });
-      // endSimulationEarly was called, exit early
-      if (end) {
+      if (endSim) {
+        // End the simulation early, saving the run as if it completed normally
         yield call(completeSimulationRunSaga);
+        return true;
+      }
+      if (deleteSim) {
+        // Delete the run from the database and move on to the next one
+        yield call(deleteCurrentSimulation);
         return true;
       }
     }

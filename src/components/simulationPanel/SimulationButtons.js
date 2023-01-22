@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 import { Box, Button } from '@mui/material';
 import { AppState, primaryButtonLabels } from '../../constants';
 import {
+  deleteRunningSimulation,
   endSimulationEarly,
   pauseSimulations,
   resumeSimulations,
   runSimulations,
 } from '../../features/ux/uxSlice';
 import { useIsPaused } from '../../hooks';
-import { deleteCurrentSimulation } from '../../globals/database';
 
 function PrimaryButton({ runsDisabled }) {
   const simulationState = useSelector((state) => state.ux.simulationState);
@@ -45,7 +45,7 @@ function PrimaryButton({ runsDisabled }) {
   };
 
   const onDelete = () => {
-    dispatch(deleteCurrentSimulation());
+    dispatch(deleteRunningSimulation());
   };
 
   return (
