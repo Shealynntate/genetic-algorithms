@@ -103,6 +103,20 @@ function SimulationForm({
                   readOnly={readOnly}
                   register={register}
                 />
+                <NumberInput
+                  errors={errors}
+                  getValues={getValues}
+                  path="population.minPoints"
+                  readOnly={readOnly}
+                  register={register}
+                />
+                <NumberInput
+                  errors={errors}
+                  getValues={getValues}
+                  path="population.maxPoints"
+                  readOnly={readOnly}
+                  register={register}
+                />
               </Stack>
             </Stack>
           </Panel>
@@ -114,7 +128,7 @@ function SimulationForm({
                   labelId="select-label"
                   label="Selection Type"
                   readOnly={readOnly}
-                  defaultValue={selection.type}
+                  value={selection.type}
                   {...register('selection.type')}
                 >
                   {Object.keys(SelectionType).map((type) => (

@@ -30,11 +30,14 @@ import {
 } from './simulationSlice';
 import {
   endSimulations,
-  resetSimulations,
+  END_SIMULATION_EARLY,
   resumeSimulations,
   runSimulations,
 } from '../ux/uxSlice';
 import { setSimulationParameters } from '../parameters/parametersSlice';
+
+let globalUpdateCount = 0;
+let monitoredBest = 0;
 
 function* restorePopulationSaga({ payload: populationData }) {
   const target = yield select((state) => state.parameters.target);
@@ -54,6 +57,8 @@ function* resetSimulationsSaga() {
   const populationService = yield getContext('population');
   yield put(setGlobalBest());
   populationService.reset();
+  globalUpdateCount = 0;
+  monitoredBest = 0;
 }
 
 function* createGalleryEntrySaga({ totalGen, globalBest }) {
@@ -76,12 +81,32 @@ function* createGalleryEntrySaga({ totalGen, globalBest }) {
   yield addGalleryEntry(json);
 }
 
+function* completeSimulationRunSaga() {
+  const globalBest = yield select((state) => state.simulation.globalBest);
+  const currentBest = yield select((state) => state.simulation.currentBest);
+  const stats = yield select((state) => state.simulation.currentStats);
+  const { population } = yield getContext('population');
+  const currentMax = currentBest.organism.fitness;
+  // Create a Gallery Entry for the run
+  yield call(createGalleryEntrySaga, {
+    totalGen: currentBest.genId,
+    globalBest,
+  });
+  // Stop the simulation and add the results to database
+  yield addResultsToCurrentSimulation({ threshold: currentMax, stats });
+  yield updateCurrentSimulation({
+    population: population.serialize(),
+    status: SimulationStatus.COMPLETE,
+  });
+  yield call(resetSimulationsSaga);
+}
+
 function* generationResultsCheckSaga({
   stopCriteria,
   currentBest,
   stats,
+  maxFitOrganism,
 }) {
-  const { population } = yield getContext('population');
   const globalBest = yield select((state) => state.simulation.globalBest);
   const currentStats = yield select((state) => state.simulation.currentStats);
 
@@ -92,25 +117,22 @@ function* generationResultsCheckSaga({
   // Store results if needed
   const latestThreshold = currentStats.threshold ?? 0;
   const currentMax = Math.trunc(stats.maxFitness * 1000) / 1000;
+  yield put(setGenStats({ threshold: currentMax, stats }));
   if (currentMax > latestThreshold && currentMax >= minExperimentThreshold) {
     yield addResultsToCurrentSimulation({ threshold: currentMax, stats });
-    yield put(setGenStats({ threshold: currentMax, stats }));
+  }
+
+  // Temp code!!
+  if (maxFitOrganism.fitness > monitoredBest) {
+    monitoredBest = maxFitOrganism.fitness;
+    globalUpdateCount = 0;
+  } else {
+    globalUpdateCount += 1;
   }
 
   // Check if the simulation is over
   if (isStopping) {
-    // Create a Gallery Entry for the run
-    yield call(createGalleryEntrySaga, {
-      totalGen: currentBest.genId,
-      globalBest,
-    });
-    // Stop the simulation and add the results to database
-    yield addResultsToCurrentSimulation({ threshold: currentMax, stats });
-    yield updateCurrentSimulation({
-      population: population.serialize(),
-      status: SimulationStatus.COMPLETE,
-    });
-    yield call(resetSimulationsSaga);
+    yield call(completeSimulationRunSaga);
     return true;
   }
   return false;
@@ -131,6 +153,8 @@ function* runSimulationSaga({ parameters }) {
         size,
         minPolygons,
         maxPolygons,
+        minPoints,
+        maxPoints,
       },
     } = parameters;
     const { data } = yield createImageData(target);
@@ -139,6 +163,8 @@ function* runSimulationSaga({ parameters }) {
       size,
       minGenomeSize: minPolygons,
       maxGenomeSize: maxPolygons,
+      minPoints,
+      maxPoints,
       target: data,
       mutation,
       crossover,
@@ -153,16 +179,16 @@ function* runSimulationSaga({ parameters }) {
   yield put(setSimulationParameters({ parameters }));
   // Run the experiment in a loop until one of the stop criteria is met
   while (true) {
-    // If the experiment has been paused, wait until a resume or reset action has been fired
+    // If the experiment has been paused, wait until a resume or endEarly action has been fired
     if (!(yield select(isRunningSelector))) {
-      const { reset } = yield race({
+      const { end } = yield race({
         resume: take(resumeSimulations),
-        reset: take(resetSimulations),
+        end: take(END_SIMULATION_EARLY),
       });
-      // Reset was called, exit early
-      if (reset) {
-        yield call(resetSimulationsSaga);
-        return false;
+      // endSimulationEarly was called, exit early
+      if (end) {
+        yield call(completeSimulationRunSaga);
+        return true;
       }
     }
 
@@ -172,8 +198,14 @@ function* runSimulationSaga({ parameters }) {
     }
 
     // First run the next generation of the simulation
-    const { maxFitOrganism, ...stats } = yield population.runGeneration();
+    const isMerge = globalUpdateCount > 300;
+    const { maxFitOrganism, ...stats } = yield population.runGeneration(isMerge);
     const organism = omit(maxFitOrganism, ['phenotype']);
+    if (isMerge) {
+      globalUpdateCount = 0; // reset count
+      monitoredBest = 0;
+      console.log('PERFORMED MERGED', stats.genId);
+    }
 
     // Should we store a copy of the maxFitOrganism for Image History?
     if (shouldSaveGenImage(population.genId)) {
@@ -197,6 +229,7 @@ function* runSimulationSaga({ parameters }) {
       currentBest: { organism, genId: stats.genId },
       stats,
       stopCriteria: parameters.stopCriteria,
+      maxFitOrganism,
     });
     // The experiment has met one of the stop criteria, signal that it's complete
     if (result) return true;

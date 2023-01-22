@@ -42,7 +42,7 @@ export async function insertSimulation({
   status = SimulationStatus.UNKNOWN,
 }) {
   return db[simulationsTable].add({
-    name: 'Unnamed Simulation',
+    name: 'New Run',
     population,
     parameters,
     status,
@@ -150,18 +150,18 @@ export async function restoreSimulation(simulationId) {
   return setCurrentSimulation(newId);
 }
 
-export async function deleteSimulation(id) {
-  const simEntry = await getSimulation(id);
-  if (simEntry.id === currentSimulationId || simEntry.status === SimulationStatus.RUNNING) {
-    // Don't delete the current Simulation, it'll break things, just mark it as not saved
-    throw new Error(`Cannot delete a running simulation ${id}`);
-  }
+export const deleteSimulation = async (id) => Promise.all([
   // Delete all matching simulationId entries
-  return Promise.all([
-    db[simulationsTable].delete(id),
-    db[imagesTable].where('simulationId').equals(id).delete(),
-  ]);
-}
+  db[simulationsTable].delete(id),
+  db[imagesTable].where('simulationId').equals(id).delete(),
+]);
+
+export const deleteCurrentSimulation = async () => {
+  if (currentSimulationId == null) {
+    throw new Error('Current simulation ID is not set, cannot delete it');
+  }
+  return deleteSimulation(currentSimulationId);
+};
 
 // Images Table
 // --------------------------------------------------

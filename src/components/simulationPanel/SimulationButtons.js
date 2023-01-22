@@ -4,51 +4,61 @@ import PropTypes from 'prop-types';
 import { Box, Button } from '@mui/material';
 import { AppState, primaryButtonLabels } from '../../constants';
 import {
+  endSimulationEarly,
   pauseSimulations,
-  resetSimulations,
   resumeSimulations,
   runSimulations,
 } from '../../features/ux/uxSlice';
 import { useIsPaused } from '../../hooks';
+import { deleteCurrentSimulation } from '../../globals/database';
 
 function PrimaryButton({ runsDisabled }) {
   const simulationState = useSelector((state) => state.ux.simulationState);
   const isPaused = useIsPaused();
   const dispatch = useDispatch();
-  const isDisabled = runsDisabled && simulationState === AppState.NONE;
+  let isDisabled = runsDisabled;
+  let action;
+  switch (simulationState) {
+    case AppState.RUNNING:
+      action = pauseSimulations;
+      // Pause button cannot be disabled
+      isDisabled = false;
+      break;
+    case AppState.PAUSED:
+      action = resumeSimulations;
+      // Resume button cannot be disabled
+      isDisabled = false;
+      break;
+    case AppState.COMPLETE:
+      action = runSimulations;
+      break;
+    default:
+      action = runSimulations;
+  }
 
   const onClick = () => {
-    let action;
-    switch (simulationState) {
-      case AppState.RUNNING:
-        action = pauseSimulations;
-        break;
-      case AppState.PAUSED:
-        action = resumeSimulations;
-        break;
-      case AppState.COMPLETE:
-        action = runSimulations;
-        break;
-      default:
-        action = runSimulations;
-    }
     dispatch(action());
   };
 
-  const onReset = () => {
-    let action;
-    switch (simulationState) {
-      case AppState.PAUSED:
-        action = resetSimulations;
-        break;
-      default:
-        throw new Error(`Unrecognized state ${simulationState} when onReset called`);
-    }
-    dispatch(action());
+  const onEndEarly = () => {
+    dispatch(endSimulationEarly());
+  };
+
+  const onDelete = () => {
+    dispatch(deleteCurrentSimulation());
   };
 
   return (
     <Box sx={{ textAlign: 'center' }}>
+      {isPaused && (
+        <Button
+          variant="outlined"
+          onClick={onEndEarly}
+          size="large"
+        >
+          End Early
+        </Button>
+      )}
       <Button
         variant="contained"
         onClick={onClick}
@@ -60,10 +70,11 @@ function PrimaryButton({ runsDisabled }) {
       {isPaused && (
         <Button
           variant="outlined"
-          onClick={onReset}
+          onClick={onDelete}
           size="large"
+          color="error"
         >
-          Reset
+          Delete
         </Button>
       )}
     </Box>

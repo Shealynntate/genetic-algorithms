@@ -31,9 +31,14 @@ function SimulationChart({ simulations }) {
   const bgColor = theme.palette.background.default;
   const axisColor = theme.palette.grey[400];
 
-  const genData = (results) => results.map(({ stats }) => ({
+  const getMaxData = (results) => results.map(({ stats }) => ({
     x: stats.genId,
     y: stats.maxFitness,
+  }));
+
+  const getMeanData = (results) => results.map(({ stats }) => ({
+    x: stats.genId,
+    y: stats.meanFitness,
   }));
 
   const yScale = useMemo(
@@ -72,13 +77,21 @@ function SimulationChart({ simulations }) {
           strokeOpacity={0.10}
         />
         {simulations.map(({ id, results }) => (
-          <ExperimentLine
-            key={`graph-${id}`}
-            data={genData(results)}
-            xScale={xScale}
-            yScale={yScale}
-            color={graphContext.getColor(id)}
-          />
+          <React.Fragment key={`graph-line-${id}`}>
+            <ExperimentLine
+              data={getMaxData(results)}
+              xScale={xScale}
+              yScale={yScale}
+              color={graphContext.getColor(id)}
+            />
+            <ExperimentLine
+              data={getMeanData(results)}
+              xScale={xScale}
+              yScale={yScale}
+              color={graphContext.getColor(id)}
+              type="dashed"
+            />
+          </React.Fragment>
         ))}
       </Group>
       <AxisLeft

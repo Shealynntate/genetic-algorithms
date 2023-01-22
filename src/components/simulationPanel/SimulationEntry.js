@@ -31,6 +31,7 @@ function SimulationEntry({
   const [nameValue, setNameValue] = useState(name);
   const hasCheckbox = status !== SimulationStatus.PENDING;
   const hasDelete = status !== SimulationStatus.RUNNING;
+  const hasTextEdit = status !== SimulationStatus.RUNNING;
   const elevation = isSelected ? 2 : 2;
   const border = isSelected ? `1px dashed ${theme.palette.primary.main}` : 'none';
   const color = graph.getColor(id);
@@ -65,11 +66,13 @@ function SimulationEntry({
             }}
           />
         )}
-        <Typography variant="body2" pr={1}>{`${id}.`}</Typography>
+        {/* <Typography variant="body2" pr={1}>{`${id}.`}</Typography> */}
         <TextField
           value={nameValue}
           onChange={onChangeName}
           variant="standard"
+          size="small"
+          disabled={!hasTextEdit}
         />
         <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
           {new Date(createdOn).toLocaleString()}

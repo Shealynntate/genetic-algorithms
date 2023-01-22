@@ -14,7 +14,8 @@ export const CrossoverType = {
 
 export const ProbabilityTypes = {
   // Mutation Probabilities
-  TWEAK: 'TWEAK',
+  TWEAK_POINT: 'TWEAK_POINT',
+  TWEAK_COLOR: 'TWEAK_COLOR',
   ADD_POINT: 'ADD_POINT',
   REMOVE_POINT: 'REMOVE_POINT',
   ADD_CHROMOSOME: 'ADD_CHROMOSOME',
@@ -33,7 +34,8 @@ export const DistributionTypes = {
 };
 
 export const MutationProbabilities = [
-  ProbabilityTypes.TWEAK,
+  ProbabilityTypes.TWEAK_POINT,
+  ProbabilityTypes.TWEAK_COLOR,
   ProbabilityTypes.ADD_POINT,
   ProbabilityTypes.REMOVE_POINT,
   ProbabilityTypes.ADD_CHROMOSOME,
@@ -93,7 +95,8 @@ export const DistSigmaLabels = {
 };
 
 export const ProbabilityLabels = {
-  [ProbabilityTypes.TWEAK]: 'Tweak',
+  [ProbabilityTypes.TWEAK_COLOR]: 'Tweak Color',
+  [ProbabilityTypes.TWEAK_POINT]: 'Tweak Point',
   [ProbabilityTypes.ADD_POINT]: 'Add Point',
   [ProbabilityTypes.REMOVE_POINT]: 'Remove Point',
   [ProbabilityTypes.ADD_CHROMOSOME]: 'Add Chromosome',
@@ -107,9 +110,7 @@ export const primaryButtonLabels = {
   [AppState.NONE]: 'Run',
   [AppState.RUNNING]: 'Pause',
   [AppState.PAUSED]: 'Resume',
-  [AppState.COMPLETE]: 'Reset',
-  [AppState.RUNNING_EXPERIMENTS]: 'Pause Experiments',
-  [AppState.PAUSED_EXPERIMENTS]: 'Resume Experiments',
+  [AppState.COMPLETE]: 'Run',
 };
 
 export const statusLabels = {

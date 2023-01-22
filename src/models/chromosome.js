@@ -9,10 +9,6 @@ import {
 } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 
-const minNumSides = 3;
-const maxNumSides = 10;
-const defaultNumSides = 3;
-
 // Chromosome Initialization Helpers
 // ------------------------------------------------------------
 const randCV = () => randomInt(0, maxColorValue);
@@ -96,7 +92,7 @@ const mutatePoint = (points, index, mutation) => {
  * Chromosome
  */
 const Chromosome = {
-  create: ({ color: col, points: pts, numSides = defaultNumSides } = {}) => ({
+  create: ({ color: col, points: pts, numSides } = {}) => ({
     points: pts || randomPoints(numSides),
     color: col || randomColor(),
   }),
@@ -122,7 +118,7 @@ const Chromosome = {
 
   multiMutation: (chromosomes, mutation) => {
     for (let i = 0; i < chromosomes.color.length; ++i) {
-      if (mutation.doMutate()) {
+      if (mutation.doTweakColor()) {
         if (i === 3) {
           chromosomes.color[i] = tweakAlpha(mutation, chromosomes.color[i]);
         } else {
@@ -131,7 +127,7 @@ const Chromosome = {
       }
     }
     for (let i = 0; i < chromosomes.points.length; ++i) {
-      if (mutation.doMutate()) {
+      if (mutation.doTweakPoint()) {
         chromosomes.points[i] = tweakPoint(mutation, ...chromosomes.points[i]);
       }
     }
@@ -158,8 +154,8 @@ const Chromosome = {
    * @returns true if the add mutation was successful, false if the chromosome already has the
    * maximum number of points allowed
    */
-  addPointMutation: (chromosome) => {
-    if (chromosome.points.length >= maxNumSides) {
+  addPointMutation: (chromosome, maxNumPoints) => {
+    if (chromosome.points.length >= maxNumPoints) {
       return false;
     }
 
@@ -173,8 +169,8 @@ const Chromosome = {
     return true;
   },
 
-  removePointMutation: (chromosome) => {
-    if (chromosome.points.length <= minNumSides) {
+  removePointMutation: (chromosome, minNumPoints) => {
+    if (chromosome.points.length <= minNumPoints) {
       return false;
     }
     const index = randomIndex(chromosome.points.length - 1);
@@ -183,8 +179,8 @@ const Chromosome = {
     return true;
   },
 
-  resetMutation: (chromosome) => {
-    chromosome.points = randomPoints(defaultNumSides);
+  resetMutation: (chromosome, numPoints) => {
+    chromosome.points = randomPoints(numPoints);
     chromosome.color = randomColor();
   },
 };

@@ -25,6 +25,16 @@ export const ParameterBounds = {
       max: 100,
       step: 1,
     },
+    minPoints: {
+      min: 2,
+      max: 16,
+      step: 1,
+    },
+    maxPoints: {
+      min: 2,
+      max: 16,
+      step: 1,
+    },
   },
   selection: {
     eliteCount: {
@@ -54,6 +64,8 @@ export const ParameterValidation = {
     size: (v) => ((v % 2 === 0) || 'Population size must be even'),
     minPolygons: (v, gv) => ((v <= gv('population.maxPolygons')) || 'Min polygons can\'t be greater than max polygons'),
     maxPolygons: (v, gv) => ((v >= gv('population.minPolygons')) || 'Max polygons can\'t be less than min polygons'),
+    minPoints: (v, gv) => ((v <= gv('population.maxPoints')) || 'Min number of sides can\'t be greater than max sides'),
+    maxPoints: (v, gv) => ((v >= gv('population.minPoints')) || 'Max number of sides can\'t be less than min sides'),
   },
   selection: {
     eliteCount: (v, gv) => (((v % 2 === 0) && v < gv('population.size')) || 'Elite count must be even and less than the population size'),
@@ -66,6 +78,8 @@ export const ParameterLabels = {
     size: 'Size',
     minPolygons: 'Min △',
     maxPolygons: 'Max △',
+    minPoints: 'Min Sides',
+    maxPoints: 'Max Sides',
     target: 'Target Image',
   },
   selection: {
@@ -84,7 +98,8 @@ export const ParameterLabels = {
     [DistributionTypes.POINT_SIGMA]: 'Point',
     [DistributionTypes.PERMUTE_SIGMA]: 'Permute',
     probabilities: {
-      [ProbabilityTypes.TWEAK]: 'Tweak',
+      [ProbabilityTypes.TWEAK_COLOR]: 'Tweak Color',
+      [ProbabilityTypes.TWEAK_POINT]: 'Tweak Point',
       [ProbabilityTypes.ADD_POINT]: 'Add Point',
       [ProbabilityTypes.REMOVE_POINT]: 'Remove Point',
       [ProbabilityTypes.ADD_CHROMOSOME]: 'Add Chromosome',
@@ -101,9 +116,11 @@ export const ParameterLabels = {
 
 const parameters = {
   population: {
-    size: 200,
+    size: 150,
     minPolygons: 1,
-    maxPolygons: 50,
+    maxPolygons: 40,
+    minPoints: 3,
+    maxPoints: 8,
     target: defaultTarget,
   },
   selection: {
@@ -127,7 +144,13 @@ const parameters = {
     [DistributionTypes.POINT_SIGMA]: 0.05,
     [DistributionTypes.PERMUTE_SIGMA]: 0.05, // TODO
     probabilities: {
-      [ProbabilityTypes.TWEAK]: {
+      [ProbabilityTypes.TWEAK_COLOR]: {
+        startValue: 0.1,
+        endValue: 0.05,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+      [ProbabilityTypes.TWEAK_POINT]: {
         startValue: 0.01,
         endValue: 0.005,
         startFitness: 0,

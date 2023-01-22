@@ -1,5 +1,6 @@
+/* eslint-disable class-methods-use-this */
 import { deviation } from 'd3-array';
-import { omit } from 'lodash';
+import _, { omit } from 'lodash';
 import Organism from './organism';
 import { SelectionType, statsSigFigs, workerBatchSize } from '../constants';
 import { randomFloat, randomIndex, setSigFigs } from '../globals/statsUtils';
@@ -33,34 +34,45 @@ class Population {
     size,
     minGenomeSize,
     maxGenomeSize,
+    minPoints,
+    maxPoints,
     target,
     crossover,
     mutation,
     selection,
+    // eslint-disable-next-line no-unused-vars
     organisms = null,
     best = null,
   }) {
     this.genId = genId;
     this.target = target;
-    this.organisms = organisms ?? [...Array(size)].map(
-      () => Organism.create({ size: minGenomeSize }),
-    );
+    // this.species = [1, 2].map(() => (
+    this.species = [1].map(() => (
+      [...Array(size)].map(
+        () => Organism.create({ size: minGenomeSize, numSides: minPoints }),
+      )
+    ));
+    // this.organisms = organisms ?? [...Array(size)].map(
+    //   () => Organism.create({ size: minGenomeSize }),
+    // );
     this.crossover = new Crossover(crossover);
     this.selection = new Selection(selection);
     this.mutation = new Mutation(mutation);
     this.maxGenomeSize = maxGenomeSize;
+    this.minPoints = minPoints;
+    this.maxPoints = maxPoints;
     this.best = best;
     // If population is shrinking, keep the first <size> organisms
     // If fitness has been evaluated, then they're the most fit, otherwise it's a random selection
-    if (this.organisms.length > size) {
-      this.organisms = this.organisms.slice(0, size);
-    }
+    // if (this.organisms.length > size) {
+    //   this.organisms = this.organisms.slice(0, size);
+    // }
     // If the population is expanding, duplicate the first organism until we reach <size>
     // It's either the most fit organism or a random selection
-    while (this.organisms.length < size) {
-      // Clone and mutate first organism
-      this.organisms.push(Organism.cloneAndMutate(this.organisms[0], this.mutation));
-    }
+    // while (this.organisms.length < size) {
+    //   // Clone and mutate first organism
+    //   this.organisms.push(Organism.cloneAndMutate(this.organisms[0], this.mutation));
+    // }
   }
 
   serialize() {
@@ -70,7 +82,7 @@ class Population {
     }
     return {
       genId: this.genId,
-      organisms: this.organisms.map((o) => omit(o, ['phenotype'])),
+      species: this.species.map((organisms) => organisms.map((o) => omit(o, ['phenotype']))),
       mutation: this.mutation.serialize(),
       crossover: this.crossover.serialize(),
       selection: this.selection.serialize(),
@@ -81,20 +93,65 @@ class Population {
 
   async initialize() {
     // Setup web workers for evaluateFitness work
-    const numWorkers = Math.ceil(this.size / workerBatchSize);
+    const numWorkers = Math.ceil(this.totalSize / workerBatchSize);
     this.workers = [...Array(numWorkers)].map(() => createWorker(this.target));
     // Prep for the first call of runGeneration
-    this.organisms = await this.evaluateFitness();
+    for (let i = 0; i < this.species.length; ++i) {
+      // eslint-disable-next-line no-await-in-loop
+      this.species[i] = await this.evaluateFitness(this.species[i]);
+    }
   }
 
-  async runGeneration() {
-    // Select all the parents for reproduction
-    const parents = this.performSelection(this.selection);
-    // Replace old population with new generation
-    this.organisms = this.reproduce(parents, this.selection, this.crossover, this.mutation);
-    this.genId = Population.nextGenId;
-    this.organisms = await this.evaluateFitness();
+  async runGeneration(isMerge) {
+    if (isMerge) {
+      // return this.runMergeGeneration();
+      this.mutation.markDisruptionGen();
+    }
 
+    for (let i = 0; i < this.species.length; ++i) {
+      const organisms = this.species[i];
+      // Select all the parents for reproduction
+      const parents = this.performSelection(organisms, organisms, this.size, this.selection);
+      // Replace old population with new generation
+      this.species[i] = this.reproduce(parents, this.selection, this.crossover, this.mutation);
+      // eslint-disable-next-line no-await-in-loop
+      this.species[i] = await this.evaluateFitness(this.species[i]);
+    }
+
+    this.genId = Population.nextGenId;
+    const stats = this.createStats();
+    // Let Mutation and Crossover strategies update if needed
+    this.mutation.markNextGen(stats);
+    this.crossover.markNextGen(stats);
+
+    return stats;
+  }
+
+  async runMergeGeneration() {
+    // const allOrganisms = _.concat(...this.species);
+    // Select all the parents for reproduction
+    const len = this.species[0].length;
+    const parents = this.performSelection(
+      this.species[0],
+      this.species[1],
+      this.totalSize,
+      this.selection,
+    );
+    // Replace old population with new generation
+    const children = this.reproduce(parents, this.selection, this.crossover, this.mutation);
+    for (let i = 0; i < this.species.length; ++i) {
+      this.species[i] = children.slice(i, i + len);
+      // Temp code!!
+      if (i === this.species.length - 1) {
+        this.species[i] = [...Array(this.size)].map(
+          () => Organism.create({ size: 1, numSides: this.minPoints }),
+        );
+      }
+      // eslint-disable-next-line no-await-in-loop
+      this.species[i] = await this.evaluateFitness(this.species[i]);
+    }
+
+    this.genId = Population.nextGenId;
     const stats = this.createStats();
     // Let Mutation and Crossover strategies update if needed
     this.mutation.markNextGen(stats);
@@ -108,7 +165,7 @@ class Population {
    * Should only be called per generation as it's compulationally expensive
    * @returns null
    */
-  async evaluateFitness() {
+  async evaluateFitness(organisms) {
     const promises = [];
 
     for (let i = 0; i < this.workers.length; ++i) {
@@ -117,7 +174,7 @@ class Population {
       promises.push(new Promise((resolve, reject) => {
         try {
           this.workers[i].postMessage({
-            organisms: this.organisms.slice(start, end),
+            organisms: organisms.slice(start, end),
           });
           this.workers[i].onmessage = (result) => {
             resolve(result.data);
@@ -139,15 +196,15 @@ class Population {
     return orgs;
   }
 
-  performSelection({ type, tournamentSize, eliteCount }) {
-    const count = (this.size - eliteCount) / 2;
+  performSelection(speciesA, speciesB, size, { type, tournamentSize, eliteCount }) {
+    const count = (size - eliteCount) / 2;
     switch (type) {
       case SelectionType.ROULETTE:
-        return this.rouletteSelection(count);
+        return this.rouletteSelection(speciesA, speciesB, count);
       case SelectionType.TOURNAMENT:
-        return this.tournamentSelection(count, tournamentSize);
+        return this.tournamentSelection(speciesA, speciesB, count, tournamentSize);
       case SelectionType.SUS:
-        return this.susSelection(count);
+        return this.susSelection(speciesA, speciesB, count);
       default:
         throw new Error(`Invalid SelectionType ${type} provided`);
     }
@@ -156,9 +213,14 @@ class Population {
   reproduce(parents, selection, crossover, mutation) {
     const { eliteCount } = selection;
     // Generate (N - eliteCount) offspring for the next generation
-    const nextGen = this.getElites(eliteCount);
+    const nextGen = this.getElites(parents, eliteCount);
+    const bounds = {
+      maxGenomeSize: this.maxGenomeSize,
+      minPoints: this.minPoints,
+      maxPoints: this.maxPoints,
+    };
     parents.forEach(([p1, p2]) => {
-      const offspring = Organism.reproduce(p1, p2, crossover, mutation, this.maxGenomeSize);
+      const offspring = Organism.reproduce(p1, p2, crossover, mutation, bounds);
       nextGen.push(...offspring);
     });
     return nextGen;
@@ -166,37 +228,41 @@ class Population {
 
   // Parent Selection Algorithms
   // ------------------------------------------------------------
-  rouletteSelection(count) {
+  rouletteSelection(speciesA, speciesB, count) {
     const parents = [];
-    const cdf = this.createFitnessCDF();
+    const cdfA = this.createFitnessCDF(speciesA);
+    const cdfB = this.createFitnessCDF(speciesB);
     while (parents.length < count) {
-      const p1 = this.rouletteSelectParent(cdf);
-      const p2 = this.rouletteSelectParent(cdf);
+      const p1 = this.rouletteSelectParent(speciesA, cdfA);
+      const p2 = this.rouletteSelectParent(speciesB, cdfB);
       parents.push([p1, p2]);
     }
     return parents;
   }
 
-  tournamentSelection(count, tournamentSize) {
+  tournamentSelection(speciesA, speciesB, count, tournamentSize) {
     const parents = [];
     while (parents.length < count) {
-      const p1 = this.tournamentSelectParent(tournamentSize);
-      const p2 = this.tournamentSelectParent(tournamentSize);
+      const p1 = this.tournamentSelectParent(speciesA, tournamentSize);
+      const p2 = this.tournamentSelectParent(speciesB, tournamentSize);
       parents.push([p1, p2]);
     }
     return parents;
   }
 
-  susSelection(count) {
+  susSelection(speciesA, speciesB, count) {
     const parents = [];
-    const cdf = this.createFitnessCDF();
-    const step = cdf[cdf.length - 1] / this.size;
-    let value = randomFloat(0, step);
+    const cdfA = this.createFitnessCDF(speciesA);
+    const cdfB = this.createFitnessCDF(speciesB);
+    const stepA = cdfA[cdfA.length - 1] / this.size;
+    const stepB = cdfB[cdfB.length - 1] / this.size;
+    let valueA = randomFloat(0, stepA);
+    let valueB = randomFloat(0, stepA);
     while (parents.length < count) {
-      const p1 = this.susSelectParent(value);
-      value += step;
-      const p2 = this.susSelectParent(value);
-      value += step;
+      const p1 = this.susSelectParent(speciesA, valueA);
+      valueA += stepA;
+      const p2 = this.susSelectParent(speciesB, valueB);
+      valueB += stepB;
       parents.push([p1, p2]);
     }
     return parents;
@@ -204,20 +270,20 @@ class Population {
 
   // Parent Selection Algorithm Helpers
   // ------------------------------------------------------------
-  rouletteSelectParent(cdf) {
+  rouletteSelectParent(organisms, cdf) {
     const total = cdf[cdf.length - 1];
     const n = randomFloat(0, total);
     const index = cdf.findIndex((f) => n <= f);
-    return this.organisms[index];
+    return organisms[index];
   }
 
-  tournamentSelectParent(size) {
+  tournamentSelectParent(organisms, size) {
     const chromosomePenalty = 0; // 0.0001;
-    let best = this.randomOrganism();
+    let best = this.randomOrganism(organisms);
     // TODO: Temp test length penalty on chromosomes
     let fitA = best.fitness - (chromosomePenalty * best.genome.chromosomes.length);
     genRange(size).forEach(() => {
-      const next = this.randomOrganism();
+      const next = this.randomOrganism(organisms);
       const fitB = next.fitness - (chromosomePenalty * next.genome.chromosomes.length);
       if (fitB > fitA) {
         best = next;
@@ -228,35 +294,37 @@ class Population {
     return best;
   }
 
-  susSelectParent(cdf, value) {
+  susSelectParent(organisms, cdf, value) {
     const index = cdf.findIndex((f) => value <= f);
-    return this.organisms[index];
+    return organisms[index];
   }
 
-  createFitnessCDF() {
+  createFitnessCDF(organisms) {
     const cdf = [];
     let fitnessSum = 0;
-    this.organisms.forEach((org) => {
+    organisms.forEach((org) => {
       fitnessSum += org.fitness;
       cdf.push(fitnessSum);
     });
     return cdf;
   }
 
-  getElites(count) {
+  getElites(organisms, count) {
     if (count === 0) return [];
 
-    const organisms = this.organismsByFitness();
-    return organisms.slice(0, count).map((org) => Organism.clone(org));
+    const orgs = this.organismsByFitness(organisms);
+    return orgs.slice(0, count).map((org) => Organism.clone(org));
   }
 
-  randomOrganism() {
+  randomOrganism(organisms) {
     const index = randomIndex(this.size);
-    return this.organisms[index];
+    return organisms[index];
   }
 
   maxFitOrganism() {
-    return this.organismsByFitness()[0];
+    const sorted = this.species.map((organisms) => this.organismsByFitness(organisms));
+    const top = sorted.map((s) => s[0]);
+    return this.organismsByFitness(top)[0];
   }
 
   // Helper Methods
@@ -265,25 +333,26 @@ class Population {
    * Sorts a copy of the list of organisms by fitness in descending order.
    * @returns the array of sorted organisms
    */
-  organismsByFitness() {
-    return [...this.organisms].sort((a, b) => b.fitness - a.fitness);
+  organismsByFitness(organisms) {
+    return [...organisms].sort((a, b) => b.fitness - a.fitness);
   }
 
   createStats() {
+    const allOrgs = _.concat(...this.species);
     let max = Number.MIN_SAFE_INTEGER;
     let min = Number.MAX_SAFE_INTEGER;
     let total = 0;
     let maxFitOrganism = null;
-    for (let i = 0; i < this.size; ++i) {
-      const { fitness } = this.organisms[i];
+    for (let i = 0; i < allOrgs.length; ++i) {
+      const { fitness } = allOrgs[i];
       if (fitness < min) min = fitness;
       if (fitness > max) {
         max = fitness;
-        maxFitOrganism = this.organisms[i];
+        maxFitOrganism = allOrgs[i];
       }
       total += fitness;
     }
-    const mean = total / this.size;
+    const mean = total / allOrgs.length;
     // Update the overall best organism
     let isGlobalBest = false;
     if (!this.best || max > this.best.organism.fitness) {
@@ -295,7 +364,7 @@ class Population {
       meanFitness: setSigFigs(mean, statsSigFigs),
       maxFitness: setSigFigs(max, statsSigFigs),
       minFitness: setSigFigs(min, statsSigFigs),
-      deviation: setSigFigs(deviation(this.organisms, (o) => o.fitness), statsSigFigs),
+      deviation: setSigFigs(deviation(allOrgs, (o) => o.fitness), statsSigFigs),
       maxFitOrganism,
       isGlobalBest,
     };
@@ -305,7 +374,11 @@ class Population {
    * The size of the population (number of organisms per generation)
    */
   get size() {
-    return this.organisms.length;
+    return this.species[0].length;
+  }
+
+  get totalSize() {
+    return _.concat(...this.species).length;
   }
 }
 

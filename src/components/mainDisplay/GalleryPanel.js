@@ -15,7 +15,7 @@ function Gallery() {
 
   return (
     <Paper>
-      <GalleryEntry data={testData} />
+      <GalleryEntry id={0} data={testData} />
       {entriesParsed.map(({ id, data }) => (
         <GalleryEntry key={id} id={id} data={data} />
       ))}

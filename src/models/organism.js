@@ -14,13 +14,18 @@ const nextId = () => {
 };
 
 const Organism = {
-  create: ({ id, size, genome = null }) => ({
+  create: ({
+    id,
+    size,
+    numSides,
+    genome = null,
+  }) => ({
     id: id ?? nextId(),
-    genome: genome ?? Genome.create({ size }),
+    genome: genome ?? Genome.create({ size, numSides }),
     fitness: 0,
   }),
 
-  reproduce: (parentA, parentB, crossover, mutation, maxGenomeSize) => {
+  reproduce: (parentA, parentB, crossover, mutation, bounds) => {
     // Crossover event
     const crossoverFunc = CrossoverFunctions[crossover.type];
     if (!crossoverFunc) {
@@ -36,8 +41,8 @@ const Organism = {
     const childA = Organism.create({ genome: Genome.create({ chromosomes: newChromosome1 }) });
     const childB = Organism.create({ genome: Genome.create({ chromosomes: newChromosome2 }) });
     // Mutate the new children
-    Genome.mutate(childA.genome, mutation, maxGenomeSize);
-    Genome.mutate(childB.genome, mutation, maxGenomeSize);
+    Genome.mutate(childA.genome, mutation, bounds);
+    Genome.mutate(childB.genome, mutation, bounds);
 
     return [childA, childB];
   },

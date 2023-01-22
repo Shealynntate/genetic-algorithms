@@ -9,7 +9,7 @@ import { deleteGalleryEntry } from '../globals/database';
 import { download } from '../globals/utils';
 
 function GalleryEntry({ id, data }) {
-  // console.log(data);
+  console.log(data);
   const {
     gif, name, globalBest, totalGen,
   } = data;
@@ -42,12 +42,12 @@ function GalleryEntry({ id, data }) {
   };
 
   return (
-    <Box sx={{ display: 'inline-block' }}>
+    <Box sx={{ display: 'inline-block', m: 1 }}>
       <img src={gif} alt={`${name} gif`} />
       <Paper elevation={2}>
         <Typography>{name}</Typography>
-        <Typography>{`Top score ${globalBest.organism.fitness}`}</Typography>
-        <Typography>{`Total generations ${totalGen}`}</Typography>
+        <Typography variant="body2">{`Top score ${globalBest.organism.fitness.toFixed(3)}`}</Typography>
+        <Typography variant="body2">{`Generations: ${totalGen}`}</Typography>
       </Paper>
       <IconButton onClick={onDownload}>
         <DownloadIcon />

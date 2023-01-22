@@ -5,8 +5,8 @@ import Chromosome from './chromosome';
 const Genome = {
   // Creation Methods
   // ------------------------------------------------------------
-  create: ({ size, chromosomes }) => ({
-    chromosomes: chromosomes || genRange(size).map(() => Chromosome.create()),
+  create: ({ size, chromosomes, numSides }) => ({
+    chromosomes: chromosomes || genRange(size).map(() => Chromosome.create({ numSides })),
   }),
 
   clone: (genome) => Genome.create({
@@ -103,20 +103,21 @@ const Genome = {
 
   // Mutation Methods
   // ------------------------------------------------------------
-  mutate: (genome, mutation, maxGenomeSize) => {
+  mutate: (genome, mutation, bounds) => {
+    const { maxPoints, minPoints, maxGenomeSize } = bounds;
     const { chromosomes } = genome;
     const isSingleMutation = false;
     // Mutate at the chromosomal level
 
     // Check add chromosome mutation
     if (chromosomes.length < maxGenomeSize && mutation.doAddChromosome()) {
-      chromosomes.push(Chromosome.create());
+      chromosomes.push(Chromosome.create({ numSides: minPoints }));
     }
 
     for (let i = 0; i < chromosomes.length; ++i) {
       // Check full reset mutation
       if (mutation.doResetChromosome()) {
-        Chromosome.resetMutation(chromosomes[i]);
+        Chromosome.resetMutation(chromosomes[i], minPoints);
       }
       // Check remove chromosome mutation
       if (mutation.doRemoveChromosome()) {
@@ -128,29 +129,29 @@ const Genome = {
       }
       // Check add point mutation
       if (mutation.doAddPoint()) {
-        if (!Chromosome.addPointMutation(chromosomes[i])) {
-        //   // Split into two
-        //   const daughters = Chromosome.mitosis(chromosomes[i]);
-        //   if (chromosomes.length < maxGenomeSize) {
-        //     chromosomes.splice(i, 1, ...daughters);
-        //   } else {
-        //     chromosomes.splice(i, 1, daughters[0]);
-        //   }
+        if (!Chromosome.addPointMutation(chromosomes[i], maxPoints)) {
+          // Split into two
+          const daughters = Chromosome.mitosis(chromosomes[i]);
+          if (chromosomes.length < maxGenomeSize) {
+            chromosomes.splice(i, 1, ...daughters);
+          } else {
+            chromosomes.splice(i, 1, daughters[0]);
+          }
         }
       }
       // Check remove point mutation
       if (mutation.doRemovePoint()) {
-        if (!Chromosome.removePointMutation(chromosomes[i])) {
+        if (!Chromosome.removePointMutation(chromosomes[i], minPoints)) {
           // Delete the chromosome
-          // if (chromosomes.length > 1) {
-          //   chromosomes.splice(i, 1);
-          //   if (i >= chromosomes.length) break;
-          // }
+          if (chromosomes.length > 1) {
+            chromosomes.splice(i, 1);
+            if (i >= chromosomes.length) break;
+          }
         }
       }
       // Check tweak values mutation
       if (isSingleMutation) {
-        if (mutation.doMutate(chromosomes.length)) {
+        if (mutation.doTweakPoint(chromosomes.length)) { // TODO: Fix mutation call
           chromosomes[i] = Chromosome.singleMutation(chromosomes[i], mutation);
         }
       } else {
