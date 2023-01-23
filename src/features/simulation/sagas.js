@@ -30,9 +30,9 @@ import {
   RESTORE_POPULATION, setGenStats, setGlobalBest, updateCurrentGen,
 } from './simulationSlice';
 import {
-  DELETE_RUNNING_SIMULATION,
+  deleteRunningSimulation,
+  endSimulationEarly,
   endSimulations,
-  END_SIMULATION_EARLY,
   resumeSimulations,
   runSimulations,
 } from '../ux/uxSlice';
@@ -185,8 +185,8 @@ function* runSimulationSaga({ parameters }) {
     if (!(yield select(isRunningSelector))) {
       const { endSim, deleteSim } = yield race({
         resume: take(resumeSimulations),
-        endSim: take(END_SIMULATION_EARLY),
-        deleteSim: take(DELETE_RUNNING_SIMULATION),
+        endSim: take(endSimulationEarly),
+        deleteSim: take(deleteRunningSimulation),
       });
       if (endSim) {
         // End the simulation early, saving the run as if it completed normally

@@ -1,28 +1,11 @@
 /* eslint-disable no-param-reassign */
-import { createAction, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { AppState } from '../../constants';
 import { rehydrate } from '../developer/developerSlice';
-
-export const END_SIMULATION_EARLY = 'ux/endSimulationEarly';
-export const DELETE_RUNNING_SIMULATION = 'ux/deleteRunningSimulation';
 
 const initialState = {
   simulationState: AppState.NONE,
 };
-
-export const endSimulationEarly = createAction(
-  END_SIMULATION_EARLY,
-  () => ({
-    type: END_SIMULATION_EARLY,
-  }),
-);
-
-export const deleteRunningSimulation = createAction(
-  DELETE_RUNNING_SIMULATION,
-  () => ({
-    type: DELETE_RUNNING_SIMULATION,
-  }),
-);
 
 export const uxSlice = createSlice({
   name: 'ux',
@@ -43,6 +26,14 @@ export const uxSlice = createSlice({
     endSimulations: (state) => {
       state.simulationState = AppState.COMPLETE;
     },
+    endSimulationEarly: (state) => {
+      // This is called from a PAUSED state, resume running to process the next run
+      state.simulationState = AppState.RUNNING;
+    },
+    deleteRunningSimulation: (state) => {
+      // This is called from a PAUSED state, resume running to process the next run
+      state.simulationState = AppState.RUNNING;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -61,6 +52,8 @@ export const {
   pauseSimulations,
   resumeSimulations,
   endSimulations,
+  endSimulationEarly,
+  deleteRunningSimulation,
 } = uxSlice.actions;
 
 export default uxSlice.reducer;
