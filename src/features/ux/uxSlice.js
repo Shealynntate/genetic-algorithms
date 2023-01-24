@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { AppState } from '../../constants';
+import { AppState, lineColors } from '../../constants';
 import { rehydrate } from '../developer/developerSlice';
 
 const initialState = {
   simulationState: AppState.NONE,
+  simulationGraphEntries: {},
 };
 
 export const uxSlice = createSlice({
@@ -34,6 +35,20 @@ export const uxSlice = createSlice({
       // This is called from a PAUSED state, resume running to process the next run
       state.simulationState = AppState.RUNNING;
     },
+    // Graph Entries
+    addGraphEntry: (state, action) => {
+      const id = action.payload;
+      if (id in state.simulationGraphEntries) return;
+      // Determine line color index
+      const indices = Object.values(state.simulationGraphEntries);
+      const len = indices.length;
+      indices.sort();
+      const next = (len ? indices[len - 1] + 1 : 0) % lineColors.length;
+      state.simulationGraphEntries[id] = next;
+    },
+    removeGraphEntry: (state, action) => {
+      delete state.simulationGraphEntries[action.payload];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -54,6 +69,8 @@ export const {
   endSimulations,
   endSimulationEarly,
   deleteRunningSimulation,
+  addGraphEntry,
+  removeGraphEntry,
 } = uxSlice.actions;
 
 export default uxSlice.reducer;

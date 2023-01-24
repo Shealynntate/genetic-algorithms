@@ -1,14 +1,13 @@
-import React, { useContext, useMemo } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { scaleLinear } from '@visx/scale';
 import { useTheme } from '@emotion/react';
 import { Grid } from '@visx/grid';
 import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
-import { minExperimentThreshold } from '../../constants';
+import { getGraphColor, minExperimentThreshold } from '../../constants';
 import ExperimentLine from '../ExperimentLine';
-import GraphContext from '../../contexts/graphContext';
-import { ParametersType } from '../../types';
+import { getSimulations } from '../../globals/database';
 
 const graphWidth = 625;
 const graphHeight = 500;
@@ -24,9 +23,19 @@ const margin = {
 const fullWidth = graphWidth + margin.left + margin.right;
 const fullHeight = graphHeight + margin.top + margin.bottom;
 
-function SimulationChart({ simulations }) {
+function SimulationChart() {
   const theme = useTheme();
-  const graphContext = useContext(GraphContext);
+  const graphEntries = useSelector((state) => state.ux.simulationGraphEntries);
+  const [simulations, setSimulations] = useState([]);
+
+  useEffect(() => {
+    const fetchSimulations = async () => {
+      const keys = Object.keys(graphEntries).map((k) => parseInt(k, 10));
+      const entries = await getSimulations(keys);
+      setSimulations(entries);
+    };
+    fetchSimulations();
+  }, [graphEntries]);
 
   const bgColor = theme.palette.background.default;
   const axisColor = theme.palette.grey[400];
@@ -82,13 +91,13 @@ function SimulationChart({ simulations }) {
               data={getMaxData(results)}
               xScale={xScale}
               yScale={yScale}
-              color={graphContext.getColor(id)}
+              color={getGraphColor(graphEntries[id])}
             />
             <ExperimentLine
               data={getMeanData(results)}
               xScale={xScale}
               yScale={yScale}
-              color={graphContext.getColor(id)}
+              color={getGraphColor(graphEntries[id])}
               type="dashed"
             />
           </React.Fragment>
@@ -125,15 +134,5 @@ function SimulationChart({ simulations }) {
     </svg>
   );
 }
-
-SimulationChart.propTypes = {
-  simulations: PropTypes.arrayOf(
-    PropTypes.shape(ParametersType),
-  ),
-};
-
-SimulationChart.defaultProps = {
-  simulations: [],
-};
 
 export default SimulationChart;

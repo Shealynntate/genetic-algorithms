@@ -56,6 +56,10 @@ export async function getSimulation(id) {
   return db[simulationsTable].get(id);
 }
 
+export async function getSimulations(ids) {
+  return db[simulationsTable].bulkGet(ids);
+}
+
 export async function getCurrentSimulation() {
   return db[simulationsTable].get(currentSimulationId);
 }
@@ -219,6 +223,10 @@ export const useImageDbQuery = () => useLiveQuery(
   [currentSimulationId],
 );
 
+export const useGetSimulations = (ids) => useLiveQuery(
+  () => db[simulationsTable].bulkGet(ids),
+);
+
 export const useGetCurrentSimulation = () => useLiveQuery(
   () => db[simulationsTable].get({ status: SimulationStatus.RUNNING }),
 );
@@ -229,10 +237,6 @@ export const useGetCompletedSimulations = () => useLiveQuery(
 
 export const useGetPendingSimulations = () => useLiveQuery(
   () => db[simulationsTable].where('status').equals(SimulationStatus.PENDING).toArray(),
-);
-
-export const useGetSavedSimulations = () => useLiveQuery(
-  () => db[simulationsTable].where('isSaved').equals(1).reverse().toArray(),
 );
 
 export const useGetGalleryEntries = () => useLiveQuery(

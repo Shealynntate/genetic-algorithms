@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -22,17 +22,14 @@ import SimulationFormDialog from './SimulationFormDialog';
 import RunningSimulationDisplay from './RunningSimulationDisplay';
 import defaultParameters from '../../globals/defaultParameters';
 import Panel from '../settingsPanels/Panel';
-import GraphContext from '../../contexts/graphContext';
 
 function SimulationPanel() {
   const runningSimulation = useGetCurrentSimulation();
   const completedSimulations = useGetCompletedSimulations() || [];
   const pendingSimulations = useGetPendingSimulations() || [];
-  const [openForm, setOpenForm] = useState(false);
-  const [checkedExperiments, setCheckedExperiments] = useState([]);
-  const [selectedSimulation, setSelectedSimulation] = useState(null);
   const formData = useRef(defaultParameters);
-  const graphContext = useContext(GraphContext);
+  const [openForm, setOpenForm] = useState(false);
+  const [selectedSimulation, setSelectedSimulation] = useState(null);
 
   const idToSimulation = (id) => {
     const all = [...completedSimulations, ...pendingSimulations, runningSimulation];
@@ -51,23 +48,6 @@ function SimulationPanel() {
         parameters,
         status: SimulationStatus.PENDING,
       });
-    }
-  };
-
-  // eslint-disable-next-line max-len
-  const filteredExperiments = [...completedSimulations, runningSimulation].filter((entry) => (entry ? checkedExperiments.includes(entry.id) : false));
-
-  const isChecked = (id) => checkedExperiments.includes(id);
-
-  const onChangeCheckbox = (event, id) => {
-    event.stopPropagation();
-
-    if (event.target.checked) {
-      graphContext.addColor(id);
-      setCheckedExperiments([...checkedExperiments, id]);
-    } else {
-      graphContext.removeColor(id);
-      setCheckedExperiments(checkedExperiments.filter((item) => item !== id));
     }
   };
 
@@ -91,10 +71,8 @@ function SimulationPanel() {
             runsDisabled={!pendingSimulations.length}
           />
           <RunningSimulationDisplay
-            isChecked={isChecked(runningSimulation?.id)}
             isSelected={selectedSimulation === runningSimulation?.id}
             onDuplicate={onDuplicate}
-            onCheck={onChangeCheckbox}
             onSelect={onSelect}
             simulation={runningSimulation}
           />
@@ -104,10 +82,8 @@ function SimulationPanel() {
                 key={simulation.id}
                 simulation={simulation}
                 status={SimulationStatus.PENDING}
-                isChecked={isChecked(simulation.id)}
                 isSelected={selectedSimulation === simulation.id}
                 onDuplicate={onDuplicate}
-                onCheck={onChangeCheckbox}
                 onSelect={onSelect}
               />
             ))}
@@ -123,17 +99,15 @@ function SimulationPanel() {
                 key={simulation.id}
                 simulation={simulation}
                 status={SimulationStatus.COMPLETE}
-                isChecked={isChecked(simulation.id)}
                 isSelected={selectedSimulation === simulation.id}
                 onDuplicate={onDuplicate}
-                onCheck={onChangeCheckbox}
                 onSelect={onSelect}
               />
             ))}
           </Panel>
         </Stack>
         <Stack direction="column" spacing={1}>
-          <SimulationChart simulations={filteredExperiments} />
+          <SimulationChart />
           <SimulationDetails simulation={idToSimulation(selectedSimulation)} />
         </Stack>
       </Stack>

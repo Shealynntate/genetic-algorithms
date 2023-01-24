@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -12,14 +12,11 @@ import GlobalBest from '../GlobalBest';
 import Canvas from '../Canvas';
 import { createImageData } from '../../globals/utils';
 import Panel from '../settingsPanels/Panel';
-import GraphContext from '../../contexts/graphContext';
 
 const { width, height } = canvasParameters;
 
 function RunningSimulationDisplay({
-  isChecked,
   isSelected,
-  onCheck,
   onDuplicate,
   onSelect,
   simulation,
@@ -27,8 +24,6 @@ function RunningSimulationDisplay({
   const target = useSelector((state) => state.parameters.population.target);
   const [imageData, setImageData] = useState();
   const theme = useTheme();
-  const graphContext = useContext(GraphContext);
-  const color = graphContext.getColor(simulation?.id);
 
   useEffect(() => {
     let isMounted = true;
@@ -69,30 +64,23 @@ function RunningSimulationDisplay({
       <SimulationEntry
         simulation={simulation}
         status={SimulationStatus.RUNNING}
-        isChecked={isChecked}
         isSelected={isSelected}
-        onCheck={onCheck}
         onDuplicate={onDuplicate}
         onSelect={onSelect}
-        color={color}
       />
     </Panel>
   );
 }
 
 RunningSimulationDisplay.propTypes = {
-  isChecked: PropTypes.bool,
   isSelected: PropTypes.bool,
-  onCheck: PropTypes.func,
   onDuplicate: PropTypes.func,
   onSelect: PropTypes.func,
   simulation: PropTypes.shape(ParametersType),
 };
 
 RunningSimulationDisplay.defaultProps = {
-  isChecked: false,
   isSelected: false,
-  onCheck: () => {},
   onDuplicate: () => {},
   onSelect: () => {},
   simulation: null,

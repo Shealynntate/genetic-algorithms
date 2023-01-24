@@ -1,4 +1,5 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
 import {
@@ -11,15 +12,14 @@ import {
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
-import GraphContext from '../../contexts/graphContext';
+import { addGraphEntry, removeGraphEntry } from '../../features/ux/uxSlice';
 import { SimulationStatus } from '../../constants';
 import { deleteSimulation, renameSimulation } from '../../globals/database';
 import { ParametersType } from '../../types';
+import { useGraphColor, useIsGraphEntry } from '../../hooks';
 
 function SimulationEntry({
   simulation,
-  isChecked,
-  onCheck,
   onDuplicate,
   onSelect,
   isSelected,
@@ -27,14 +27,15 @@ function SimulationEntry({
 }) {
   const { id, createdOn, name } = simulation;
   const theme = useTheme();
-  const graph = useContext(GraphContext);
+  const dispatch = useDispatch();
   const [nameValue, setNameValue] = useState(name);
+  const isChecked = useIsGraphEntry(id);
+  const color = useGraphColor(id);
   const hasCheckbox = status !== SimulationStatus.PENDING;
   const hasDelete = status !== SimulationStatus.RUNNING;
   const hasTextEdit = status !== SimulationStatus.RUNNING;
   const elevation = isSelected ? 2 : 2;
   const border = isSelected ? `1px dashed ${theme.palette.primary.main}` : 'none';
-  const color = graph.getColor(id);
 
   const onDelete = (event) => {
     event.stopPropagation();
@@ -45,6 +46,15 @@ function SimulationEntry({
     const { value } = event.target;
     setNameValue(value);
     await renameSimulation(id, value);
+  };
+
+  const onCheck = (event) => {
+    event.stopPropagation();
+    if (isChecked) {
+      dispatch(removeGraphEntry(id));
+    } else {
+      dispatch(addGraphEntry(id));
+    }
   };
 
   return (
@@ -93,17 +103,13 @@ function SimulationEntry({
 SimulationEntry.propTypes = {
   simulation: PropTypes.shape(ParametersType).isRequired,
   status: PropTypes.string.isRequired,
-  isChecked: PropTypes.bool,
   isSelected: PropTypes.bool,
-  onCheck: PropTypes.func,
   onDuplicate: PropTypes.func,
   onSelect: PropTypes.func,
 };
 
 SimulationEntry.defaultProps = {
-  isChecked: false,
   isSelected: false,
-  onCheck: () => {},
   onDuplicate: () => {},
   onSelect: () => {},
 };

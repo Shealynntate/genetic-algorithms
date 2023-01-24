@@ -1,3 +1,5 @@
+import theme from './theme';
+
 // Type Definitions
 // --------------------------------------------------
 export const SelectionType = {
@@ -177,3 +179,30 @@ export const SimulationStatus = {
   RUNNING: 'RUNNING', // Only one simuation is actively running at a time
   COMPLETE: 'COMPLETE', // Simulation has reached one of the stop criteria
 };
+
+export const defaultLineColor = theme.palette.primary.main;
+
+export const lineColors = [
+  theme.palette.primary.main,
+  theme.palette.secondary.main,
+  theme.palette.error.main,
+  theme.palette.warning.main,
+  theme.palette.info.main,
+  theme.palette.success.main,
+
+  theme.palette.primary.light,
+  theme.palette.secondary.light,
+  theme.palette.error.light,
+  theme.palette.warning.light,
+  theme.palette.info.light,
+  theme.palette.success.light,
+
+  theme.palette.primary.dark,
+  theme.palette.secondary.dark,
+  theme.palette.error.dark,
+  theme.palette.warning.dark,
+  theme.palette.info.dark,
+  theme.palette.success.dark,
+];
+
+export const getGraphColor = (index) => lineColors[index % lineColors.length];
