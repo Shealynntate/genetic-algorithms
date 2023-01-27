@@ -122,21 +122,21 @@ const Genome = {
       // Check remove chromosome mutation
       if (mutation.doRemoveChromosome()) {
         // Delete the chromosome
-        if (chromosomes.length > 1) {
-          chromosomes.splice(i, 1);
-          if (i >= chromosomes.length) break;
-        }
+        // if (chromosomes.length > 1) {
+        //   chromosomes.splice(i, 1);
+        //   if (i >= chromosomes.length) break;
+        // }
       }
       // Check add point mutation
       if (mutation.doAddPoint()) {
         if (!Chromosome.addPointMutation(chromosomes[i], maxPoints)) {
           // Split into two
-          const daughters = Chromosome.mitosis(chromosomes[i]);
-          if (chromosomes.length < maxGenomeSize) {
-            chromosomes.splice(i, 1, ...daughters);
-          } else {
-            chromosomes.splice(i, 1, daughters[0]);
-          }
+          // const daughters = Chromosome.mitosis(chromosomes[i]);
+          // if (chromosomes.length < maxGenomeSize) {
+          //   chromosomes.splice(i, 1, ...daughters);
+          // } else {
+          //   chromosomes.splice(i, 1, daughters[0]);
+          // }
         }
       }
       // Check remove point mutation

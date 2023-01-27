@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { scaleLinear } from '@visx/scale';
 import { useTheme } from '@emotion/react';
@@ -7,12 +7,11 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
 import { getGraphColor, minExperimentThreshold } from '../../constants';
 import ExperimentLine from '../ExperimentLine';
-import { getSimulations } from '../../globals/database';
+import { useGetCompletedSimulations, useGetCurrentSimulation } from '../../globals/database';
+import defaultParameters from '../../globals/defaultParameters';
 
 const graphWidth = 625;
 const graphHeight = 500;
-const maxGenerations = 20_000;
-
 const margin = {
   left: 28,
   top: 4,
@@ -26,16 +25,19 @@ const fullHeight = graphHeight + margin.top + margin.bottom;
 function SimulationChart() {
   const theme = useTheme();
   const graphEntries = useSelector((state) => state.ux.simulationGraphEntries);
-  const [simulations, setSimulations] = useState([]);
+  const keys = Object.keys(graphEntries).map((k) => parseInt(k, 10));
+  const completedSimulations = useGetCompletedSimulations() || [];
+  const currentSimulation = useGetCurrentSimulation();
+  const showCurrentSim = currentSimulation && keys.includes(currentSimulation.id);
+  let numGenerations = defaultParameters.stopCriteria.maxGenerations;
 
-  useEffect(() => {
-    const fetchSimulations = async () => {
-      const keys = Object.keys(graphEntries).map((k) => parseInt(k, 10));
-      const entries = await getSimulations(keys);
-      setSimulations(entries);
-    };
-    fetchSimulations();
-  }, [graphEntries]);
+  const allSimulations = [...completedSimulations];
+  if (showCurrentSim) allSimulations.push(currentSimulation);
+  const simulations = allSimulations.filter((sim) => keys.includes(sim.id));
+  simulations.forEach(({ parameters }) => {
+    const { maxGenerations } = parameters.stopCriteria;
+    numGenerations = Math.max(numGenerations, maxGenerations);
+  });
 
   const bgColor = theme.palette.background.default;
   const axisColor = theme.palette.grey[400];
@@ -61,9 +63,9 @@ function SimulationChart() {
   const xScale = useMemo(
     () => scaleLinear({
       range: [0, graphWidth],
-      domain: [100, maxGenerations],
+      domain: [100, numGenerations],
     }),
-    [],
+    [numGenerations],
   );
 
   return (

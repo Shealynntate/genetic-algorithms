@@ -15,6 +15,8 @@ const randCV = () => randomInt(0, maxColorValue);
 
 const randomColor = () => [randCV(), randCV(), randCV(), rand()];
 
+const transparent = () => [0, 0, 0, 0];
+
 const randomPoint = () => [rand(), rand()];
 
 const randomPoints = (len) => genRange(len).map(() => randomPoint());
@@ -181,7 +183,8 @@ const Chromosome = {
 
   resetMutation: (chromosome, numPoints) => {
     chromosome.points = randomPoints(numPoints);
-    chromosome.color = randomColor();
+    // chromosome.color = randomColor();
+    chromosome.color = transparent();
   },
 };
 

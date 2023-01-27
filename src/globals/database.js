@@ -227,6 +227,10 @@ export const useGetSimulations = (ids) => useLiveQuery(
   () => db[simulationsTable].bulkGet(ids),
 );
 
+export const useGetAllSimulation = () => useLiveQuery(
+  () => getAllSimulations(),
+);
+
 export const useGetCurrentSimulation = () => useLiveQuery(
   () => db[simulationsTable].get({ status: SimulationStatus.RUNNING }),
 );

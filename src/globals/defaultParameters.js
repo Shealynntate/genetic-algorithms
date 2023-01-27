@@ -116,11 +116,11 @@ export const ParameterLabels = {
 
 const parameters = {
   population: {
-    size: 150,
+    size: 200,
     minPolygons: 1,
-    maxPolygons: 40,
+    maxPolygons: 50,
     minPoints: 3,
-    maxPoints: 8,
+    maxPoints: 10,
     target: defaultTarget,
   },
   selection: {
@@ -129,7 +129,7 @@ const parameters = {
     tournamentSize: 2,
   },
   crossover: {
-    type: CrossoverType.ONE_POINT,
+    type: CrossoverType.TWO_POINT,
     probabilities: {
       [ProbabilityTypes.SWAP]: {
         startValue: 0.9,
@@ -146,19 +146,19 @@ const parameters = {
     probabilities: {
       [ProbabilityTypes.TWEAK_COLOR]: {
         startValue: 0.1,
-        endValue: 0.05,
+        endValue: 0.01,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.TWEAK_POINT]: {
-        startValue: 0.01,
-        endValue: 0.005,
+        startValue: 0.1,
+        endValue: 0.01,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.ADD_POINT]: {
         startValue: 0.01,
-        endValue: 0.005,
+        endValue: 0.01,
         startFitness: 0,
         endFitness: targetFitness,
       },
@@ -169,26 +169,26 @@ const parameters = {
         endFitness: targetFitness,
       },
       [ProbabilityTypes.ADD_CHROMOSOME]: {
-        startValue: 0.005,
-        endValue: 0.002,
+        startValue: 0.01,
+        endValue: 0.005,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.REMOVE_CHROMOSOME]: {
         startValue: 0.005,
-        endValue: 0.002,
+        endValue: 0.001,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.RESET_CHROMOSOME]: {
-        startValue: 0.0001,
-        endValue: 0.0003,
+        startValue: 0.01,
+        endValue: 0.001,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.PERMUTE_CHROMOSOMES]: {
         startValue: 0.01,
-        endValue: 0.005,
+        endValue: 0.01,
         startFitness: 0,
         endFitness: targetFitness,
       },

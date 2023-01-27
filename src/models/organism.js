@@ -51,9 +51,9 @@ const Organism = {
     genome: Genome.clone(organism.genome),
   }),
 
-  cloneAndMutate: (organism, mutation) => {
+  cloneAndMutate: (organism, mutation, bounds) => {
     const copy = Organism.clone(organism);
-    Genome.mutate(copy.genome, mutation);
+    Genome.mutate(copy.genome, mutation, bounds);
     return copy;
   },
 
