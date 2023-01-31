@@ -6,7 +6,10 @@ const initialState = {
   targetFitnessReached: false,
   globalBest: null,
   currentBest: {},
-  currentStats: {},
+  // The current gen's stats, updated every generation
+  currentGenStats: {},
+  // A record of every fitness threshold passed to be stored in the db at end of the run
+  runningStatsRecord: [],
 };
 
 export const simulationSlice = createSlice({
@@ -22,16 +25,20 @@ export const simulationSlice = createSlice({
     setTargetFitnessReached: (state, action) => {
       state.targetFitnessReached = action.payload;
     },
-    setGenStats: (state, action) => {
-      state.genStats = action.payload;
+    setCurrentGenStats: (state, action) => {
+      state.currentGenStats = action.payload;
+    },
+    addGenStats: (state, action) => {
+      state.runningStatsRecord.push(action.payload);
     },
     clearGenStats: (state) => {
-      state.genStats = [];
+      state.runningStatsRecord = [];
     },
+    // Set both the currentBest and current stats in one call
     updateCurrentGen: (state, action) => {
       const { currentBest, stats } = action.payload;
       state.currentBest = currentBest;
-      state.currentStats = stats;
+      state.currentGenStats = stats;
     },
   },
   extraReducers: (builder) => {
@@ -59,7 +66,8 @@ export const {
   setGlobalBest,
   setCurrentBest,
   setTargetFitnessReached,
-  setGenStats,
+  setCurrentGenStats,
+  addGenStats,
   clearGenStats,
   updateCurrentGen,
 } = simulationSlice.actions;

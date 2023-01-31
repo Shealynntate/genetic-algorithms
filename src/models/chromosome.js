@@ -15,7 +15,7 @@ const randCV = () => randomInt(0, maxColorValue);
 
 const randomColor = () => [randCV(), randCV(), randCV(), rand()];
 
-const transparent = () => [0, 0, 0, 0];
+const transparent = () => [randCV(), randCV(), randCV(), 0];
 
 const randomPoint = () => [rand(), rand()];
 
@@ -96,7 +96,7 @@ const mutatePoint = (points, index, mutation) => {
 const Chromosome = {
   create: ({ color: col, points: pts, numSides } = {}) => ({
     points: pts || randomPoints(numSides),
-    color: col || randomColor(),
+    color: col || transparent(),
   }),
 
   clone: (chromosome) => Chromosome.create({

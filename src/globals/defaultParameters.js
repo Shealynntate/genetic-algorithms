@@ -1,5 +1,5 @@
-// import defaultTarget from '../assets/mona_lisa.jpeg';
-import defaultTarget from '../assets/composition_II.png';
+import defaultTarget from '../assets/mona_lisa.jpeg';
+// import defaultTarget from '../assets/composition_II.png';
 import {
   CrossoverType,
   DistributionTypes,
@@ -117,7 +117,7 @@ export const ParameterLabels = {
 const parameters = {
   population: {
     size: 200,
-    minPolygons: 1,
+    minPolygons: 50,
     maxPolygons: 50,
     minPoints: 3,
     maxPoints: 10,
@@ -146,49 +146,49 @@ const parameters = {
     probabilities: {
       [ProbabilityTypes.TWEAK_COLOR]: {
         startValue: 0.1,
-        endValue: 0.01,
+        endValue: 0.002,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.TWEAK_POINT]: {
         startValue: 0.1,
-        endValue: 0.01,
+        endValue: 0.002,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.ADD_POINT]: {
         startValue: 0.01,
-        endValue: 0.01,
+        endValue: 0.001,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.REMOVE_POINT]: {
-        startValue: 0.002,
-        endValue: 0.005,
+        startValue: 0.005,
+        endValue: 0.0005,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.ADD_CHROMOSOME]: {
-        startValue: 0.01,
-        endValue: 0.005,
+        startValue: 0,
+        endValue: 0,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.REMOVE_CHROMOSOME]: {
-        startValue: 0.005,
-        endValue: 0.001,
+        startValue: 0,
+        endValue: 0,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.RESET_CHROMOSOME]: {
-        startValue: 0.01,
-        endValue: 0.001,
+        startValue: 0.05,
+        endValue: 0.0005,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.PERMUTE_CHROMOSOMES]: {
-        startValue: 0.01,
-        endValue: 0.01,
+        startValue: 0.05,
+        endValue: 0.001,
         startFitness: 0,
         endFitness: targetFitness,
       },

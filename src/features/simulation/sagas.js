@@ -13,7 +13,6 @@ import { minExperimentThreshold, SimulationStatus } from '../../constants';
 import {
   addGalleryEntry,
   addImageToDatabase,
-  addResultsToCurrentSimulation,
   deleteCurrentSimulation,
   getCurrentImages,
   getCurrentSimulation,
@@ -27,7 +26,10 @@ import {
 } from '../../globals/utils';
 import { isRunningSelector } from '../../hooks';
 import {
-  RESTORE_POPULATION, setGenStats, setGlobalBest, updateCurrentGen,
+  addGenStats,
+  setGlobalBest,
+  updateCurrentGen,
+  RESTORE_POPULATION,
 } from './simulationSlice';
 import {
   deleteRunningSimulation,
@@ -86,7 +88,8 @@ function* createGalleryEntrySaga({ totalGen, globalBest }) {
 function* completeSimulationRunSaga() {
   const globalBest = yield select((state) => state.simulation.globalBest);
   const currentBest = yield select((state) => state.simulation.currentBest);
-  const stats = yield select((state) => state.simulation.currentStats);
+  const currentStats = yield select((state) => state.simulation.currentGenStats);
+  const results = yield select((state) => state.simulation.runningStatRecord);
   const { population } = yield getContext('population');
   const currentMax = currentBest.organism.fitness;
   // Create a Gallery Entry for the run
@@ -95,10 +98,11 @@ function* completeSimulationRunSaga() {
     globalBest,
   });
   // Stop the simulation and add the results to database
-  yield addResultsToCurrentSimulation({ threshold: currentMax, stats });
+  yield put(addGenStats({ threshold: currentMax, currentStats }));
   yield updateCurrentSimulation({
     population: population.serialize(),
     status: SimulationStatus.COMPLETE,
+    results,
   });
   yield call(resetSimulationsSaga);
 }
@@ -110,18 +114,20 @@ function* generationResultsCheckSaga({
   maxFitOrganism,
 }) {
   const globalBest = yield select((state) => state.simulation.globalBest);
-  const currentStats = yield select((state) => state.simulation.currentStats);
+  const currentStats = yield select((state) => state.simulation.currentGenStats);
 
   const { targetFitness, maxGenerations } = stopCriteria;
   const isSuccess = hasReachedTarget(globalBest, targetFitness);
   const isStopping = isSuccess || currentBest.genId >= maxGenerations;
 
   // Store results if needed
-  const latestThreshold = currentStats.threshold ?? 0;
+  let latestThreshold = 0;
+  if (currentStats.length) {
+    latestThreshold = currentStats[currentStats.length - 1].threshold;
+  }
   const currentMax = Math.trunc(stats.maxFitness * 1000) / 1000;
-  yield put(setGenStats({ threshold: currentMax, stats }));
   if (currentMax > latestThreshold && currentMax >= minExperimentThreshold) {
-    yield addResultsToCurrentSimulation({ threshold: currentMax, stats });
+    yield put(addGenStats({ threshold: currentMax, stats }));
   }
 
   // Temp code!!

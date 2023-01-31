@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   PausedStates,
@@ -8,6 +9,7 @@ import {
   defaultLineColor,
   getGraphColor,
 } from './constants';
+import { useGetCompletedSimulations, useGetCurrentSimulation } from './globals/database';
 
 export const useIsRunning = () => {
   const simulationState = useSelector((state) => state.ux.simulationState);
@@ -55,4 +57,25 @@ export const useGraphColor = (id) => {
   if (!isEntry) return defaultLineColor;
 
   return getGraphColor(entries[id]);
+};
+
+export const useGetGraphSimulations = () => {
+  const graphEntries = useSelector((state) => state.ux.simulationGraphEntries);
+  const runningStats = useSelector((state) => state.simulation.runningStatsRecord);
+  const completedSims = useGetCompletedSimulations() || [];
+  const currentSim = useGetCurrentSimulation();
+  const [simulations, setSimulations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const keys = Object.keys(graphEntries).map((k) => parseInt(k, 10));
+    const entries = completedSims.filter(({ id }) => keys.includes(id));
+    if (keys.includes(currentSim?.id)) {
+      entries.push({ ...currentSim, results: runningStats });
+    }
+    setSimulations(entries);
+    setLoading(false);
+  }, [graphEntries]);
+
+  return { simulations, loading };
 };

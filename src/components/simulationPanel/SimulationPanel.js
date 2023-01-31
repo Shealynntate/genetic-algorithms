@@ -65,7 +65,7 @@ function SimulationPanel() {
 
   return (
     <Paper>
-      <Stack direction="row">
+      <Stack direction="row" spacing={1}>
         <Stack>
           <SimulationButtons
             runsDisabled={!pendingSimulations.length}

@@ -18,7 +18,7 @@ StatusText.propTypes = {
 };
 
 function SimulationStatusPanel() {
-  const stats = useSelector((state) => state.simulation.currentStats);
+  const stats = useSelector((state) => state.simulation.currentGenStats);
 
   return (
     <Paper>

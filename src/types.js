@@ -86,3 +86,11 @@ export const ParametersType = {
   mutation: PropTypes.shape(MutationType),
   stopCriteria: PropTypes.shape(StopCriteriaType),
 };
+
+export const StatsType = {
+  genId: PropTypes.number,
+  maxFitness: PropTypes.number,
+  meanFitness: PropTypes.number,
+  minFitness: PropTypes.number,
+  deviation: PropTypes.number,
+};
