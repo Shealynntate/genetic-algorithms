@@ -89,7 +89,7 @@ function* completeSimulationRunSaga() {
   const globalBest = yield select((state) => state.simulation.globalBest);
   const currentBest = yield select((state) => state.simulation.currentBest);
   const currentStats = yield select((state) => state.simulation.currentGenStats);
-  const results = yield select((state) => state.simulation.runningStatRecord);
+  const results = yield select((state) => state.simulation.runningStatsRecord);
   const { population } = yield getContext('population');
   const currentMax = currentBest.organism.fitness;
   // Create a Gallery Entry for the run
@@ -114,7 +114,7 @@ function* generationResultsCheckSaga({
   maxFitOrganism,
 }) {
   const globalBest = yield select((state) => state.simulation.globalBest);
-  const currentStats = yield select((state) => state.simulation.currentGenStats);
+  const statsRecord = yield select((state) => state.simulation.runningStatsRecord);
 
   const { targetFitness, maxGenerations } = stopCriteria;
   const isSuccess = hasReachedTarget(globalBest, targetFitness);
@@ -122,11 +122,11 @@ function* generationResultsCheckSaga({
 
   // Store results if needed
   let latestThreshold = 0;
-  if (currentStats.length) {
-    latestThreshold = currentStats[currentStats.length - 1].threshold;
+  if (statsRecord.length) {
+    latestThreshold = statsRecord[statsRecord.length - 1].threshold;
   }
   const currentMax = Math.trunc(stats.maxFitness * 1000) / 1000;
-  if (currentMax > latestThreshold && currentMax >= minExperimentThreshold) {
+  if (currentMax >= minExperimentThreshold && currentMax !== latestThreshold) {
     yield put(addGenStats({ threshold: currentMax, stats }));
   }
 

@@ -158,13 +158,13 @@ const parameters = {
       },
       [ProbabilityTypes.ADD_POINT]: {
         startValue: 0.01,
-        endValue: 0.001,
+        endValue: 0.0005,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.REMOVE_POINT]: {
         startValue: 0.005,
-        endValue: 0.0005,
+        endValue: 0.0002,
         startFitness: 0,
         endFitness: targetFitness,
       },
