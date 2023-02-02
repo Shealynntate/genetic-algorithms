@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { scaleLinear } from '@visx/scale';
 import { useTheme } from '@emotion/react';
@@ -47,10 +47,12 @@ function SimulationChart() {
   const runningStats = useSelector((state) => state.simulation.runningStatsRecord);
   const completedSims = useGetCompletedSimulations() || [];
   const currentSim = useGetCurrentSimulation();
+  const simulations = [...completedSims];
   if (currentSim) {
     currentSim.results = runningStats;
+    simulations.push(currentSim);
   }
-  const [simulations, setSimulations] = useState([]);
+
   const numGenerations = findMaxGeneration(simulations);
   const [showMean, setShowMean] = useState(true);
   const [domain, setDomain] = useState([0, numGenerations]);
@@ -58,14 +60,7 @@ function SimulationChart() {
   const bgColor = theme.palette.background.default;
   const axisColor = theme.palette.grey[400];
 
-  useEffect(() => {
-    const keys = Object.keys(graphEntries).map((k) => parseInt(k, 10));
-    const entries = completedSims.filter(({ id }) => keys.includes(id));
-    if (keys.includes(currentSim?.id)) {
-      entries.push(currentSim);
-    }
-    setSimulations(entries);
-  }, [graphEntries]);
+  const isGraphed = (id) => (id in graphEntries);
 
   const getMaxData = (results) => results.map(({ stats }) => ({
     x: stats.genId,
@@ -125,23 +120,25 @@ function SimulationChart() {
             strokeOpacity={0.10}
           />
           {simulations.map(({ id, results }) => (
-            <React.Fragment key={`graph-line-${id}`}>
-              <ExperimentLine
-                data={getMaxData(results)}
-                xScale={xScale}
-                yScale={yScale}
-                color={getGraphColor(graphEntries[id])}
-              />
-              {showMean && (
+            isGraphed(id) ? (
+              <React.Fragment key={`graph-line-${id}`}>
                 <ExperimentLine
-                  data={getMeanData(results)}
+                  data={getMaxData(results)}
                   xScale={xScale}
                   yScale={yScale}
                   color={getGraphColor(graphEntries[id])}
-                  type="dashed"
                 />
-              )}
-            </React.Fragment>
+                {showMean && (
+                  <ExperimentLine
+                    data={getMeanData(results)}
+                    xScale={xScale}
+                    yScale={yScale}
+                    color={getGraphColor(graphEntries[id])}
+                    type="dashed"
+                  />
+                )}
+              </React.Fragment>
+            ) : null
           ))}
         </Group>
         <AxisLeft

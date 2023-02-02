@@ -91,14 +91,14 @@ function* completeSimulationRunSaga() {
   const currentStats = yield select((state) => state.simulation.currentGenStats);
   const results = yield select((state) => state.simulation.runningStatsRecord);
   const { population } = yield getContext('population');
-  const currentMax = currentBest.organism.fitness;
+  const currentMax = Math.trunc(currentBest.organism.fitness * 1000) / 1000;
   // Create a Gallery Entry for the run
   yield call(createGalleryEntrySaga, {
     totalGen: currentBest.genId,
     globalBest,
   });
   // Stop the simulation and add the results to database
-  yield put(addGenStats({ threshold: currentMax, currentStats }));
+  yield put(addGenStats({ threshold: currentMax, stats: currentStats }));
   yield updateCurrentSimulation({
     population: population.serialize(),
     status: SimulationStatus.COMPLETE,
