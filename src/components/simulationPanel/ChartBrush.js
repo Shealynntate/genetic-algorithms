@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Group } from '@visx/group';
-import { AreaClosed, LinePath } from '@visx/shape';
+import { LinePath } from '@visx/shape';
 import { useTheme } from '@emotion/react';
 import { curveMonotoneX } from '@visx/curve';
 import { Brush } from '@visx/brush';
@@ -15,7 +15,6 @@ const PATTERN_ID = 'brush_pattern';
 const handleSize = 8;
 const lineWidth = 8;
 const lineHeight = 8;
-const fillOpacity = 0.15;
 
 const selectedBoxStyle = (theme) => ({
   fill: `url(#${PATTERN_ID})`,
@@ -92,20 +91,12 @@ function ChartBrush({
         curve={curveMonotoneX}
         shapeRendering="geometricPrecision"
       />
-      <AreaClosed
-        data={data}
-        x={(d) => xScale(d.x)}
-        y={(d) => yScale(d.meanFitness)}
-        yScale={yScale}
-        fillOpacity={fillOpacity}
-        fill={theme.palette.primary.light}
-      />
       <PatternLines
         id={PATTERN_ID}
-        strokeWidth={0.5}
+        strokeWidth={0.25}
         width={lineWidth}
         height={lineHeight}
-        stroke={theme.palette.primary.light}
+        stroke={theme.palette.grey[600]}
         orientation={['diagonal']}
       />
       <Brush
