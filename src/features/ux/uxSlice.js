@@ -5,7 +5,10 @@ import { rehydrate } from '../developer/developerSlice';
 
 const initialState = {
   simulationState: AppState.NONE,
-  simulationGraphEntries: {},
+  // Map of simulation id to color value for the graph
+  simulationGraphColors: {},
+  // Map of simulation id to color index, for internal bookkeeping
+  simulationGraphIndices: {},
 };
 
 export const uxSlice = createSlice({
@@ -38,16 +41,25 @@ export const uxSlice = createSlice({
     // Graph Entries
     addGraphEntry: (state, action) => {
       const id = action.payload;
-      if (id in state.simulationGraphEntries) return;
+      if (id in state.simulationGraphColors) return;
       // Determine line color index
-      const indices = Object.values(state.simulationGraphEntries);
-      const len = indices.length;
+      const indices = Object.values(state.simulationGraphIndices);
       indices.sort();
-      const next = (len ? indices[len - 1] + 1 : 0) % lineColors.length;
-      state.simulationGraphEntries[id] = next;
+      let next = indices.length % lineColors.length;
+      for (let i = 1; i < indices.length; ++i) {
+        const prev = indices[i - 1];
+        if (!indices[i] <= prev + 1) {
+          next = prev + 1;
+          break;
+        }
+      }
+
+      state.simulationGraphColors[id] = lineColors[next];
+      state.simulationGraphIndices[id] = next;
     },
     removeGraphEntry: (state, action) => {
-      delete state.simulationGraphEntries[action.payload];
+      delete state.simulationGraphColors[action.payload];
+      delete state.simulationGraphIndices[action.payload];
     },
   },
   extraReducers: (builder) => {

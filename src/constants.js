@@ -204,5 +204,3 @@ export const lineColors = [
   theme.palette.info.dark,
   theme.palette.success.dark,
 ];
-
-export const getGraphColor = (index) => lineColors[index % lineColors.length];

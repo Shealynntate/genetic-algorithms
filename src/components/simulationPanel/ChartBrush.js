@@ -7,8 +7,10 @@ import { curveMonotoneX } from '@visx/curve';
 import { Brush } from '@visx/brush';
 import { PatternLines } from '@visx/pattern';
 import { scaleLinear } from '@visx/scale';
+import { useSelector } from 'react-redux';
 import BrushHandle from './BrushHandle';
 import { minExperimentThreshold } from '../../constants';
+import { SimulationType } from '../../types';
 
 const PATTERN_ID = 'brush_pattern';
 // const GRADIENT_ID = 'brush_gradient';
@@ -22,7 +24,7 @@ const selectedBoxStyle = (theme) => ({
 });
 
 function ChartBrush({
-  data,
+  simulations,
   margin,
   width,
   height,
@@ -30,6 +32,8 @@ function ChartBrush({
   maxGenerations,
   setDomain,
 }) {
+  const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
+
   const theme = useTheme();
 
   const bgColor = theme.palette.background.default;
@@ -43,7 +47,7 @@ function ChartBrush({
       range: [0, xMax],
       domain: [0, maxGenerations],
     }),
-    [xMax, data.length],
+    [xMax],
   );
 
   const yScale = useMemo(
@@ -59,7 +63,7 @@ function ChartBrush({
       start: { x: xScale(0) },
       end: { x: xScale(maxGenerations) },
     }),
-    [xScale, data],
+    [xScale, maxGenerations],
   );
 
   const onBrushEnd = (domain) => {
@@ -82,15 +86,18 @@ function ChartBrush({
         fill={bgColor}
         rx={theme.shape.borderRadius}
       />
-      <LinePath
-        data={data}
-        x={(d) => xScale(d.x)}
-        y={(d) => yScale(d.y)}
-        strokeWidth={1}
-        stroke={theme.palette.primary.light}
-        curve={curveMonotoneX}
-        shapeRendering="geometricPrecision"
-      />
+      {simulations.map(({ id, results }) => (
+        <LinePath
+          key={`brush-chart-line-${id}`}
+          data={results}
+          x={(d) => xScale(d.stats.genId)}
+          y={(d) => yScale(d.stats.maxFitness)}
+          strokeWidth={1}
+          stroke={graphEntries[id]}
+          curve={curveMonotoneX}
+          shapeRendering="geometricPrecision"
+        />
+      ))}
       <PatternLines
         id={PATTERN_ID}
         strokeWidth={0.25}
@@ -121,7 +128,7 @@ function ChartBrush({
 }
 
 ChartBrush.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.number)),
+  simulations: PropTypes.arrayOf(PropTypes.shape(SimulationType)),
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   maxFitness: PropTypes.number.isRequired,
@@ -131,7 +138,7 @@ ChartBrush.propTypes = {
 };
 
 ChartBrush.defaultProps = {
-  data: [],
+  simulations: [],
   margin: {
     top: 0, right: 0, bottom: 0, left: 0,
   },

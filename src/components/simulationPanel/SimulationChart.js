@@ -6,7 +6,7 @@ import { Grid } from '@visx/grid';
 import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
 import { Stack, Typography } from '@mui/material';
-import { getGraphColor, minExperimentThreshold } from '../../constants';
+import { minExperimentThreshold } from '../../constants';
 import ExperimentLine from '../ExperimentLine';
 import defaultParameters from '../../globals/defaultParameters';
 import CustomCheckbox from './Checkbox';
@@ -43,7 +43,7 @@ const findMaxGeneration = (simulations) => {
 
 function SimulationChart() {
   const theme = useTheme();
-  const graphEntries = useSelector((state) => state.ux.simulationGraphEntries);
+  const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
   const runningStats = useSelector((state) => state.simulation.runningStatsRecord);
   const completedSims = useGetCompletedSimulations() || [];
   const currentSim = useGetCurrentSimulation();
@@ -92,6 +92,8 @@ function SimulationChart() {
     setDomain([x0, x1]);
   };
 
+  const checkedSimulations = simulations.filter(({ id }) => isGraphed(id));
+
   return (
     <Stack>
       <Typography color="GrayText" sx={{ textAlign: 'center' }}>
@@ -119,26 +121,24 @@ function SimulationChart() {
             stroke="white"
             strokeOpacity={0.10}
           />
-          {simulations.map(({ id, results }) => (
-            isGraphed(id) ? (
-              <React.Fragment key={`graph-line-${id}`}>
+          {checkedSimulations.map(({ id, results }) => (
+            <React.Fragment key={`graph-line-${id}`}>
+              <ExperimentLine
+                data={getMaxData(results)}
+                xScale={xScale}
+                yScale={yScale}
+                color={graphEntries[id]}
+              />
+              {showMean && (
                 <ExperimentLine
-                  data={getMaxData(results)}
+                  data={getMeanData(results)}
                   xScale={xScale}
                   yScale={yScale}
-                  color={getGraphColor(graphEntries[id])}
+                  color={graphEntries[id]}
+                  type="dashed"
                 />
-                {showMean && (
-                  <ExperimentLine
-                    data={getMeanData(results)}
-                    xScale={xScale}
-                    yScale={yScale}
-                    color={getGraphColor(graphEntries[id])}
-                    type="dashed"
-                  />
-                )}
-              </React.Fragment>
-            ) : null
+              )}
+            </React.Fragment>
           ))}
         </Group>
         <AxisLeft
@@ -177,7 +177,7 @@ function SimulationChart() {
           maxFitness={1}
           maxGenerations={numGenerations}
           margin={brushMargin}
-          data={simulations.length ? getMaxData(simulations[0].results) : []}
+          simulations={checkedSimulations}
           setDomain={onChangeDomain}
         />
       </svg>

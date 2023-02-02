@@ -94,3 +94,18 @@ export const StatsType = {
   minFitness: PropTypes.number,
   deviation: PropTypes.number,
 };
+
+export const ResultsType = {
+  threshold: PropTypes.number,
+  stats: PropTypes.shape(StatsType),
+};
+
+export const SimulationType = {
+  id: PropTypes.number,
+  createdOn: PropTypes.number,
+  status: PropTypes.string,
+  name: PropTypes.string,
+  lastUpdate: PropTypes.number,
+  parameters: PropTypes.shape(ParametersType),
+  results: PropTypes.arrayOf(PropTypes.shape(ResultsType)),
+};

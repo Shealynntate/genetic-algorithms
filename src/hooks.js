@@ -7,7 +7,6 @@ import {
   SettingsDisabledStates,
   AppState,
   defaultLineColor,
-  getGraphColor,
 } from './constants';
 import { useGetCompletedSimulations, useGetCurrentSimulation } from './globals/database';
 
@@ -47,20 +46,20 @@ export const useDisableSaveSimulation = () => {
 };
 
 export const useIsGraphEntry = (id) => {
-  const entries = useSelector((state) => state.ux.simulationGraphEntries);
+  const entries = useSelector((state) => state.ux.simulationGraphColors);
   return (id in entries);
 };
 
 export const useGraphColor = (id) => {
   const isEntry = useIsGraphEntry(id);
-  const entries = useSelector((state) => state.ux.simulationGraphEntries);
+  const entries = useSelector((state) => state.ux.simulationGraphColors);
   if (!isEntry) return defaultLineColor;
 
-  return getGraphColor(entries[id]);
+  return entries[id];
 };
 
 export const useGetGraphSimulations = () => {
-  const graphEntries = useSelector((state) => state.ux.simulationGraphEntries);
+  const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
   const runningStats = useSelector((state) => state.simulation.runningStatsRecord);
   const completedSims = useGetCompletedSimulations() || [];
   const currentSim = useGetCurrentSimulation();
