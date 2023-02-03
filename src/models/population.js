@@ -216,9 +216,9 @@ class Population {
     const step = cdf[cdf.length - 1] / this.size;
     let value = randomFloat(0, step);
     while (parents.length < count) {
-      const p1 = this.susSelectParent(value);
+      const p1 = this.susSelectParent(cdf, value);
       value += step;
-      const p2 = this.susSelectParent(value);
+      const p2 = this.susSelectParent(cdf, value);
       value += step;
       parents.push([p1, p2]);
     }

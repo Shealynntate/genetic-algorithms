@@ -127,8 +127,8 @@ function SimulationForm({
                 <Select
                   labelId="select-label"
                   label="Selection Type"
+                  defaultValue={selection.type}
                   readOnly={readOnly}
-                  value={selection.type}
                   {...register('selection.type')}
                 >
                   {Object.keys(SelectionType).map((type) => (

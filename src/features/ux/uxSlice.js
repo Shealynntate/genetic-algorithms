@@ -48,7 +48,7 @@ export const uxSlice = createSlice({
       let next = indices.length % lineColors.length;
       for (let i = 1; i < indices.length; ++i) {
         const prev = indices[i - 1];
-        if (!indices[i] <= prev + 1) {
+        if (indices[i] !== prev && indices[i] - 1 !== prev) {
           next = prev + 1;
           break;
         }

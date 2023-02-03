@@ -9,7 +9,7 @@ import {
   take,
   takeEvery,
 } from 'redux-saga/effects';
-import { minExperimentThreshold, SimulationStatus } from '../../constants';
+import { minResultsThreshold, SimulationStatus } from '../../constants';
 import {
   addGalleryEntry,
   addImageToDatabase,
@@ -126,7 +126,7 @@ function* generationResultsCheckSaga({
     latestThreshold = statsRecord[statsRecord.length - 1].threshold;
   }
   const currentMax = Math.trunc(stats.maxFitness * 1000) / 1000;
-  if (currentMax >= minExperimentThreshold && currentMax !== latestThreshold) {
+  if (currentMax >= minResultsThreshold && currentMax !== latestThreshold) {
     yield put(addGenStats({ threshold: currentMax, stats }));
   }
 
@@ -212,7 +212,7 @@ function* runSimulationSaga({ parameters }) {
     }
 
     // First run the next generation of the simulation
-    const isMerge = globalUpdateCount > 300;
+    const isMerge = globalUpdateCount > 100_000; // 300;
     const { maxFitOrganism, ...stats } = yield population.runGeneration(isMerge);
     const organism = omit(maxFitOrganism, ['phenotype']);
     if (isMerge) {

@@ -6,7 +6,7 @@ import { Grid } from '@visx/grid';
 import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
 import { Stack, Typography } from '@mui/material';
-import { minExperimentThreshold } from '../../constants';
+import { minResultsThreshold } from '../../constants';
 import ExperimentLine from '../ExperimentLine';
 import defaultParameters from '../../globals/defaultParameters';
 import CustomCheckbox from './Checkbox';
@@ -75,7 +75,7 @@ function SimulationChart() {
   const yScale = useMemo(
     () => scaleLinear({
       range: [graphHeight, 0],
-      domain: [minExperimentThreshold, 1],
+      domain: [minResultsThreshold, 1],
     }),
     [],
   );

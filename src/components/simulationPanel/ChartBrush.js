@@ -8,8 +8,9 @@ import { Brush } from '@visx/brush';
 import { PatternLines } from '@visx/pattern';
 import { scaleLinear } from '@visx/scale';
 import { useSelector } from 'react-redux';
+import { GridColumns } from '@visx/grid';
 import BrushHandle from './BrushHandle';
-import { minExperimentThreshold } from '../../constants';
+import { minResultsThreshold } from '../../constants';
 import { SimulationType } from '../../types';
 
 const PATTERN_ID = 'brush_pattern';
@@ -47,13 +48,13 @@ function ChartBrush({
       range: [0, xMax],
       domain: [0, maxGenerations],
     }),
-    [xMax],
+    [xMax, maxGenerations],
   );
 
   const yScale = useMemo(
     () => scaleLinear({
       range: [yMax, 0],
-      domain: [minExperimentThreshold, maxFitness],
+      domain: [minResultsThreshold, maxFitness],
     }),
     [yMax],
   );
@@ -86,6 +87,13 @@ function ChartBrush({
         fill={bgColor}
         rx={theme.shape.borderRadius}
       />
+      <GridColumns
+        scale={xScale}
+        width={width}
+        height={height}
+        stroke="white"
+        strokeOpacity={0.10}
+      />
       {simulations.map(({ id, results }) => (
         <LinePath
           key={`brush-chart-line-${id}`}
@@ -109,7 +117,7 @@ function ChartBrush({
       <Brush
         xScale={xScale}
         yScale={yScale}
-        width={xMax}
+        width={width}
         height={yMax}
         margin={margin}
         initialBrushPosition={initialBrushPosition}
