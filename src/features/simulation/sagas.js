@@ -30,6 +30,8 @@ import {
   setGlobalBest,
   updateCurrentGen,
   RESTORE_POPULATION,
+  clearGenStats,
+  setCurrentBest,
 } from './simulationSlice';
 import {
   deleteRunningSimulation,
@@ -60,6 +62,8 @@ const hasReachedTarget = (globalBest, target) => {
 function* resetSimulationsSaga() {
   const populationService = yield getContext('population');
   yield put(setGlobalBest());
+  yield put(clearGenStats());
+  yield put(setCurrentBest());
   populationService.reset();
   globalUpdateCount = 0;
   monitoredBest = 0;
@@ -98,11 +102,12 @@ function* completeSimulationRunSaga() {
     globalBest,
   });
   // Stop the simulation and add the results to database
-  yield put(addGenStats({ threshold: currentMax, stats: currentStats }));
+  const lastGenResults = { threshold: currentMax, stats: currentStats };
+  yield put(addGenStats(lastGenResults));
   yield updateCurrentSimulation({
     population: population.serialize(),
     status: SimulationStatus.COMPLETE,
-    results,
+    results: [...results, lastGenResults],
   });
   yield call(resetSimulationsSaga);
 }

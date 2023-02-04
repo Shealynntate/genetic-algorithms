@@ -15,7 +15,7 @@ import { useGetCompletedSimulations, useGetCurrentSimulation } from '../../globa
 
 const graphWidth = 625;
 const graphHeight = 500;
-const brushHeight = 120;
+const brushHeight = 100;
 const margin = {
   left: 28,
   top: 4,
@@ -170,7 +170,11 @@ function SimulationChart() {
           })}
         />
       </svg>
-      <svg width={fullWidth} height={brushHeight}>
+      <svg
+        width={fullWidth}
+        height={brushHeight}
+        style={{ marginTop: '0.6rem' }}
+      >
         <ChartBrush
           width={graphWidth}
           height={brushHeight}

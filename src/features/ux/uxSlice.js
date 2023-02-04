@@ -45,7 +45,7 @@ export const uxSlice = createSlice({
       // Determine line color index
       const indices = Object.values(state.simulationGraphIndices);
       indices.sort();
-      let next = indices.length % lineColors.length;
+      let next = indices[0] === 0 ? indices.length % lineColors.length : 0;
       for (let i = 1; i < indices.length; ++i) {
         const prev = indices[i - 1];
         if (indices[i] !== prev && indices[i] - 1 !== prev) {

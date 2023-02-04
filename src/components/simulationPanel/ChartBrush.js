@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Group } from '@visx/group';
 import { LinePath } from '@visx/shape';
@@ -34,29 +34,25 @@ function ChartBrush({
   setDomain,
 }) {
   const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
-
+  // Prevent component from calling setDomain multiple times with the same values
+  const domainRef = useRef([0, maxGenerations]);
   const theme = useTheme();
 
   const bgColor = theme.palette.background.default;
 
-  // Determine bounds and scale functions
-  const xMax = Math.max(width - margin.left - margin.right, 0);
-  const yMax = Math.max(height - margin.top - margin.bottom, 0);
-
   const xScale = useMemo(
     () => scaleLinear({
-      range: [0, xMax],
+      range: [0, width],
       domain: [0, maxGenerations],
     }),
-    [xMax, maxGenerations],
+    [maxGenerations],
   );
 
   const yScale = useMemo(
     () => scaleLinear({
-      range: [yMax, 0],
+      range: [height, 0],
       domain: [minResultsThreshold, maxFitness],
     }),
-    [yMax],
   );
 
   const initialBrushPosition = useMemo(
@@ -69,9 +65,13 @@ function ChartBrush({
 
   const onBrushEnd = (domain) => {
     if (!domain) return;
-    const { x0, x1 } = domain;
-    // const dataSubset = data.filter((item) => item.x >= x0 && item.x <= x1);
-    setDomain(x0, x1);
+
+    const min = Math.max(0, Math.floor(domain.x0));
+    const max = Math.min(maxGenerations, Math.floor(domain.x1));
+    if (min === domainRef.current[0] && max === domainRef.current[1]) return;
+
+    domainRef.current = [min, max];
+    setDomain(min, max);
   };
 
   return (
@@ -118,12 +118,13 @@ function ChartBrush({
         xScale={xScale}
         yScale={yScale}
         width={width}
-        height={yMax}
+        height={height}
         margin={margin}
         initialBrushPosition={initialBrushPosition}
         resizeTriggerAreas={['left', 'right']}
         brushDirection="horizontal"
-        onBrushEnd={onBrushEnd}
+        // onBrushEnd={onBrushEnd}
+        onChange={onBrushEnd}
         // onClick={() => setDomain(0, maxGenerations)}
         handleSize={handleSize}
         selectedBoxStyle={selectedBoxStyle(theme)}
