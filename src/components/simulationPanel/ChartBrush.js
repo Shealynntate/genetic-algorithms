@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Group } from '@visx/group';
 import { LinePath } from '@visx/shape';
@@ -37,8 +37,12 @@ function ChartBrush({
   // Prevent component from calling setDomain multiple times with the same values
   const domainRef = useRef([0, maxGenerations]);
   const theme = useTheme();
-
   const bgColor = theme.palette.background.default;
+
+  useEffect(() => {
+    // Invoke callback initially in case maxGenerations is different from default max
+    setDomain(domainRef.current[0], domainRef.current[1]);
+  }, []);
 
   const xScale = useMemo(
     () => scaleLinear({
@@ -123,7 +127,6 @@ function ChartBrush({
         initialBrushPosition={initialBrushPosition}
         resizeTriggerAreas={['left', 'right']}
         brushDirection="horizontal"
-        // onBrushEnd={onBrushEnd}
         onChange={onBrushEnd}
         // onClick={() => setDomain(0, maxGenerations)}
         handleSize={handleSize}
