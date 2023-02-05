@@ -30,7 +30,14 @@ SectionTitle.propTypes = {
   variant: PropTypes.string.isRequired,
 };
 
-function Panel({ label, children, variant }) {
+function Panel({
+  label,
+  children,
+  variant,
+  pt,
+  px,
+  pb,
+}) {
   const theme = useTheme();
 
   return (
@@ -39,9 +46,9 @@ function Panel({ label, children, variant }) {
       <Box sx={{
         border: `1px solid ${theme.palette[variant].dark}`,
         borderRadius: `${theme.shape.borderRadius}px`,
-        pt: 1.5,
-        px: 1,
-        pb: 1,
+        pt,
+        px,
+        pb,
       }}
       >
         {children}
@@ -54,11 +61,17 @@ Panel.propTypes = {
   label: PropTypes.string,
   children: PropTypes.node.isRequired,
   variant: PropTypes.string,
+  pt: PropTypes.number,
+  px: PropTypes.number,
+  pb: PropTypes.number,
 };
 
 Panel.defaultProps = {
   label: null,
   variant: 'primary',
+  pt: 1.5,
+  px: 1,
+  pb: 1,
 };
 
 export default Panel;

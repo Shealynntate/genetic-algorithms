@@ -1,4 +1,5 @@
-import defaultTarget from '../assets/mona_lisa.jpeg';
+// import defaultTarget from '../assets/mona_lisa.jpeg';
+import defaultTarget from '../assets/son_of_man.jpeg';
 // import defaultTarget from '../assets/composition_II.png';
 import {
   CrossoverType,
@@ -140,19 +141,19 @@ const parameters = {
     },
   },
   mutation: {
-    [DistributionTypes.COLOR_SIGMA]: 0.05, // 0.25 / n
-    [DistributionTypes.POINT_SIGMA]: 0.05,
-    [DistributionTypes.PERMUTE_SIGMA]: 0.05, // TODO
+    [DistributionTypes.COLOR_SIGMA]: 0.06, // 0.25 / n
+    [DistributionTypes.POINT_SIGMA]: 0.06,
+    [DistributionTypes.PERMUTE_SIGMA]: 0.06, // TODO
     probabilities: {
       [ProbabilityTypes.TWEAK_COLOR]: {
         startValue: 0.1,
-        endValue: 0.002,
+        endValue: 0.001,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.TWEAK_POINT]: {
         startValue: 0.1,
-        endValue: 0.002,
+        endValue: 0.001,
         startFitness: 0,
         endFitness: targetFitness,
       },

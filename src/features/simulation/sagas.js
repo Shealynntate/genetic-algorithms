@@ -13,10 +13,11 @@ import { minResultsThreshold, SimulationStatus } from '../../constants';
 import {
   addGalleryEntry,
   addImageToDatabase,
+  insertResultsForCurrentSimulation,
   deleteCurrentSimulation,
   getCurrentImages,
   getCurrentSimulation,
-  getNextPendingSimulation,
+  runNextPendingSimulation,
   setCurrentSimulation,
   updateCurrentSimulation,
 } from '../../globals/database';
@@ -107,8 +108,8 @@ function* completeSimulationRunSaga() {
   yield updateCurrentSimulation({
     population: population.serialize(),
     status: SimulationStatus.COMPLETE,
-    results: [...results, lastGenResults],
   });
+  yield insertResultsForCurrentSimulation([...results, lastGenResults]);
   yield call(resetSimulationsSaga);
 }
 
@@ -186,7 +187,6 @@ function* runSimulationSaga({ parameters }) {
   }
 
   yield updateCurrentSimulation({
-    status: SimulationStatus.RUNNING,
     population: population.serialize(),
   });
   yield put(setSimulationParameters({ parameters }));
@@ -257,16 +257,14 @@ function* runSimulationSaga({ parameters }) {
 
 function* runSimulationsSaga() {
   // TODO: Combine into one call
-  let pendingSimulation = yield getNextPendingSimulation();
-  yield setCurrentSimulation(pendingSimulation.id);
+  let pendingSimulation = yield runNextPendingSimulation();
 
   while (pendingSimulation) {
-    yield setCurrentSimulation(pendingSimulation.id);
     const doContinue = yield call(runSimulationSaga, pendingSimulation);
     // If user reset simulations, exit early and don't mark them complete
     if (!doContinue) return;
 
-    pendingSimulation = yield getNextPendingSimulation();
+    pendingSimulation = yield runNextPendingSimulation();
   }
 
   yield setCurrentSimulation(null);

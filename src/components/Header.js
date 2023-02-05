@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import { GitHub } from '@mui/icons-material';
-import About from './About';
+import About from './About/About';
 
 function Header() {
   const [aboutOpen, setAboutOpen] = useState(false);

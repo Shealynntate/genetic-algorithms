@@ -11,7 +11,7 @@ import ExperimentLine from '../ExperimentLine';
 import defaultParameters from '../../globals/defaultParameters';
 import CustomCheckbox from './Checkbox';
 import ChartBrush from './ChartBrush';
-import { useGetCompletedSimulations, useGetCurrentSimulation } from '../../globals/database';
+import { useGetCompletedSimulationsAndResults, useGetCurrentSimulation } from '../../globals/database';
 
 const graphWidth = 625;
 const graphHeight = 500;
@@ -45,7 +45,7 @@ function SimulationChart() {
   const theme = useTheme();
   const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
   const runningStats = useSelector((state) => state.simulation.runningStatsRecord);
-  const completedSims = useGetCompletedSimulations() || [];
+  const completedSims = useGetCompletedSimulationsAndResults() || [];
   const currentSim = useGetCurrentSimulation();
   const simulations = [...completedSims];
   if (currentSim) {

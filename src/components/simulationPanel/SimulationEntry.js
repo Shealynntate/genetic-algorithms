@@ -76,17 +76,43 @@ function SimulationEntry({
             }}
           />
         )}
-        {/* <Typography variant="body2" pr={1}>{`${id}.`}</Typography> */}
-        <TextField
-          value={nameValue}
-          onChange={onChangeName}
-          variant="standard"
-          size="small"
-          disabled={!hasTextEdit}
-        />
-        <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-          {new Date(createdOn).toLocaleString()}
-        </Typography>
+        <Stack sx={{ position: 'relative' }}>
+          <TextField
+            value={nameValue}
+            onChange={onChangeName}
+            variant="standard"
+            size="small"
+            disabled={!hasTextEdit}
+          />
+          <Typography
+            color="GrayText"
+            sx={{ position: 'absolute', top: '-0.9rem', right: 0 }}
+            fontSize="small"
+          >
+            {id}
+          </Typography>
+        </Stack>
+        <Stack>
+          <Typography
+            variant="body2"
+            fontSize="small"
+            sx={{ color: theme.palette.text.secondary, px: 0.75, textAlign: 'right' }}
+          >
+            {new Date(createdOn).toLocaleString('en-US', { dateStyle: 'short' })}
+          </Typography>
+          <Typography
+            variant="body2"
+            fontSize="small"
+            sx={{
+              minWidth: '5.5rem',
+              color: theme.palette.text.secondary,
+              px: 0.75,
+              textAlign: 'right',
+            }}
+          >
+            {new Date(createdOn).toLocaleString('en-US', { timeStyle: 'medium' })}
+          </Typography>
+        </Stack>
         <IconButton onClick={(event) => onDuplicate(event, id)} size="small">
           <ContentCopyIcon fontSize="inherit" />
         </IconButton>
@@ -96,6 +122,7 @@ function SimulationEntry({
           </IconButton>
         )}
       </Stack>
+
     </Paper>
   );
 }
