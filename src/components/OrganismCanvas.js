@@ -2,10 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { canvasParameters } from '../constants';
 import { OrganismType } from '../types';
-// import Chromosome from '../models/chromosomes';
 
 function OrganismCanvas({
-  organism, width, height, willReadFrequently,
+  organism,
+  width,
+  height,
+  willReadFrequently,
 }) {
   const scalePoint = (point) => [point[0] * width, point[1] * height];
 

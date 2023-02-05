@@ -225,10 +225,10 @@ export const getCurrentImages = async () => {
 
 // Gallery Table
 // --------------------------------------------------
-export const addGalleryEntry = (json) => db[galleryTable].add({
+export const addGalleryEntry = (simulationId, json) => db[galleryTable].add({
   createdOn: Date.now(),
-  simulationId: currentSimulationId,
-  name: `Entry ${currentSimulationId}`,
+  simulationId,
+  name: `Entry ${simulationId}`,
   json,
 });
 

@@ -71,7 +71,7 @@ function* resetSimulationsSaga() {
 }
 
 function* createGalleryEntrySaga({ totalGen, globalBest }) {
-  const { name, parameters } = yield getCurrentSimulation();
+  const { id, name, parameters } = yield getCurrentSimulation();
   const history = yield getCurrentImages();
   const imageData = history.map((entry) => entry.imageData);
   const { chromosomes } = globalBest.organism.genome;
@@ -87,7 +87,7 @@ function* createGalleryEntrySaga({ totalGen, globalBest }) {
     totalGen,
   };
   const json = JSON.stringify(galleryData);
-  yield addGalleryEntry(json);
+  yield addGalleryEntry(id, json);
 }
 
 function* completeSimulationRunSaga() {
