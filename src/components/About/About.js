@@ -35,7 +35,7 @@ function About({ open, onClose }) {
             - It&apos;s not obvious how to find a solution to the problem
           </Typography>
           <Typography sx={{ pl: 2 }}>
-            - But it&apos;s easy to check if a solution is good or better than another
+            - But it&apos;s easy to check if a solution is good or at least better than another
           </Typography>
           <Typography sx={{ pl: 2 }}>
             - The solution space is so large that simple brute force, trial and error isn&apos;t
@@ -51,11 +51,9 @@ function About({ open, onClose }) {
           <Typography sx={{ display: 'inline-block' }}>
             - a subcategory of Metaheuristics that borrow concepts from evolutionary biology.
           </Typography>
-          <DialogContentText variant="h5">Goal</DialogContentText>
-          <DialogContentText>
-            The aim is to match the target image pixel for pixel.
-            The program checks each pixel to see how correct it is to the original.
-          </DialogContentText>
+
+          <DialogContentText variant="subtitle">Population</DialogContentText>
+          <DialogContentText variant="subtitle">Organism</DialogContentText>
           <DialogContentText variant="subtitle">Chromosome</DialogContentText>
           <DialogContentText>
             An array of (x, y) coordinates and an rgb color value.
@@ -72,6 +70,11 @@ function About({ open, onClose }) {
           the population&apos;s fitness graphically. Previous runs are also stored for comparison.
           Completed runs also generate a timelapse gif of the process that you can find on the
           Gallery tab,
+          <DialogContentText variant="h5">Goal</DialogContentText>
+          <DialogContentText>
+            The aim is to match the target image pixel for pixel.
+            The program checks each pixel to see how correct it is to the original.
+          </DialogContentText>
         </Panel>
         <ResourcesPanel />
       </DialogContent>

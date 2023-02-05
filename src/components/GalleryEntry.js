@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Box, IconButton, Paper, Stack, Typography,
+  Box, IconButton, Paper, Stack, TextField, Typography,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
-import { deleteGalleryEntry } from '../globals/database';
+import { deleteGalleryEntry, renameGalleryEntry } from '../globals/database';
 import { download } from '../globals/utils';
 import { canvasParameters } from '../constants';
 import OrganismCanvas from './Canvases/OrganismCanvas';
@@ -27,12 +27,21 @@ function GalleryEntry({
     parameters,
   } = JSON.parse(json);
 
+  const [entryName, setEntryName] = useState(name);
+
   const onDelete = () => {
     deleteGalleryEntry(id);
   };
 
   const onDownload = () => {
     download(name, gif);
+  };
+
+  const onChangeName = async (event) => {
+    const { value } = event.target;
+    setEntryName(value);
+    // TODO: Throttle this update, same with SimulationEntry name change
+    await renameGalleryEntry(id, value);
   };
 
   return (
@@ -54,7 +63,12 @@ function GalleryEntry({
             >
               {simulationId}
             </Typography>
-            <Typography>{name}</Typography>
+            <TextField
+              value={entryName}
+              onChange={onChangeName}
+              variant="standard"
+              sx={{ pb: 1 }}
+            />
             <Typography variant="body2">{`Top score ${globalBest.organism.fitness.toFixed(3)}`}</Typography>
             <Typography variant="body2">{`Generations: ${totalGen}`}</Typography>
           </Stack>
