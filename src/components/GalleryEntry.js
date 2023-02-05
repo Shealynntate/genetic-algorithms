@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Box, IconButton, Paper, Stack, Typography,
@@ -6,10 +6,10 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import { deleteGalleryEntry } from '../globals/database';
-import { createImageData, download } from '../globals/utils';
-import Canvas from './Canvas';
+import { download } from '../globals/utils';
 import { canvasParameters } from '../constants';
-import OrganismCanvas from './OrganismCanvas';
+import OrganismCanvas from './Canvases/OrganismCanvas';
+import TargetCanvas from './Canvases/TargetCanvas';
 
 const width = canvasParameters.width / 2;
 const height = canvasParameters.height / 2;
@@ -27,23 +27,6 @@ function GalleryEntry({
     parameters,
   } = JSON.parse(json);
 
-  const [imageData, setImageData] = useState();
-
-  useEffect(() => {
-    let isMounted = true;
-    const updateImage = async () => {
-      const result = await createImageData(parameters.population.target, { width, height });
-      if (isMounted) {
-        setImageData(result);
-      }
-    };
-    updateImage();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [parameters.target]);
-
   const onDelete = () => {
     deleteGalleryEntry(id);
   };
@@ -57,7 +40,7 @@ function GalleryEntry({
       <Stack direction="row" spacing={1}>
         <Stack spacing={1}>
           <OrganismCanvas organism={globalBest.organism} width={width} height={height} />
-          <Canvas width={width} height={height} imageData={imageData} />
+          <TargetCanvas width={width} height={height} target={parameters.population.target} />
         </Stack>
         <img src={gif} alt={`${name} gif`} />
       </Stack>

@@ -1,9 +1,11 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 function Canvas({
-  width, height, imageData, willReadFrequently,
+  height,
+  imageData,
+  width,
+  willReadFrequently,
 }) {
   const canvasRef = useRef();
 
@@ -28,15 +30,15 @@ function Canvas({
 }
 
 Canvas.propTypes = {
-  width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   imageData: PropTypes.shape(ImageData),
+  width: PropTypes.number.isRequired,
   willReadFrequently: PropTypes.bool,
 };
 
 Canvas.defaultProps = {
-  willReadFrequently: false,
   imageData: null,
+  willReadFrequently: false,
 };
 
 export default Canvas;

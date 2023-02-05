@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
-import OrganismCanvas from './OrganismCanvas';
+import OrganismCanvas from './Canvases/OrganismCanvas';
 import { canvasParameters } from '../constants';
 import ImageCaption from './ImageCaption';
 

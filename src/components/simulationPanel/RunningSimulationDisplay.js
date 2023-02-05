@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -9,9 +9,8 @@ import { ParametersType } from '../../types';
 import SimulationEntry from './SimulationEntry';
 import { canvasParameters, SimulationStatus } from '../../constants';
 import GlobalBest from '../GlobalBest';
-import Canvas from '../Canvas';
-import { createImageData } from '../../globals/utils';
 import Panel from '../settingsPanels/Panel';
+import TargetCanvas from '../Canvases/TargetCanvas';
 
 const { width, height } = canvasParameters;
 
@@ -22,23 +21,8 @@ function RunningSimulationDisplay({
   simulation,
 }) {
   const target = useSelector((state) => state.parameters.population.target);
-  const [imageData, setImageData] = useState();
   const theme = useTheme();
 
-  useEffect(() => {
-    let isMounted = true;
-    const updateImage = async () => {
-      const result = await createImageData(target);
-      if (isMounted) {
-        setImageData(result);
-      }
-    };
-    updateImage();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [target]);
   if (!simulation) {
     return (
       <Paper sx={{ textAlign: 'center' }}>
@@ -54,7 +38,7 @@ function RunningSimulationDisplay({
       <Stack direction="row" spacing={1}>
         <Stack>
           <Typography variant="caption" pt={1}>Target</Typography>
-          <Canvas width={width} height={height} imageData={imageData} />
+          <TargetCanvas width={width} height={height} target={target} />
         </Stack>
         <Stack>
           <Typography variant="caption" pt={1}>Current Best</Typography>

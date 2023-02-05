@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { canvasParameters } from '../constants';
-import { OrganismType } from '../types';
+import { canvasParameters } from '../../constants';
+import { OrganismType } from '../../types';
 
 function OrganismCanvas({
   organism,

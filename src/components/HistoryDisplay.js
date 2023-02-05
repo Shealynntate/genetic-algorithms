@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Box } from '@mui/material';
 import HistoryEntry from './HistoryEntry';
-import OrganismCanvas from './OrganismCanvas';
+import OrganismCanvas from './Canvases/OrganismCanvas';
 import ImageCaption from './ImageCaption';
 import { useImageDbQuery } from '../globals/database';
 

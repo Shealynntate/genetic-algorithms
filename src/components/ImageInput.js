@@ -5,8 +5,8 @@ import { useTheme } from '@emotion/react';
 import { Alert, Box, Snackbar } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { AlertState, canvasParameters } from '../constants';
-import { createImageData, fileToBase64 } from '../globals/utils';
-import Canvas from './Canvas';
+import { fileToBase64 } from '../globals/utils';
+import TargetCanvas from './Canvases/TargetCanvas';
 
 const AlertMessage = {
   error: 'Oops, unable to read the file provided',
@@ -22,7 +22,6 @@ function ImageInput({
 }) {
   const theme = useTheme();
   const [target, setTarget] = useState(defaultTarget);
-  const [imageData, setImageData] = useState();
   const [alertState, setAlertState] = useState();
 
   useEffect(() => {
@@ -31,21 +30,6 @@ function ImageInput({
       setTarget(defaultTarget);
     }
   }, [defaultTarget]);
-
-  useEffect(() => {
-    let isMounted = true;
-    const updateImage = async () => {
-      const result = await createImageData(target, { width, height });
-      if (isMounted) {
-        setImageData(result);
-      }
-    };
-    updateImage();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [target]);
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
@@ -81,7 +65,7 @@ function ImageInput({
       }}
     >
       <input {...getInputProps()} disabled={readOnly} />
-      <Canvas width={width} height={height} imageData={imageData} />
+      <TargetCanvas width={width} height={height} target={target} />
       <Snackbar open={!!alertState} autoHideDuration={6e3} onClose={() => setAlertState()}>
         {alertState && <Alert severity={alertState}>{AlertMessage[alertState]}</Alert>}
       </Snackbar>
