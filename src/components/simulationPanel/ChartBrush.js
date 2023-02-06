@@ -42,7 +42,7 @@ function ChartBrush({
   useEffect(() => {
     // Invoke callback initially in case maxGenerations is different from default max
     setDomain(domainRef.current[0], domainRef.current[1]);
-  }, []);
+  }, [maxGenerations]);
 
   const xScale = useMemo(
     () => scaleLinear({

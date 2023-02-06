@@ -1,10 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Typography } from '@mui/material';
+import { useTheme } from '@mui/material';
 
 function ExampleText({ children }) {
+  const theme = useTheme();
+
   return (
-    <Typography color="primary">{children}</Typography>
+    <span
+      style={{
+        display: 'inline',
+        paddingLeft: '0.4rem',
+        color: theme.palette.primary.light,
+      }}
+    >
+      {children}
+    </span>
   );
 }
 

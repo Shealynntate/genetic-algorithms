@@ -7,7 +7,7 @@ import ExampleText from './ExampleText';
 
 function OverviewPanel() {
   return (
-    <Panel label="Introduction" px={2} pt={2} pb={2}>
+    <Panel label="Introduction" px={2} pb={2}>
       <SectionTitle>Metaheuristics</SectionTitle>
       <Typography>
         A set of techniques that are useful for solving a hard problem
@@ -49,7 +49,6 @@ function OverviewPanel() {
           - Repeat until you&apos;ve &quot;climbed the hill&quot; to a good solution
         </Typography>
       </Stack>
-      <br />
       <SectionTitle>Genetic Algorithms</SectionTitle>
       <Typography sx={{ display: 'inline-block' }}>
         A subcategory of Metaheuristics that borrows concepts from evolutionary biology.

@@ -4,7 +4,11 @@ import { Typography } from '@mui/material';
 
 function SectionTitle({ children }) {
   return (
-    <Typography color="secondary" variant="h6">
+    <Typography
+      color="secondary"
+      variant="h5"
+      sx={{ py: 1 }}
+    >
       {children}
     </Typography>
   );

@@ -2,14 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
 
-function Keyword({ children }) {
+function Keyword({ pl, pr, children }) {
   const theme = useTheme();
 
   return (
     <span style={{
-      paddingRight: '0.4rem',
-      paddingLeft: '0.4rem',
-      // fontStyle: 'italic',
+      paddingLeft: pl,
+      paddingRight: pr,
       color: theme.palette.secondary.main,
     }}
     >
@@ -20,6 +19,13 @@ function Keyword({ children }) {
 
 Keyword.propTypes = {
   children: PropTypes.node.isRequired,
+  pl: PropTypes.string,
+  pr: PropTypes.string,
+};
+
+Keyword.defaultProps = {
+  pl: '0.4rem',
+  pr: '0.4rem',
 };
 
 export default Keyword;
