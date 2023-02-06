@@ -10,6 +10,8 @@ import {
 } from '@mui/material';
 import Panel from '../settingsPanels/Panel';
 import ResourcesPanel from './ResourcesPanel';
+import OverviewPanel from './OverviewPanel';
+import AlgorithmPanel from './AlgorithmPanel';
 
 function About({ open, onClose }) {
   return (
@@ -26,44 +28,8 @@ function About({ open, onClose }) {
         >
           Genetic Programming: Evolution of the Mona Lisa
         </Link>
-        <Panel label="Introduction to Genetic Algorithms " px={2} pt={2} pb={2}>
-          <Typography color="secondary" sx={{ display: 'inline-block', pr: 1 }}>Metaheuristics</Typography>
-          <Typography sx={{ display: 'inline-block' }}>
-            - techniques that are useful when you&apos;re facing a problem with three criteria:
-          </Typography>
-          <Typography sx={{ pl: 2 }}>
-            - It&apos;s not obvious how to find a solution to the problem
-          </Typography>
-          <Typography sx={{ pl: 2 }}>
-            - But it&apos;s easy to check if a solution is good or at least better than another
-          </Typography>
-          <Typography sx={{ pl: 2 }}>
-            - The solution space is so large that simple brute force, trial and error isn&apos;t
-            going to work
-          </Typography>
-          <Typography>
-            Metaheuristics are a type of
-            <em>stochastic optimization</em>
-            , algorithms that use some randomness to find a solution.
-          </Typography>
-          <br />
-          <Typography color="secondary" sx={{ display: 'inline-block', pr: 1 }}>Genetic Algorithms</Typography>
-          <Typography sx={{ display: 'inline-block' }}>
-            - a subcategory of Metaheuristics that borrow concepts from evolutionary biology.
-          </Typography>
-
-          <DialogContentText variant="subtitle">Population</DialogContentText>
-          <DialogContentText variant="subtitle">Organism</DialogContentText>
-          <DialogContentText variant="subtitle">Chromosome</DialogContentText>
-          <DialogContentText>
-            An array of (x, y) coordinates and an rgb color value.
-            Each instances forms a single triangle.
-          </DialogContentText>
-          <DialogContentText variant="subtitle">Organism</DialogContentText>
-          <DialogContentText>
-            Genome
-          </DialogContentText>
-        </Panel>
+        <OverviewPanel />
+        <AlgorithmPanel />
         <Panel label="This Project">
           This site is an interative tool that lets you change parameters for a Genetic Algorithm
           and run that simulation. It lets you watch the top organisms evolve over time and track
