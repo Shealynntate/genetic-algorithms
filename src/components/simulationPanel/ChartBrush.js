@@ -35,13 +35,19 @@ function ChartBrush({
 }) {
   const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
   // Prevent component from calling setDomain multiple times with the same values
+  const initialMax = useRef(maxGenerations);
   const domainRef = useRef([0, maxGenerations]);
   const theme = useTheme();
   const bgColor = theme.palette.background.default;
 
   useEffect(() => {
-    // Invoke callback initially in case maxGenerations is different from default max
-    setDomain(domainRef.current[0], domainRef.current[1]);
+    const max = domainRef.current[1];
+    if (initialMax.current === max || max > maxGenerations) {
+      // Invoke callback initially in case maxGenerations is different from default max
+      domainRef.current[1] = maxGenerations;
+      setDomain(domainRef.current[0], domainRef.current[1]);
+    }
+    initialMax.current = maxGenerations;
   }, [maxGenerations]);
 
   const xScale = useMemo(

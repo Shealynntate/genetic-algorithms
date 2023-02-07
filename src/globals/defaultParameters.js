@@ -1,5 +1,5 @@
-// import defaultTarget from '../assets/mona_lisa.jpeg';
-import defaultTarget from '../assets/son_of_man.jpeg';
+import defaultTarget from '../assets/mona_lisa.jpeg';
+// import defaultTarget from '../assets/son_of_man.jpeg';
 // import defaultTarget from '../assets/composition_II.png';
 import {
   CrossoverType,
@@ -159,13 +159,13 @@ const parameters = {
       },
       [ProbabilityTypes.ADD_POINT]: {
         startValue: 0.01,
-        endValue: 0.0005,
+        endValue: 0.001,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.REMOVE_POINT]: {
         startValue: 0.005,
-        endValue: 0.0002,
+        endValue: 0.0006,
         startFitness: 0,
         endFitness: targetFitness,
       },
@@ -189,7 +189,7 @@ const parameters = {
       },
       [ProbabilityTypes.PERMUTE_CHROMOSOMES]: {
         startValue: 0.05,
-        endValue: 0.001,
+        endValue: 0.015,
         startFitness: 0,
         endFitness: targetFitness,
       },
@@ -197,7 +197,7 @@ const parameters = {
   },
   stopCriteria: {
     targetFitness: 1,
-    maxGenerations: 20_000,
+    maxGenerations: 40_000,
   },
 };
 

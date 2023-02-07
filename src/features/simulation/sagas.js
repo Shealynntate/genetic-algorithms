@@ -31,8 +31,7 @@ import {
   setGlobalBest,
   updateCurrentGen,
   RESTORE_POPULATION,
-  clearGenStats,
-  setCurrentBest,
+  clearCurrentSimulation,
 } from './simulationSlice';
 import {
   deleteRunningSimulation,
@@ -62,9 +61,7 @@ const hasReachedTarget = (globalBest, target) => {
 
 function* resetSimulationsSaga() {
   const populationService = yield getContext('population');
-  yield put(setGlobalBest());
-  yield put(clearGenStats());
-  yield put(setCurrentBest());
+  yield put(clearCurrentSimulation());
   populationService.reset();
   globalUpdateCount = 0;
   monitoredBest = 0;

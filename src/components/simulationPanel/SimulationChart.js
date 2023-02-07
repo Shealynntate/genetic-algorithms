@@ -52,15 +52,14 @@ function SimulationChart() {
     currentSim.results = runningStats;
     simulations.push(currentSim);
   }
+  const checkedSimulations = simulations.filter(({ id }) => (id in graphEntries));
+  const numGenerations = findMaxGeneration(checkedSimulations);
 
-  const numGenerations = findMaxGeneration(simulations);
   const [showMean, setShowMean] = useState(true);
   const [domain, setDomain] = useState([0, numGenerations]);
 
   const bgColor = theme.palette.background.default;
   const axisColor = theme.palette.grey[400];
-
-  const isGraphed = (id) => (id in graphEntries);
 
   const getMaxData = (results) => results.map(({ stats }) => ({
     x: stats.genId,
@@ -91,8 +90,6 @@ function SimulationChart() {
   const onChangeDomain = (x0, x1) => {
     setDomain([x0, x1]);
   };
-
-  const checkedSimulations = simulations.filter(({ id }) => isGraphed(id));
 
   return (
     <Stack>

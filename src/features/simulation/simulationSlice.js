@@ -31,8 +31,10 @@ export const simulationSlice = createSlice({
     addGenStats: (state, action) => {
       state.runningStatsRecord.push(action.payload);
     },
-    clearGenStats: (state) => {
+    clearCurrentSimulation: (state) => {
       state.runningStatsRecord = [];
+      state.currentBest = {};
+      state.globalBest = null;
     },
     // Set both the currentBest and current stats in one call
     updateCurrentGen: (state, action) => {
@@ -68,7 +70,7 @@ export const {
   setTargetFitnessReached,
   setCurrentGenStats,
   addGenStats,
-  clearGenStats,
+  clearCurrentSimulation,
   updateCurrentGen,
 } = simulationSlice.actions;
 
