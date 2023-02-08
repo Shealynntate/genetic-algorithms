@@ -3,25 +3,23 @@ import PropTypes from 'prop-types';
 import { LinePath } from '@visx/shape';
 import { curveMonotoneX } from '@visx/curve';
 
-const lineWidth = 1;
-const dashedLineWidth = 0.5;
-
 function ExperimentLine({
   data,
-  xScale,
-  yScale,
+  xAccessor,
+  yAccessor,
   color,
   type,
+  width,
 }) {
   return (
     <LinePath
       data={data}
-      x={(entry) => xScale(entry.x)}
-      y={(entry) => yScale(entry.y)}
+      x={xAccessor}
+      y={yAccessor}
       curve={curveMonotoneX}
       shapeRendering="geometricPrecision"
       stroke={color}
-      strokeWidth={type === 'dashed' ? dashedLineWidth : lineWidth}
+      strokeWidth={width}
       strokeDasharray={type === 'dashed' ? '1,3' : null}
     />
   );
@@ -29,15 +27,17 @@ function ExperimentLine({
 
 ExperimentLine.propTypes = {
   data: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.number)),
-  xScale: PropTypes.func.isRequired,
-  yScale: PropTypes.func.isRequired,
+  xAccessor: PropTypes.func.isRequired,
+  yAccessor: PropTypes.func.isRequired,
   color: PropTypes.string.isRequired,
   type: PropTypes.string,
+  width: PropTypes.number,
 };
 
 ExperimentLine.defaultProps = {
   data: [],
   type: 'solid',
+  width: 1,
 };
 
 export default ExperimentLine;

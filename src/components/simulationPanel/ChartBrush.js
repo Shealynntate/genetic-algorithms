@@ -36,16 +36,16 @@ function ChartBrush({
   const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
   // Prevent component from calling setDomain multiple times with the same values
   const initialMax = useRef(maxGenerations);
-  const domainRef = useRef([0, maxGenerations]);
+  const domainRef = useRef({ x0: 0, x1: maxGenerations });
   const theme = useTheme();
   const bgColor = theme.palette.background.default;
 
   useEffect(() => {
-    const max = domainRef.current[1];
+    const max = domainRef.current.x1;
     if (initialMax.current === max || max > maxGenerations) {
       // Invoke callback initially in case maxGenerations is different from default max
-      domainRef.current[1] = maxGenerations;
-      setDomain(domainRef.current[0], domainRef.current[1]);
+      domainRef.current.x1 = maxGenerations;
+      setDomain(domainRef.current.x0, domainRef.current.x1);
     }
     initialMax.current = maxGenerations;
   }, [maxGenerations]);
@@ -76,12 +76,14 @@ function ChartBrush({
   const onBrushEnd = (domain) => {
     if (!domain) return;
 
-    const min = Math.max(0, Math.floor(domain.x0));
-    const max = Math.min(maxGenerations, Math.floor(domain.x1));
-    if (min === domainRef.current[0] && max === domainRef.current[1]) return;
+    let { x0, x1 } = domain;
+    x0 = Math.max(0, Math.floor(x0));
+    x1 = Math.min(maxGenerations, Math.floor(x1));
 
-    domainRef.current = [min, max];
-    setDomain(min, max);
+    if (domainRef.current.x0 === x0 && domainRef.current.x1 === x1) return;
+
+    domainRef.current = { x0, x1 };
+    setDomain(x0, x1);
   };
 
   return (

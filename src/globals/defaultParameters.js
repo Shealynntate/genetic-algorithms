@@ -147,25 +147,25 @@ const parameters = {
     probabilities: {
       [ProbabilityTypes.TWEAK_COLOR]: {
         startValue: 0.1,
-        endValue: 0.001,
+        endValue: 0.0015,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.TWEAK_POINT]: {
         startValue: 0.1,
-        endValue: 0.001,
+        endValue: 0.0015,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.ADD_POINT]: {
         startValue: 0.01,
-        endValue: 0.001,
+        endValue: 0.0015,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.REMOVE_POINT]: {
         startValue: 0.005,
-        endValue: 0.0006,
+        endValue: 0.0007,
         startFitness: 0,
         endFitness: targetFitness,
       },
@@ -189,7 +189,7 @@ const parameters = {
       },
       [ProbabilityTypes.PERMUTE_CHROMOSOMES]: {
         startValue: 0.05,
-        endValue: 0.015,
+        endValue: 0.03,
         startFitness: 0,
         endFitness: targetFitness,
       },

@@ -41,6 +41,62 @@ const findMaxGeneration = (simulations) => {
   return result;
 };
 
+const findMin = (stats, settings) => {
+  const {
+    maxFitness, meanFitness, minFitness, deviation,
+  } = stats;
+  const { showMean, showMin, showDeviation } = settings;
+
+  if (showMin && showDeviation) { return Math.min(minFitness, meanFitness - deviation); }
+  if (showDeviation) { return meanFitness - deviation; }
+  if (showMin) { return minFitness; }
+  if (showMean) { return meanFitness; }
+  return maxFitness;
+};
+
+const findMax = (stats, settings) => {
+  const { maxFitness, meanFitness, deviation } = stats;
+  const { showDeviation } = settings;
+
+  if (showDeviation) { return Math.max(maxFitness, meanFitness + deviation); }
+
+  return maxFitness;
+};
+
+const findYDomain = (x0, x1, simulations, settings) => {
+  const epsilon = 0.005;
+  let y0 = -1;
+  let y1 = -1;
+  simulations.forEach(({ results }) => {
+    let leftBound = null;
+    let rightBound = null;
+    results.forEach(({ stats }) => {
+      const { genId } = stats;
+      if (genId <= x0) leftBound = stats;
+      if (rightBound == null && genId >= x1) rightBound = stats;
+      const max = findMax(stats, settings);
+      const min = findMin(stats, settings);
+
+      if (genId >= x0 && genId <= x1) {
+        y0 = y0 < 0 ? min : Math.min(y0, min);
+        y1 = y1 < 0 ? max : Math.max(y1, max);
+      }
+    });
+    if (leftBound && y0 < 0) {
+      y0 = findMin(leftBound, settings);
+    }
+    if (rightBound && y1 < 0) {
+      y1 = findMax(rightBound, settings);
+    }
+  });
+  if (y0 < 0) y0 = minResultsThreshold;
+  if (y1 < 0) y1 = 1;
+  y0 -= epsilon;
+  y1 += epsilon;
+
+  return { y0, y1 };
+};
+
 function SimulationChart() {
   const theme = useTheme();
   const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
@@ -56,39 +112,70 @@ function SimulationChart() {
   const numGenerations = findMaxGeneration(checkedSimulations);
 
   const [showMean, setShowMean] = useState(true);
-  const [domain, setDomain] = useState([0, numGenerations]);
+  const [showDeviation, setShowDeviation] = useState(false);
+  const [showMin, setShowMin] = useState(false);
+  const [domain, setDomain] = useState({
+    x0: 0,
+    x1: numGenerations,
+    y0: minResultsThreshold,
+    y1: 1,
+  });
 
   const bgColor = theme.palette.background.default;
+  const maskColor = '#222222'; // theme.palette.background.paper;
   const axisColor = theme.palette.grey[400];
-
-  const getMaxData = (results) => results.map(({ stats }) => ({
-    x: stats.genId,
-    y: stats.maxFitness,
-  }));
-
-  const getMeanData = (results) => results.map(({ stats }) => ({
-    x: stats.genId,
-    y: stats.meanFitness,
-  }));
 
   const yScale = useMemo(
     () => scaleLinear({
       range: [graphHeight, 0],
-      domain: [minResultsThreshold, 1],
+      domain: [domain.y0, domain.y1],
     }),
-    [],
+    [domain],
   );
 
   const xScale = useMemo(
     () => scaleLinear({
       range: [0, graphWidth],
-      domain,
+      domain: [domain.x0, domain.x1],
     }),
     [domain],
   );
 
   const onChangeDomain = (x0, x1) => {
-    setDomain([x0, x1]);
+    const yDomain = findYDomain(
+      x0,
+      x1,
+      checkedSimulations,
+      { showDeviation, showMean, showMin },
+    );
+    setDomain({ x0, x1, ...yDomain });
+  };
+
+  const onCheckValue = (key, value) => {
+    const yDomain = findYDomain(
+      domain.x0,
+      domain.x1,
+      checkedSimulations,
+      {
+        showDeviation, showMean, showMin, [key]: value,
+      },
+    );
+    setDomain({ ...domain, ...yDomain });
+  };
+
+  const onCheckMean = (v) => {
+    setShowMean(v);
+    onCheckValue('showMean', v);
+  };
+
+  const onCheckMin = (v) => {
+    setShowMin(v);
+    onCheckValue('showMin', v);
+  };
+
+  const onCheckDeviation = (v) => {
+    setShowDeviation(v);
+    onCheckValue('showDeviation', v);
   };
 
   return (
@@ -97,8 +184,21 @@ function SimulationChart() {
         Simulation Fitness vs Generations
       </Typography>
       <Stack direction="row" sx={{ justifyContent: 'end', pr: 2 }} spacing={2}>
-        <CustomCheckbox label="Mean" checked={showMean} onCheck={setShowMean} />
-        <CustomCheckbox label="Variance" />
+        <CustomCheckbox
+          label="Mean"
+          checked={showMean}
+          onCheck={onCheckMean}
+        />
+        <CustomCheckbox
+          label="Min"
+          checked={showMin}
+          onCheck={onCheckMin}
+        />
+        <CustomCheckbox
+          label="Deviation"
+          checked={showDeviation}
+          onCheck={onCheckDeviation}
+        />
       </Stack>
       <svg width={fullWidth} height={fullHeight}>
         <Group top={margin.top} left={margin.left}>
@@ -120,23 +220,77 @@ function SimulationChart() {
           />
           {checkedSimulations.map(({ id, results }) => (
             <React.Fragment key={`graph-line-${id}`}>
-              <ExperimentLine
-                data={getMaxData(results)}
-                xScale={xScale}
-                yScale={yScale}
-                color={graphEntries[id]}
-              />
               {showMean && (
                 <ExperimentLine
-                  data={getMeanData(results)}
-                  xScale={xScale}
-                  yScale={yScale}
+                  data={results}
+                  xAccessor={({ stats }) => xScale(stats.genId)}
+                  yAccessor={({ stats }) => yScale(stats.meanFitness)}
                   color={graphEntries[id]}
                   type="dashed"
+                  width={0.8}
                 />
               )}
+              {showDeviation && (
+                <ExperimentLine
+                  data={results}
+                  xAccessor={({ stats }) => xScale(stats.genId)}
+                  yAccessor={({ stats }) => (
+                    yScale(stats.meanFitness + stats.deviation)
+                  )}
+                  color={graphEntries[id]}
+                  width={0.5}
+                />
+              )}
+              {showDeviation && (
+                <ExperimentLine
+                  data={results}
+                  xAccessor={({ stats }) => xScale(stats.genId)}
+                  yAccessor={({ stats }) => (
+                    yScale(stats.meanFitness - stats.deviation)
+                  )}
+                  color={graphEntries[id]}
+                  width={0.5}
+                />
+              )}
+              {showMin && (
+                <ExperimentLine
+                  data={results}
+                  xAccessor={({ stats }) => xScale(stats.genId)}
+                  yAccessor={({ stats }) => yScale(stats.minFitness)}
+                  color={graphEntries[id]}
+                  width={0.5}
+                />
+              )}
+              <ExperimentLine
+                data={results}
+                xAccessor={({ stats }) => xScale(stats.genId)}
+                yAccessor={({ stats }) => yScale(stats.maxFitness)}
+                color={graphEntries[id]}
+                width={1}
+              />
             </React.Fragment>
           ))}
+          <rect
+            x={graphWidth}
+            y={-margin.top}
+            width={20}
+            height={fullHeight}
+            fill={maskColor}
+          />
+          <rect
+            x={-30}
+            y={-margin.top}
+            width={30}
+            height={fullHeight}
+            fill={maskColor}
+          />
+          <rect
+            x={0}
+            y={graphHeight}
+            width={graphWidth}
+            height={20}
+            fill={maskColor}
+          />
         </Group>
         <AxisLeft
           scale={yScale}

@@ -18,6 +18,15 @@ function ProjectPanel() {
         <Keyword>Gallery</Keyword>
         tab.
       </Typography>
+      <SectionTitle>Things I&apos;ve Learned</SectionTitle>
+      <Typography>
+        Plateaus - Most images of any complexity seem to experience a fitness plateau around the 97%
+        mark. I tried so many things to avoid the plateau and all of them just made things worse
+        - Split population (species) with merging events
+        - Distruption Events if stagnation was detected
+        - Mitosis mechanism - here I thought I was being clever... I was not. The net result was a
+        really noisy mean fitness in the population
+      </Typography>
       <SectionTitle>The Site</SectionTitle>
       <Typography>
         This site is made with React via create-react-app.
