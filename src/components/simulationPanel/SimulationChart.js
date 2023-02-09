@@ -7,11 +7,12 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
 import { Stack, Typography } from '@mui/material';
 import { minResultsThreshold } from '../../constants';
-import ExperimentLine from '../ExperimentLine';
 import defaultParameters from '../../globals/defaultParameters';
 import CustomCheckbox from './Checkbox';
 import ChartBrush from './ChartBrush';
 import { useGetCompletedSimulationsAndResults, useGetCurrentSimulation } from '../../globals/database';
+import DeviationLine from '../Charts/DeviationLine';
+import Line from '../Charts/Line';
 
 const graphWidth = 625;
 const graphHeight = 500;
@@ -221,50 +222,38 @@ function SimulationChart() {
           {checkedSimulations.map(({ id, results }) => (
             <React.Fragment key={`graph-line-${id}`}>
               {showMean && (
-                <ExperimentLine
+                <Line
                   data={results}
-                  xAccessor={({ stats }) => xScale(stats.genId)}
-                  yAccessor={({ stats }) => yScale(stats.meanFitness)}
+                  x={({ stats }) => xScale(stats.genId)}
+                  y={({ stats }) => yScale(stats.meanFitness)}
                   color={graphEntries[id]}
                   type="dashed"
                   width={0.8}
                 />
               )}
               {showDeviation && (
-                <ExperimentLine
+                <DeviationLine
+                  id={id}
                   data={results}
-                  xAccessor={({ stats }) => xScale(stats.genId)}
-                  yAccessor={({ stats }) => (
-                    yScale(stats.meanFitness + stats.deviation)
-                  )}
                   color={graphEntries[id]}
-                  width={0.5}
-                />
-              )}
-              {showDeviation && (
-                <ExperimentLine
-                  data={results}
-                  xAccessor={({ stats }) => xScale(stats.genId)}
-                  yAccessor={({ stats }) => (
-                    yScale(stats.meanFitness - stats.deviation)
-                  )}
-                  color={graphEntries[id]}
-                  width={0.5}
+                  xScale={xScale}
+                  yScale={yScale}
+                  yMax={graphHeight}
                 />
               )}
               {showMin && (
-                <ExperimentLine
+                <Line
                   data={results}
-                  xAccessor={({ stats }) => xScale(stats.genId)}
-                  yAccessor={({ stats }) => yScale(stats.minFitness)}
+                  x={({ stats }) => xScale(stats.genId)}
+                  y={({ stats }) => yScale(stats.minFitness)}
                   color={graphEntries[id]}
-                  width={0.5}
+                  width={0.4}
                 />
               )}
-              <ExperimentLine
+              <Line
                 data={results}
-                xAccessor={({ stats }) => xScale(stats.genId)}
-                yAccessor={({ stats }) => yScale(stats.maxFitness)}
+                x={({ stats }) => xScale(stats.genId)}
+                y={({ stats }) => yScale(stats.maxFitness)}
                 color={graphEntries[id]}
                 width={1}
               />

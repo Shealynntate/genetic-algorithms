@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { LinePath } from '@visx/shape';
 import { curveMonotoneX } from '@visx/curve';
+import { ResultsType } from '../../types';
 
-function ExperimentLine({
+function Line({
   data,
-  xAccessor,
-  yAccessor,
+  x,
+  y,
   color,
   type,
   width,
@@ -14,8 +15,8 @@ function ExperimentLine({
   return (
     <LinePath
       data={data}
-      x={xAccessor}
-      y={yAccessor}
+      x={x}
+      y={y}
       curve={curveMonotoneX}
       shapeRendering="geometricPrecision"
       stroke={color}
@@ -25,19 +26,19 @@ function ExperimentLine({
   );
 }
 
-ExperimentLine.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.number)),
-  xAccessor: PropTypes.func.isRequired,
-  yAccessor: PropTypes.func.isRequired,
+Line.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape(ResultsType)),
+  x: PropTypes.func.isRequired,
+  y: PropTypes.func.isRequired,
   color: PropTypes.string.isRequired,
   type: PropTypes.string,
   width: PropTypes.number,
 };
 
-ExperimentLine.defaultProps = {
+Line.defaultProps = {
   data: [],
   type: 'solid',
   width: 1,
 };
 
-export default ExperimentLine;
+export default Line;
