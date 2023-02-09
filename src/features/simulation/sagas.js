@@ -204,6 +204,7 @@ function* runSimulationSaga({ parameters }) {
       if (deleteSim) {
         // Delete the run from the database and move on to the next one
         yield call(deleteCurrentSimulation);
+        yield call(resetSimulationsSaga);
         return true;
       }
     }
