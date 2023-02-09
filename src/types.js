@@ -109,3 +109,11 @@ export const SimulationType = {
   parameters: PropTypes.shape(ParametersType),
   results: PropTypes.arrayOf(PropTypes.shape(ResultsType)),
 };
+
+export const GalleryEntryType = {
+  createdOn: PropTypes.number,
+  id: PropTypes.number,
+  json: PropTypes.string,
+  name: PropTypes.string,
+  simulationId: PropTypes.number,
+};

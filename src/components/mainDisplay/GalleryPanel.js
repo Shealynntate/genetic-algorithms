@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paper } from '@mui/material';
-// import testData from '../../assets/test-gallery-file.json';
+import compositionII from '../../assets/gallery-entries/composition_II.json';
 import { useGetGalleryEntries } from '../../globals/database';
 import GalleryEntry from '../GalleryEntry';
 
@@ -9,22 +9,11 @@ function Gallery() {
 
   return (
     <Paper>
-      {/* <GalleryEntry
-        id={0}
-        data={testData}
-      /> */}
-      {entriesJSON.map(({
-        id,
-        json,
-        name,
-        simulationId,
-      }) => (
+      <GalleryEntry data={compositionII} />
+      {entriesJSON.map((data) => (
         <GalleryEntry
-          key={id}
-          id={id}
-          json={json}
-          name={name}
-          simulationId={simulationId}
+          key={data.id}
+          data={data}
         />
       ))}
     </Paper>

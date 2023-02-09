@@ -6,20 +6,22 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import { deleteGalleryEntry, renameGalleryEntry } from '../globals/database';
-import { download } from '../globals/utils';
+import { download, downloadJSON } from '../globals/utils';
 import { canvasParameters } from '../constants';
 import OrganismCanvas from './Canvases/OrganismCanvas';
 import TargetCanvas from './Canvases/TargetCanvas';
+import { GalleryEntryType } from '../types';
 
 const width = canvasParameters.width / 2;
 const height = canvasParameters.height / 2;
 
-function GalleryEntry({
-  json,
-  id,
-  name,
-  simulationId,
-}) {
+function GalleryEntry({ data }) {
+  const {
+    json,
+    id,
+    name,
+    simulationId,
+  } = data;
   const {
     gif,
     globalBest,
@@ -28,6 +30,7 @@ function GalleryEntry({
   } = JSON.parse(json);
 
   const [entryName, setEntryName] = useState(name);
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   const onDelete = () => {
     deleteGalleryEntry(id);
@@ -35,6 +38,9 @@ function GalleryEntry({
 
   const onDownload = () => {
     download(name, gif);
+    if (isDevelopment) {
+      downloadJSON(name, data);
+    }
   };
 
   const onChangeName = async (event) => {
@@ -87,10 +93,7 @@ function GalleryEntry({
 }
 
 GalleryEntry.propTypes = {
-  id: PropTypes.number.isRequired,
-  json: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  simulationId: PropTypes.number.isRequired,
+  data: PropTypes.shape(GalleryEntryType).isRequired,
 };
 
 export default GalleryEntry;
