@@ -21,7 +21,7 @@ function DisplayTabs() {
       <Box>
         <Tabs onChange={onChange} value={value}>
           <Tab label="Simulations" />
-          <Tab label="Progress" />
+          <Tab label="Progress Snapshots" />
           <Tab label="Gallery" />
         </Tabs>
       </Box>

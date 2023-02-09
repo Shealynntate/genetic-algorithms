@@ -160,8 +160,8 @@ const Genome = {
     }
 
     // Mutate Genome
-    if (mutation.doPermute(chromosomes.length)) {
-      Genome.mutateOrder(genome);
+    if (mutation.doPermute()) {
+      Genome.mutateOrder2(genome, mutation);
     }
   },
 

@@ -49,7 +49,7 @@ function PrimaryButton({ runsDisabled }) {
   };
 
   return (
-    <Box sx={{ textAlign: 'center' }}>
+    <Box sx={{ textAlign: 'center', mb: 1 }}>
       {isPaused && (
         <Button
           variant="outlined"

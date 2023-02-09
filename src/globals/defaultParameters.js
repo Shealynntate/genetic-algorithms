@@ -1,5 +1,5 @@
-import defaultTarget from '../assets/mona_lisa.jpeg';
-// import defaultTarget from '../assets/son_of_man.jpeg';
+// import defaultTarget from '../assets/mona_lisa.jpeg';
+import defaultTarget from '../assets/son_of_man.jpeg';
 // import defaultTarget from '../assets/composition_II.png';
 import {
   CrossoverType,
