@@ -24,10 +24,17 @@ const theme = createTheme({
     },
   },
   components: {
-    MuiPaper: {
+    MuiButton: {
       styleOverrides: {
         root: {
-          padding: '1rem',
+          fontFamily: '"Montserrat", Helvetica, Arial, sans-serif',
+        },
+      },
+    },
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          fontFamily: '"Montserrat", Helvetica, Arial, sans-serif',
         },
       },
     },
@@ -46,6 +53,27 @@ const theme = createTheme({
           },
         },
       }],
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          padding: '1rem',
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          fontFamily: '"Montserrat", Helvetica, Arial, sans-serif',
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontFamily: '"Montserrat", Helvetica, Arial, sans-serif',
+        },
+      },
     },
   },
 });

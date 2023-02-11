@@ -7,7 +7,7 @@ import ExampleText from './ExampleText';
 
 function OverviewPanel() {
   return (
-    <Panel label="Introduction" px={2} pb={2}>
+    <Panel label="Overview" px={2} pb={2}>
       <SectionTitle>Metaheuristics</SectionTitle>
       <Typography>
         A set of techniques that are useful for solving a hard problem
