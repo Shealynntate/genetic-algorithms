@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { scaleLinear } from '@visx/scale';
 import { useTheme } from '@emotion/react';
@@ -123,7 +123,7 @@ function SimulationChart() {
   });
 
   const bgColor = theme.palette.background.default;
-  const maskColor = '#222222'; // theme.palette.background.paper;
+  const maskColor = theme.palette.background.mask[0];
   const axisColor = theme.palette.grey[400];
 
   const yScale = useMemo(
@@ -141,6 +141,16 @@ function SimulationChart() {
     }),
     [domain],
   );
+
+  useEffect(() => {
+    const yDomain = findYDomain(
+      domain.x0,
+      domain.x1,
+      checkedSimulations,
+      { showDeviation, showMean, showMin },
+    );
+    setDomain({ ...domain, ...yDomain });
+  }, [checkedSimulations]);
 
   const onChangeDomain = (x0, x1) => {
     const yDomain = findYDomain(

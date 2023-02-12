@@ -122,10 +122,10 @@ const Genome = {
       // Check remove chromosome mutation
       if (mutation.doRemoveChromosome()) {
         // Delete the chromosome
-        // if (chromosomes.length > 1) {
-        //   chromosomes.splice(i, 1);
-        //   if (i >= chromosomes.length) break;
-        // }
+        if (chromosomes.length > 1) {
+          chromosomes.splice(i, 1);
+          if (i >= chromosomes.length) break;
+        }
       }
       // Check add point mutation
       if (mutation.doAddPoint()) {
@@ -143,10 +143,10 @@ const Genome = {
       if (mutation.doRemovePoint()) {
         if (!Chromosome.removePointMutation(chromosomes[i], minPoints)) {
           // Delete the chromosome
-          if (chromosomes.length > 1) {
-            chromosomes.splice(i, 1);
-            if (i >= chromosomes.length) break;
-          }
+          // if (chromosomes.length > 1) {
+          //   chromosomes.splice(i, 1);
+          //   if (i >= chromosomes.length) break;
+          // }
         }
       }
       // Check tweak values mutation

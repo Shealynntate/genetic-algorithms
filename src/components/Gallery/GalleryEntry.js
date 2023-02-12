@@ -5,17 +5,17 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
-import { deleteGalleryEntry, renameGalleryEntry } from '../globals/database';
-import { download, downloadJSON } from '../globals/utils';
-import { canvasParameters } from '../constants';
-import OrganismCanvas from './Canvases/OrganismCanvas';
-import TargetCanvas from './Canvases/TargetCanvas';
-import { GalleryEntryType } from '../types';
+import { deleteGalleryEntry, renameGalleryEntry } from '../../globals/database';
+import { download, downloadJSON } from '../../globals/utils';
+import { canvasParameters } from '../../constants';
+import OrganismCanvas from '../Canvases/OrganismCanvas';
+import TargetCanvas from '../Canvases/TargetCanvas';
+import { GalleryEntryType } from '../../types';
 
 const width = canvasParameters.width / 2;
 const height = canvasParameters.height / 2;
 
-function GalleryEntry({ data }) {
+function GalleryEntry({ data, readOnly }) {
   const {
     json,
     id,
@@ -74,15 +74,17 @@ function GalleryEntry({ data }) {
               onChange={onChangeName}
               variant="standard"
               sx={{ pb: 1 }}
+              disabled={readOnly}
             />
-            <Typography variant="body2">{`Top score ${globalBest.organism.fitness.toFixed(3)}`}</Typography>
-            <Typography variant="body2">{`Generations: ${totalGen}`}</Typography>
+            <Typography variant="body2">{`Top score: ${globalBest.organism.fitness.toFixed(3)}`}</Typography>
+            <Typography variant="body2">{`Number of △: ${globalBest.organism.genome.chromosomes.length}`}</Typography>
+            <Typography variant="body2">{`Generations: ${totalGen.toLocaleString()}`}</Typography>
           </Stack>
           <Stack direction="row" sx={{ alignItems: 'end' }}>
             <IconButton onClick={onDownload}>
               <DownloadIcon />
             </IconButton>
-            <IconButton color="error" onClick={onDelete}>
+            <IconButton color="error" onClick={onDelete} disabled={readOnly}>
               <DeleteIcon />
             </IconButton>
           </Stack>
@@ -94,6 +96,11 @@ function GalleryEntry({ data }) {
 
 GalleryEntry.propTypes = {
   data: PropTypes.shape(GalleryEntryType).isRequired,
+  readOnly: PropTypes.bool,
+};
+
+GalleryEntry.defaultProps = {
+  readOnly: false,
 };
 
 export default GalleryEntry;

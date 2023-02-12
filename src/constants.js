@@ -204,3 +204,5 @@ export const lineColors = [
   theme.palette.info.dark,
   theme.palette.success.dark,
 ];
+
+export const projectUrl = 'https://github.com/Shealynntate/genetic-algorithms';

@@ -21,6 +21,9 @@ const theme = createTheme({
     background: {
       // default: '#F6F8FA',
       // paper: '#FFFFFF',
+      mask: [
+        '#222222',
+      ],
     },
   },
   components: {
@@ -45,11 +48,8 @@ const theme = createTheme({
           height: 24,
           width: 24,
           minHeight: 0,
-          // color: '#628793',
           '.MuiSvgIcon-root': {
             fontSize: '1.2rem',
-            // fontSize: 'small',
-            // fontWeight
           },
         },
       }],

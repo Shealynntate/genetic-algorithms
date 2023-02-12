@@ -5,7 +5,7 @@ import {
   Tabs,
 } from '@mui/material';
 import TabPanel from './TabPanel';
-import GalleryPanel from './GalleryPanel';
+import GalleryPanel from '../Gallery/Gallery';
 import ProgressPanel from './ProgressPanel';
 import ExperimentationPanel from '../simulationPanel/SimulationPanel';
 import About from '../About/About';

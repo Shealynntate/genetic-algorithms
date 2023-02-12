@@ -1,6 +1,7 @@
-// import defaultTarget from '../assets/mona_lisa.jpeg';
-import defaultTarget from '../assets/son_of_man.jpeg';
-// import defaultTarget from '../assets/composition_II.png';
+// Important Note: For image imports to be base64 and not a path, need to be under ~10kb
+import defaultTarget from '../assets/mona_lisa.jpeg';
+// import defaultTarget from '../assets/son_of_man.jpeg';
+// import defaultTarget from '../assets/composition_II.jpeg';
 import {
   CrossoverType,
   DistributionTypes,
@@ -54,7 +55,7 @@ export const ParameterBounds = {
     },
     maxGenerations: {
       min: 1,
-      max: 100_000,
+      max: 500_000,
       step: 1,
     },
   },
@@ -141,31 +142,31 @@ const parameters = {
     },
   },
   mutation: {
-    [DistributionTypes.COLOR_SIGMA]: 0.06, // 0.25 / n
+    [DistributionTypes.COLOR_SIGMA]: 0.06,
     [DistributionTypes.POINT_SIGMA]: 0.06,
-    [DistributionTypes.PERMUTE_SIGMA]: 0.06, // TODO
+    [DistributionTypes.PERMUTE_SIGMA]: 0.1,
     probabilities: {
       [ProbabilityTypes.TWEAK_COLOR]: {
         startValue: 0.1,
-        endValue: 0.0015,
+        endValue: 0.002,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.TWEAK_POINT]: {
         startValue: 0.1,
-        endValue: 0.0015,
+        endValue: 0.001,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.ADD_POINT]: {
         startValue: 0.01,
-        endValue: 0.0015,
+        endValue: 0.002,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.REMOVE_POINT]: {
         startValue: 0.005,
-        endValue: 0.0007,
+        endValue: 0.001,
         startFitness: 0,
         endFitness: targetFitness,
       },
@@ -183,12 +184,12 @@ const parameters = {
       },
       [ProbabilityTypes.RESET_CHROMOSOME]: {
         startValue: 0.05,
-        endValue: 0.0005,
+        endValue: 0.001,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.PERMUTE_CHROMOSOMES]: {
-        startValue: 0.05,
+        startValue: 0.08,
         endValue: 0.03,
         startFitness: 0,
         endFitness: targetFitness,
@@ -197,7 +198,7 @@ const parameters = {
   },
   stopCriteria: {
     targetFitness: 1,
-    maxGenerations: 40_000,
+    maxGenerations: 80_000,
   },
 };
 

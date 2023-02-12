@@ -1,32 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  Link,
-  List,
-  ListItem,
-  Typography,
-} from '@mui/material';
+import { List, Typography } from '@mui/material';
 import Panel from '../settingsPanels/Panel';
+import Resource from './Resource';
 
-function Resource({ title, link }) {
-  return (
-    <ListItem>
-      <Link
-        href={link}
-        underline="hover"
-      >
-        {title}
-      </Link>
-    </ListItem>
-  );
-}
-
-Resource.propTypes = {
-  title: PropTypes.string.isRequired,
-  link: PropTypes.string.isRequired,
-};
-
-// Analyzing the Performance of Mutation Operators to Solve the Traveling Salesman Problem
 function ResourcesPanel() {
   return (
     <Panel label="Resources">
@@ -61,6 +37,10 @@ function ResourcesPanel() {
         <Resource
           link="http://gpbenchmarks.org/wp-content/uploads/2019/08/paper1.pdf"
           title="Genetic Programming Needs Better Benchmarks"
+        />
+        <Resource
+          link="https://medium.com/@sebastian.charmot/genetic-algorithm-for-image-recreation-4ca546454aaa"
+          title="A Genetic Algorithm for Image Recreation — Can it Paint the Mona Lisa?"
         />
       </List>
     </Panel>

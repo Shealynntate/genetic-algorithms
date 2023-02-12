@@ -1,12 +1,12 @@
 import React from 'react';
-import { Stack, Typography } from '@mui/material';
+import { Link, Stack, Typography } from '@mui/material';
 import Panel from '../settingsPanels/Panel';
 import Keyword from './Keyword';
 import SectionTitle from './SectionTitle';
 
 function Introduction() {
   return (
-    <Panel label="Introduction">
+    <Panel label="Introduction" px={2}>
       <Stack direction="row" spacing={2}>
         <Stack flex={1}>
           <SectionTitle>Welcome!</SectionTitle>
@@ -37,16 +37,39 @@ function Introduction() {
             <Keyword>Run</Keyword>
             to watch it go.
           </Typography>
+          <Typography pb={1}>
+            The graph on the right tracks a population&apos;s fitness over time and allows you
+            to compare multiple runs.
+          </Typography>
+          <Typography pb={1}>
+            The
+            <Keyword>Progress Snapshots</Keyword>
+            tab lets you view live statistics and image snapshots of the current run.
+            It can be a useful way to get a sense of how a run is performing.
+          </Typography>
           <Typography>
-            You can set up runs with a custom target image and play with the tuning of the
-            hyperparameters to see the results.
-            The site stores previous runs to allow you to compare performances.
-            You can also view Gifs and final images of your runs in the
+            Once a run is completed, check out the
             <Keyword>Gallery</Keyword>
-            tab.
+            tab where you can view its final image and a gif timelapse.
+            There are some example runs in there as well.
           </Typography>
         </Stack>
       </Stack>
+      <Typography
+        color="GrayText"
+        sx={{
+          display: 'inline-block', pt: 1, pr: 1, pb: 1,
+        }}
+      >
+        Full credit to Robert Johansson for this project idea. Check it out at
+      </Typography>
+      <Link
+        href="https://rogerjohansson.blog/2008/12/07/genetic-programming-evolution-of-mona-lisa/"
+        underline="hover"
+        sx={{ display: 'inline-block' }}
+      >
+        Genetic Programming: Evolution of the Mona Lisa
+      </Link>
     </Panel>
   );
 }

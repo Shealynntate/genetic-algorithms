@@ -43,6 +43,7 @@ function SimulationStatusPanel() {
               <StatusText label="Mean Fitness">{stats.meanFitness?.toFixed(4) || 0}</StatusText>
               <StatusText label="Min Fitness">{stats.minFitness?.toFixed(4) || 0}</StatusText>
               <StatusText label="Deviation">{stats.deviation?.toFixed(4) || 0}</StatusText>
+              <StatusText label="Num △">{organism.genome.chromosomes.length || 0}</StatusText>
             </Box>
           </Stack>
           <HistoryDisplay />
