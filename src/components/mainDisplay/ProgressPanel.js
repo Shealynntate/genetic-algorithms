@@ -14,7 +14,7 @@ function StatusText({ label, children }) {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
       <Typography variant="caption" pr={1}>{`${label}: `}</Typography>
-      <Typography variant="caption">{children}</Typography>
+      <Typography variant="caption" fontFamily="'Oxygen Mono', monospace">{children}</Typography>
     </Box>
   );
 }
