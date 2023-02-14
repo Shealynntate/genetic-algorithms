@@ -100,17 +100,15 @@ const findYDomain = (x0, x1, simulations, settings) => {
 
 function SimulationChart() {
   const theme = useTheme();
+  const bgColor = theme.palette.background.default;
+  const maskColor = theme.palette.background.mask[0];
+  const axisColor = theme.palette.grey[400];
+
   const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
   const runningStats = useSelector((state) => state.simulation.runningStatsRecord);
   const completedSims = useGetCompletedSimulationsAndResults() || [];
   const currentSim = useGetCurrentSimulation();
-  const simulations = [...completedSims];
-  if (currentSim) {
-    currentSim.results = runningStats;
-    simulations.push(currentSim);
-  }
-  const getCheckedSims = () => simulations.filter(({ id }) => (id in graphEntries));
-  const [checkedSimulations, setCheckedSimulations] = useState(getCheckedSims());
+  const [checkedSimulations, setCheckedSimulations] = useState([]);
   const numGenerations = findMaxGeneration(checkedSimulations);
 
   const [showMean, setShowMean] = useState(true);
@@ -124,12 +122,13 @@ function SimulationChart() {
   });
 
   useEffect(() => {
-    setCheckedSimulations(getCheckedSims());
-  }, [graphEntries]);
-
-  const bgColor = theme.palette.background.default;
-  const maskColor = theme.palette.background.mask[0];
-  const axisColor = theme.palette.grey[400];
+    const simulations = [...completedSims];
+    if (currentSim) {
+      currentSim.results = runningStats;
+      simulations.push(currentSim);
+    }
+    setCheckedSimulations(simulations.filter(({ id }) => (id in graphEntries)));
+  }, [graphEntries, currentSim]);
 
   const yScale = useMemo(
     () => scaleLinear({

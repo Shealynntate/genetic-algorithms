@@ -62,13 +62,15 @@ function GalleryEntry({ data, readOnly }) {
       <Paper elevation={2} sx={{ position: 'relative' }}>
         <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
           <Stack>
-            <Typography
-              color="GrayText"
-              fontSize="small"
-              sx={{ position: 'absolute', top: '0.25rem', right: '0.5rem' }}
-            >
-              {simulationId}
-            </Typography>
+            {!readOnly && (
+              <Typography
+                color="GrayText"
+                fontSize="small"
+                sx={{ position: 'absolute', top: '0.25rem', right: '0.5rem' }}
+              >
+                {simulationId}
+              </Typography>
+            )}
             <TextField
               value={entryName}
               onChange={onChangeName}
