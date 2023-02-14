@@ -144,29 +144,29 @@ const parameters = {
   mutation: {
     [DistributionTypes.COLOR_SIGMA]: 0.06,
     [DistributionTypes.POINT_SIGMA]: 0.06,
-    [DistributionTypes.PERMUTE_SIGMA]: 0.1,
+    [DistributionTypes.PERMUTE_SIGMA]: 0.05,
     probabilities: {
       [ProbabilityTypes.TWEAK_COLOR]: {
-        startValue: 0.1,
-        endValue: 0.002,
-        startFitness: 0,
-        endFitness: targetFitness,
-      },
-      [ProbabilityTypes.TWEAK_POINT]: {
-        startValue: 0.1,
-        endValue: 0.001,
-        startFitness: 0,
-        endFitness: targetFitness,
-      },
-      [ProbabilityTypes.ADD_POINT]: {
         startValue: 0.01,
         endValue: 0.002,
         startFitness: 0,
         endFitness: targetFitness,
       },
-      [ProbabilityTypes.REMOVE_POINT]: {
-        startValue: 0.005,
+      [ProbabilityTypes.TWEAK_POINT]: {
+        startValue: 0.01,
         endValue: 0.001,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+      [ProbabilityTypes.ADD_POINT]: {
+        startValue: 0.005,
+        endValue: 0.0005,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+      [ProbabilityTypes.REMOVE_POINT]: {
+        startValue: 0.001,
+        endValue: 0.0001,
         startFitness: 0,
         endFitness: targetFitness,
       },
@@ -183,14 +183,14 @@ const parameters = {
         endFitness: targetFitness,
       },
       [ProbabilityTypes.RESET_CHROMOSOME]: {
-        startValue: 0.05,
-        endValue: 0.001,
+        startValue: 0.01,
+        endValue: 0.0005,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.PERMUTE_CHROMOSOMES]: {
-        startValue: 0.08,
-        endValue: 0.03,
+        startValue: 0.01,
+        endValue: 0.001,
         startFitness: 0,
         endFitness: targetFitness,
       },

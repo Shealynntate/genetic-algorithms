@@ -109,7 +109,8 @@ function SimulationChart() {
     currentSim.results = runningStats;
     simulations.push(currentSim);
   }
-  const checkedSimulations = simulations.filter(({ id }) => (id in graphEntries));
+  const getCheckedSims = () => simulations.filter(({ id }) => (id in graphEntries));
+  const [checkedSimulations, setCheckedSimulations] = useState(getCheckedSims());
   const numGenerations = findMaxGeneration(checkedSimulations);
 
   const [showMean, setShowMean] = useState(true);
@@ -121,6 +122,10 @@ function SimulationChart() {
     y0: minResultsThreshold,
     y1: 1,
   });
+
+  useEffect(() => {
+    setCheckedSimulations(getCheckedSims());
+  }, [graphEntries]);
 
   const bgColor = theme.palette.background.default;
   const maskColor = theme.palette.background.mask[0];
