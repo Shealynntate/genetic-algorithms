@@ -1,6 +1,7 @@
 
 # Genetic Algorithms Site
-Check out the project in action [here](https://github.com/facebook/create-react-app)!
+Check out the project in action [here](https://genetic-algorithms-demo.vercel.app)!
+
 The About section also contains an explanation of Genetic Algorithms and links to more resources.
 
 ## Running The Code
