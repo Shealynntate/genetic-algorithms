@@ -18,7 +18,6 @@ class Mutation {
     this.probabilities = probabilities;
     this.genomeSize = genomeSize;
     this.computeProbabilities(0);
-    this.isDisruptionGen = false;
   }
 
   serialize() {
@@ -37,41 +36,24 @@ class Mutation {
     });
   }
 
-  markDisruptionGen() {
-    this.isDisruptionGen = true;
-  }
-
   markNextGen({ maxFitness }) {
     // Recompute probabilities
     this.computeProbabilities(maxFitness);
-    this.isDisruptionGen = false;
   }
 
   doTweakPoint() {
-    if (this.isDisruptionGen) {
-      return flipCoin(0.1);
-    }
     return flipCoin(this[ProbabilityTypes.TWEAK_POINT]);
   }
 
   doTweakColor() {
-    if (this.isDisruptionGen) {
-      return flipCoin(0.25);
-    }
     return flipCoin(this[ProbabilityTypes.TWEAK_COLOR]);
   }
 
   doAddPoint() {
-    if (this.isDisruptionGen) {
-      return flipCoin(this.probabilities[ProbabilityTypes.ADD_POINT].startValue);
-    }
     return flipCoin(this[ProbabilityTypes.ADD_POINT]);
   }
 
   doRemovePoint() {
-    if (this.isDisruptionGen) {
-      return flipCoin(this.probabilities[ProbabilityTypes.REMOVE_POINT].startValue);
-    }
     return flipCoin(this[ProbabilityTypes.REMOVE_POINT]);
   }
 
@@ -84,9 +66,6 @@ class Mutation {
   }
 
   doResetChromosome() {
-    if (this.isDisruptionGen) {
-      return flipCoin(0.1);
-    }
     return flipCoin(this[ProbabilityTypes.RESET_CHROMOSOME]);
   }
 

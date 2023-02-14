@@ -42,9 +42,6 @@ import {
 } from '../ux/uxSlice';
 import { setSimulationParameters } from '../parameters/parametersSlice';
 
-let globalUpdateCount = 0;
-let monitoredBest = 0;
-
 function* restorePopulationSaga({ payload: populationData }) {
   const target = yield select((state) => state.parameters.target);
   const populationService = yield getContext('population');
@@ -63,8 +60,6 @@ function* resetSimulationsSaga() {
   const populationService = yield getContext('population');
   yield put(clearCurrentSimulation());
   populationService.reset();
-  globalUpdateCount = 0;
-  monitoredBest = 0;
 }
 
 function* createGalleryEntrySaga({ totalGen, globalBest }) {
@@ -114,7 +109,6 @@ function* generationResultsCheckSaga({
   stopCriteria,
   currentBest,
   stats,
-  maxFitOrganism,
 }) {
   const globalBest = yield select((state) => state.simulation.globalBest);
   const statsRecord = yield select((state) => state.simulation.runningStatsRecord);
@@ -131,14 +125,6 @@ function* generationResultsCheckSaga({
   const currentMax = Math.trunc(stats.maxFitness * 1000) / 1000;
   if (currentMax >= minResultsThreshold && currentMax !== latestThreshold) {
     yield put(addGenStats({ threshold: currentMax, stats }));
-  }
-
-  // Temp code!!
-  if (maxFitOrganism.fitness > monitoredBest) {
-    monitoredBest = maxFitOrganism.fitness;
-    globalUpdateCount = 0;
-  } else {
-    globalUpdateCount += 1;
   }
 
   // Check if the simulation is over
@@ -215,14 +201,8 @@ function* runSimulationSaga({ parameters }) {
     }
 
     // First run the next generation of the simulation
-    const isMerge = globalUpdateCount > 100_000; // 300;
-    const { maxFitOrganism, ...stats } = yield population.runGeneration(isMerge);
+    const { maxFitOrganism, ...stats } = yield population.runGeneration();
     const organism = omit(maxFitOrganism, ['phenotype']);
-    if (isMerge) {
-      globalUpdateCount = 0; // reset count
-      monitoredBest = 0;
-      console.log('PERFORMED MERGED', stats.genId);
-    }
 
     // Should we store a copy of the maxFitOrganism for Image History?
     if (shouldSaveGenImage(population.genId)) {
@@ -246,7 +226,6 @@ function* runSimulationSaga({ parameters }) {
       currentBest: { organism, genId: stats.genId },
       stats,
       stopCriteria: parameters.stopCriteria,
-      maxFitOrganism,
     });
     // The experiment has met one of the stop criteria, signal that it's complete
     if (result) return true;

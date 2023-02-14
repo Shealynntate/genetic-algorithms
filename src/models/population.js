@@ -92,25 +92,10 @@ class Population {
     this.organisms = await this.evaluateFitness();
   }
 
-  async runGeneration(isMerge) {
-    if (isMerge) {
-      // this.mutation.markDisruptionGen();
-      const best = this.maxFitOrganism();
-      const bounds = {
-        maxGenomeSize: this.maxGenomeSize,
-        minPoints: this.minPoints,
-        maxPoints: this.maxPoints,
-      };
-      const children = [];
-      while (children.length < this.size) {
-        children.push(Organism.cloneAndMutate(best, this.mutation, bounds));
-      }
-      this.organisms = children;
-    } else {
-      const parents = this.performSelection(this.selection);
-      this.organisms = this.reproduce(parents, this.selection, this.crossover, this.mutation);
-      this.organisms = await this.evaluateFitness();
-    }
+  async runGeneration() {
+    const parents = this.performSelection(this.selection);
+    this.organisms = this.reproduce(parents, this.selection, this.crossover, this.mutation);
+    this.organisms = await this.evaluateFitness();
 
     this.genId = Population.nextGenId;
     const stats = this.createStats();

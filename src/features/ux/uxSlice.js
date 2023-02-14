@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import { AppState, lineColors } from '../../constants';
-import { rehydrate } from '../developer/developerSlice';
 
 const initialState = {
   simulationState: AppState.NONE,
@@ -61,15 +60,6 @@ export const uxSlice = createSlice({
       delete state.simulationGraphColors[action.payload];
       delete state.simulationGraphIndices[action.payload];
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(rehydrate, (state, action) => {
-        const { ux } = action.payload;
-        Object.keys(ux).forEach((key) => {
-          state[key] = ux[key];
-        });
-      });
   },
 });
 
