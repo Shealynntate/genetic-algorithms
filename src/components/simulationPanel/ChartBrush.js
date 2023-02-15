@@ -12,6 +12,7 @@ import { GridColumns } from '@visx/grid';
 import BrushHandle from './BrushHandle';
 import { minResultsThreshold } from '../../constants';
 import { SimulationType } from '../../types';
+import RunningSimulationGraph from './RunningSimulationGraph';
 
 const PATTERN_ID = 'brush_pattern';
 // const GRADIENT_ID = 'brush_gradient';
@@ -32,6 +33,7 @@ function ChartBrush({
   maxFitness,
   maxGenerations,
   setDomain,
+  showRunningSim,
 }) {
   const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
   // Prevent component from calling setDomain multiple times with the same values
@@ -118,6 +120,16 @@ function ChartBrush({
           shapeRendering="geometricPrecision"
         />
       ))}
+      {showRunningSim && (
+        <RunningSimulationGraph
+          xScale={xScale}
+          yScale={yScale}
+          showMean={false}
+          showMin={false}
+          showDeviation={false}
+          graphHeight={height}
+        />
+      )}
       <PatternLines
         id={PATTERN_ID}
         strokeWidth={0.25}
@@ -155,6 +167,7 @@ ChartBrush.propTypes = {
   maxGenerations: PropTypes.number.isRequired,
   margin: PropTypes.objectOf(PropTypes.number),
   setDomain: PropTypes.func,
+  showRunningSim: PropTypes.bool,
 };
 
 ChartBrush.defaultProps = {
@@ -163,6 +176,7 @@ ChartBrush.defaultProps = {
     top: 0, right: 0, bottom: 0, left: 0,
   },
   setDomain: () => {},
+  showRunningSim: false,
 };
 
 export default ChartBrush;

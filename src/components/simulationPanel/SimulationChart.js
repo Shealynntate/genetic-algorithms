@@ -13,6 +13,7 @@ import ChartBrush from './ChartBrush';
 import { useGetCompletedSimulationsAndResults, useGetCurrentSimulation } from '../../globals/database';
 import DeviationLine from '../Charts/DeviationLine';
 import Line from '../Charts/Line';
+import RunningSimulationGraph from './RunningSimulationGraph';
 
 const graphWidth = 625;
 const graphHeight = 500;
@@ -105,7 +106,6 @@ function SimulationChart() {
   const axisColor = theme.palette.grey[400];
 
   const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
-  const runningStats = useSelector((state) => state.simulation.runningStatsRecord);
   const completedSims = useGetCompletedSimulationsAndResults() || [];
   const currentSim = useGetCurrentSimulation();
   const [checkedSimulations, setCheckedSimulations] = useState([]);
@@ -121,14 +121,14 @@ function SimulationChart() {
     y1: 1,
   });
 
+  const isCurrentSimChecked = currentSim && currentSim.id in graphEntries;
+
   useEffect(() => {
-    const simulations = [...completedSims];
-    if (currentSim) {
-      currentSim.results = runningStats;
-      simulations.push(currentSim);
+    const list = completedSims.filter(({ id }) => (id in graphEntries));
+    if (list.length !== checkedSimulations.length) {
+      setCheckedSimulations(list);
     }
-    setCheckedSimulations(simulations.filter(({ id }) => (id in graphEntries)));
-  }, [graphEntries, currentSim]);
+  }, [graphEntries, completedSims]);
 
   const yScale = useMemo(
     () => scaleLinear({
@@ -273,6 +273,16 @@ function SimulationChart() {
               />
             </React.Fragment>
           ))}
+          {isCurrentSimChecked && (
+            <RunningSimulationGraph
+              xScale={xScale}
+              yScale={yScale}
+              showMean={showMean}
+              showMin={showMin}
+              showDeviation={showDeviation}
+              graphHeight={graphHeight}
+            />
+          )}
           <rect
             x={graphWidth}
             y={-margin.top}
@@ -337,6 +347,7 @@ function SimulationChart() {
           margin={brushMargin}
           simulations={checkedSimulations}
           setDomain={onChangeDomain}
+          showRunningSim={isCurrentSimChecked}
         />
       </svg>
     </Stack>
