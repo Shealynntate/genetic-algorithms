@@ -72,6 +72,8 @@ const findYDomain = (x0, x1, simulations, settings) => {
   simulations.forEach(({ results }) => {
     let leftBound = null;
     let rightBound = null;
+    if (!results) return;
+
     results.forEach(({ stats }) => {
       const { genId } = stats;
       if (genId <= x0) leftBound = stats;
@@ -109,24 +111,31 @@ function SimulationChart() {
   const completedSims = useGetCompletedSimulationsAndResults() || [];
   const currentSim = useGetCurrentSimulation();
   const [checkedSimulations, setCheckedSimulations] = useState([]);
-  const numGenerations = findMaxGeneration(checkedSimulations);
-
   const [showMean, setShowMean] = useState(true);
   const [showDeviation, setShowDeviation] = useState(false);
   const [showMin, setShowMin] = useState(false);
   const [domain, setDomain] = useState({
     x0: 0,
-    x1: numGenerations,
+    x1: defaultParameters.stopCriteria.maxGenerations,
     y0: minResultsThreshold,
     y1: 1,
   });
 
   const isCurrentSimChecked = currentSim && currentSim.id in graphEntries;
+  const domainSimulations = [...checkedSimulations];
+  if (isCurrentSimChecked) domainSimulations.push(currentSim);
 
   useEffect(() => {
-    const list = completedSims.filter(({ id }) => (id in graphEntries));
-    if (list.length !== checkedSimulations.length) {
-      setCheckedSimulations(list);
+    const checked = completedSims.filter(({ id }) => (id in graphEntries));
+    if (checked.length !== checkedSimulations.length) {
+      setCheckedSimulations(checked);
+    }
+
+    const allChecked = [...checked];
+    if (isCurrentSimChecked) allChecked.push(currentSim);
+    const numGenerations = findMaxGeneration(allChecked);
+    if (numGenerations !== domain.x1) {
+      setDomain({ ...domain, x1: numGenerations });
     }
   }, [graphEntries, completedSims]);
 
@@ -343,7 +352,7 @@ function SimulationChart() {
           width={graphWidth}
           height={brushHeight}
           maxFitness={1}
-          maxGenerations={numGenerations}
+          maxGenerations={findMaxGeneration(domainSimulations)}
           margin={brushMargin}
           simulations={checkedSimulations}
           setDomain={onChangeDomain}
