@@ -165,6 +165,7 @@ export const deleteSimulation = async (id) => Promise.all([
   // Delete all matching simulationId entries
   db[simulationsTable].delete(id),
   db[imagesTable].where('simulationId').equals(id).delete(),
+  db[simulationResultsTable].where('simulationId').equals(id).delete(),
 ]);
 
 export const deleteCurrentSimulation = async () => {

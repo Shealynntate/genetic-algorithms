@@ -21,7 +21,7 @@ import {
   setCurrentSimulation,
   updateCurrentSimulation,
 } from '../../globals/database';
-import { approxEqual } from '../../globals/statsUtils';
+import { approxEqual, setSigFigs } from '../../globals/statsUtils';
 import {
   chromosomesToPhenotype, createGif, createImageData, shouldSaveGenImage,
 } from '../../globals/utils';
@@ -122,7 +122,7 @@ function* generationResultsCheckSaga({
   if (statsRecord.length) {
     latestThreshold = statsRecord[statsRecord.length - 1].threshold;
   }
-  const currentMax = Math.trunc(stats.maxFitness * 1000) / 1000;
+  const currentMax = setSigFigs(stats.maxFitness, 3);
   if (currentMax >= minResultsThreshold && currentMax !== latestThreshold) {
     yield put(addGenStats({ threshold: currentMax, stats }));
   }

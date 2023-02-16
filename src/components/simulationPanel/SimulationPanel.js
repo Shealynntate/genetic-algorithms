@@ -89,7 +89,7 @@ function SimulationPanel() {
             ))}
             <Box sx={{ textAlign: 'center' }}>
               <Button startIcon={<Add />} variant="outlined" color="secondary" onClick={onAddSimulation}>
-                Add Simulation
+                New
               </Button>
             </Box>
           </Panel>

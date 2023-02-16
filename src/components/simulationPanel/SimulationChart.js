@@ -19,9 +19,9 @@ const graphWidth = 625;
 const graphHeight = 500;
 const brushHeight = 100;
 const margin = {
-  left: 28,
+  left: 30,
   top: 4,
-  right: 14,
+  right: 18,
   bottom: 15,
 };
 const brushMargin = {

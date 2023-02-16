@@ -164,27 +164,31 @@ function SimulationForm({
             </Stack>
           </Panel>
           <Panel label="Crossover" variant="secondary">
-            <InputLabel id="crossover-label">Type</InputLabel>
-            <Select
-              labelId="crossover-label"
-              label="Crossover Type"
-              defaultValue={crossover.type}
-              readOnly={readOnly}
-              {...register('crossover.type')}
-            >
-              {Object.keys(CrossoverType).map((type) => (
-                <MenuItem key={type} value={type}>
-                  {CrossoverTypeLabels[type]}
-                </MenuItem>
-              ))}
-            </Select>
-            <ProbabilityInput
-              defaultValues={crossover.probabilities[ProbabilityTypes.SWAP]}
-              register={register}
-              label={ProbabilityLabels[ProbabilityTypes.SWAP]}
-              readOnly={readOnly}
-              path={`crossover.probabilities.${ProbabilityTypes.SWAP}`}
-            />
+            <Stack direction="row">
+              <Stack>
+                <InputLabel id="crossover-label">Type</InputLabel>
+                <Select
+                  labelId="crossover-label"
+                  label="Crossover Type"
+                  defaultValue={crossover.type}
+                  readOnly={readOnly}
+                  {...register('crossover.type')}
+                >
+                  {Object.keys(CrossoverType).map((type) => (
+                    <MenuItem key={type} value={type}>
+                      {CrossoverTypeLabels[type]}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Stack>
+              <ProbabilityInput
+                defaultValues={crossover.probabilities[ProbabilityTypes.SWAP]}
+                register={register}
+                label={ProbabilityLabels[ProbabilityTypes.SWAP]}
+                readOnly={readOnly}
+                path={`crossover.probabilities.${ProbabilityTypes.SWAP}`}
+              />
+            </Stack>
           </Panel>
         </Box>
         <Box>
@@ -246,9 +250,15 @@ function SimulationForm({
               readOnly={readOnly}
             />
           </Panel>
-          {!readOnly && <Button type="submit" variant="contained">Save</Button>}
         </Box>
       </Stack>
+      {!readOnly && (
+        <Box sx={{ textAlign: 'center' }}>
+          <Button type="submit" variant="contained" size="large">
+            Create
+          </Button>
+        </Box>
+      )}
     </form>
   );
 }

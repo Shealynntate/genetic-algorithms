@@ -53,7 +53,7 @@ function RunningSimulationGraph({
       <Line
         data={runningStats}
         x={({ stats }) => xScale(stats.genId)}
-        y={({ stats }) => yScale(stats.meanFitness)}
+        y={({ stats }) => yScale(stats.maxFitness)}
         width={1}
         color={graphEntries[currentSim.id]}
       />

@@ -76,7 +76,7 @@ function SimulationEntry({
             }}
           />
         )}
-        <Stack sx={{ position: 'relative' }}>
+        <Stack sx={{ position: 'relative', flex: 1 }}>
           <TextField
             value={nameValue}
             onChange={onChangeName}
