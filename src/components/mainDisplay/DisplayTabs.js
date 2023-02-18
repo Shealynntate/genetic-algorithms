@@ -21,20 +21,20 @@ function DisplayTabs() {
     <Box>
       <Box>
         <Tabs onChange={onChange} value={value}>
+          <Tab label="Gallery" />
           <Tab label="Simulations" />
           <Tab label="Progress Snapshots" />
-          <Tab label="Gallery" />
           <Tab label="About" />
         </Tabs>
       </Box>
       <TabPanel index={0} value={value}>
-        <ExperimentationPanel />
+        <GalleryPanel />
       </TabPanel>
       <TabPanel index={1} value={value}>
-        <ProgressPanel />
+        <ExperimentationPanel />
       </TabPanel>
       <TabPanel index={2} value={value}>
-        <GalleryPanel />
+        <ProgressPanel />
       </TabPanel>
       <TabPanel index={3} value={value}>
         <About />

@@ -65,7 +65,7 @@ function SimulationForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack direction="row" spacing={1}>
-        <Box>
+        <Stack sx={{ justifyContent: 'space-between' }}>
           <Panel label="Population" variant="primary">
             <Stack direction="row" spacing={1}>
               <ImageInput
@@ -121,7 +121,7 @@ function SimulationForm({
             </Stack>
           </Panel>
           <Panel label="Selection" variant="primary">
-            <Stack direction="row">
+            <Stack direction="row" spacing={1}>
               <Box display="inline-block">
                 <InputLabel id="select-label">Type</InputLabel>
                 <Select
@@ -164,7 +164,7 @@ function SimulationForm({
             </Stack>
           </Panel>
           <Panel label="Crossover" variant="primary">
-            <Stack direction="row">
+            <Stack direction="row" spacing={1}>
               <Stack>
                 <InputLabel id="crossover-label">Type</InputLabel>
                 <Select
@@ -190,7 +190,7 @@ function SimulationForm({
               />
             </Stack>
           </Panel>
-        </Box>
+        </Stack>
         <Box>
           <Panel label="Mutation" variant="primary">
             <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
@@ -253,7 +253,7 @@ function SimulationForm({
         </Box>
       </Stack>
       {!readOnly && (
-        <Box sx={{ textAlign: 'center' }}>
+        <Box sx={{ textAlign: 'center', mt: 1 }}>
           <Button type="submit" variant="contained" size="large">
             Create
           </Button>

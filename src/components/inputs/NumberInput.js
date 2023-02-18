@@ -25,7 +25,10 @@ function NumberInput({
   return (
     <Stack direction="row">
       <Tooltip title={error?.message} arrow open={!!error}>
-        <Stack direction="row" sx={{ alignItems: 'center' }}>
+        <Stack
+          direction="row"
+          sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
+        >
           <Typography pr={1}>{_.get(ParameterLabels, path)}</Typography>
           <Input
             defaultValue={defaultValue}

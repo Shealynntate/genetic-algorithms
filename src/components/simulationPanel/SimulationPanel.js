@@ -88,7 +88,7 @@ function SimulationPanel() {
               />
             ))}
             <Box sx={{ textAlign: 'center', py: 1 }}>
-              <Button startIcon={<Add />} variant="outlined" color="secondary" onClick={onAddSimulation}>
+              <Button startIcon={<Add />} variant="contained" color="secondary" onClick={onAddSimulation}>
                 New
               </Button>
             </Box>

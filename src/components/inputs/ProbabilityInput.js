@@ -18,7 +18,7 @@ function ProbabilityInput({
     startValue, endValue, startFitness, endFitness,
   } = defaultValues;
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', height: 'fit-content' }}>
       <Typography variant="body2" sx={{ pr: 2 }}>{label}</Typography>
       <Stack sx={{ textAlign: 'center' }}>
         <Input
