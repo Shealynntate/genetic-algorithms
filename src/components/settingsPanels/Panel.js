@@ -41,7 +41,12 @@ function Panel({
   const theme = useTheme();
 
   return (
-    <Paper elevation={2} sx={{ position: 'relative', p: '0.8rem', mb: 1 }}>
+    <Paper
+      elevation={4}
+      sx={{
+        position: 'relative', p: '0.8rem', mb: 1, // background: '#3b3b3e',
+      }}
+    >
       {label && <SectionTitle variant={variant}>{label}</SectionTitle>}
       <Box sx={{
         border: `1px solid ${theme.palette[variant].dark}`,

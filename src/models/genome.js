@@ -129,29 +129,15 @@ const Genome = {
       }
       // Check add point mutation
       if (mutation.doAddPoint()) {
-        if (!Chromosome.addPointMutation(chromosomes[i], maxPoints)) {
-          // Split into two
-          // const daughters = Chromosome.mitosis(chromosomes[i]);
-          // if (chromosomes.length < maxGenomeSize) {
-          //   chromosomes.splice(i, 1, ...daughters);
-          // } else {
-          //   chromosomes.splice(i, 1, daughters[0]);
-          // }
-        }
+        Chromosome.addPointMutation(chromosomes[i], maxPoints);
       }
       // Check remove point mutation
       if (mutation.doRemovePoint()) {
-        if (!Chromosome.removePointMutation(chromosomes[i], minPoints)) {
-          // Delete the chromosome
-          // if (chromosomes.length > 1) {
-          //   chromosomes.splice(i, 1);
-          //   if (i >= chromosomes.length) break;
-          // }
-        }
+        Chromosome.removePointMutation(chromosomes[i], minPoints);
       }
       // Check tweak values mutation
       if (isSingleMutation) {
-        if (mutation.doTweakPoint(chromosomes.length)) { // TODO: Fix mutation call
+        if (mutation.doTweakPoint()) {
           chromosomes[i] = Chromosome.singleMutation(chromosomes[i], mutation);
         }
       } else {
@@ -160,14 +146,15 @@ const Genome = {
     }
 
     // Mutate Genome
-    if (mutation.doPermute()) {
-      Genome.mutateOrder2(genome, mutation);
+    for (let i = 0; i < genome.chromosomes.length - 1; ++i) {
+      if (mutation.doPermute()) {
+        Genome.mutateOrder(genome, i);
+      }
     }
   },
 
   // Swap adjacent Chromosome objects in the array
-  mutateOrder: (genome) => {
-    const index = randomIndex(genome.chromosomes.length - 1);
+  mutateOrder: (genome, index) => {
     const r1 = genome.chromosomes.splice(index, 1);
     genome.chromosomes.splice(index + 1, 0, ...r1);
   },

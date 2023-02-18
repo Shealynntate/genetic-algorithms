@@ -66,7 +66,7 @@ function SimulationForm({
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack direction="row" spacing={1}>
         <Box>
-          <Panel label="Population" variant="secondary">
+          <Panel label="Population" variant="primary">
             <Stack direction="row" spacing={1}>
               <ImageInput
                 defaultTarget={population.target}
@@ -120,7 +120,7 @@ function SimulationForm({
               </Stack>
             </Stack>
           </Panel>
-          <Panel label="Selection" variant="secondary">
+          <Panel label="Selection" variant="primary">
             <Stack direction="row">
               <Box display="inline-block">
                 <InputLabel id="select-label">Type</InputLabel>
@@ -163,7 +163,7 @@ function SimulationForm({
               </Box>
             </Stack>
           </Panel>
-          <Panel label="Crossover" variant="secondary">
+          <Panel label="Crossover" variant="primary">
             <Stack direction="row">
               <Stack>
                 <InputLabel id="crossover-label">Type</InputLabel>
@@ -192,7 +192,7 @@ function SimulationForm({
           </Panel>
         </Box>
         <Box>
-          <Panel label="Mutation" variant="secondary">
+          <Panel label="Mutation" variant="primary">
             <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
               <Box>
                 <Typography>Distributions</Typography>
@@ -234,7 +234,7 @@ function SimulationForm({
               </Stack>
             </Stack>
           </Panel>
-          <Panel label="Stop Criteria" variant="secondary">
+          <Panel label="Stop Criteria" variant="primary">
             <NumberInput
               errors={errors}
               getValues={getValues}

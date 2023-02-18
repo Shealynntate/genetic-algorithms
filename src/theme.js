@@ -4,25 +4,30 @@ const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      dark: '#294954',
-      main: '#3b6978', // forest green
-      light: '#628793',
+      dark: '#168676',
+      main: '#20c0a9', // mint green
+      light: '#4cccba',
     },
     secondary: {
-      dark: '#B09E60',
-      main: '#FCE38A', // pale yellow
-      light: '#FCE8A1',
+      dark: '#b1813e',
+      main: '#feb95a', // mustard yellow
+      light: '#fec77b',
     },
     info: {
       dark: '#7896A5',
       main: '#ACD7EC', // Light Steel Blue
       light: '#BCDFEF',
     },
+    error: {
+      dark: '#893830',
+      main: '#c45145', // faded brick red
+      light: '#cf736a',
+    },
     background: {
       // default: '#F6F8FA',
-      // paper: '#FFFFFF',
+      paper: '#242227',
       mask: [
-        '#222222',
+        '#312f35',
       ],
     },
   },

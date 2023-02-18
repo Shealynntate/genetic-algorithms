@@ -117,14 +117,18 @@ function* generationResultsCheckSaga({
   const isSuccess = hasReachedTarget(globalBest, targetFitness);
   const isStopping = isSuccess || currentBest.genId >= maxGenerations;
 
-  // Store results if needed
-  let latestThreshold = 0;
-  if (statsRecord.length) {
-    latestThreshold = statsRecord[statsRecord.length - 1].threshold;
-  }
+  // Add the current stats to the record if they meet the requirements
   const currentMax = setSigFigs(stats.maxFitness, 3);
-  if (currentMax >= minResultsThreshold && currentMax !== latestThreshold) {
-    yield put(addGenStats({ threshold: currentMax, stats }));
+  if (currentMax >= minResultsThreshold) {
+    let latestThreshold = 0;
+    if (statsRecord.length) {
+      latestThreshold = statsRecord[statsRecord.length - 1].threshold;
+    }
+    // If the results are a new GlobalBest or are different enough from the previously
+    // recorded value, add them to the record
+    if (currentMax !== latestThreshold || stats.isGlobalBest) {
+      yield put(addGenStats({ threshold: currentMax, stats }));
+    }
   }
 
   // Check if the simulation is over

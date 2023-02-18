@@ -198,7 +198,7 @@ const parameters = {
   },
   stopCriteria: {
     targetFitness: 1,
-    maxGenerations: 80_000,
+    maxGenerations: 100_000,
   },
 };
 
