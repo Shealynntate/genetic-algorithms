@@ -14,10 +14,8 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   CrossoverType,
-  DistSigmaLabels,
   DistributionTypes,
   MutationProbabilities,
-  ProbabilityLabels,
   ProbabilityTypes,
   SelectionType,
   SelectionTypeLabels,
@@ -26,11 +24,12 @@ import {
 } from '../../constants';
 import SigmaInput from '../inputs/SigmaInput';
 import ProbabilityInput from '../inputs/ProbabilityInput';
-import defaultParameters, { ParameterLabels } from '../../globals/defaultParameters';
+import defaultParameters from '../../globals/defaultParameters';
 import ImageInput from '../ImageInput';
 import Panel from '../settingsPanels/Panel';
 import NumberInput from '../inputs/NumberInput';
 import { ParametersType } from '../../types';
+import Tooltip from '../Tooltip';
 
 function SimulationForm({
   defaultValues,
@@ -51,7 +50,6 @@ function SimulationForm({
     population,
     selection,
     crossover,
-    mutation,
   } = defaultValues;
 
   const onImageChange = (image) => {
@@ -68,19 +66,21 @@ function SimulationForm({
         <Stack sx={{ justifyContent: 'space-between' }}>
           <Panel label="Population" variant="primary">
             <Stack direction="row" spacing={1}>
-              <ImageInput
-                defaultTarget={population.target}
-                height={imageHeight}
-                onChange={onImageChange}
-                readOnly={readOnly}
-                width={imageWidth}
-              />
-              <Input
-                readOnly={readOnly}
-                defaultValue={population.target}
-                sx={{ display: 'none' }}
-                {...register('population.target')}
-              />
+              <Tooltip content="Drag n' drop a new target image here">
+                <ImageInput
+                  defaultTarget={population.target}
+                  height={imageHeight}
+                  onChange={onImageChange}
+                  readOnly={readOnly}
+                  width={imageWidth}
+                />
+                <Input
+                  readOnly={readOnly}
+                  defaultValue={population.target}
+                  sx={{ display: 'none' }}
+                  {...register('population.target')}
+                />
+              </Tooltip>
               <Stack direction="column">
                 <NumberInput
                   errors={errors}
@@ -147,17 +147,12 @@ function SimulationForm({
                   readOnly={readOnly}
                 />
                 <Box>
-                  <Typography display="inline-block" pr={1}>{ParameterLabels.selection.tournamentSize}</Typography>
-                  <Input
-                    defaultValue={selection.tournamentSize}
+                  <NumberInput
+                    errors={errors}
+                    getValues={getValues}
+                    path="selection.tournamentSize"
+                    register={register}
                     readOnly={readOnly}
-                    inputProps={{
-                      min: 2,
-                      max: 500,
-                      step: 2,
-                      type: 'number',
-                    }}
-                    {...register('selection.tournamentSize', { valueAsNumber: true })}
                   />
                 </Box>
               </Box>
@@ -182,9 +177,7 @@ function SimulationForm({
                 </Select>
               </Stack>
               <ProbabilityInput
-                defaultValues={crossover.probabilities[ProbabilityTypes.SWAP]}
                 register={register}
-                label={ProbabilityLabels[ProbabilityTypes.SWAP]}
                 readOnly={readOnly}
                 path={`crossover.probabilities.${ProbabilityTypes.SWAP}`}
               />
@@ -195,38 +188,40 @@ function SimulationForm({
           <Panel label="Mutation" variant="primary">
             <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
               <Box>
-                <Typography>Distributions</Typography>
+                <Tooltip content="The sigma parameter for a normal distribution">
+                  <Typography>Distributions</Typography>
+                </Tooltip>
               </Box>
               <Box>
                 <SigmaInput
-                  label={DistSigmaLabels[DistributionTypes.COLOR_SIGMA]}
-                  defaultValue={0.01}
+                  path={`mutation.${DistributionTypes.COLOR_SIGMA}`}
                   readOnly={readOnly}
-                  {...register(`mutation.${DistributionTypes.COLOR_SIGMA}`, { valueAsNumber: true })}
+                  register={register}
                 />
                 <SigmaInput
-                  label={DistSigmaLabels[DistributionTypes.POINT_SIGMA]}
-                  defaultValue={0.01}
+                  path={`mutation.${DistributionTypes.POINT_SIGMA}`}
                   readOnly={readOnly}
-                  {...register(`mutation.${DistributionTypes.POINT_SIGMA}`, { valueAsNumber: true })}
+                  register={register}
                 />
                 <SigmaInput
-                  label={DistSigmaLabels[DistributionTypes.PERMUTE_SIGMA]}
-                  defaultValue={0.01}
+                  path={`mutation.${DistributionTypes.PERMUTE_SIGMA}`}
                   readOnly={readOnly}
-                  {...register(`mutation.${DistributionTypes.PERMUTE_SIGMA}`, { valueAsNumber: true })}
+                  register={register}
                 />
               </Box>
             </Stack>
-            <Typography>Probabilities</Typography>
+            <Tooltip
+              content="Starting prob. (fitness = 0) >> ending prob. (fitness = 1)"
+              direction="left"
+            >
+              <Typography>Probabilities</Typography>
+            </Tooltip>
             <Stack direction="row" sx={{ justifyContent: 'space-between', pt: 1 }}>
               <Stack direction="column" sx={{ alignItems: 'end' }}>
                 {MutationProbabilities.map((key) => (
                   <ProbabilityInput
                     key={key}
-                    defaultValues={mutation.probabilities[key]}
                     register={register}
-                    label={ProbabilityLabels[key]}
                     path={`mutation.probabilities.${key}`}
                     readOnly={readOnly}
                   />

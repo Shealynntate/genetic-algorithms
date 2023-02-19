@@ -11,6 +11,7 @@ import { canvasParameters } from '../../constants';
 import OrganismCanvas from '../Canvases/OrganismCanvas';
 import TargetCanvas from '../Canvases/TargetCanvas';
 import { GalleryEntryType } from '../../types';
+import Tooltip from '../Tooltip';
 
 const width = canvasParameters.width / 2;
 const height = canvasParameters.height / 2;
@@ -54,10 +55,25 @@ function GalleryEntry({ data, readOnly }) {
     <Box sx={{ display: 'inline-block', m: 1 }}>
       <Stack direction="row" spacing={1}>
         <Stack spacing={1}>
-          <OrganismCanvas organism={globalBest.organism} width={width} height={height} />
-          <TargetCanvas width={width} height={height} target={parameters.population.target} />
+          <Tooltip
+            content="The final result"
+            display="inherit"
+          >
+            <OrganismCanvas organism={globalBest.organism} width={width} height={height} />
+          </Tooltip>
+          <Tooltip
+            content="The target image"
+            display="inherit"
+          >
+            <TargetCanvas width={width} height={height} target={parameters.population.target} />
+          </Tooltip>
         </Stack>
-        <img src={gif} alt={`${name} gif`} />
+        <Tooltip
+          content="A timelapse of the evolution of the best solution"
+          display="inherit"
+        >
+          <img src={gif} alt={`${name} gif`} />
+        </Tooltip>
       </Stack>
       <Paper elevation={2} sx={{ position: 'relative' }}>
         <Stack direction="row" sx={{ justifyContent: 'space-between' }}>

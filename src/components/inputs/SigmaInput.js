@@ -1,48 +1,51 @@
-import { Box, Input, Typography } from '@mui/material';
+/* eslint-disable react/jsx-props-no-spreading */
+import React from 'react';
 import PropTypes from 'prop-types';
-import React, { forwardRef } from 'react';
+import _ from 'lodash';
+import { Box, Input, Typography } from '@mui/material';
+import defaultParameters from '../../globals/defaultParameters';
+import { ParameterLabels } from '../../globals/websiteCopy';
+import Tooltip from '../Tooltip';
 
-const SigmaInput = forwardRef(({
-  defaultValue,
-  label,
-  name,
-  onBlur,
-  onChange,
+function SigmaInput({
+  path,
+  register,
   readOnly,
-}, ref) => (
-  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-    <Typography sx={{ pr: 2 }}>{label}</Typography>
-    <Input
-      defaultValue={defaultValue}
-      onBlur={onBlur}
-      onChange={onChange}
-      name={name}
-      ref={ref}
-      readOnly={readOnly}
-      inputProps={{
-        min: 0,
-        max: 1,
-        step: 0.001,
-        type: 'number',
-      }}
-    />
-  </Box>
-));
+}) {
+  const { text, Icon, tooltip } = _.get(ParameterLabels, path);
+  const defaultValue = _.get(defaultParameters, path);
+
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <Tooltip content={tooltip} display="flex" direction="left">
+        <>
+          <Typography variant="body2">{text}</Typography>
+          {Icon && <Icon />}
+        </>
+      </Tooltip>
+      <Input
+        defaultValue={defaultValue}
+        readOnly={readOnly}
+        inputProps={{
+          min: 0,
+          max: 1,
+          step: 0.001,
+          type: 'number',
+        }}
+        sx={{ ml: 2 }}
+        {...register(path, { valueAsNumber: true })}
+      />
+    </Box>
+  );
+}
 
 SigmaInput.propTypes = {
-  defaultValue: PropTypes.number,
-  label: PropTypes.string,
-  onBlur: PropTypes.func,
-  onChange: PropTypes.func,
-  name: PropTypes.string.isRequired,
+  path: PropTypes.string.isRequired,
+  register: PropTypes.func.isRequired,
   readOnly: PropTypes.bool,
 };
 
 SigmaInput.defaultProps = {
-  defaultValue: 0,
-  label: '',
-  onBlur: () => {},
-  onChange: () => {},
   readOnly: false,
 };
 

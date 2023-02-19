@@ -8,7 +8,9 @@ import {
   Typography,
 } from '@mui/material';
 import _ from 'lodash';
-import defaultParameters, { ParameterBounds, ParameterLabels, ParameterValidation } from '../../globals/defaultParameters';
+import defaultParameters, { ParameterBounds, ParameterValidation } from '../../globals/defaultParameters';
+import { ParameterLabels } from '../../globals/websiteCopy';
+import CustomTooltip from '../Tooltip';
 
 function NumberInput({
   errors,
@@ -21,6 +23,7 @@ function NumberInput({
   const { min, max, step } = _.get(ParameterBounds, path);
   const validate = _.get(ParameterValidation, path, () => {});
   const error = _.get(errors, path);
+  const { text, tooltip } = _.get(ParameterLabels, path);
 
   return (
     <Stack direction="row">
@@ -29,7 +32,9 @@ function NumberInput({
           direction="row"
           sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
         >
-          <Typography pr={1}>{_.get(ParameterLabels, path)}</Typography>
+          <CustomTooltip content={tooltip}>
+            <Typography pr={1}>{text}</Typography>
+          </CustomTooltip>
           <Input
             defaultValue={defaultValue}
             {...register(path, { valueAsNumber: true, validate: (v) => validate(v, getValues) })}

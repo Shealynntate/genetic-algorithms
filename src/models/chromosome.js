@@ -118,22 +118,22 @@ const Chromosome = {
   //   points: mutatePoints(chromosomes.points, mutation),
   // })),
 
-  multiMutation: (chromosomes, mutation) => {
-    for (let i = 0; i < chromosomes.color.length; ++i) {
+  multiMutation: (chromosome, mutation) => {
+    for (let i = 0; i < chromosome.color.length; ++i) {
       if (mutation.doTweakColor()) {
         if (i === 3) {
-          chromosomes.color[i] = tweakAlpha(mutation, chromosomes.color[i]);
+          chromosome.color[i] = tweakAlpha(mutation, chromosome.color[i]);
         } else {
-          chromosomes.color[i] = tweakColor(mutation, chromosomes.color[i]);
+          chromosome.color[i] = tweakColor(mutation, chromosome.color[i]);
         }
       }
     }
-    for (let i = 0; i < chromosomes.points.length; ++i) {
+    for (let i = 0; i < chromosome.points.length; ++i) {
       if (mutation.doTweakPoint()) {
-        chromosomes.points[i] = tweakPoint(mutation, ...chromosomes.points[i]);
+        chromosome.points[i] = tweakPoint(mutation, ...chromosome.points[i]);
       }
     }
-    return chromosomes;
+    return chromosome;
   },
 
   // Exacly 1 mutation per Chromosome

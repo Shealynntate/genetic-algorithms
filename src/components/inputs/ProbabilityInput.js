@@ -1,34 +1,47 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 import {
   Box, Input, Stack, Typography,
 } from '@mui/material';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
-import PropTypes from 'prop-types';
+import defaultParameters, { ParameterBounds } from '../../globals/defaultParameters';
+import { ParameterLabels } from '../../globals/websiteCopy';
+import Tooltip from '../Tooltip';
 
 // Note: Start and End fitness are available as inputs here, currently not setting them
 function ProbabilityInput({
-  defaultValues,
-  label,
   path,
   register,
   readOnly,
 }) {
+  const { min, max, step } = _.get(ParameterBounds, path);
+  const { text, Icon, tooltip } = _.get(ParameterLabels, path);
   const {
-    startValue, endValue, startFitness, endFitness,
-  } = defaultValues;
+    startValue,
+    endValue,
+    startFitness,
+    endFitness,
+  } = _.get(defaultParameters, path);
+
   return (
     <Box sx={{ display: 'flex', height: 'fit-content' }}>
-      <Typography variant="body2" sx={{ pr: 2 }}>{label}</Typography>
-      <Stack sx={{ textAlign: 'center' }}>
+      <Tooltip content={tooltip} display="flex">
+        <>
+          <Typography variant="body2">{text}</Typography>
+          {Icon && <Icon />}
+        </>
+      </Tooltip>
+      <Stack sx={{ textAlign: 'center', pl: 2 }}>
         <Input
           defaultValue={startValue}
           readOnly={readOnly}
           {...register(`${path}.startValue`, { valueAsNumber: true })}
           inputProps={{
-            min: 0,
-            max: 1,
-            step: 0.0001,
+            min,
+            max,
+            step,
             type: 'number',
           }}
         />
@@ -80,8 +93,6 @@ function ProbabilityInput({
 }
 
 ProbabilityInput.propTypes = {
-  defaultValues: PropTypes.objectOf(PropTypes.number).isRequired,
-  label: PropTypes.string.isRequired,
   path: PropTypes.string.isRequired,
   register: PropTypes.func.isRequired,
   readOnly: PropTypes.bool,

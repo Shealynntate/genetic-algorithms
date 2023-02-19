@@ -107,26 +107,36 @@ const Genome = {
     const { maxPoints, minPoints, maxGenomeSize } = bounds;
     const { chromosomes } = genome;
     const isSingleMutation = false;
-    // Mutate at the chromosomal level
+    // Mutate at the genome level
 
     // Check add chromosome mutation
     if (chromosomes.length < maxGenomeSize && mutation.doAddChromosome()) {
       chromosomes.push(Chromosome.create({ numSides: minPoints }));
     }
 
+    // Check remove chromosome mutation
+    if (chromosomes.length > 1 && mutation.doRemoveChromosome()) {
+      // Delete the chromosome
+      const index = randomIndex(chromosomes.length);
+      chromosomes.splice(index, 1);
+    }
+
+    // Check full reset mutation
+    if (mutation.doResetChromosome()) {
+      const index = randomIndex(chromosomes.length);
+      Chromosome.resetMutation(chromosomes[index], minPoints);
+      const c = chromosomes.splice(index, 1);
+      // Reset it to the top of the array
+      chromosomes.push(...c);
+    }
+
+    // Mutate Genome
+    if (mutation.doPermute()) {
+      Genome.mutateOrder(genome, mutation);
+    }
+
+    // Mutate at the chromosome level
     for (let i = 0; i < chromosomes.length; ++i) {
-      // Check full reset mutation
-      if (mutation.doResetChromosome()) {
-        Chromosome.resetMutation(chromosomes[i], minPoints);
-      }
-      // Check remove chromosome mutation
-      if (mutation.doRemoveChromosome()) {
-        // Delete the chromosome
-        if (chromosomes.length > 1) {
-          chromosomes.splice(i, 1);
-          if (i >= chromosomes.length) break;
-        }
-      }
       // Check add point mutation
       if (mutation.doAddPoint()) {
         Chromosome.addPointMutation(chromosomes[i], maxPoints);
@@ -144,22 +154,10 @@ const Genome = {
         chromosomes[i] = Chromosome.multiMutation(chromosomes[i], mutation);
       }
     }
-
-    // Mutate Genome
-    for (let i = 0; i < genome.chromosomes.length - 1; ++i) {
-      if (mutation.doPermute()) {
-        Genome.mutateOrder(genome, i);
-      }
-    }
   },
 
-  // Swap adjacent Chromosome objects in the array
-  mutateOrder: (genome, index) => {
-    const r1 = genome.chromosomes.splice(index, 1);
-    genome.chromosomes.splice(index + 1, 0, ...r1);
-  },
-
-  mutateOrder2: (genome, mutation) => {
+  // Swap a random range of adjacent Chromosome objects in the array
+  mutateOrder: (genome, mutation) => {
     const index = randomIndex(genome.chromosomes.length - 1);
     const [start, end] = mutation.permutationNudge(index);
     const patch = genome.chromosomes.splice(start, end - start).reverse();

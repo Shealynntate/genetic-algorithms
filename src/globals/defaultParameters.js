@@ -10,11 +10,13 @@ import {
   targetFitness,
 } from '../constants';
 
+const maxPopulation = 500;
+
 export const ParameterBounds = {
   population: {
     size: {
       min: 2,
-      max: 500,
+      max: maxPopulation,
       step: 2,
     },
     minPolygons: {
@@ -41,12 +43,83 @@ export const ParameterBounds = {
   selection: {
     eliteCount: {
       min: 0,
-      max: 500,
+      max: maxPopulation,
+      step: 2,
+    },
+    tournamentSize: {
+      min: 0,
+      max: maxPopulation,
       step: 2,
     },
   },
-  crossover: {},
-  mutation: {},
+  crossover: {
+    probabilities: {
+      [ProbabilityTypes.SWAP]: {
+        min: 0,
+        max: 1,
+        step: 0.0001,
+      },
+    },
+  },
+  mutation: {
+    [DistributionTypes.COLOR_SIGMA]: {
+      min: 0,
+      max: 1,
+      step: 0.0001,
+    },
+    [DistributionTypes.POINT_SIGMA]: {
+      min: 0,
+      max: 1,
+      step: 0.0001,
+    },
+    [DistributionTypes.PERMUTE_SIGMA]: {
+      min: 0,
+      max: 1,
+      step: 0.0001,
+    },
+    probabilities: {
+      [ProbabilityTypes.TWEAK_COLOR]: {
+        min: 0,
+        max: 1,
+        step: 0.0001,
+      },
+      [ProbabilityTypes.TWEAK_POINT]: {
+        min: 0,
+        max: 1,
+        step: 0.0001,
+      },
+      [ProbabilityTypes.ADD_POINT]: {
+        min: 0,
+        max: 1,
+        step: 0.0001,
+      },
+      [ProbabilityTypes.REMOVE_POINT]: {
+        min: 0,
+        max: 1,
+        step: 0.0001,
+      },
+      [ProbabilityTypes.ADD_CHROMOSOME]: {
+        min: 0,
+        max: 1,
+        step: 0.0001,
+      },
+      [ProbabilityTypes.REMOVE_CHROMOSOME]: {
+        min: 0,
+        max: 1,
+        step: 0.0001,
+      },
+      [ProbabilityTypes.RESET_CHROMOSOME]: {
+        min: 0,
+        max: 1,
+        step: 0.0001,
+      },
+      [ProbabilityTypes.PERMUTE_CHROMOSOMES]: {
+        min: 0,
+        max: 1,
+        step: 0.0001,
+      },
+    },
+  },
   stopCriteria: {
     targetFitness: {
       min: 0,
@@ -72,47 +145,6 @@ export const ParameterValidation = {
   selection: {
     eliteCount: (v, gv) => (((v % 2 === 0) && v < gv('population.size')) || 'Elite count must be even and less than the population size'),
     tournamentSize: (v, gv) => ((v < gv('population.size')) || 'Tournament size must be less than the population size'),
-  },
-};
-
-export const ParameterLabels = {
-  population: {
-    size: 'Size',
-    minPolygons: 'Min △',
-    maxPolygons: 'Max △',
-    minPoints: 'Min Sides',
-    maxPoints: 'Max Sides',
-    target: 'Target Image',
-  },
-  selection: {
-    type: 'Type',
-    eliteCount: 'Elite Count',
-    tournamentSize: 'Tourney Size',
-  },
-  crossover: {
-    type: 'Type',
-    probabilities: {
-      [ProbabilityTypes.SWAP]: 'Swap',
-    },
-  },
-  mutation: {
-    [DistributionTypes.COLOR_SIGMA]: 'Color',
-    [DistributionTypes.POINT_SIGMA]: 'Point',
-    [DistributionTypes.PERMUTE_SIGMA]: 'Permute',
-    probabilities: {
-      [ProbabilityTypes.TWEAK_COLOR]: 'Tweak Color',
-      [ProbabilityTypes.TWEAK_POINT]: 'Tweak Point',
-      [ProbabilityTypes.ADD_POINT]: 'Add Point',
-      [ProbabilityTypes.REMOVE_POINT]: 'Remove Point',
-      [ProbabilityTypes.ADD_CHROMOSOME]: 'Add Chromosome',
-      [ProbabilityTypes.REMOVE_CHROMOSOME]: 'Remove Chromosome',
-      [ProbabilityTypes.RESET_CHROMOSOME]: 'Reset Chromosome',
-      [ProbabilityTypes.PERMUTE_CHROMOSOMES]: 'Permute Chromosomes',
-    },
-  },
-  stopCriteria: {
-    targetFitness: 'Target Fitness',
-    maxGenerations: 'Max Generations',
   },
 };
 
