@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
+import theme from '../theme';
 
 const Tooltip = styled(({
   content,
@@ -43,10 +44,11 @@ const Tooltip = styled(({
           style={{
             display,
             position: 'absolute',
-            opacity: 0.8,
+            lineHeight: 1.3,
             zIndex: 9999,
             whiteSpace: 'pre',
             overflowX: 'visible',
+            background: theme.palette.background.paper,
           }}
         >
           {content}

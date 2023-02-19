@@ -4,11 +4,13 @@ import {
   Box,
   Container,
   IconButton,
+  Stack,
   Toolbar,
   Typography,
 } from '@mui/material';
 import { GitHub } from '@mui/icons-material';
 import { projectUrl } from '../constants';
+import ChromosomesIcon from './ChromosomesIcon';
 
 function Header() {
   const onClickGithub = () => {
@@ -19,7 +21,10 @@ function Header() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar variant="dense" disableGutters sx={{ justifyContent: 'space-between' }}>
-          <Typography variant="h4">Genetic Algorithms</Typography>
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+            <ChromosomesIcon sx={{ width: 48, height: 48 }} />
+            <Typography variant="h4">Genetic Algorithms</Typography>
+          </Stack>
           <Box>
             <IconButton size="large" onClick={onClickGithub}>
               <GitHub fontSize="inherit" />

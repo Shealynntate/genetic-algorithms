@@ -123,7 +123,12 @@ function SimulationForm({
           <Panel label="Selection" variant="primary">
             <Stack direction="row" spacing={1}>
               <Box display="inline-block">
-                <InputLabel id="select-label">Type</InputLabel>
+                <Tooltip
+                  content={'Mechanism for selecting parents:\n-Tournament\n-Roulette\n-Stochastic Universal Sampling\n(more info in the About section)'}
+                  direction="right"
+                >
+                  <InputLabel id="select-label">Type</InputLabel>
+                </Tooltip>
                 <Select
                   labelId="select-label"
                   label="Selection Type"
@@ -211,7 +216,7 @@ function SimulationForm({
               </Box>
             </Stack>
             <Tooltip
-              content="Starting prob. (fitness = 0) >> ending prob. (fitness = 1)"
+              content={'The starting probability (fitness 0) \n and ending probability (fitness 1) \n of each field'}
               direction="left"
             >
               <Typography>Probabilities</Typography>

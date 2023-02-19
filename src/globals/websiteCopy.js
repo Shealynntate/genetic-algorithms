@@ -66,15 +66,19 @@ export const ParameterLabels = {
     probabilities: {
       [ProbabilityTypes.TWEAK_COLOR]: {
         text: 'Tweak Color',
+        tooltip: 'Chance of nudging the rgba channels of a polygon',
       },
       [ProbabilityTypes.TWEAK_POINT]: {
         text: 'Tweak Point',
+        tooltip: 'Chance of nudging the (x,y) values of a point',
       },
       [ProbabilityTypes.ADD_POINT]: {
         text: 'Add Point',
+        tooltip: 'Chance of adding a (x,y) point to a polygon',
       },
       [ProbabilityTypes.REMOVE_POINT]: {
         text: 'Remove Point',
+        tooltip: 'Chance of removing a (x,y) point from a polygon',
       },
       [ProbabilityTypes.ADD_CHROMOSOME]: {
         text: 'Add',
@@ -89,7 +93,7 @@ export const ParameterLabels = {
       [ProbabilityTypes.RESET_CHROMOSOME]: {
         text: 'Reset',
         Icon: ChromosomeIcon,
-        tooltip: 'Chance of resetting a chromosome with a new random color and points',
+        tooltip: 'Chance of resetting a chromosome \n with a new random color and points',
       },
       [ProbabilityTypes.PERMUTE_CHROMOSOMES]: {
         text: 'Permute',

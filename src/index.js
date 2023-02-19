@@ -1,7 +1,8 @@
 import React from 'react';
-import { CssBaseline, ThemeProvider } from '@mui/material';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { inject } from '@vercel/analytics';
 import App from './components/App';
 import reportWebVitals from './reportWebVitals';
 import store from './store';
@@ -26,3 +27,6 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+// Setup Vercel analytics
+inject();
