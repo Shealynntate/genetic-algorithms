@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, Typography } from '@mui/material';
-import Panel from '../settingsPanels/Panel';
+import Panel from '../common/Panel';
 import Resource from './Resource';
 
 function ResourcesPanel() {

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Stack, Typography } from '@mui/material';
-import Panel from '../settingsPanels/Panel';
-import ExampleText from './ExampleText';
-import Keyword from './Keyword';
-import SectionTitle from './SectionTitle';
+import Panel from '../common/Panel';
+import ExampleText from '../common/ExampleText';
+import Keyword from '../common/Keyword';
+import SectionTitle from '../common/SectionTitle';
 
 function AlgorithmPanel() {
   return (

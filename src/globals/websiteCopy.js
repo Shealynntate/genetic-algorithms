@@ -1,4 +1,4 @@
-import ChromosomeIcon from '../components/ChromosomeIcon';
+import ChromosomeIcon from '../components/common/ChromosomeIcon';
 import { DistributionTypes, ProbabilityTypes } from '../constants';
 
 // eslint-disable-next-line import/prefer-default-export

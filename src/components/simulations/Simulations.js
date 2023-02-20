@@ -21,9 +21,9 @@ import SimulationDetails from './SimulationDetails';
 import SimulationFormDialog from './SimulationFormDialog';
 import RunningSimulationDisplay from './RunningSimulationDisplay';
 import defaultParameters from '../../globals/defaultParameters';
-import Panel from '../settingsPanels/Panel';
+import Panel from '../common/Panel';
 
-function SimulationPanel() {
+function Simulations() {
   const runningSimulation = useGetCurrentSimulation();
   const completedSimulations = useGetCompletedSimulations() || [];
   const pendingSimulations = useGetPendingSimulations() || [];
@@ -120,4 +120,4 @@ function SimulationPanel() {
   );
 }
 
-export default SimulationPanel;
+export default Simulations;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, Stack, Typography } from '@mui/material';
-import Panel from '../settingsPanels/Panel';
-import Keyword from './Keyword';
-import SectionTitle from './SectionTitle';
+import Panel from '../common/Panel';
+import Keyword from '../common/Keyword';
+import SectionTitle from '../common/SectionTitle';
 
 function Introduction() {
   return (

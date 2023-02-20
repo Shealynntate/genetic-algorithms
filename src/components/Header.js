@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { GitHub } from '@mui/icons-material';
 import { projectUrl } from '../constants';
-import ChromosomesIcon from './ChromosomesIcon';
+import ChromosomesIcon from './common/ChromosomesIcon';
 
 function Header() {
   const onClickGithub = () => {

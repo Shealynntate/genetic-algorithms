@@ -9,7 +9,7 @@ import { ParametersType } from '../../types';
 import SimulationEntry from './SimulationEntry';
 import { canvasParameters, SimulationStatus } from '../../constants';
 import GlobalBest from '../GlobalBest';
-import Panel from '../settingsPanels/Panel';
+import Panel from '../common/Panel';
 import TargetCanvas from '../Canvases/TargetCanvas';
 
 const { width, height } = canvasParameters;

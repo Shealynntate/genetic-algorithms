@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
-import SimulationForm from './SimulationForm';
+import SimulationForm from '../form/SimulationForm';
 import { ParametersType } from '../../types';
 import defaultParameters from '../../globals/defaultParameters';
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Box,
   Paper,
@@ -8,21 +7,8 @@ import {
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import OrganismCanvas from '../Canvases/OrganismCanvas';
-import HistoryDisplay from '../HistoryDisplay';
-
-function StatusText({ label, children }) {
-  return (
-    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-      <Typography variant="caption" pr={1}>{`${label}: `}</Typography>
-      <Typography variant="caption" fontFamily="'Oxygen Mono', monospace">{children}</Typography>
-    </Box>
-  );
-}
-
-StatusText.propTypes = {
-  label: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
-};
+import HistoryDisplay from './HistoryDisplay';
+import StatusText from '../common/StatusText';
 
 function SimulationStatusPanel() {
   const { organism } = useSelector((state) => state.simulation.currentBest);

@@ -182,7 +182,12 @@ const Chromosome = {
   },
 
   resetMutation: (chromosome, numPoints) => {
-    chromosome.points = randomPoints(numPoints);
+    const point = randomPoint();
+    chromosome.points = [];
+    for (let i = 0; i < numPoints; ++i) {
+      chromosome.points.push(point.slice());
+    }
+    // chromosome.points = randomPoints(numPoints);
     // chromosome.color = randomColor();
     chromosome.color = transparent();
   },

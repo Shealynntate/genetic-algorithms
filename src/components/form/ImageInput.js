@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
 import { Alert, Box, Snackbar } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
-import { AlertState, canvasParameters } from '../constants';
-import { fileToBase64 } from '../globals/utils';
-import TargetCanvas from './Canvases/TargetCanvas';
+import { AlertState, canvasParameters } from '../../constants';
+import { fileToBase64 } from '../../globals/utils';
+import TargetCanvas from '../Canvases/TargetCanvas';
 
 const AlertMessage = {
   error: 'Oops, unable to read the file provided',

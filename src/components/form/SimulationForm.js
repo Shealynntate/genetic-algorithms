@@ -22,12 +22,12 @@ import {
   CrossoverTypeLabels,
   canvasParameters,
 } from '../../constants';
-import SigmaInput from '../inputs/SigmaInput';
-import ProbabilityInput from '../inputs/ProbabilityInput';
+import SigmaInput from './SigmaInput';
+import ProbabilityInput from './ProbabilityInput';
 import defaultParameters from '../../globals/defaultParameters';
-import ImageInput from '../ImageInput';
-import Panel from '../settingsPanels/Panel';
-import NumberInput from '../inputs/NumberInput';
+import ImageInput from './ImageInput';
+import Panel from '../common/Panel';
+import NumberInput from './NumberInput';
 import { ParametersType } from '../../types';
 import Tooltip from '../Tooltip';
 

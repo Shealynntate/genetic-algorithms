@@ -1,9 +1,9 @@
 import React from 'react';
 import { Stack, Typography } from '@mui/material';
-import Panel from '../settingsPanels/Panel';
-import SectionTitle from './SectionTitle';
-import Keyword from './Keyword';
-import ExampleText from './ExampleText';
+import Panel from '../common/Panel';
+import SectionTitle from '../common/SectionTitle';
+import Keyword from '../common/Keyword';
+import ExampleText from '../common/ExampleText';
 
 function OverviewPanel() {
   return (

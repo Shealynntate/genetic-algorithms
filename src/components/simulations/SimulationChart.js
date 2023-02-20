@@ -8,7 +8,7 @@ import { Group } from '@visx/group';
 import { Stack, Typography } from '@mui/material';
 import { minResultsThreshold } from '../../constants';
 import defaultParameters from '../../globals/defaultParameters';
-import CustomCheckbox from './Checkbox';
+import CustomCheckbox from '../common/Checkbox';
 import ChartBrush from './ChartBrush';
 import { useGetCompletedSimulationsAndResults, useGetCurrentSimulation } from '../../globals/database';
 import DeviationLine from '../Charts/DeviationLine';

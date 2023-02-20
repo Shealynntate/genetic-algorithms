@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Typography } from '@mui/material';
 import { ParametersType } from '../../types';
-import SimulationForm from './SimulationForm';
+import SimulationForm from '../form/SimulationForm';
 
 function SimulationDetails({ simulation }) {
   if (!simulation) return null;

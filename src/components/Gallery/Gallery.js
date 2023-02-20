@@ -3,8 +3,8 @@ import { Box, Paper, Typography } from '@mui/material';
 import { useGetGalleryEntries } from '../../globals/database';
 import GalleryEntry from './GalleryEntry';
 import DemoGallery from './DemoGallery';
-import Panel from '../settingsPanels/Panel';
-import Keyword from '../About/Keyword';
+import Panel from '../common/Panel';
+import Keyword from '../common/Keyword';
 
 function Gallery() {
   const entriesJSON = useGetGalleryEntries() || [];

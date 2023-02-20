@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@mui/material';
-import { canvasParameters } from '../constants';
-import Canvas from './Canvases/Canvas';
-import ImageCaption from './ImageCaption';
+import { canvasParameters } from '../../constants';
+import Canvas from '../Canvases/Canvas';
+import ImageCaption from '../common/ImageCaption';
 
 const { width, height } = canvasParameters;
 
