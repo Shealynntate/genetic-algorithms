@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import Header from './Header';
 import TabPanel from './common/TabPanel';
-import Gallery from './gallery_/Gallery';
+import Gallery from './gallery/Gallery';
 import Progress from './progress/Progress';
 import Simulations from './simulations/Simulations';
 import About from './about/About';
