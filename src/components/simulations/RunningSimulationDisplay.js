@@ -8,9 +8,9 @@ import { useTheme } from '@emotion/react';
 import { ParametersType } from '../../types';
 import SimulationEntry from './SimulationEntry';
 import { canvasParameters, SimulationStatus } from '../../constants';
-import GlobalBest from '../GlobalBest';
+import GlobalBest from '../canvas/GlobalBest';
 import Panel from '../common/Panel';
-import TargetCanvas from '../Canvases/TargetCanvas';
+import TargetCanvas from '../canvas/TargetCanvas';
 
 const { width, height } = canvasParameters;
 

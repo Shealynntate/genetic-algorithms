@@ -113,12 +113,7 @@ const Chromosome = {
     return [a, b];
   },
 
-  // totalMutation: (chromosomes, mutation) => (Chromosome.create({
-  //   color: mutateColors(chromosomes.color, mutation),
-  //   points: mutatePoints(chromosomes.points, mutation),
-  // })),
-
-  multiMutation: (chromosome, mutation) => {
+  tweakMutationUniform: (chromosome, mutation) => {
     for (let i = 0; i < chromosome.color.length; ++i) {
       if (mutation.doTweakColor()) {
         if (i === 3) {
@@ -137,7 +132,7 @@ const Chromosome = {
   },
 
   // Exacly 1 mutation per Chromosome
-  singleMutation: (chromosome, mutation) => {
+  tweakMutationSinglePoint: (chromosome, mutation) => {
     const { color, points } = chromosome;
     const index = randomIndex(color.length + points.length);
     if (index < color.length) {
@@ -182,13 +177,7 @@ const Chromosome = {
   },
 
   resetMutation: (chromosome, numPoints) => {
-    const point = randomPoint();
-    chromosome.points = [];
-    for (let i = 0; i < numPoints; ++i) {
-      chromosome.points.push(point.slice());
-    }
-    // chromosome.points = randomPoints(numPoints);
-    // chromosome.color = randomColor();
+    chromosome.points = randomPoints(numPoints);
     chromosome.color = transparent();
   },
 };

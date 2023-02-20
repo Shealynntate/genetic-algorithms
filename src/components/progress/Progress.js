@@ -6,7 +6,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-import OrganismCanvas from '../Canvases/OrganismCanvas';
+import OrganismCanvas from '../canvas/OrganismCanvas';
 import HistoryDisplay from './HistoryDisplay';
 import StatusText from '../common/StatusText';
 

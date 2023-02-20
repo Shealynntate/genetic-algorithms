@@ -8,10 +8,10 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { deleteGalleryEntry, renameGalleryEntry } from '../../globals/database';
 import { download, downloadJSON } from '../../globals/utils';
 import { canvasParameters } from '../../constants';
-import OrganismCanvas from '../Canvases/OrganismCanvas';
-import TargetCanvas from '../Canvases/TargetCanvas';
+import OrganismCanvas from '../canvas/OrganismCanvas';
+import TargetCanvas from '../canvas/TargetCanvas';
 import { GalleryEntryType } from '../../types';
-import Tooltip from '../Tooltip';
+import Tooltip from '../common/Tooltip';
 
 const width = canvasParameters.width / 2;
 const height = canvasParameters.height / 2;

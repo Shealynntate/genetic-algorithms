@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
-import theme from '../theme';
+import theme from '../../theme';
 
 const Tooltip = styled(({
   content,

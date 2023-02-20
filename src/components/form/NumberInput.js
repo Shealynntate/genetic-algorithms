@@ -10,7 +10,7 @@ import {
 import _ from 'lodash';
 import defaultParameters, { ParameterBounds, ParameterValidation } from '../../globals/defaultParameters';
 import { ParameterLabels } from '../../globals/websiteCopy';
-import CustomTooltip from '../Tooltip';
+import CustomTooltip from '../common/Tooltip';
 
 function NumberInput({
   errors,

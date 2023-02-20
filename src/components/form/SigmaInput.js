@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { Box, Input, Typography } from '@mui/material';
 import defaultParameters from '../../globals/defaultParameters';
 import { ParameterLabels } from '../../globals/websiteCopy';
-import Tooltip from '../Tooltip';
+import Tooltip from '../common/Tooltip';
 
 function SigmaInput({
   path,

@@ -8,7 +8,7 @@ import {
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import defaultParameters, { ParameterBounds } from '../../globals/defaultParameters';
 import { ParameterLabels } from '../../globals/websiteCopy';
-import Tooltip from '../Tooltip';
+import Tooltip from '../common/Tooltip';
 
 // Note: Start and End fitness are available as inputs here, currently not setting them
 function ProbabilityInput({

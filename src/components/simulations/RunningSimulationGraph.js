@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useGetCurrentSimulation } from '../../globals/database';
-import Line from '../Charts/Line';
-import DeviationLine from '../Charts/DeviationLine';
+import Line from '../graph/Line';
+import DeviationLine from '../graph/DeviationLine';
 
 function RunningSimulationGraph({
   xScale,

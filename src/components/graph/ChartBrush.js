@@ -12,7 +12,7 @@ import { GridColumns } from '@visx/grid';
 import BrushHandle from './BrushHandle';
 import { minResultsThreshold } from '../../constants';
 import { SimulationType } from '../../types';
-import RunningSimulationGraph from './RunningSimulationGraph';
+import RunningSimulationGraph from '../simulations/RunningSimulationGraph';
 
 const PATTERN_ID = 'brush_pattern';
 // const GRADIENT_ID = 'brush_gradient';

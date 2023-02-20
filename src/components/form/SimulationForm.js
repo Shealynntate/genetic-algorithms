@@ -29,7 +29,7 @@ import ImageInput from './ImageInput';
 import Panel from '../common/Panel';
 import NumberInput from './NumberInput';
 import { ParametersType } from '../../types';
-import Tooltip from '../Tooltip';
+import Tooltip from '../common/Tooltip';
 
 function SimulationForm({
   defaultValues,

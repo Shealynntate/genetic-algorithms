@@ -6,7 +6,7 @@ import { Alert, Box, Snackbar } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { AlertState, canvasParameters } from '../../constants';
 import { fileToBase64 } from '../../globals/utils';
-import TargetCanvas from '../Canvases/TargetCanvas';
+import TargetCanvas from '../canvas/TargetCanvas';
 
 const AlertMessage = {
   error: 'Oops, unable to read the file provided',
