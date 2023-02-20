@@ -106,7 +106,6 @@ const Genome = {
   mutate: (genome, mutation, bounds) => {
     const { maxPoints, minPoints, maxGenomeSize } = bounds;
     const { chromosomes } = genome;
-    const isSinglePointMutation = true;
     // Mutate at the genome level
 
     // Check add chromosome mutation
@@ -146,7 +145,7 @@ const Genome = {
         Chromosome.removePointMutation(chromosomes[i], minPoints);
       }
       // Check tweak values mutation
-      if (isSinglePointMutation) {
+      if (mutation.isSinglePoint) {
         if (mutation.doTweakPoint()) {
           chromosomes[i] = Chromosome.tweakMutationSinglePoint(chromosomes[i], mutation);
         }

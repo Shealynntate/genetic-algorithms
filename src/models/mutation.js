@@ -17,6 +17,7 @@ class Mutation {
     this.permuteDist = new GaussianNoise(params[DistributionTypes.PERMUTE_SIGMA]);
     this.probabilities = probabilities;
     this.genomeSize = genomeSize;
+    this.isSinglePoint = params.isSinglePoint;
     this.computeProbabilities(0);
   }
 

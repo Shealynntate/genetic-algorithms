@@ -51,6 +51,10 @@ export const ParameterLabels = {
     },
   },
   mutation: {
+    isSinglePoint: {
+      text: 'Use Single Point',
+      tooltip: 'Should tweak mutations apply\nonce per gene or should each\npoint and color have a uniform\nchance of being tweaked',
+    },
     [DistributionTypes.COLOR_SIGMA]: {
       text: 'Color',
       tooltip: 'How far a color channel (rgba) can get nudged',

@@ -22,6 +22,7 @@ import {
   CrossoverTypeLabels,
   canvasParameters,
 } from '../../constants';
+import Checkbox from './Checkbox';
 import SigmaInput from './SigmaInput';
 import ProbabilityInput from './ProbabilityInput';
 import defaultParameters from '../../globals/defaultParameters';
@@ -121,7 +122,7 @@ function SimulationForm({
             </Stack>
           </Panel>
           <Panel label="Selection" variant="primary">
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
               <Box display="inline-block">
                 <Tooltip
                   content={'Mechanism for selecting parents:\n-Tournament\n-Roulette\n-Stochastic Universal Sampling\n(more info in the About section)'}
@@ -164,7 +165,7 @@ function SimulationForm({
             </Stack>
           </Panel>
           <Panel label="Crossover" variant="primary">
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
               <Stack>
                 <InputLabel id="crossover-label">Type</InputLabel>
                 <Select
@@ -215,12 +216,19 @@ function SimulationForm({
                 />
               </Box>
             </Stack>
-            <Tooltip
-              content={'The starting probability (fitness 0) \n and ending probability (fitness 1) \n of each field'}
-              direction="left"
-            >
-              <Typography>Probabilities</Typography>
-            </Tooltip>
+            <Stack direction="row" sx={{ alignItems: 'center', pt: 1, justifyContent: 'space-between' }}>
+              <Tooltip
+                content={'The starting probability (fitness 0) \n and ending probability (fitness 1) \n of each field'}
+                direction="left"
+              >
+                <Typography>Probabilities</Typography>
+              </Tooltip>
+              <Checkbox
+                path="mutation.isSinglePoint"
+                readOnly={readOnly}
+                register={register}
+              />
+            </Stack>
             <Stack direction="row" sx={{ justifyContent: 'space-between', pt: 1 }}>
               <Stack direction="column" sx={{ alignItems: 'end' }}>
                 {MutationProbabilities.map((key) => (

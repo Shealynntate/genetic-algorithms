@@ -5,7 +5,6 @@ import {
   randomInt,
   rand,
   randomIndex,
-  // randomIndex,
 } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
 
@@ -20,10 +19,6 @@ const transparent = () => [randCV(), randCV(), randCV(), 0];
 const randomPoint = () => [rand(), rand()];
 
 const randomPoints = (len) => genRange(len).map(() => randomPoint());
-// const randomPoints = (len) => {
-//   const pt = randomPoint();
-//   return genRange(len).map(() => pt.slice());
-// };
 
 // Chromosome Crossover Helpers
 // ------------------------------------------------------------
@@ -59,20 +54,13 @@ const crossoverColor = (chromosomes1, chromosomes2, point) => {
 // ------------------------------------------------------------
 const tweakPoint = (m, x, y) => [clamp(x + m.pointNudge(), 0, 1), clamp(y + m.pointNudge(), 0, 1)];
 
-// const tweakColor = (m, value) => clamp(value + m.colorNudge() * maxColorValue, 0, maxColorValue);
-const mv = maxColorValue;
-const tweakColor = (m, value) => ((mv + value + m.colorNudge() * mv) % mv);
+const tweakColor = (m, value) => (
+  (maxColorValue + value + m.colorNudge() * maxColorValue) % maxColorValue
+);
 
 const tweakAlpha = (m, value) => clamp(value + m.colorNudge(), 0, 1);
 
-// Mutate all color values
-// eslint-disable-next-line no-unused-vars
-const mutateColors = (color, mutation) => {
-  const func = (i) => (i < 3 ? tweakColor : tweakAlpha);
-  return color.map((c, i) => func(i)(mutation, c));
-};
-
-// Mutate just one color value
+// Mutate a single color value
 const mutateColor = (color, index, mutation) => {
   if (index === 3) color[index] = tweakAlpha(mutation, color[index]);
   else color[index] = tweakColor(mutation, color[index]);
@@ -80,11 +68,7 @@ const mutateColor = (color, index, mutation) => {
   return color;
 };
 
-// Mutate all points
-const mutatePoints = (points, mutation) => points.map((p) => tweakPoint(mutation, ...p));
-
-// Mutate just one point
-// eslint-disable-next-line no-unused-vars
+// Mutate a single (x, y) point
 const mutatePoint = (points, index, mutation) => {
   points[index] = tweakPoint(mutation, ...points[index]);
   return points;
@@ -137,7 +121,6 @@ const Chromosome = {
     const index = randomIndex(color.length + points.length);
     if (index < color.length) {
       chromosome.color = mutateColor(color, index, mutation);
-      // chromosome.color = mutateColors(color, mutation); // TODO: Temp test
     } else {
       chromosome.points = mutatePoint(points, index - color.length, mutation);
     }
@@ -197,7 +180,6 @@ export const Test = {
   tweakColor,
   tweakAlpha,
   mutateColor,
-  mutatePoints,
 };
 
 export default Chromosome;

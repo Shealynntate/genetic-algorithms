@@ -177,6 +177,7 @@ const parameters = {
     [DistributionTypes.COLOR_SIGMA]: 0.06,
     [DistributionTypes.POINT_SIGMA]: 0.06,
     [DistributionTypes.PERMUTE_SIGMA]: 0.05,
+    isSinglePoint: true,
     probabilities: {
       [ProbabilityTypes.TWEAK_COLOR]: {
         startValue: 0.01,
