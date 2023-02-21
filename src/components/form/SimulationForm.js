@@ -192,29 +192,32 @@ function SimulationForm({
         </Stack>
         <Box>
           <Panel label="Mutation" variant="primary">
-            <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
+            <Stack>
               <Box>
                 <Tooltip content="The sigma parameter for a normal distribution">
                   <Typography>Distributions</Typography>
                 </Tooltip>
               </Box>
-              <Box>
-                <SigmaInput
-                  path={`mutation.${DistributionTypes.COLOR_SIGMA}`}
-                  readOnly={readOnly}
-                  register={register}
-                />
-                <SigmaInput
-                  path={`mutation.${DistributionTypes.POINT_SIGMA}`}
-                  readOnly={readOnly}
-                  register={register}
-                />
-                <SigmaInput
-                  path={`mutation.${DistributionTypes.PERMUTE_SIGMA}`}
-                  readOnly={readOnly}
-                  register={register}
-                />
-              </Box>
+              <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
+                <Box />
+                <Box>
+                  <SigmaInput
+                    path={`mutation.${DistributionTypes.COLOR_SIGMA}`}
+                    readOnly={readOnly}
+                    register={register}
+                  />
+                  <SigmaInput
+                    path={`mutation.${DistributionTypes.POINT_SIGMA}`}
+                    readOnly={readOnly}
+                    register={register}
+                  />
+                  <SigmaInput
+                    path={`mutation.${DistributionTypes.PERMUTE_SIGMA}`}
+                    readOnly={readOnly}
+                    register={register}
+                  />
+                </Box>
+              </Stack>
             </Stack>
             <Stack direction="row" sx={{ alignItems: 'center', pt: 1, justifyContent: 'space-between' }}>
               <Tooltip

@@ -52,7 +52,7 @@ export const ParameterLabels = {
   },
   mutation: {
     isSinglePoint: {
-      text: 'Use Single Point',
+      text: 'Single Point',
       tooltip: 'Should tweak mutations apply\nonce per gene or should each\npoint and color have a uniform\nchance of being tweaked',
     },
     [DistributionTypes.COLOR_SIGMA]: {
@@ -69,19 +69,19 @@ export const ParameterLabels = {
     },
     probabilities: {
       [ProbabilityTypes.TWEAK_COLOR]: {
-        text: 'Tweak Color',
+        text: 'Color',
         tooltip: 'Chance of nudging the rgba channels of a polygon',
       },
       [ProbabilityTypes.TWEAK_POINT]: {
-        text: 'Tweak Point',
+        text: 'Point',
         tooltip: 'Chance of nudging the (x,y) values of a point',
       },
       [ProbabilityTypes.ADD_POINT]: {
-        text: 'Add Point',
+        text: 'Point +',
         tooltip: 'Chance of adding a (x,y) point to a polygon',
       },
       [ProbabilityTypes.REMOVE_POINT]: {
-        text: 'Remove Point',
+        text: 'Point -',
         tooltip: 'Chance of removing a (x,y) point from a polygon',
       },
       [ProbabilityTypes.ADD_CHROMOSOME]: {

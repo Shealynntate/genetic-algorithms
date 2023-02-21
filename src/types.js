@@ -62,6 +62,7 @@ const MutationType = {
   [DistributionTypes.COLOR_SIGMA]: PropTypes.number,
   [DistributionTypes.POINT_SIGMA]: PropTypes.number,
   [DistributionTypes.PERMUTE_SIGMA]: PropTypes.number,
+  isSinglePoint: PropTypes.bool,
   probabilities: PropTypes.shape({
     [ProbabilityTypes.TWEAK_COLOR]: PropTypes.objectOf(PropTypes.number),
     [ProbabilityTypes.TWEAK_POINT]: PropTypes.objectOf(PropTypes.number),

@@ -102,9 +102,11 @@ function GalleryEntry({ data, readOnly }) {
             <IconButton onClick={onDownload}>
               <DownloadIcon />
             </IconButton>
-            <IconButton color="error" onClick={onDelete} disabled={readOnly}>
-              <DeleteIcon />
-            </IconButton>
+            {!readOnly && (
+              <IconButton color="error" onClick={onDelete}>
+                <DeleteIcon />
+              </IconButton>
+            )}
           </Stack>
         </Stack>
       </Paper>
