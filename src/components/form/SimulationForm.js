@@ -18,10 +18,9 @@ import {
   MutationProbabilities,
   ProbabilityTypes,
   SelectionType,
-  SelectionTypeLabels,
-  CrossoverTypeLabels,
   canvasParameters,
 } from '../../constants';
+import { CrossoverTypeLabels, SelectionTypeLabels } from '../../globals/websiteCopy';
 import Checkbox from './Checkbox';
 import SigmaInput from './SigmaInput';
 import ProbabilityInput from './ProbabilityInput';
@@ -31,6 +30,9 @@ import Panel from '../common/Panel';
 import NumberInput from './NumberInput';
 import { ParametersType } from '../../types';
 import Tooltip from '../common/Tooltip';
+
+const singlePointFields = [ProbabilityTypes.TWEAK];
+const nonSinglePointFields = [ProbabilityTypes.TWEAK_COLOR, ProbabilityTypes.TWEAK_POINT];
 
 function SimulationForm({
   defaultValues,
@@ -46,6 +48,7 @@ function SimulationForm({
     getValues,
     register,
     reset,
+    watch,
   } = useForm();
   const {
     population,
@@ -60,6 +63,9 @@ function SimulationForm({
   useEffect(() => {
     reset(defaultValues);
   }, [defaultValues]);
+
+  const watchSinglePoint = watch('mutation.isSinglePoint');
+  const hiddenFields = watchSinglePoint ? nonSinglePointFields : singlePointFields;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -240,6 +246,7 @@ function SimulationForm({
                     register={register}
                     path={`mutation.probabilities.${key}`}
                     readOnly={readOnly}
+                    hide={hiddenFields.includes(key)}
                   />
                 ))}
               </Stack>

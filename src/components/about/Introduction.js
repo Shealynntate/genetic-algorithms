@@ -9,7 +9,7 @@ function Introduction() {
     <Panel label="Introduction" px={2}>
       <Stack direction="row" spacing={2}>
         <Stack flex={1}>
-          <SectionTitle>Welcome!</SectionTitle>
+          <SectionTitle>Hello!</SectionTitle>
           <Typography>
             This is an interactive demo of Genetic Algorithms, try it out!
           </Typography>

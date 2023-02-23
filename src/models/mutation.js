@@ -42,6 +42,15 @@ class Mutation {
     this.computeProbabilities(maxFitness);
   }
 
+  /**
+   * Called when using Single Point mutation to determine
+   * if a chromosome should mutate one of its fields
+   * @returns true if the mutation should occur, false otherwise
+   */
+  doTweak() {
+    return flipCoin(this[ProbabilityTypes.TWEAK]);
+  }
+
   doTweakPoint() {
     return flipCoin(this[ProbabilityTypes.TWEAK_POINT]);
   }

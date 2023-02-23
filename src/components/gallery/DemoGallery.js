@@ -6,6 +6,7 @@ import sonOfMan from '../../assets/gallery-entries/son_of_man.json';
 import monaLisa from '../../assets/gallery-entries/mona_lisa.json';
 import marilyn from '../../assets/gallery-entries/marilyn_diptych.json';
 import drawingHands from '../../assets/gallery-entries/drawing_hands.json';
+import greatWave from '../../assets/gallery-entries/the_great_wave.json';
 
 function DemoGallery() {
   return (
@@ -15,6 +16,7 @@ function DemoGallery() {
       <GalleryEntry data={sonOfMan} readOnly />
       <GalleryEntry data={marilyn} readOnly />
       <GalleryEntry data={compositionII} readOnly />
+      <GalleryEntry data={greatWave} readOnly />
     </Panel>
   );
 }

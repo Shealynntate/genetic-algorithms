@@ -1,7 +1,12 @@
 import ChromosomeIcon from '../components/common/ChromosomeIcon';
-import { DistributionTypes, ProbabilityTypes } from '../constants';
+import {
+  AppState,
+  CrossoverType,
+  DistributionTypes,
+  ProbabilityTypes,
+  SelectionType,
+} from '../constants';
 
-// eslint-disable-next-line import/prefer-default-export
 export const ParameterLabels = {
   population: {
     size: {
@@ -68,6 +73,10 @@ export const ParameterLabels = {
       tooltip: 'How many chromosomes can swap their order at a time',
     },
     probabilities: {
+      [ProbabilityTypes.TWEAK]: {
+        text: 'Tweak',
+        tooltip: 'Chance of tweaking a single property (color or point) of a polygon',
+      },
       [ProbabilityTypes.TWEAK_COLOR]: {
         text: 'Color',
         tooltip: 'Chance of nudging the rgba channels of a polygon',
@@ -114,4 +123,50 @@ export const ParameterLabels = {
       text: 'Max Generations',
     },
   },
+};
+
+// Type Labels
+// --------------------------------------------------
+export const SelectionTypeLabels = {
+  [SelectionType.ROULETTE]: 'Roulette',
+  [SelectionType.TOURNAMENT]: 'Tournament',
+  [SelectionType.SUS]: 'SUS',
+};
+
+export const CrossoverTypeLabels = {
+  [CrossoverType.ONE_POINT]: 'One Point',
+  [CrossoverType.TWO_POINT]: 'Two Point',
+  [CrossoverType.UNIFORM]: 'Uniform',
+};
+
+export const DistSigmaLabels = {
+  [DistributionTypes.COLOR_SIGMA]: 'Color',
+  [DistributionTypes.POINT_SIGMA]: 'Points',
+  [DistributionTypes.PERMUTE_SIGMA]: 'Permute',
+};
+
+export const ProbabilityLabels = {
+  [ProbabilityTypes.TWEAK_COLOR]: 'Tweak Color',
+  [ProbabilityTypes.TWEAK_POINT]: 'Tweak Point',
+  [ProbabilityTypes.ADD_POINT]: 'Add Point',
+  [ProbabilityTypes.REMOVE_POINT]: 'Remove Point',
+  [ProbabilityTypes.ADD_CHROMOSOME]: 'Add Chromosome',
+  [ProbabilityTypes.REMOVE_CHROMOSOME]: 'Remove Chromosome',
+  [ProbabilityTypes.RESET_CHROMOSOME]: 'Reset Chromosome',
+  [ProbabilityTypes.PERMUTE_CHROMOSOMES]: 'Permute Chromosomes',
+  [ProbabilityTypes.SWAP]: 'Swap',
+};
+
+export const primaryButtonLabels = {
+  [AppState.NONE]: 'Run',
+  [AppState.RUNNING]: 'Pause',
+  [AppState.PAUSED]: 'Resume',
+  [AppState.COMPLETE]: 'Run',
+};
+
+export const statusLabels = {
+  [AppState.NONE]: 'None',
+  [AppState.RUNNING]: 'Running',
+  [AppState.PAUSED]: 'Paused',
+  [AppState.COMPLETE]: 'Complete',
 };

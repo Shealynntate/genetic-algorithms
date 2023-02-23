@@ -20,7 +20,7 @@ function CustomCheckbox({
       <Checkbox
         size="small"
         sx={{ pb: 0, pr: 0.5 }}
-        checked={defaultValue}
+        defaultChecked={defaultValue}
         readOnly={readOnly}
         {...register(path)}
       />

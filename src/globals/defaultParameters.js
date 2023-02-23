@@ -78,6 +78,11 @@ export const ParameterBounds = {
       step: 0.0001,
     },
     probabilities: {
+      [ProbabilityTypes.TWEAK]: {
+        min: 0,
+        max: 1,
+        step: 0.0001,
+      },
       [ProbabilityTypes.TWEAK_COLOR]: {
         min: 0,
         max: 1,
@@ -148,9 +153,10 @@ export const ParameterValidation = {
   },
 };
 
+// The Default Parameters for a Simulation
 const parameters = {
   population: {
-    size: 200,
+    size: 300,
     minPolygons: 50,
     maxPolygons: 50,
     minPoints: 3,
@@ -174,11 +180,17 @@ const parameters = {
     },
   },
   mutation: {
+    isSinglePoint: true,
     [DistributionTypes.COLOR_SIGMA]: 0.06,
     [DistributionTypes.POINT_SIGMA]: 0.06,
     [DistributionTypes.PERMUTE_SIGMA]: 0.05,
-    isSinglePoint: true,
     probabilities: {
+      [ProbabilityTypes.TWEAK]: {
+        startValue: 0.04,
+        endValue: 0.04,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
       [ProbabilityTypes.TWEAK_COLOR]: {
         startValue: 0.01,
         endValue: 0.003,
@@ -192,14 +204,14 @@ const parameters = {
         endFitness: targetFitness,
       },
       [ProbabilityTypes.ADD_POINT]: {
-        startValue: 0.005,
-        endValue: 0.005,
+        startValue: 0.0015,
+        endValue: 0.0015,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.REMOVE_POINT]: {
-        startValue: 0.001,
-        endValue: 0.001,
+        startValue: 0.0015,
+        endValue: 0.0015,
         startFitness: 0,
         endFitness: targetFitness,
       },
@@ -217,13 +229,13 @@ const parameters = {
       },
       [ProbabilityTypes.RESET_CHROMOSOME]: {
         startValue: 0.01,
-        endValue: 0.0005,
+        endValue: 0.0006,
         startFitness: 0,
         endFitness: targetFitness,
       },
       [ProbabilityTypes.PERMUTE_CHROMOSOMES]: {
-        startValue: 0.01,
-        endValue: 0.003,
+        startValue: 0.0015,
+        endValue: 0.0015,
         startFitness: 0,
         endFitness: targetFitness,
       },
@@ -231,7 +243,7 @@ const parameters = {
   },
   stopCriteria: {
     targetFitness: 1,
-    maxGenerations: 100_000,
+    maxGenerations: 200_000,
   },
 };
 

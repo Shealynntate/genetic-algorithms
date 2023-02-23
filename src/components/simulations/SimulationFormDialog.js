@@ -8,6 +8,7 @@ import defaultParameters from '../../globals/defaultParameters';
 function SimulationFormDialog({ defaultValues, open, onClose }) {
   // Send to database and close form
   const onSubmit = (data) => {
+    console.log(data);
     onClose(data);
   };
 

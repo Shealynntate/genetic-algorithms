@@ -16,6 +16,7 @@ export const CrossoverType = {
 
 export const ProbabilityTypes = {
   // Mutation Probabilities
+  TWEAK: 'TWEAK',
   TWEAK_POINT: 'TWEAK_POINT',
   TWEAK_COLOR: 'TWEAK_COLOR',
   ADD_POINT: 'ADD_POINT',
@@ -36,6 +37,7 @@ export const DistributionTypes = {
 };
 
 export const MutationProbabilities = [
+  ProbabilityTypes.TWEAK,
   ProbabilityTypes.TWEAK_POINT,
   ProbabilityTypes.TWEAK_COLOR,
   ProbabilityTypes.ADD_POINT,
@@ -76,76 +78,7 @@ export const PausedStates = [
   AppState.PAUSED,
 ];
 
-// Type Labels
 // --------------------------------------------------
-export const SelectionTypeLabels = {
-  [SelectionType.ROULETTE]: 'Roulette',
-  [SelectionType.TOURNAMENT]: 'Tournament',
-  [SelectionType.SUS]: 'SUS',
-};
-
-export const CrossoverTypeLabels = {
-  [CrossoverType.ONE_POINT]: 'One Point',
-  [CrossoverType.TWO_POINT]: 'Two Point',
-  [CrossoverType.UNIFORM]: 'Uniform',
-};
-
-export const DistSigmaLabels = {
-  [DistributionTypes.COLOR_SIGMA]: 'Color',
-  [DistributionTypes.POINT_SIGMA]: 'Points',
-  [DistributionTypes.PERMUTE_SIGMA]: 'Permute',
-};
-
-export const ProbabilityLabels = {
-  [ProbabilityTypes.TWEAK_COLOR]: 'Tweak Color',
-  [ProbabilityTypes.TWEAK_POINT]: 'Tweak Point',
-  [ProbabilityTypes.ADD_POINT]: 'Add Point',
-  [ProbabilityTypes.REMOVE_POINT]: 'Remove Point',
-  [ProbabilityTypes.ADD_CHROMOSOME]: 'Add Chromosome',
-  [ProbabilityTypes.REMOVE_CHROMOSOME]: 'Remove Chromosome',
-  [ProbabilityTypes.RESET_CHROMOSOME]: 'Reset Chromosome',
-  [ProbabilityTypes.PERMUTE_CHROMOSOMES]: 'Permute Chromosomes',
-  [ProbabilityTypes.SWAP]: 'Swap',
-};
-
-export const primaryButtonLabels = {
-  [AppState.NONE]: 'Run',
-  [AppState.RUNNING]: 'Pause',
-  [AppState.PAUSED]: 'Resume',
-  [AppState.COMPLETE]: 'Run',
-};
-
-export const statusLabels = {
-  [AppState.NONE]: 'None',
-  [AppState.RUNNING]: 'Running',
-  [AppState.PAUSED]: 'Paused',
-  [AppState.COMPLETE]: 'Complete',
-};
-
-// --------------------------------------------------
-export const populationBounds = {
-  max: 500,
-  min: 2,
-  step: 2,
-};
-
-export const eliteCountBounds = {
-  min: 0,
-  step: 2,
-};
-
-export const mutationBounds = {
-  min: 0,
-  max: 0.5,
-  step: 0.001,
-};
-
-export const triangleBounds = {
-  min: 2,
-  max: 100,
-  step: 1,
-};
-
 export const targetFitness = 1;
 
 export const statsSigFigs = 5;

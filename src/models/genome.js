@@ -146,7 +146,7 @@ const Genome = {
       }
       // Check tweak values mutation
       if (mutation.isSinglePoint) {
-        if (mutation.doTweakPoint()) {
+        if (mutation.doTweak()) {
           chromosomes[i] = Chromosome.tweakMutationSinglePoint(chromosomes[i], mutation);
         }
       } else {

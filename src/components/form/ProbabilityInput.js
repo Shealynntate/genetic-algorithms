@@ -12,6 +12,7 @@ import Tooltip from '../common/Tooltip';
 
 // Note: Start and End fitness are available as inputs here, currently not setting them
 function ProbabilityInput({
+  hide,
   path,
   register,
   readOnly,
@@ -26,7 +27,7 @@ function ProbabilityInput({
   } = _.get(defaultParameters, path);
 
   return (
-    <Box sx={{ display: 'flex', height: 'fit-content' }}>
+    <Box sx={{ display: hide ? 'none' : 'flex', height: 'fit-content' }}>
       <Tooltip content={tooltip} display="flex">
         <>
           <Typography variant="body2">{text}</Typography>
@@ -93,12 +94,14 @@ function ProbabilityInput({
 }
 
 ProbabilityInput.propTypes = {
+  hide: PropTypes.bool,
   path: PropTypes.string.isRequired,
   register: PropTypes.func.isRequired,
   readOnly: PropTypes.bool,
 };
 
 ProbabilityInput.defaultProps = {
+  hide: false,
   readOnly: false,
 };
 
