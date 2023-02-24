@@ -1,8 +1,8 @@
 /* eslint-disable no-restricted-globals */
 export default () => {
-  let phenotype = null;
+  let fitnessEvaluator = null;
 
-  class Phenotype {
+  class FitnessEvaluator {
     constructor({
       canvas,
       numColorChannels,
@@ -64,7 +64,7 @@ export default () => {
     },
   }) => {
     if (canvas) {
-      phenotype = new Phenotype({
+      fitnessEvaluator = new FitnessEvaluator({
         canvas,
         numColorChannels,
         maxColorValue,
@@ -74,14 +74,14 @@ export default () => {
     }
 
     const updatedOrganisms = organisms.map((org) => {
-      const data = phenotype.getImageData(org.genome.chromosomes);
+      const data = fitnessEvaluator.getImageData(org.genome.chromosomes);
       return {
         ...org,
         genome: {
           ...org.genome,
         },
         phenotype: data,
-        fitness: phenotype.evaluateFitness(data),
+        fitness: fitnessEvaluator.evaluateFitness(data),
       };
     });
     postMessage({ updatedOrganisms });

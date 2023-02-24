@@ -228,7 +228,7 @@ const parameters = {
         endFitness: targetFitness,
       },
       [ProbabilityTypes.RESET_CHROMOSOME]: {
-        startValue: 0.01,
+        startValue: 0.0006,
         endValue: 0.0006,
         startFitness: 0,
         endFitness: targetFitness,

@@ -2,10 +2,9 @@
 import { deviation } from 'd3-array';
 import { omit } from 'lodash';
 import Organism from './organism';
-import { SelectionType, statsSigFigs, workerBatchSize } from '../constants';
+import { SelectionType, statsSigFigs } from '../constants';
 import { randomFloat, randomIndex, setSigFigs } from '../globals/statsUtils';
 import { genRange } from '../globals/utils';
-import createWorker from '../web-workers/phenotypeCreator';
 import Mutation from './mutation';
 import Selection from './selection';
 import Crossover from './crossover';
@@ -42,7 +41,7 @@ class Population {
     selection,
     organisms = null,
     best = null,
-  }) {
+  }, evaluateFitness) {
     this.genId = genId;
     this.target = target;
     this.organisms = organisms ?? [...Array(size)].map(
@@ -55,6 +54,7 @@ class Population {
     this.minPoints = minPoints;
     this.maxPoints = maxPoints;
     this.best = best;
+    this.evaluateFitness = evaluateFitness;
     // If population is shrinking, keep the first <size> organisms
     // If fitness has been evaluated, then they're the most fit, otherwise it's a random selection
     if (this.organisms.length > size) {
@@ -85,17 +85,14 @@ class Population {
   }
 
   async initialize() {
-    // Setup web workers for evaluateFitness work
-    const numWorkers = Math.ceil(this.size / workerBatchSize);
-    this.workers = [...Array(numWorkers)].map(() => createWorker(this.target));
     // Prep for the first call of runGeneration
-    this.organisms = await this.evaluateFitness();
+    this.organisms = await this.evaluateFitness(this.organisms);
   }
 
   async runGeneration() {
     const parents = this.performSelection(this.selection);
     this.organisms = this.reproduce(parents, this.selection, this.crossover, this.mutation);
-    this.organisms = await this.evaluateFitness();
+    this.organisms = await this.evaluateFitness(this.organisms);
 
     this.genId = Population.nextGenId;
     const stats = this.createStats();
@@ -104,42 +101,6 @@ class Population {
     this.crossover.markNextGen(stats);
 
     return stats;
-  }
-
-  /**
-   * Evaluates the fitness of each organism in the population
-   * Should only be called per generation as it's compulationally expensive
-   * @returns null
-   */
-  async evaluateFitness() {
-    const promises = [];
-
-    for (let i = 0; i < this.workers.length; ++i) {
-      const start = i * workerBatchSize;
-      const end = Math.min((i + 1) * workerBatchSize, this.size);
-      promises.push(new Promise((resolve, reject) => {
-        try {
-          this.workers[i].postMessage({
-            organisms: this.organisms.slice(start, end),
-          });
-          this.workers[i].onmessage = (result) => {
-            resolve(result.data);
-          };
-        } catch (error) {
-          reject(error);
-        }
-      }));
-    }
-
-    const results = await Promise.all(promises);
-    let orgs = [];
-    for (let i = 0; i < results.length; ++i) {
-      orgs = orgs.concat(results[i].updatedOrganisms);
-    }
-    if (orgs.length !== this.size) {
-      throw new Error(`evaluateFitness returned incorrect number of organisms ${orgs.length}`);
-    }
-    return orgs;
   }
 
   performSelection({ type, tournamentSize, eliteCount }) {
