@@ -27,12 +27,6 @@
   --tooltip-arrow-size: 6px;
 }
 
-/* Wrapping */
-.Tooltip-Wrapper {
-  display: inherit;
-  position: relative;
-}
-
 /* Absolute positioning */
 .Tooltip-Tip {
   position: absolute;

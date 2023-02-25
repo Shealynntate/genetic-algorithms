@@ -9,9 +9,9 @@ import {
   resumeSimulations,
   runSimulations,
 } from '../../features/ux/uxSlice';
-import { useIsPaused } from '../../hooks';
-import { AppState } from '../../constants';
-import { primaryButtonLabels } from '../../globals/websiteCopy';
+import { useIsPaused } from '../../features/hooks';
+import { AppState } from '../../constants/typeDefinitions';
+import { primaryButtonLabels } from '../../constants/websiteCopy';
 
 function PrimaryButton({ runsDisabled }) {
   const simulationState = useSelector((state) => state.ux.simulationState);

@@ -9,7 +9,8 @@ import {
   take,
   takeEvery,
 } from 'redux-saga/effects';
-import { minResultsThreshold, SimulationStatus } from '../../constants';
+import { minResultsThreshold, saveThresholds } from '../../constants/constants';
+import { SimulationStatus } from '../../constants/typeDefinitions';
 import {
   addGalleryEntry,
   addImageToDatabase,
@@ -20,12 +21,14 @@ import {
   runNextPendingSimulation,
   setCurrentSimulation,
   updateCurrentSimulation,
-} from '../../globals/database';
-import { approxEqual, setSigFigs } from '../../globals/statsUtils';
+} from '../../global/database';
+import { approxEqual, setSigFigs } from '../../utils/statsUtils';
 import {
-  chromosomesToPhenotype, createGif, createImageData, shouldSaveGenImage,
-} from '../../globals/utils';
-import { isRunningSelector } from '../../hooks';
+  chromosomesToPhenotype,
+  createGif,
+  createImageData,
+} from '../../utils/utils';
+import { isRunningSelector } from '../hooks';
 import {
   addGenStats,
   setGlobalBest,
@@ -42,12 +45,18 @@ import {
 } from '../ux/uxSlice';
 import { setSimulationParameters } from '../parameters/parametersSlice';
 
-function* restorePopulationSaga({ payload: populationData }) {
-  const target = yield select((state) => state.parameters.target);
-  const populationService = yield getContext('population');
-  const { data } = yield createImageData(target);
-  yield populationService.restore({ target: data, ...populationData });
-}
+// Private Helper Functions
+// --------------------------------------------------
+const shouldSaveGenImage = (genId) => {
+  let mod;
+  for (let i = 0; i < saveThresholds.length; ++i) {
+    if (genId <= saveThresholds[i].threshold) {
+      mod = saveThresholds[i].mod;
+      break;
+    }
+  }
+  return (genId % mod) === 0;
+};
 
 const hasReachedTarget = (globalBest, target) => {
   if (!globalBest) return false;
@@ -55,6 +64,15 @@ const hasReachedTarget = (globalBest, target) => {
   const { fitness } = globalBest.organism;
   return fitness > target || approxEqual(fitness, target);
 };
+
+// Saga Functions
+// --------------------------------------------------
+function* restorePopulationSaga({ payload: populationData }) {
+  const target = yield select((state) => state.parameters.target);
+  const populationService = yield getContext('population');
+  const { data } = yield createImageData(target);
+  yield populationService.restore({ target: data, ...populationData });
+}
 
 function* resetSimulationsSaga() {
   const populationService = yield getContext('population');
@@ -237,7 +255,6 @@ function* runSimulationSaga({ parameters }) {
 }
 
 function* runSimulationsSaga() {
-  // TODO: Combine into one call
   let pendingSimulation = yield runNextPendingSimulation();
 
   while (pendingSimulation) {

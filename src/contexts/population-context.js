@@ -1,8 +1,14 @@
 import { createContext } from 'react';
-import { workerBatchSize } from '../constants';
+import { workerBatchSize } from '../constants/constants';
 import createWorker from '../web-workers/fitnessEvaluatorCreator';
 import Population from '../models/population';
 
+/**
+ * A class that serves as the interface between the App and the Population
+ * and other GA model code that's designed to be platform agnostic.
+ * This service has methods for creating, destroying, and running a Population.
+ * It also manages the webWorker code for parallelizing the fitnessEvaluation work.
+ */
 class PopulationService {
   constructor() {
     this.population = null;

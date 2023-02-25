@@ -1,7 +1,7 @@
-import { DistributionTypes, MutationProbabilities, ProbabilityTypes } from '../constants';
-import GaussianNoise from '../globals/gaussianNoise';
-import { flipCoin } from '../globals/statsUtils';
-import { computeProb } from '../globals/utils';
+import { DistributionTypes, ProbabilityTypes } from '../constants/typeDefinitions';
+import { MutationProbabilities } from '../constants/constants';
+import GaussianNoise from '../utils/gaussianNoise';
+import { computeProb, flipCoin } from '../utils/statsUtils';
 
 /**
  * Mutation

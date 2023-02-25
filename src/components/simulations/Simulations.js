@@ -12,15 +12,15 @@ import {
   useGetCompletedSimulations,
   useGetCurrentSimulation,
   useGetPendingSimulations,
-} from '../../globals/database';
-import { SimulationStatus } from '../../constants';
+} from '../../global/database';
+import { SimulationStatus } from '../../constants/typeDefinitions';
 import SimulationChart from './SimulationChart';
 import SimulationButtons from './SimulationButtons';
 import SimulationEntry from './SimulationEntry';
 import SimulationDetails from './SimulationDetails';
 import SimulationFormDialog from './SimulationFormDialog';
 import RunningSimulationDisplay from './RunningSimulationDisplay';
-import defaultParameters from '../../globals/defaultParameters';
+import defaultParameters from '../../constants/defaultParameters';
 import Panel from '../common/Panel';
 
 function Simulations() {

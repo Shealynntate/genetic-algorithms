@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { clamp } from 'lodash';
-import { maxColorValue } from '../constants';
+import { maxColorValue } from '../constants/constants';
 import {
+  genRange,
   randomInt,
   rand,
   randomIndex,
-} from '../globals/statsUtils';
-import { genRange } from '../globals/utils';
+} from '../utils/statsUtils';
 
 // Chromosome Initialization Helpers
 // ------------------------------------------------------------

@@ -6,8 +6,8 @@ import {
   Box, Input, Stack, Typography,
 } from '@mui/material';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
-import defaultParameters, { ParameterBounds } from '../../globals/defaultParameters';
-import { ParameterLabels } from '../../globals/websiteCopy';
+import defaultParameters, { ParameterBounds } from '../../constants/defaultParameters';
+import { ParameterLabels } from '../../constants/websiteCopy';
 import Tooltip from '../common/Tooltip';
 
 // Note: Start and End fitness are available as inputs here, currently not setting them

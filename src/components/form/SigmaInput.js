@@ -3,8 +3,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { Box, Input, Typography } from '@mui/material';
-import defaultParameters from '../../globals/defaultParameters';
-import { ParameterLabels } from '../../globals/websiteCopy';
+import defaultParameters from '../../constants/defaultParameters';
+import { ParameterLabels } from '../../constants/websiteCopy';
 import Tooltip from '../common/Tooltip';
 
 function SigmaInput({

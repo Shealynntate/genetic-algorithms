@@ -13,10 +13,10 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { addGraphEntry, removeGraphEntry } from '../../features/ux/uxSlice';
-import { SimulationStatus } from '../../constants';
-import { deleteSimulation, renameSimulation } from '../../globals/database';
-import { ParametersType } from '../../types';
-import { useGraphColor, useIsGraphEntry } from '../../hooks';
+import { SimulationStatus } from '../../constants/typeDefinitions';
+import { ParametersType } from '../../constants/propTypes';
+import { deleteSimulation, renameSimulation } from '../../global/database';
+import { useGraphColor, useIsGraphEntry } from '../../features/hooks';
 
 function SimulationEntry({
   simulation,

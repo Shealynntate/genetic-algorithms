@@ -2,9 +2,14 @@
 import { deviation } from 'd3-array';
 import { omit } from 'lodash';
 import Organism from './organism';
-import { SelectionType, statsSigFigs } from '../constants';
-import { randomFloat, randomIndex, setSigFigs } from '../globals/statsUtils';
-import { genRange } from '../globals/utils';
+import { SelectionType } from '../constants/typeDefinitions';
+import { statsSigFigs } from '../constants/constants';
+import {
+  genRange,
+  randomFloat,
+  randomIndex,
+  setSigFigs,
+} from '../utils/statsUtils';
 import Mutation from './mutation';
 import Selection from './selection';
 import Crossover from './crossover';
@@ -92,6 +97,7 @@ class Population {
   async runGeneration() {
     const parents = this.performSelection(this.selection);
     this.organisms = this.reproduce(parents, this.selection, this.crossover, this.mutation);
+    // This is handled externally in a webWorker in order to parallelize the work
     this.organisms = await this.evaluateFitness(this.organisms);
 
     this.genId = Population.nextGenId;
@@ -181,13 +187,11 @@ class Population {
   }
 
   tournamentSelectParent(size) {
-    const chromosomePenalty = 0; // 0.0001;
     let best = this.randomOrganism();
-    // TODO: Temp test length penalty on chromosomes
-    let fitA = best.fitness - (chromosomePenalty * best.genome.chromosomes.length);
+    let fitA = best.fitness;
     genRange(size).forEach(() => {
       const next = this.randomOrganism();
-      const fitB = next.fitness - (chromosomePenalty * next.genome.chromosomes.length);
+      const fitB = next.fitness;
       if (fitB > fitA) {
         best = next;
         fitA = fitB;

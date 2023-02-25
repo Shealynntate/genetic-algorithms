@@ -1,6 +1,6 @@
-import { CrossoverProbabilities, ProbabilityTypes } from '../constants';
-import { flipCoin } from '../globals/statsUtils';
-import { computeProb } from '../globals/utils';
+import { ProbabilityTypes } from '../constants/typeDefinitions';
+import { CrossoverProbabilities } from '../constants/constants';
+import { computeProb, flipCoin } from '../utils/statsUtils';
 
 /**
  * Crossover

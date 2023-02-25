@@ -7,8 +7,8 @@ import {
   DistributionTypes,
   ProbabilityTypes,
   SelectionType,
-  targetFitness,
-} from '../constants';
+} from './typeDefinitions';
+import { targetFitness } from './constants';
 
 const maxPopulation = 500;
 

@@ -1,43 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { Box } from '@mui/material';
 import theme from '../../theme';
 
-const Tooltip = styled(({
-  content,
+const ErrorTooltip = styled(({
+  error,
   children,
-  delay,
   direction,
   display,
+  show,
 }) => {
-  let timeout;
-  const [active, setActive] = useState(false);
-
-  const showTip = () => {
-    timeout = setTimeout(() => {
-      setActive(true);
-    }, delay);
-  };
-
-  const hideTip = () => {
-    clearInterval(timeout);
-    setActive(false);
-  };
-
-  if (!content) {
+  if (!error) {
     // Don't create the tooltip if there's no text content
     return children;
   }
 
   return (
     <Box
-      onMouseEnter={showTip}
-      onMouseLeave={hideTip}
       style={{ display: 'inherit', position: 'relative' }}
     >
       {children}
-      {active && (
+      {show && (
         <div
           className={`Tooltip-Tip ${direction}`}
           style={{
@@ -47,29 +31,30 @@ const Tooltip = styled(({
             zIndex: 9999,
             whiteSpace: 'pre',
             overflowX: 'visible',
+            color: theme.palette.error.light,
             background: theme.palette.background.paper,
           }}
         >
-          {content}
+          {error}
         </div>
       )}
     </Box>
   );
 })();
 
-Tooltip.propTypes = {
+ErrorTooltip.propTypes = {
   children: PropTypes.node.isRequired,
-  content: PropTypes.node,
-  delay: PropTypes.number,
   direction: PropTypes.string,
   display: PropTypes.string,
+  error: PropTypes.node,
+  show: PropTypes.bool,
 };
 
-Tooltip.defaultProps = {
-  delay: 400,
-  direction: 'top',
+ErrorTooltip.defaultProps = {
+  direction: 'bottom',
   display: 'block',
-  content: null,
+  error: null,
+  show: false,
 };
 
-export default Tooltip;
+export default ErrorTooltip;

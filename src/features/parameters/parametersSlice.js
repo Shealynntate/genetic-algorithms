@@ -1,9 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import {
-  DistributionTypes,
-} from '../../constants';
-import defaultParameters from '../../globals/defaultParameters';
+import { DistributionTypes } from '../../constants/typeDefinitions';
+import defaultParameters from '../../constants/defaultParameters';
 
 export const parametersSlice = createSlice({
   name: 'parameters',

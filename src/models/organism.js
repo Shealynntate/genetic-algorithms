@@ -1,4 +1,4 @@
-import { CrossoverType } from '../constants';
+import { CrossoverType } from '../constants/typeDefinitions';
 import Genome from './genome';
 
 const CrossoverFunctions = {

@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Box, Paper, Stack, Typography,
 } from '@mui/material';
-import { useGetGalleryEntries } from '../../globals/database';
+import { useGetGalleryEntries } from '../../global/database';
 import GalleryEntry from './GalleryEntry';
 import DemoGallery from './DemoGallery';
 import Panel from '../common/Panel';

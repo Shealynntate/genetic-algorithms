@@ -1,7 +1,7 @@
 import Dexie from 'dexie';
 import { useLiveQuery } from 'dexie-react-hooks';
 import _ from 'lodash';
-import { SimulationStatus } from '../constants';
+import { SimulationStatus } from '../constants/typeDefinitions';
 
 const databaseName = 'GeneticAlgorithmsDB';
 

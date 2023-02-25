@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { DistributionTypes, ProbabilityTypes } from './constants';
+import { DistributionTypes, ProbabilityTypes } from './typeDefinitions';
 
 export const ChromosomeType = {
   points: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)),

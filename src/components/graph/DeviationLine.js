@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Threshold } from '@visx/threshold';
 import { curveMonotoneX } from '@visx/curve';
-import { SimulationType } from '../../types';
+import { SimulationType } from '../../constants/propTypes';
 import Line from './Line';
 
 function DeviationLine({

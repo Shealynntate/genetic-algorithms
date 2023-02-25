@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { useGetCurrentSimulation } from '../../globals/database';
+import { useGetCurrentSimulation } from '../../global/database';
 import Line from '../graph/Line';
 import DeviationLine from '../graph/DeviationLine';
 

@@ -4,7 +4,7 @@ import {
   genRange,
   randomIndex,
   tweakPoint,
-} from '../models/utils';
+} from '../utils/utils';
 
 const startPoint = () => [0.5, 0.5];
 

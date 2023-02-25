@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import { useTheme } from '@emotion/react';
 import { Alert, Box, Snackbar } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
-import { AlertState, canvasParameters } from '../../constants';
-import { fileToBase64 } from '../../globals/utils';
+import { AlertState } from '../../constants/typeDefinitions';
+import { canvasParameters } from '../../constants/constants';
+import { fileToBase64 } from '../../utils/utils';
 import TargetCanvas from '../canvas/TargetCanvas';
 
 const AlertMessage = {

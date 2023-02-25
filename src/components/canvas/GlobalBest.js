@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
 import OrganismCanvas from './OrganismCanvas';
-import { canvasParameters } from '../../constants';
+import { canvasParameters } from '../../constants/constants';
 import ImageCaption from '../common/ImageCaption';
 
 const { width, height } = canvasParameters;

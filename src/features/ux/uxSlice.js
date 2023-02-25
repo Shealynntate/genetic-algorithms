@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { AppState, lineColors } from '../../constants';
+import { AppState } from '../../constants/typeDefinitions';
+import { lineColors } from '../../constants/constants';
 
 const initialState = {
   simulationState: AppState.NONE,

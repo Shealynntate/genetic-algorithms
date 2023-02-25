@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import { GitHub } from '@mui/icons-material';
-import { projectUrl } from '../constants';
+import { projectUrl } from '../constants/constants';
 import ChromosomesIcon from './common/ChromosomesIcon';
 
 function Header() {

@@ -1,7 +1,7 @@
 import { pickBy, values } from 'lodash';
-import * as utils from '../globals/utils';
+import * as utils from '../utils/utils';
 import { SelectionType } from '../constants';
-import GaussianNoise from '../globals/gaussianNoise';
+import GaussianNoise from '../utils/gaussianNoise';
 import Population from '../models/population';
 import Organism from '../models/organism';
 

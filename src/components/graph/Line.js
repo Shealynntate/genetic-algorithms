@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { LinePath } from '@visx/shape';
 import { curveMonotoneX } from '@visx/curve';
-import { ResultsType } from '../../types';
+import { ResultsType } from '../../constants/propTypes';
+import theme from '../../theme';
 
 function Line({
   data,
@@ -30,7 +31,7 @@ Line.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape(ResultsType)),
   x: PropTypes.func.isRequired,
   y: PropTypes.func.isRequired,
-  color: PropTypes.string.isRequired,
+  color: PropTypes.string,
   type: PropTypes.string,
   width: PropTypes.number,
 };
@@ -39,6 +40,7 @@ Line.defaultProps = {
   data: [],
   type: 'solid',
   width: 1,
+  color: theme.palette.primary.main,
 };
 
 export default Line;

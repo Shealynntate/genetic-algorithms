@@ -13,22 +13,24 @@ import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
+  canvasParameters,
+  MutationProbabilities,
+} from '../../constants/constants';
+import {
   CrossoverType,
   DistributionTypes,
-  MutationProbabilities,
   ProbabilityTypes,
   SelectionType,
-  canvasParameters,
-} from '../../constants';
-import { CrossoverTypeLabels, SelectionTypeLabels } from '../../globals/websiteCopy';
+} from '../../constants/typeDefinitions';
+import { CrossoverTypeLabels, SelectionTypeLabels } from '../../constants/websiteCopy';
 import Checkbox from './Checkbox';
 import SigmaInput from './SigmaInput';
 import ProbabilityInput from './ProbabilityInput';
-import defaultParameters from '../../globals/defaultParameters';
+import defaultParameters from '../../constants/defaultParameters';
 import ImageInput from './ImageInput';
 import Panel from '../common/Panel';
 import NumberInput from './NumberInput';
-import { ParametersType } from '../../types';
+import { ParametersType } from '../../constants/propTypes';
 import Tooltip from '../common/Tooltip';
 
 const singlePointFields = [ProbabilityTypes.TWEAK];

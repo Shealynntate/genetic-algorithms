@@ -13,7 +13,7 @@ import StatusText from '../common/StatusText';
 function SimulationStatusPanel() {
   const { organism } = useSelector((state) => state.simulation.currentBest);
   const stats = useSelector((state) => state.simulation.currentGenStats);
-  const showContent = !!organism; // TODO: Use state hook
+  const showContent = !!organism;
 
   return (
     <Paper>

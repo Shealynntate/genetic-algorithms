@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 import {
   Input,
   Stack,
-  Tooltip,
   Typography,
 } from '@mui/material';
 import _ from 'lodash';
-import defaultParameters, { ParameterBounds, ParameterValidation } from '../../globals/defaultParameters';
-import { ParameterLabels } from '../../globals/websiteCopy';
-import CustomTooltip from '../common/Tooltip';
+import defaultParameters, { ParameterBounds, ParameterValidation } from '../../constants/defaultParameters';
+import { ParameterLabels } from '../../constants/websiteCopy';
+import Tooltip from '../common/Tooltip';
+import ErrorTooltip from '../common/ErrorTooltip';
 
 function NumberInput({
   errors,
@@ -27,14 +27,14 @@ function NumberInput({
 
   return (
     <Stack direction="row">
-      <Tooltip title={error?.message} arrow open={!!error}>
+      <ErrorTooltip error={error?.message} show={!!error}>
         <Stack
           direction="row"
           sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
         >
-          <CustomTooltip content={tooltip}>
+          <Tooltip content={tooltip}>
             <Typography pr={1}>{text}</Typography>
-          </CustomTooltip>
+          </Tooltip>
           <Input
             defaultValue={defaultValue}
             {...register(path, { valueAsNumber: true, validate: (v) => validate(v, getValues) })}
@@ -47,14 +47,13 @@ function NumberInput({
             }}
           />
         </Stack>
-      </Tooltip>
+      </ErrorTooltip>
     </Stack>
   );
 }
 
 NumberInput.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  errors: PropTypes.object.isRequired,
+  errors: PropTypes.objectOf(PropTypes.objectOf(PropTypes.string)).isRequired,
   getValues: PropTypes.func.isRequired,
   path: PropTypes.string.isRequired,
   register: PropTypes.func.isRequired,

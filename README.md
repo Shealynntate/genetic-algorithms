@@ -47,7 +47,7 @@ All of the Genetic Algorithm code I've tried to keep isolated in the `models` fo
     - All the react components
   > contexts
   > features
-  > globals
+  > global
   > models
     - Most all of the Genetic Algorithm specific code
   > test

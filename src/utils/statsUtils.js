@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+export const genRange = (max) => ([...Array(max).keys()]);
+
 /**
  * Sets the number of significant figures for an input number
  * @param {*} value a floating point number
@@ -41,3 +43,14 @@ export const maxFitness = (orgs) => maxFitOrganism(orgs)?.fitness || 0;
 export const meanFitness = (orgs) => _.meanBy(orgs, 'fitness');
 
 export const minFitness = (orgs) => _.minBy(orgs, 'fitness')?.fitness || 0;
+
+export const computeProb = ({
+  startValue,
+  endValue,
+  startFitness,
+  endFitness,
+}, fitness) => {
+  if (fitness <= startFitness) return startValue;
+  if (fitness >= endFitness) return endValue;
+  return startValue + fitness * ((endValue - startValue) / (endFitness - startFitness));
+};

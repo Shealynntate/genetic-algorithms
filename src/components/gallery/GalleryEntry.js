@@ -5,12 +5,12 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
-import { deleteGalleryEntry, renameGalleryEntry } from '../../globals/database';
-import { download, downloadJSON } from '../../globals/utils';
-import { canvasParameters } from '../../constants';
+import { deleteGalleryEntry, renameGalleryEntry } from '../../global/database';
+import { download, downloadJSON } from '../../utils/utils';
+import { canvasParameters } from '../../constants/constants';
 import OrganismCanvas from '../canvas/OrganismCanvas';
 import TargetCanvas from '../canvas/TargetCanvas';
-import { GalleryEntryType } from '../../types';
+import { GalleryEntryType } from '../../constants/propTypes';
 import Tooltip from '../common/Tooltip';
 
 const width = canvasParameters.width / 2;
@@ -47,7 +47,7 @@ function GalleryEntry({ data, readOnly }) {
   const onChangeName = async (event) => {
     const { value } = event.target;
     setEntryName(value);
-    // TODO: Throttle this update, same with SimulationEntry name change
+
     await renameGalleryEntry(id, value);
   };
 

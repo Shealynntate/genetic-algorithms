@@ -5,9 +5,10 @@ import {
   Paper, Stack, Typography,
 } from '@mui/material';
 import { useTheme } from '@emotion/react';
-import { ParametersType } from '../../types';
+import { ParametersType } from '../../constants/propTypes';
 import SimulationEntry from './SimulationEntry';
-import { canvasParameters, SimulationStatus } from '../../constants';
+import { SimulationStatus } from '../../constants/typeDefinitions';
+import { canvasParameters } from '../../constants/constants';
 import GlobalBest from '../canvas/GlobalBest';
 import Panel from '../common/Panel';
 import TargetCanvas from '../canvas/TargetCanvas';

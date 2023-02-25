@@ -5,7 +5,7 @@ import {
   DistributionTypes,
   ProbabilityTypes,
   SelectionType,
-} from '../constants';
+} from './typeDefinitions';
 
 export const ParameterLabels = {
   population: {

@@ -10,8 +10,8 @@ import { scaleLinear } from '@visx/scale';
 import { useSelector } from 'react-redux';
 import { GridColumns } from '@visx/grid';
 import BrushHandle from './BrushHandle';
-import { minResultsThreshold } from '../../constants';
-import { SimulationType } from '../../types';
+import { minResultsThreshold } from '../../constants/constants';
+import { SimulationType } from '../../constants/propTypes';
 import RunningSimulationGraph from '../simulations/RunningSimulationGraph';
 
 const PATTERN_ID = 'brush_pattern';
