@@ -2,6 +2,7 @@ import { createContext } from 'react';
 import { workerBatchSize } from '../constants/constants';
 import createWorker from '../web-workers/fitnessEvaluatorCreator';
 import Population from '../models/population';
+import Organism from '../models/organism';
 
 /**
  * A class that serves as the interface between the App and the Population
@@ -76,6 +77,7 @@ class PopulationService {
   reset() {
     // Reset the static state of the Population
     Population.reset();
+    Organism.reset();
     this.population = null;
     // Terminate the webWorkers
     this.workers.forEach((worker) => worker.terminate());

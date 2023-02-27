@@ -6,7 +6,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import { deleteGalleryEntry, renameGalleryEntry } from '../../global/database';
-import { download, downloadJSON } from '../../utils/utils';
+import { download, downloadJSON } from '../../utils/fileUtils';
 import { canvasParameters } from '../../constants/constants';
 import OrganismCanvas from '../canvas/OrganismCanvas';
 import TargetCanvas from '../canvas/TargetCanvas';

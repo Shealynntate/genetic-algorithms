@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { canvasParameters } from '../../constants/constants';
-import { createImageData } from '../../utils/utils';
+import { createImageData } from '../../utils/imageUtils';
 import Canvas from './Canvas';
 
 function TargetCanvas({

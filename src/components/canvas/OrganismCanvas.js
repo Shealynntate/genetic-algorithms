@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { canvasParameters } from '../../constants/constants';
 import { OrganismType } from '../../constants/propTypes';
-import { chromosomesToCanvas } from '../../utils/utils';
+import { chromosomesToCanvas } from '../../utils/imageUtils';
 
 function OrganismCanvas({
   organism,

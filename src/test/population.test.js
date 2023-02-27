@@ -1,43 +1,118 @@
-import { pickBy, values } from 'lodash';
-import * as utils from '../utils/utils';
-import { SelectionType } from '../constants';
-import GaussianNoise from '../utils/gaussianNoise';
+import * as utils from '../utils/statsUtils';
+import {
+  CrossoverType,
+  DistributionTypes,
+  ProbabilityTypes,
+  SelectionType,
+} from '../constants/typeDefinitions';
+// import GaussianNoise from '../utils/gaussianNoise';
 import Population from '../models/population';
 import Organism from '../models/organism';
+import { mockRandom } from './utils';
 
-const popSize = 10;
+const targetFitness = 1;
+const populationParameters = {
+  size: 10,
+  minGenomeSize: 1,
+  maxGenomeSize: 10,
+  minPoints: 3,
+  maxPoints: 10,
+  target: '',
+  crossover: {
+    type: CrossoverType.ONE_POINT,
+    probabilities: {
+      [ProbabilityTypes.SWAP]: {
+        startValue: 0.9,
+        endValue: 0.9,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+    },
+  },
+  mutation: {
+    isSinglePoint: true,
+    [DistributionTypes.COLOR_SIGMA]: 0.06,
+    [DistributionTypes.POINT_SIGMA]: 0.06,
+    [DistributionTypes.PERMUTE_SIGMA]: 0.05,
+    probabilities: {
+      [ProbabilityTypes.TWEAK]: {
+        startValue: 0.04,
+        endValue: 0.04,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+      [ProbabilityTypes.TWEAK_COLOR]: {
+        startValue: 0.01,
+        endValue: 0.003,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+      [ProbabilityTypes.TWEAK_POINT]: {
+        startValue: 0.01,
+        endValue: 0.003,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+      [ProbabilityTypes.ADD_POINT]: {
+        startValue: 0.0015,
+        endValue: 0.0015,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+      [ProbabilityTypes.REMOVE_POINT]: {
+        startValue: 0.0015,
+        endValue: 0.0015,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+      [ProbabilityTypes.ADD_CHROMOSOME]: {
+        startValue: 0,
+        endValue: 0,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+      [ProbabilityTypes.REMOVE_CHROMOSOME]: {
+        startValue: 0,
+        endValue: 0,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+      [ProbabilityTypes.RESET_CHROMOSOME]: {
+        startValue: 0.0006,
+        endValue: 0.0006,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+      [ProbabilityTypes.PERMUTE_CHROMOSOMES]: {
+        startValue: 0.0015,
+        endValue: 0.0015,
+        startFitness: 0,
+        endFitness: targetFitness,
+      },
+    },
+  },
+  selection: {},
+};
 
-function mockEvaluateFitness() {
-  // eslint-disable-next-line no-param-reassign
-  this.organisms.forEach((org) => { org.fitness = 1; });
-}
+const mockEvaluateFitness = async (organisms) => organisms.map((o) => ({ ...o, fitness: 1 }));
 
 beforeEach(() => {
   // Reset ID generations
-  Population.count = null;
-  Organism.count = null;
+  Population.reset();
+  Organism.reset();
 });
 
-const mockRandomFloat = (v) => {
-  let index = -1;
-
-  return (() => {
-    index += 1;
-    return v[index];
-  });
-};
-
-test('Roulette CDF', () => {
-  jest.spyOn(Population.prototype, 'evaluateFitness').mockImplementation(mockEvaluateFitness);
-  const population = new Population(popSize, 1, null);
-
+// --------------------------------------------------
+test('Roulette CDF', async () => {
+  const population = new Population(populationParameters, mockEvaluateFitness);
+  await population.initialize();
   const cdf = population.createFitnessCDF();
   cdf.forEach((value, index) => {
     expect(value).toEqual(index + 1);
   });
 });
 
-test('Roulette Parent Selection', () => {
+test('Roulette Parent Selection', async () => {
   const picks = [
     { n: 0, id: 0 },
     { n: 1, id: 0 },
@@ -52,11 +127,11 @@ test('Roulette Parent Selection', () => {
     { n: 0, id: 0 },
   ];
   // Extract the "random" values and feed them into the mock randomFloat function
-  const rvs = values(pickBy(picks, 'n'));
-  jest.spyOn(utils, 'randomFloat').mockImplementation(mockRandomFloat(rvs));
-  jest.spyOn(Population.prototype, 'evaluateFitness').mockImplementation(mockEvaluateFitness);
+  const rvs = picks.map(({ n }) => n);
+  jest.spyOn(utils, 'randomFloat').mockImplementation(mockRandom(rvs));
 
-  const population = new Population(popSize, 1, null);
+  const population = new Population(populationParameters, mockEvaluateFitness);
+  await population.initialize();
   const cdf = population.createFitnessCDF();
   // Check that the appropriate parent was chosen for each of the corresponding n values
   picks.forEach(({ id }) => {
@@ -65,18 +140,22 @@ test('Roulette Parent Selection', () => {
   });
 });
 
-test('Roulette Selection', () => {
-  const noise = new GaussianNoise(0.1);
-  jest.spyOn(Population.prototype, 'evaluateFitness').mockImplementation(mockEvaluateFitness);
-  const population = new Population(popSize, 1, null);
+test('Roulette Selection', async () => {
+  // const noise = new GaussianNoise(0.1);
+  const population = new Population(populationParameters, mockEvaluateFitness);
+  await population.initialize();
 
   population.organisms.forEach((org) => {
     expect(org.fitness).toBe(1);
   });
 
   const rvs = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  jest.spyOn(utils, 'randomFloat').mockImplementation(mockRandomFloat(rvs));
-  population.performSelection(SelectionType.ROULETTE, noise);
+  jest.spyOn(utils, 'randomFloat').mockImplementation(mockRandom(rvs));
+  population.performSelection({
+    type: SelectionType.ROULETTE,
+    tournamentSize: 0,
+    eliteCount: 0,
+  });
 
   expect(utils.randomFloat).toBeCalledTimes(10);
 

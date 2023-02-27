@@ -1,4 +1,5 @@
-import { genRange, randomIndex } from '../utils/statsUtils';
+import { genRange } from '../utils/utils';
+import { randomIndex } from '../utils/statsUtils';
 import Chromosome from './chromosome';
 
 const Genome = {

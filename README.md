@@ -44,13 +44,19 @@ All of the Genetic Algorithm code I've tried to keep isolated in the `models` fo
   > assets
     - Images & Json for tests and demos
   > components
-    - All the react components
+    - All the React components
+  > constants
+    - Type definitions and config values
   > contexts
+    - PopulationService
   > features
+    - Redux slices, hooks, and sagas
   > global
+    - database service
   > models
     - Most all of the Genetic Algorithm specific code
   > test
+  > utils
   > web-workers
-    - Phenotype - i.e. the fitness evaluation computations
+    - fitnessEvaluator - i.e. the fitness evaluation computations
 ```

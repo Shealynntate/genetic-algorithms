@@ -1,146 +1,29 @@
-import gifshot from 'gifshot';
-import { canvasParameters } from '../constants/constants';
-
-// Internal Helper Functions
+// General Purpose Helper Functions
 // --------------------------------------------------
+
 /**
- * An helper method that asynchronously creates an Image element
- * @param {*} src - the src parameter for an HTML image element to load
- * @returns a Promise that resolves into the created Image object or an error
+ * Creates an array of numbers, provides an easy way to loop
+ * max number of times without creating an explicit for loop
+ * @param {*} max the upper bound of the array
+ * @returns an array of sequential numbers from 0 to max
  */
-const createImage = (src) => new Promise((resolve, reject) => {
-  const image = new Image();
-  image.onload = () => resolve(image);
-  image.onerror = (error) => reject(error);
-  image.src = src;
-});
+export const genRange = (max) => ([...Array(max).keys()]);
 
-const imageDataToImage = async (imageData) => {
-  const canvas = document.createElement('canvas');
-  canvas.width = imageData.width;
-  canvas.height = imageData.height;
-  canvas.getContext('2d').putImageData(imageData, 0, 0);
-
-  return createImage(canvas.toDataURL());
+/**
+ * Sets the number of significant figures for an input number
+ * @param {*} value a floating point number
+ * @param {*} sigFigs the number of digits after the decimal point you want to preserve
+ * @returns the new value with the appropriate number of significant figures
+ */
+export const setSigFigs = (value, sigFigs) => {
+  const m = 10 ** sigFigs;
+  return Math.round(value * m) / m;
 };
 
-const scalePoint = (point, { w, h }) => [point[0] * w, point[1] * h];
-
-// Canvas, ImageData and Phenotype Functions
-// --------------------------------------------------
-export const createImageData = async (src, options = {}) => {
-  const image = await createImage(src);
-  const { width = canvasParameters.width, height = canvasParameters.height } = options;
-
-  const canvas = document.createElement('canvas', { width, height });
-  const ctx = canvas.getContext('2d');
-  ctx.canvas.width = width;
-  ctx.canvas.height = height;
-  ctx.drawImage(image, 0, 0, width, height);
-
-  return ctx.getImageData(0, 0, width, height);
-};
-
-export const chromosomesToCanvas = ({
-  chromosomes,
-  ctx,
-  w,
-  h,
-}) => {
-  chromosomes.forEach(({ color, points }) => {
-    ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
-    ctx.beginPath();
-    ctx.moveTo(...scalePoint(points[0], { w, h }));
-    for (let i = 1; i < points.length; ++i) {
-      ctx.lineTo(...scalePoint(points[i], { w, h }));
-    }
-    ctx.closePath();
-    ctx.fill();
-  });
-};
-
-export const chromosomesToPhenotype = (chromosomes) => {
-  const { width, height } = canvasParameters;
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext('2d');
-  chromosomesToCanvas({
-    chromosomes,
-    ctx,
-    w: width,
-    h: height,
-  });
-
-  return ctx.getImageData(0, 0, width, height);
-};
-
-// File Conversion and Download Functions
-// --------------------------------------------------
-export const fileToBase64 = async (file) => {
-  const reader = new FileReader();
-  const promise = new Promise((resolve, reject) => {
-    reader.onload = () => { resolve(reader.result); };
-    reader.onerror = (error) => { reject(error); };
-  });
-  reader.readAsDataURL(file);
-
-  return promise;
-};
-
-export const downloadFile = (fileName, data, blobType, fileType) => {
-  const blob = new Blob([data], { type: blobType });
-  const href = URL.createObjectURL(blob);
-  // Create "a" element with href to file
-  const link = document.createElement('a');
-  link.href = href;
-  link.download = `${fileName}.${fileType}`;
-  document.body.appendChild(link);
-  link.click();
-  // Cean up element & remove ObjectURL
-  document.body.removeChild(link);
-  URL.revokeObjectURL(href);
-};
-
-export const downloadJSON = (fileName, data) => {
-  const json = JSON.stringify(data);
-  downloadFile(fileName, json, 'application/json', 'json');
-};
-
-export const download = (filename, contents) => {
-  const a = document.createElement('a');
-  a.download = filename;
-  a.href = contents;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-};
-
-export const createGif = async (images) => {
-  const { width, height } = canvasParameters;
-  const imgs = await Promise.all(images.map(async (image) => (imageDataToImage(image))));
-  const promise = new Promise((resolve, reject) => {
-    gifshot.createGIF(
-      {
-        images: imgs,
-        frameDuration: 3, // 10 = 1.0 seconds
-        sampleInterval: 1, // sampling rate for image quality, 1 is best, 10 is default
-        gifWidth: width,
-        gifHeight: height,
-        numFrames: images.length,
-      },
-      ({
-        error,
-        errorCode,
-        errorMsg,
-        image, // base64 image (gif)
-      }) => {
-        if (error) {
-          reject(new Error(`[Gifshot] ${errorCode}: ${errorMsg}`));
-        }
-        resolve(image);
-      },
-    );
-  });
-  return promise;
-};
+/**
+ * Compares two floating point numbers up to the thousandths place
+ * @param {*} a - a floating point number to compare
+ * @param {*} b - a floating point number to compare
+ * @returns true if the values are approximately equal and false otherwise
+ */
+export const approxEqual = (a, b) => (setSigFigs(a, 3) === setSigFigs(b, 3));

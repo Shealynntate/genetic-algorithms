@@ -2,11 +2,12 @@
 import { clamp } from 'lodash';
 import { maxColorValue } from '../constants/constants';
 import {
-  genRange,
   randomInt,
   rand,
   randomIndex,
+  flipCoin,
 } from '../utils/statsUtils';
+import { genRange } from '../utils/utils';
 
 // Chromosome Initialization Helpers
 // ------------------------------------------------------------
@@ -118,11 +119,14 @@ const Chromosome = {
   // Exacly 1 mutation per Chromosome
   tweakMutationSinglePoint: (chromosome, mutation) => {
     const { color, points } = chromosome;
-    const index = randomIndex(color.length + points.length);
-    if (index < color.length) {
+    // Flip a fair coin to decide between mutating a color or point,
+    // there can be far more points than colors so this ensures colors get a chance to mutate
+    if (flipCoin()) {
+      const index = randomIndex(color.length);
       chromosome.color = mutateColor(color, index, mutation);
     } else {
-      chromosome.points = mutatePoint(points, index - color.length, mutation);
+      const index = randomIndex(points.length);
+      chromosome.points = mutatePoint(points, index, mutation);
     }
 
     return chromosome;
@@ -166,20 +170,21 @@ const Chromosome = {
 };
 
 export const Test = {
+  crossover,
+  crossoverColor,
+  crossoverPoint,
+  mutateColor,
   randCV,
   randomColor,
   randomPoint,
   randomPoints,
   swap,
-  swapPoint,
   swapColor,
-  crossover,
-  crossoverPoint,
-  crossoverColor,
-  tweakPoint,
-  tweakColor,
+  swapPoint,
+  transparent,
   tweakAlpha,
-  mutateColor,
+  tweakColor,
+  tweakPoint,
 };
 
 export default Chromosome;

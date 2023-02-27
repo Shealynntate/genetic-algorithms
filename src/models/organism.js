@@ -61,6 +61,8 @@ const Organism = {
 
   // This occurs when rehydrating
   restoreId: (id) => { count = id; },
+
+  reset: () => { count = -1; },
 };
 
 export default Organism;

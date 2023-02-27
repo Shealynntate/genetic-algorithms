@@ -6,7 +6,7 @@ import { Alert, Box, Snackbar } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { AlertState } from '../../constants/typeDefinitions';
 import { canvasParameters } from '../../constants/constants';
-import { fileToBase64 } from '../../utils/utils';
+import { fileToBase64 } from '../../utils/fileUtils';
 import TargetCanvas from '../canvas/TargetCanvas';
 
 const AlertMessage = {

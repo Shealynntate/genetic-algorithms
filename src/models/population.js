@@ -4,12 +4,8 @@ import { omit } from 'lodash';
 import Organism from './organism';
 import { SelectionType } from '../constants/typeDefinitions';
 import { statsSigFigs } from '../constants/constants';
-import {
-  genRange,
-  randomFloat,
-  randomIndex,
-  setSigFigs,
-} from '../utils/statsUtils';
+import { genRange, setSigFigs } from '../utils/utils';
+import { randomFloat, randomIndex } from '../utils/statsUtils';
 import Mutation from './mutation';
 import Selection from './selection';
 import Crossover from './crossover';
@@ -182,7 +178,14 @@ class Population {
   rouletteSelectParent(cdf) {
     const total = cdf[cdf.length - 1];
     const n = randomFloat(0, total);
-    const index = cdf.findIndex((f) => n <= f);
+    let index = 0;
+    for (let i = 1; i < cdf.length; ++i) {
+      if (cdf[i - 1] < n && cdf[i] >= n) {
+        index = i;
+        break;
+      }
+    }
+
     return this.organisms[index];
   }
 

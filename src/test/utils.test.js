@@ -1,64 +1,41 @@
-import {
-  createRandomGenome,
-  genCharRange,
-  genRange,
-  randomIndex,
-  tweakPoint,
-} from '../utils/utils';
+import { approxEqual, setSigFigs } from '../utils/utils';
 
-const startPoint = () => [0.5, 0.5];
-
-test('Adds Gaussian noise to Point', () => {
-  genRange(100).forEach(() => {
-    let p = startPoint();
-    p = tweakPoint(...p);
-  });
-});
-
-test('Creates range of characters', () => {
-  expect(genCharRange('a', 6)).toEqual(['a', 'b', 'c', 'd', 'e', 'f']);
-});
-
-test('Generates random indices', () => {
-  // Setup a dictionary of ten 0 value entries
-  const results = {};
-  [...Array(10)].forEach((_, i) => { results[i] = 0; });
-
-  // Sample a ton of random indices and keep track of results
-  [...Array(1e6)].forEach(() => {
-    const index = randomIndex(10);
-    results[index] += 1;
+// --------------------------------------------------
+describe('Rounding And Approx Value Functions', () => {
+  test('Verify setSigFigs functionality', () => {
+    // Check that an integer returns without problem
+    const value1 = setSigFigs(5, 0);
+    const value2 = setSigFigs(5, 2);
+    expect(value1).toEqual(5);
+    expect(value2).toEqual(5);
+    // Check that a float can round to an integer
+    const value3 = setSigFigs(5.1, 0);
+    const value4 = setSigFigs(5.8, 0);
+    expect(value3).toEqual(5);
+    expect(value4).toEqual(6);
+    // Check that a float rounds to the correct decimal
+    const value5 = setSigFigs(5.1212, 2);
+    const value6 = setSigFigs(5.1251, 2);
+    expect(value5).toEqual(5.12);
+    expect(value6).toEqual(5.13);
   });
 
-  Object.entries(results).forEach(([key, value]) => {
-    // Check that only the expcted keys exist in the dictionary
-    expect(parseInt(key, 10)).toBeGreaterThanOrEqual(0);
-    expect(parseInt(key, 10)).toBeLessThan(10);
-    // Expect a less than 1% deviation from an idealized distribution
-    const ideal = 1e5;
-    const ratio = Math.abs(value - ideal) / ideal;
-    expect(ratio).toBeLessThan(0.01);
+  test('Verify approxEqual functionality', () => {
+    // Check that two integers behave as expected
+    const result1 = approxEqual(5, 5);
+    const result2 = approxEqual(5, 6);
+    expect(result1).toBeTruthy();
+    expect(result2).toBeFalsy();
+    // Check that two floats within the sigFig range behave as expected
+    const result3 = approxEqual(5.1, 5.1);
+    const result4 = approxEqual(5.1, 5.2);
+    const result5 = approxEqual(5.111, 5.112);
+    const result6 = approxEqual(5.1111, 5.1112);
+    const result7 = approxEqual(5.1111, 5.1118);
+    expect(result3).toBeTruthy();
+    expect(result4).toBeFalsy();
+    expect(result5).toBeFalsy();
+    expect(result6).toBeTruthy();
+    expect(result7).toBeFalsy();
   });
-});
-
-test('Creates random Genomes', () => {
-  // Check that it creates genomes of the correct length
-  [...Array(10)].forEach((_, i) => {
-    const genome = createRandomGenome(i);
-    expect(genome.length).toEqual(i);
-  });
-
-  let duplicateCount = 0;
-  const genomeMap = {};
-  [...Array(1e5)].forEach(() => {
-    const genome = createRandomGenome(20).join('');
-    if (genomeMap[genome]) {
-      duplicateCount += 1;
-      genomeMap[genome] += 1;
-    } else {
-      genomeMap[genome] = 1;
-    }
-  });
-  // Would not expect any duplicate permutions
-  expect(duplicateCount).toEqual(0);
 });

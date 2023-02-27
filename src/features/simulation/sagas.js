@@ -22,12 +22,12 @@ import {
   setCurrentSimulation,
   updateCurrentSimulation,
 } from '../../global/database';
-import { approxEqual, setSigFigs } from '../../utils/statsUtils';
+import { approxEqual, setSigFigs } from '../../utils/utils';
 import {
   chromosomesToPhenotype,
   createGif,
   createImageData,
-} from '../../utils/utils';
+} from '../../utils/imageUtils';
 import { isRunningSelector } from '../hooks';
 import {
   addGenStats,
