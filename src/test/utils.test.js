@@ -1,4 +1,4 @@
-import { approxEqual, setSigFigs } from '../utils/utils';
+import { approxEqual, genRange, setSigFigs } from '../utils/utils';
 
 // --------------------------------------------------
 describe('Rounding And Approx Value Functions', () => {
@@ -37,5 +37,20 @@ describe('Rounding And Approx Value Functions', () => {
     expect(result5).toBeFalsy();
     expect(result6).toBeTruthy();
     expect(result7).toBeFalsy();
+  });
+});
+
+// --------------------------------------------------
+describe('Array Helper Functions', () => {
+  test('Verify genRange functionality and correctness', () => {
+    // Check on the length of the range
+    const range = genRange(10);
+    expect(range.length).toEqual(10);
+    let count = 0;
+    range.forEach((entry) => {
+      // Check that each entry is the correct value
+      expect(entry).toEqual(count);
+      count += 1;
+    });
   });
 });

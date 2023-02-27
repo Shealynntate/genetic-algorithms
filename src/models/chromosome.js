@@ -1,79 +1,14 @@
 /* eslint-disable no-param-reassign */
-import { clamp } from 'lodash';
-import { maxColorValue } from '../constants/constants';
+import { randomIndex, flipCoin } from '../utils/statsUtils';
 import {
-  randomInt,
-  rand,
-  randomIndex,
-  flipCoin,
-} from '../utils/statsUtils';
-import { genRange } from '../utils/utils';
-
-// Chromosome Initialization Helpers
-// ------------------------------------------------------------
-const randCV = () => randomInt(0, maxColorValue);
-
-const randomColor = () => [randCV(), randCV(), randCV(), rand()];
-
-const transparent = () => [randCV(), randCV(), randCV(), 0];
-
-const randomPoint = () => [rand(), rand()];
-
-const randomPoints = (len) => genRange(len).map(() => randomPoint());
-
-// Chromosome Crossover Helpers
-// ------------------------------------------------------------
-const swap = (type, chromosomes1, chromosomes2, index) => {
-  const temp = chromosomes1[type][index];
-  chromosomes1[type][index] = chromosomes2[type][index];
-  chromosomes2[type][index] = temp;
-};
-
-const swapPoint = (chromosomes1, chromosomes2, index) => {
-  swap('points', chromosomes1, chromosomes2, index);
-};
-
-const swapColor = (chromosomes1, chromosomes2, index) => {
-  swap('color', chromosomes1, chromosomes2, index);
-};
-
-const crossover = (type, chrome1, chrome2, point) => {
-  const { length } = chrome1[type];
-  const values = chrome1[type].splice(point, length, ...chrome2[type].slice(point, length));
-  chrome2[type].splice(point, length, ...values);
-};
-
-const crossoverPoint = (chromosomes1, chromosomes2, point) => {
-  crossover('points', chromosomes1, chromosomes2, point);
-};
-
-const crossoverColor = (chromosomes1, chromosomes2, point) => {
-  crossover('color', chromosomes1, chromosomes2, point);
-};
-
-// Chromosome Mutation Helpers
-// ------------------------------------------------------------
-const tweakPoint = (m, x, y) => [clamp(x + m.pointNudge(), 0, 1), clamp(y + m.pointNudge(), 0, 1)];
-
-const tweakColor = (m, value) => (
-  (maxColorValue + value + m.colorNudge() * maxColorValue) % maxColorValue
-);
-
-const tweakAlpha = (m, value) => clamp(value + m.colorNudge(), 0, 1);
-
-// Mutate a single color value
-const mutateColor = (color, index, mutation) => {
-  if (index === 3) color[index] = tweakAlpha(mutation, color[index]);
-  else color[index] = tweakColor(mutation, color[index]);
-
-  return color;
-};
-
-// Mutate a single (x, y) point
-const mutatePoint = (points, index, mutation) => {
-  points[index] = tweakPoint(mutation, ...points[index]);
-  return points;
-};
+  randomPoints,
+  mutateColor,
+  mutatePoint,
+  transparent,
+  tweakAlpha,
+  tweakColor,
+  tweakPoint,
+} from './chromosomeUtils';
 
 /**
  * Chromosome
@@ -87,16 +22,6 @@ const Chromosome = {
   clone: (chromosome) => Chromosome.create({
     points: chromosome.points.slice(), color: chromosome.color.slice(),
   }),
-
-  mitosis: (chromosome) => {
-    const half = Math.ceil(chromosome.points.length / 2);
-    const a = Chromosome.clone(chromosome);
-    const b = Chromosome.clone(chromosome);
-    a.points = a.points.slice(0, half);
-    b.points = b.points.slice(half);
-
-    return [a, b];
-  },
 
   tweakMutationUniform: (chromosome, mutation) => {
     for (let i = 0; i < chromosome.color.length; ++i) {
@@ -167,24 +92,6 @@ const Chromosome = {
     chromosome.points = randomPoints(numPoints);
     chromosome.color = transparent();
   },
-};
-
-export const Test = {
-  crossover,
-  crossoverColor,
-  crossoverPoint,
-  mutateColor,
-  randCV,
-  randomColor,
-  randomPoint,
-  randomPoints,
-  swap,
-  swapColor,
-  swapPoint,
-  transparent,
-  tweakAlpha,
-  tweakColor,
-  tweakPoint,
 };
 
 export default Chromosome;

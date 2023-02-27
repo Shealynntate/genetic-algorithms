@@ -156,7 +156,7 @@ export const ParameterValidation = {
 // The Default Parameters for a Simulation
 const parameters = {
   population: {
-    size: 300,
+    size: 200,
     minPolygons: 50,
     maxPolygons: 50,
     minPoints: 3,

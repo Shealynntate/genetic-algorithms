@@ -148,16 +148,3 @@ describe('Probability Functions', () => {
     expect(p12).toEqual(0.01);
   });
 });
-
-// --------------------------------------------------
-test('Verify genRange functionality and correctness', () => {
-  // Check on the length of the range
-  const range = genRange(10);
-  expect(range.length).toEqual(10);
-  let count = 0;
-  range.forEach((entry) => {
-    // Check that each entry is the correct value
-    expect(entry).toEqual(count);
-    count += 1;
-  });
-});
