@@ -8,9 +8,7 @@ import {
   ProbabilityTypes,
   SelectionType,
 } from './typeDefinitions';
-import { targetFitness } from './constants';
-
-const maxPopulation = 500;
+import { targetFitness, maxPopulation, maxGenerations } from './constants';
 
 export const ParameterBounds = {
   population: {
@@ -133,7 +131,7 @@ export const ParameterBounds = {
     },
     maxGenerations: {
       min: 1,
-      max: 500_000,
+      max: maxGenerations,
       step: 1,
     },
   },

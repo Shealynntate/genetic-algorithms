@@ -22,6 +22,10 @@ export const RunningStates = [
 ];
 
 // --------------------------------------------------
+export const maxPopulation = 500;
+
+export const maxGenerations = 500_000;
+
 export const targetFitness = 1;
 
 export const statsSigFigs = 5;
@@ -38,7 +42,7 @@ export const saveThresholds = [
   { threshold: 5_000, mod: 500 },
   { threshold: 10_000, mod: 1_000 },
   { threshold: 50_000, mod: 5_000 },
-  { threshold: Math.MAX_SAFE_INTEGER, mod: 10_000 },
+  { threshold: maxGenerations, mod: 10_000 },
 ];
 
 // ------------------------------------------------------------

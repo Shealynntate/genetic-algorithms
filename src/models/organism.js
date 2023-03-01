@@ -1,11 +1,4 @@
-import { CrossoverType } from '../constants/typeDefinitions';
 import Genome from './genome';
-
-const CrossoverFunctions = {
-  [CrossoverType.ONE_POINT]: Genome.onePointCrossover,
-  [CrossoverType.TWO_POINT]: Genome.twoPointCrossover,
-  [CrossoverType.UNIFORM]: Genome.uniformCrossover,
-};
 
 let count = -1;
 const nextId = () => {
@@ -26,13 +19,8 @@ const Organism = {
   }),
 
   reproduce: (parentA, parentB, crossover, mutation, bounds) => {
-    // Crossover event
-    const crossoverFunc = CrossoverFunctions[crossover.type];
-    if (!crossoverFunc) {
-      throw new Error(`Unrecognized crossover type ${crossover.type}`);
-    }
     // Perform Crossover
-    const [newChromosome1, newChromosome2] = crossoverFunc(
+    const [newChromosome1, newChromosome2] = Genome.crossover(
       parentA.genome.chromosomes,
       parentB.genome.chromosomes,
       crossover,
@@ -57,12 +45,14 @@ const Organism = {
     return copy;
   },
 
+  // Organism ID Functions
+  // ------------------------------------------------------------
   getLatestId: () => (count),
+
+  reset: () => { count = -1; },
 
   // This occurs when rehydrating
   restoreId: (id) => { count = id; },
-
-  reset: () => { count = -1; },
 };
 
 export default Organism;

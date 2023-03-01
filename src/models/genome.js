@@ -1,6 +1,7 @@
 import { genRange } from '../utils/utils';
 import { randomIndex } from '../utils/statsUtils';
 import Chromosome from './chromosome';
+import { CrossoverType } from '../constants/typeDefinitions';
 
 const Genome = {
   // Creation Methods
@@ -15,6 +16,24 @@ const Genome = {
 
   // Crossover Methods
   // ------------------------------------------------------------
+  crossover: (parent1, parent2, crossover) => {
+    let func;
+    switch (crossover.type) {
+      case CrossoverType.ONE_POINT:
+        func = Genome.onePointCrossover;
+        break;
+      case CrossoverType.TWO_POINT:
+        func = Genome.twoPointCrossover;
+        break;
+      case CrossoverType.UNIFORM:
+        func = Genome.uniformCrossover;
+        break;
+      default:
+        throw new Error(`Unrecognized crossover type ${crossover.type}`);
+    }
+    return func(parent1, parent2, crossover);
+  },
+
   onePointCrossover: (parent1, parent2, crossover) => {
     const child1 = [];
     const child2 = [];

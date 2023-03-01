@@ -23,7 +23,7 @@ export const tweakPoint = (m, x, y) => (
 );
 
 export const tweakColor = (m, value) => (
-  (maxColorValue + value + m.colorNudge() * maxColorValue) % maxColorValue
+  clamp(value + m.colorNudge() * maxColorValue, 0, maxColorValue)
 );
 
 export const tweakAlpha = (m, value) => clamp(value + m.colorNudge(), 0, 1);

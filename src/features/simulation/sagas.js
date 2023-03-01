@@ -40,6 +40,7 @@ import {
   deleteRunningSimulation,
   endSimulationEarly,
   endSimulations,
+  removeGraphEntry,
   resumeSimulations,
   runSimulations,
 } from '../ux/uxSlice';
@@ -210,6 +211,9 @@ function* runSimulationSaga({ parameters }) {
         return true;
       }
       if (deleteSim) {
+        // Clear graph state if current simulation was being tracked
+        const { id } = yield getCurrentSimulation();
+        yield put(removeGraphEntry(id));
         // Delete the run from the database and move on to the next one
         yield call(deleteCurrentSimulation);
         yield call(resetSimulationsSaga);

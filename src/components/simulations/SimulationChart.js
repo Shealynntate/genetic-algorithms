@@ -15,6 +15,7 @@ import DeviationLine from '../graph/DeviationLine';
 import Line from '../graph/Line';
 import RunningSimulationGraph from './RunningSimulationGraph';
 
+const { maxGenerations: maxGens } = defaultParameters.stopCriteria;
 const graphWidth = 625;
 const graphHeight = 500;
 const brushHeight = 100;
@@ -35,7 +36,7 @@ const fullWidth = graphWidth + margin.left + margin.right;
 const fullHeight = graphHeight + margin.top + margin.bottom;
 
 const findMaxGeneration = (simulations) => {
-  let result = defaultParameters.stopCriteria.maxGenerations;
+  let result = maxGens;
   simulations.forEach(({ parameters }) => {
     const { maxGenerations } = parameters.stopCriteria;
     if (maxGenerations > result) result = maxGenerations;
@@ -98,108 +99,73 @@ const findYDomain = (x0, x1, simulations, settings) => {
   y0 -= epsilon;
   y1 += epsilon;
 
-  return { y0, y1 };
+  return [y0, y1];
 };
 
 function SimulationChart() {
-  const theme = useTheme();
-  const bgColor = theme.palette.background.default;
-  const maskColor = theme.palette.background.mask[0];
-  const axisColor = theme.palette.grey[400];
-
   const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
+  const theme = useTheme();
   const completedSims = useGetCompletedSimulationsAndResults() || [];
   const currentSim = useGetCurrentSimulation();
+
   const [checkedSimulations, setCheckedSimulations] = useState([]);
+  const [domainY, setDomainY] = useState([minResultsThreshold, 1]);
+  const [domainX, setDomainX] = useState([0, maxGens]);
   const [showMean, setShowMean] = useState(true);
   const [showDeviation, setShowDeviation] = useState(false);
   const [showMin, setShowMin] = useState(false);
-  const [domain, setDomain] = useState({
-    x0: 0,
-    x1: defaultParameters.stopCriteria.maxGenerations,
-    y0: minResultsThreshold,
-    y1: 1,
-  });
 
+  const bgColor = theme.palette.background.default;
+  const maskColor = theme.palette.background.mask[0];
+  const axisColor = theme.palette.grey[400];
   const isCurrentSimChecked = currentSim && currentSim.id in graphEntries;
   const domainSimulations = [...checkedSimulations];
   if (isCurrentSimChecked) domainSimulations.push(currentSim);
 
-  useEffect(() => {
-    const checked = completedSims.filter(({ id }) => (id in graphEntries));
-    if (checked.length !== checkedSimulations.length) {
-      setCheckedSimulations(checked);
-    }
-
-    const allChecked = [...checked];
-    if (isCurrentSimChecked) allChecked.push(currentSim);
-    const numGenerations = findMaxGeneration(allChecked);
-    if (numGenerations !== domain.x1) {
-      setDomain({ ...domain, x1: numGenerations });
-    }
-  }, [graphEntries, completedSims]);
-
   const yScale = useMemo(
     () => scaleLinear({
       range: [graphHeight, 0],
-      domain: [domain.y0, domain.y1],
+      domain: domainY,
     }),
-    [domain],
+    [domainY],
   );
 
   const xScale = useMemo(
     () => scaleLinear({
       range: [0, graphWidth],
-      domain: [domain.x0, domain.x1],
+      domain: domainX,
     }),
-    [domain],
+    [domainX],
   );
 
+  // Update X Domain when simulations are checked / unchecked
   useEffect(() => {
-    const yDomain = findYDomain(
-      domain.x0,
-      domain.x1,
+    const checked = completedSims.filter(({ id }) => (id in graphEntries));
+    if (checked.length !== checkedSimulations.length) {
+      setCheckedSimulations(checked);
+    }
+    const allChecked = [...checked];
+    if (isCurrentSimChecked) allChecked.push(currentSim);
+    const numGenerations = findMaxGeneration(allChecked);
+
+    if (numGenerations !== domainX[1]) {
+      setDomainX([domainX[0], numGenerations]);
+    }
+  }, [graphEntries, completedSims]);
+
+  // Update Y Domain when basically anything about the chart changes
+  useEffect(() => {
+    const result = findYDomain(
+      domainX[0],
+      domainX[1],
       checkedSimulations,
       { showDeviation, showMean, showMin },
     );
-    setDomain({ ...domain, ...yDomain });
-  }, [checkedSimulations]);
+    setDomainY(result);
+  }, [checkedSimulations, showMean, showMin, showDeviation, domainX]);
 
   const onChangeDomain = (x0, x1) => {
-    const yDomain = findYDomain(
-      x0,
-      x1,
-      checkedSimulations,
-      { showDeviation, showMean, showMin },
-    );
-    setDomain({ x0, x1, ...yDomain });
-  };
-
-  const onCheckValue = (key, value) => {
-    const yDomain = findYDomain(
-      domain.x0,
-      domain.x1,
-      checkedSimulations,
-      {
-        showDeviation, showMean, showMin, [key]: value,
-      },
-    );
-    setDomain({ ...domain, ...yDomain });
-  };
-
-  const onCheckMean = (v) => {
-    setShowMean(v);
-    onCheckValue('showMean', v);
-  };
-
-  const onCheckMin = (v) => {
-    setShowMin(v);
-    onCheckValue('showMin', v);
-  };
-
-  const onCheckDeviation = (v) => {
-    setShowDeviation(v);
-    onCheckValue('showDeviation', v);
+    setDomainX([x0, x1]);
   };
 
   return (
@@ -211,17 +177,17 @@ function SimulationChart() {
         <CustomCheckbox
           label="Mean"
           checked={showMean}
-          onCheck={onCheckMean}
+          onCheck={setShowMean}
         />
         <CustomCheckbox
           label="Min"
           checked={showMin}
-          onCheck={onCheckMin}
+          onCheck={setShowMin}
         />
         <CustomCheckbox
           label="Deviation"
           checked={showDeviation}
-          onCheck={onCheckDeviation}
+          onCheck={setShowDeviation}
         />
       </Stack>
       <svg width={fullWidth} height={fullHeight}>

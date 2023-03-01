@@ -138,6 +138,108 @@ describe('Chromosome Mutation Utils', () => {
     expect(result[0]).toEqual(0);
     expect(result[1]).toEqual(0);
   });
+
+  test('Tweak Color Zero Amount', () => {
+    const mockMutation = {
+      colorNudge: () => 0,
+    };
+    const result = ChromosomeUtils.tweakColor(mockMutation, 100);
+    expect(result).toEqual(100);
+  });
+
+  test('Tweak Color Small Amount', () => {
+    const start = 100;
+    const mockMutation = {
+      colorNudge: () => 0.1,
+    };
+    const result = ChromosomeUtils.tweakColor(mockMutation, start);
+    expect(result).toEqual(0.1 * maxColorValue + start);
+  });
+
+  test('Tweak Color Max Value Clamping', () => {
+    const start = 200;
+    const mockMutation = {
+      colorNudge: () => 0.5,
+    };
+    const result = ChromosomeUtils.tweakColor(mockMutation, start);
+    expect(result).toEqual(maxColorValue);
+  });
+
+  test('Tweak Color Min Value Clamping', () => {
+    const start = 20;
+    const mockMutation = {
+      colorNudge: () => -0.5,
+    };
+    const result = ChromosomeUtils.tweakColor(mockMutation, start);
+    expect(result).toEqual(0);
+  });
+
+  test('Tweak Alpha Zero Amount', () => {
+    const mockMutation = {
+      colorNudge: () => 0,
+    };
+    const result = ChromosomeUtils.tweakAlpha(mockMutation, 0.5);
+    expect(result).toEqual(0.5);
+  });
+
+  test('Tweak Alpha Small Amount', () => {
+    const mockMutation = {
+      colorNudge: () => 0.1,
+    };
+    const result = ChromosomeUtils.tweakAlpha(mockMutation, 0.5);
+    expect(result).toEqual(0.6);
+  });
+
+  test('Tweak Alpha Max Value Clamping', () => {
+    const mockMutation = {
+      colorNudge: () => 0.5,
+    };
+    const result = ChromosomeUtils.tweakAlpha(mockMutation, 0.8);
+    expect(result).toEqual(1);
+  });
+
+  test('Tweak Alpha Min Value Clamping', () => {
+    const mockMutation = {
+      colorNudge: () => -0.5,
+    };
+    const result = ChromosomeUtils.tweakAlpha(mockMutation, 0.2);
+    expect(result).toEqual(0);
+  });
+
+  test('Mutate Color Changing RGB Channels', () => {
+    const color = [100, 100, 100, 0.5];
+    const mutatedColor = 100 + maxColorValue * 0.1;
+    const mockMutation = {
+      colorNudge: () => 0.1,
+    };
+    // Red
+    const result1 = ChromosomeUtils.mutateColor(color, 0, mockMutation);
+    expect(result1).toEqual([mutatedColor, 100, 100, 0.5]);
+    // Green
+    const result2 = ChromosomeUtils.mutateColor(color, 1, mockMutation);
+    expect(result2).toEqual([mutatedColor, mutatedColor, 100, 0.5]);
+    // Blue
+    const result3 = ChromosomeUtils.mutateColor(color, 2, mockMutation);
+    expect(result3).toEqual([mutatedColor, mutatedColor, mutatedColor, 0.5]);
+  });
+
+  test('Mutate Color Alpha Channel', () => {
+    const color = [100, 100, 100, 0.5];
+    const mockMutation = {
+      colorNudge: () => 0.1,
+    };
+    const result = ChromosomeUtils.mutateColor(color, 3, mockMutation);
+    expect(result).toEqual([100, 100, 100, 0.6]);
+  });
+
+  test('Mutate Point', () => {
+    const points = [[0, 1], [0.5, 0.5]];
+    const mockMutation = {
+      pointNudge: () => 0.1,
+    };
+    const result = ChromosomeUtils.mutatePoint(points, 0, mockMutation);
+    expect(result).toEqual([[0.1, 1], [0.5, 0.5]]);
+  });
 });
 
 // --------------------------------------------------
