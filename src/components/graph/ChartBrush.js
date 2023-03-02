@@ -124,9 +124,6 @@ function ChartBrush({
         <RunningSimulationGraph
           xScale={xScale}
           yScale={yScale}
-          showMean={false}
-          showMin={false}
-          showDeviation={false}
           graphHeight={height}
         />
       )}

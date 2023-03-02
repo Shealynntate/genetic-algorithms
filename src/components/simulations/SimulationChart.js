@@ -11,9 +11,8 @@ import defaultParameters from '../../constants/defaultParameters';
 import CustomCheckbox from '../common/Checkbox';
 import ChartBrush from '../graph/ChartBrush';
 import { useGetCompletedSimulationsAndResults, useGetCurrentSimulation } from '../../global/database';
-import DeviationLine from '../graph/DeviationLine';
-import Line from '../graph/Line';
-import RunningSimulationGraph from './RunningSimulationGraph';
+import SimulationGraphEntry from '../graph/SimulatonGraphEntry';
+import { SimulationGraph } from '../../constants/websiteCopy';
 
 const { maxGenerations: maxGens } = defaultParameters.stopCriteria;
 const graphWidth = 625;
@@ -73,7 +72,9 @@ const findYDomain = (x0, x1, simulations, settings) => {
   simulations.forEach(({ results }) => {
     let leftBound = null;
     let rightBound = null;
-    if (!results) return;
+    if (!results) {
+      return;
+    }
 
     results.forEach(({ stats }) => {
       const { genId } = stats;
@@ -107,8 +108,9 @@ function SimulationChart() {
   const theme = useTheme();
   const completedSims = useGetCompletedSimulationsAndResults() || [];
   const currentSim = useGetCurrentSimulation();
-
-  const [checkedSimulations, setCheckedSimulations] = useState([]);
+  const runningStats = useSelector((state) => state.simulation.runningStatsRecord);
+  if (currentSim) currentSim.results = runningStats;
+  // Local state
   const [domainY, setDomainY] = useState([minResultsThreshold, 1]);
   const [domainX, setDomainX] = useState([0, maxGens]);
   const [showMean, setShowMean] = useState(true);
@@ -118,9 +120,10 @@ function SimulationChart() {
   const bgColor = theme.palette.background.default;
   const maskColor = theme.palette.background.mask[0];
   const axisColor = theme.palette.grey[400];
-  const isCurrentSimChecked = currentSim && currentSim.id in graphEntries;
-  const domainSimulations = [...checkedSimulations];
-  if (isCurrentSimChecked) domainSimulations.push(currentSim);
+  const isCurrentSimGraphed = currentSim && currentSim.id in graphEntries;
+  // Determine which simulations are being graphed
+  const checkedSimulations = completedSims.filter(({ id }) => (id in graphEntries));
+  if (isCurrentSimGraphed) checkedSimulations.push(currentSim);
 
   const yScale = useMemo(
     () => scaleLinear({
@@ -138,31 +141,37 @@ function SimulationChart() {
     [domainX],
   );
 
-  // Update X Domain when simulations are checked / unchecked
-  useEffect(() => {
-    const checked = completedSims.filter(({ id }) => (id in graphEntries));
-    if (checked.length !== checkedSimulations.length) {
-      setCheckedSimulations(checked);
-    }
-    const allChecked = [...checked];
-    if (isCurrentSimChecked) allChecked.push(currentSim);
-    const numGenerations = findMaxGeneration(allChecked);
-
-    if (numGenerations !== domainX[1]) {
-      setDomainX([domainX[0], numGenerations]);
-    }
-  }, [graphEntries, completedSims]);
-
-  // Update Y Domain when basically anything about the chart changes
-  useEffect(() => {
+  const updateDomainY = () => {
     const result = findYDomain(
       domainX[0],
       domainX[1],
       checkedSimulations,
       { showDeviation, showMean, showMin },
     );
-    setDomainY(result);
-  }, [checkedSimulations, showMean, showMin, showDeviation, domainX]);
+
+    if (result !== domainY) {
+      setDomainY(result);
+    }
+  };
+
+  // Update X Domain when simulations are checked / unchecked
+  useEffect(() => {
+    const numGenerations = findMaxGeneration(checkedSimulations);
+    if (numGenerations !== domainX[1]) {
+      setDomainX([domainX[0], numGenerations]);
+    }
+  }, [graphEntries]);
+
+  // Update Y Domain when basically anything about the chart changes
+  useEffect(() => {
+    updateDomainY();
+  }, [graphEntries, showMean, showMin, showDeviation, domainX]);
+
+  useEffect(() => {
+    if (isCurrentSimGraphed) {
+      updateDomainY();
+    }
+  }, [runningStats]);
 
   const onChangeDomain = (x0, x1) => {
     setDomainX([x0, x1]);
@@ -171,21 +180,21 @@ function SimulationChart() {
   return (
     <Stack>
       <Typography color="GrayText" sx={{ textAlign: 'center' }}>
-        Simulation Fitness vs Generations
+        {SimulationGraph.title}
       </Typography>
       <Stack direction="row" sx={{ justifyContent: 'end', pr: 2 }} spacing={2}>
         <CustomCheckbox
-          label="Mean"
+          label={SimulationGraph.meanCheckbox}
           checked={showMean}
           onCheck={setShowMean}
         />
         <CustomCheckbox
-          label="Min"
+          label={SimulationGraph.minCheckbox}
           checked={showMin}
           onCheck={setShowMin}
         />
         <CustomCheckbox
-          label="Deviation"
+          label={SimulationGraph.deviationCheckbox}
           checked={showDeviation}
           onCheck={setShowDeviation}
         />
@@ -210,54 +219,19 @@ function SimulationChart() {
           />
           {checkedSimulations.map(({ id, results }) => (
             <React.Fragment key={`graph-line-${id}`}>
-              {showMean && (
-                <Line
-                  data={results}
-                  x={({ stats }) => xScale(stats.genId)}
-                  y={({ stats }) => yScale(stats.meanFitness)}
-                  color={graphEntries[id]}
-                  type="dashed"
-                  width={0.8}
-                />
-              )}
-              {showDeviation && (
-                <DeviationLine
-                  id={id}
-                  data={results}
-                  color={graphEntries[id]}
-                  xScale={xScale}
-                  yScale={yScale}
-                  yMax={graphHeight}
-                />
-              )}
-              {showMin && (
-                <Line
-                  data={results}
-                  x={({ stats }) => xScale(stats.genId)}
-                  y={({ stats }) => yScale(stats.minFitness)}
-                  color={graphEntries[id]}
-                  width={0.4}
-                />
-              )}
-              <Line
-                data={results}
-                x={({ stats }) => xScale(stats.genId)}
-                y={({ stats }) => yScale(stats.maxFitness)}
+              <SimulationGraphEntry
                 color={graphEntries[id]}
-                width={1}
+                id={id}
+                graphHeight={graphHeight}
+                data={results}
+                showDeviation={showDeviation}
+                showMean={showMean}
+                showMin={showMin}
+                xScale={xScale}
+                yScale={yScale}
               />
             </React.Fragment>
           ))}
-          {isCurrentSimChecked && (
-            <RunningSimulationGraph
-              xScale={xScale}
-              yScale={yScale}
-              showMean={showMean}
-              showMin={showMin}
-              showDeviation={showDeviation}
-              graphHeight={graphHeight}
-            />
-          )}
           <rect
             x={graphWidth}
             y={-margin.top}
@@ -318,11 +292,11 @@ function SimulationChart() {
           width={graphWidth}
           height={brushHeight}
           maxFitness={1}
-          maxGenerations={findMaxGeneration(domainSimulations)}
+          maxGenerations={findMaxGeneration(checkedSimulations)}
           margin={brushMargin}
           simulations={checkedSimulations}
           setDomain={onChangeDomain}
-          showRunningSim={isCurrentSimChecked}
+          showRunningSim={isCurrentSimGraphed}
         />
       </svg>
     </Stack>

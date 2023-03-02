@@ -125,6 +125,13 @@ export const ParameterLabels = {
   },
 };
 
+export const SimulationGraph = {
+  title: 'Simulation vs Generations',
+  minCheckbox: 'Min',
+  meanCheckbox: 'Mean',
+  deviationCheckbox: 'Deviation',
+};
+
 // Type Labels
 // --------------------------------------------------
 export const SelectionTypeLabels = {
