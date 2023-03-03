@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   Paper, Stack, Typography,
@@ -21,7 +20,6 @@ function RunningSimulationDisplay({
   onSelect,
   simulation,
 }) {
-  const target = useSelector((state) => state.parameters.population.target);
   const theme = useTheme();
 
   if (!simulation) {
@@ -33,6 +31,8 @@ function RunningSimulationDisplay({
       </Paper>
     );
   }
+
+  const { target } = simulation.parameters.population;
 
   return (
     <Panel label="In Progress">

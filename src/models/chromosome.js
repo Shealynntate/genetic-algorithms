@@ -44,9 +44,9 @@ const Chromosome = {
   // Exacly 1 mutation per Chromosome
   tweakMutationSinglePoint: (chromosome, mutation) => {
     const { color, points } = chromosome;
-    // Flip a fair coin to decide between mutating a color or point,
+    // Flip a coin to decide between mutating a color or point,
     // there can be far more points than colors so this ensures colors get a chance to mutate
-    if (flipCoin()) {
+    if (flipCoin(0.25)) {
       const index = randomIndex(color.length);
       chromosome.color = mutateColor(color, index, mutation);
     } else {

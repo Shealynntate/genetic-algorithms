@@ -56,6 +56,7 @@ function PrimaryButton({ runsDisabled }) {
           variant="outlined"
           onClick={onEndEarly}
           size="large"
+          sx={{ mr: 1 }}
         >
           End Early
         </Button>
@@ -74,6 +75,7 @@ function PrimaryButton({ runsDisabled }) {
           onClick={onDelete}
           size="large"
           color="error"
+          sx={{ ml: 1 }}
         >
           Delete
         </Button>

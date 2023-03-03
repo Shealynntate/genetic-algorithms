@@ -44,7 +44,7 @@ function Panel({
     <Paper
       elevation={4}
       sx={{
-        position: 'relative', p: '0.8rem', mb: 1, // background: '#3b3b3e',
+        position: 'relative', p: '0.8rem', mb: 1,
       }}
     >
       {label && <SectionTitle variant={variant}>{label}</SectionTitle>}
