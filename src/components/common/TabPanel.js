@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box } from '@mui/material';
+import { Container } from '@mui/material';
 
 function TabPanel({
   children,
@@ -18,9 +18,9 @@ function TabPanel({
       className={className}
     >
       {visible && (
-        <Box>
+        <Container>
           {children}
-        </Box>
+        </Container>
       )}
     </div>
   );

@@ -75,7 +75,7 @@ function GalleryEntry({ data, readOnly }) {
           <img src={gif} alt={`${name} gif`} />
         </Tooltip>
       </Stack>
-      <Paper elevation={2} sx={{ position: 'relative' }}>
+      <Paper elevation={0} sx={{ position: 'relative', pt: 0, px: 0 }}>
         <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
           <Stack>
             {!readOnly && (

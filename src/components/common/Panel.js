@@ -1,20 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
-function SectionTitle({ children, variant }) {
-  const theme = useTheme();
-
+function SectionTitle({ children }) {
   return (
     <Typography
-      variant="body2"
       sx={{
         position: 'absolute',
         top: '0.25rem',
         left: '0.75rem',
         pr: 0.5,
         background: 'inherit',
-        color: theme.palette[variant].dark,
         textTransform: 'uppercase',
       }}
     >
@@ -25,7 +21,6 @@ function SectionTitle({ children, variant }) {
 
 SectionTitle.propTypes = {
   children: PropTypes.node.isRequired,
-  variant: PropTypes.string.isRequired,
 };
 
 function Panel({
