@@ -18,7 +18,7 @@ const store = configureStore({
     simulation: simulationReducer,
     ux: uxReducer,
   },
-  middleware: [sagaMiddleware],
+  middleware: () => [sagaMiddleware],
 });
 
 sagaMiddleware.run(rootSaga);
