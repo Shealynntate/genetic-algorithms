@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Box, Paper, Typography, useTheme,
-} from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 
 function SectionTitle({ children, variant }) {
   const theme = useTheme();
@@ -38,19 +36,14 @@ function Panel({
   px,
   pb,
 }) {
-  const theme = useTheme();
-
   return (
-    <Paper
-      elevation={4}
+    <Box
       sx={{
         position: 'relative', p: '0.8rem', mb: 1,
       }}
     >
       {label && <SectionTitle variant={variant}>{label}</SectionTitle>}
       <Box sx={{
-        border: `1px solid ${theme.palette[variant].dark}`,
-        borderRadius: `${theme.shape.borderRadius}px`,
         pt,
         px,
         pb,
@@ -58,7 +51,7 @@ function Panel({
       >
         {children}
       </Box>
-    </Paper>
+    </Box>
   );
 }
 

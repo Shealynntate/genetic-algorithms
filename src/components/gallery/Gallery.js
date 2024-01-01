@@ -13,8 +13,8 @@ function Gallery() {
   const hasEntries = entriesJSON.length > 0;
 
   return (
-    <Paper>
-      <Paper elevation={4} sx={{ mb: 1.5, textAlign: 'center' }}>
+    <Box>
+      <Paper elevation={0} sx={{ mb: 1.5, textAlign: 'center' }}>
         <Typography variant="h4">Welcome!</Typography>
         <Typography variant="subtitle1" color="GrayText">
           Here you&apos;ll find results from running this site&apos;s Genetic Algorithm tool
@@ -49,7 +49,7 @@ function Gallery() {
         </Panel>
       )}
       <DemoGallery />
-    </Paper>
+    </Box>
   );
 }
 
