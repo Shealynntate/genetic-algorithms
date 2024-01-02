@@ -3,11 +3,12 @@ import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { inject } from '@vercel/analytics';
-import App from './components/App';
+import { RouterProvider } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import store from './store';
 import theme from './theme';
 import poulationService, { PopulationContext } from './contexts/population-context';
+import router from './router/router';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -16,7 +17,10 @@ root.render(
       <PopulationContext.Provider value={poulationService}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <App />
+          <RouterProvider
+            router={router}
+            fallbackElement={<div>Loading...</div>}
+          />
         </ThemeProvider>
       </PopulationContext.Provider>
     </Provider>

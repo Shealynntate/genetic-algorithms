@@ -41,6 +41,7 @@
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.42.1",
     "react-redux": "^9.0.4",
+    "react-router-dom": "^6.21.1",
     "react-scripts": "5.0.1",
     "redux-saga": "^1.2.1",
     "web-vitals": "^3.5.1"

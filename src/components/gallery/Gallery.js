@@ -1,27 +1,25 @@
 import React from 'react';
-import { Box } from '@mui/material';
-import { useGetGalleryEntries } from '../../global/database';
+import { Box, Typography } from '@mui/material';
 import GalleryEntry from './GalleryEntry';
-import DemoGallery from './DemoGallery';
-import Panel from '../common/Panel';
+import compositionII from '../../assets/gallery-entries/composition_II.json';
+import sonOfMan from '../../assets/gallery-entries/son_of_man.json';
+import monaLisa from '../../assets/gallery-entries/mona_lisa.json';
+import marilyn from '../../assets/gallery-entries/marilyn_diptych.json';
+import drawingHands from '../../assets/gallery-entries/drawing_hands.json';
+import greatWave from '../../assets/gallery-entries/the_great_wave.json';
 
 function Gallery() {
-  const entriesJSON = useGetGalleryEntries() || [];
-  const hasEntries = entriesJSON.length > 0;
-
   return (
     <Box>
-      <DemoGallery />
-      {hasEntries && (
-        <Panel label="Your Work">
-          {entriesJSON.map((data) => (
-            <GalleryEntry
-              key={data.id}
-              data={data}
-            />
-          ))}
-        </Panel>
-      )}
+      <Typography variant="h4" sx={{ textAlign: 'center' }}>Gallery</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
+        <GalleryEntry data={monaLisa} readOnly />
+        <GalleryEntry data={drawingHands} readOnly />
+        <GalleryEntry data={sonOfMan} readOnly />
+        <GalleryEntry data={marilyn} readOnly />
+        <GalleryEntry data={compositionII} readOnly />
+        <GalleryEntry data={greatWave} readOnly />
+      </Box>
     </Box>
   );
 }

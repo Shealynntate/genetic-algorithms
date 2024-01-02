@@ -6,14 +6,19 @@ import {
   Typography,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
+import { useGetGalleryEntries } from '../../global/database';
 import OrganismCanvas from '../canvas/OrganismCanvas';
 import HistoryDisplay from './HistoryDisplay';
 import StatusText from '../common/StatusText';
+import Panel from '../common/Panel';
+import GalleryEntry from '../gallery/GalleryEntry';
 
 function SimulationStatusPanel() {
   const { organism } = useSelector((state) => state.simulation.currentBest);
   const stats = useSelector((state) => state.simulation.currentGenStats);
+  const entriesJSON = useGetGalleryEntries() || [];
   const showContent = !!organism;
+  const hasEntries = entriesJSON.length > 0;
 
   return (
     <Paper>
@@ -45,6 +50,16 @@ function SimulationStatusPanel() {
             Start a run to see a live view of fitness statistics and progress snapshots in this tab
           </Typography>
         </Box>
+      )}
+      {hasEntries && (
+        <Panel label="Your Work">
+          {entriesJSON.map((data) => (
+            <GalleryEntry
+              key={data.id}
+              data={data}
+            />
+          ))}
+        </Panel>
       )}
     </Paper>
   );
