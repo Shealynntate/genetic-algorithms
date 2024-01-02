@@ -118,7 +118,6 @@ function SimulationChart() {
   const [showMin, setShowMin] = useState(false);
 
   const bgColor = theme.palette.background.default;
-  const maskColor = theme.palette.background.mask[0];
   const axisColor = theme.palette.grey[400];
   const isCurrentSimGraphed = currentSim && currentSim.id in graphEntries;
   // Determine which simulations are being graphed
@@ -214,8 +213,6 @@ function SimulationChart() {
             yScale={yScale}
             width={graphWidth}
             height={graphHeight}
-            stroke="white"
-            strokeOpacity={0.10}
           />
           {checkedSimulations.map(({ id, results }) => (
             <React.Fragment key={`graph-line-${id}`}>
@@ -237,21 +234,21 @@ function SimulationChart() {
             y={-margin.top}
             width={20}
             height={fullHeight}
-            fill={maskColor}
+            fill={bgColor}
           />
           <rect
             x={-30}
             y={-margin.top}
             width={30}
             height={fullHeight}
-            fill={maskColor}
+            fill={bgColor}
           />
           <rect
             x={0}
             y={graphHeight}
             width={graphWidth}
             height={20}
-            fill={maskColor}
+            fill={bgColor}
           />
         </Group>
         <AxisLeft

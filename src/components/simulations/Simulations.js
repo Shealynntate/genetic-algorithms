@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import {
   Box,
   Button,
-  Paper,
   Stack,
+  Typography,
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import _ from 'lodash';
@@ -64,12 +64,18 @@ function Simulations() {
   };
 
   return (
-    <Paper>
+    <Box>
+      <Typography variant="h4" sx={{ textAlign: 'center' }}>Experiment</Typography>
       <Stack direction="row" spacing={1}>
         <Stack>
           <SimulationButtons
             runsDisabled={!pendingSimulations.length}
           />
+          <Box sx={{ textAlign: 'center', py: 1 }}>
+            <Button startIcon={<Add />} variant="contained" color="secondary" onClick={onAddSimulation}>
+              New
+            </Button>
+          </Box>
           <RunningSimulationDisplay
             isSelected={selectedSimulation === runningSimulation?.id}
             onDuplicate={onDuplicate}
@@ -87,11 +93,6 @@ function Simulations() {
                 onSelect={onSelect}
               />
             ))}
-            <Box sx={{ textAlign: 'center', py: 1 }}>
-              <Button startIcon={<Add />} variant="contained" color="secondary" onClick={onAddSimulation}>
-                New
-              </Button>
-            </Box>
           </Panel>
           <Panel label="Completed Runs">
             {completedSimulations.map((simulation) => (
@@ -116,7 +117,7 @@ function Simulations() {
         open={openForm}
         onClose={onCloseForm}
       />
-    </Paper>
+    </Box>
   );
 }
 
