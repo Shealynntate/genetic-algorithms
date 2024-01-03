@@ -266,7 +266,7 @@ export const useGetSimulations = (ids) => useLiveQuery(
   () => db[simulationsTable].bulkGet(ids),
 );
 
-export const useGetAllSimulation = () => useLiveQuery(
+export const useGetAllSimulations = () => useLiveQuery(
   () => getAllSimulations(),
 );
 

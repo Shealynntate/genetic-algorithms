@@ -9,9 +9,8 @@ import { Add } from '@mui/icons-material';
 import _ from 'lodash';
 import {
   insertSimulation,
-  useGetCompletedSimulations,
+  useGetAllSimulations,
   useGetCurrentSimulation,
-  useGetPendingSimulations,
 } from '../../global/database';
 import { SimulationStatus } from '../../constants/typeDefinitions';
 import SimulationChart from './SimulationChart';
@@ -21,18 +20,16 @@ import SimulationDetails from './SimulationDetails';
 import SimulationFormDialog from './SimulationFormDialog';
 import RunningSimulationDisplay from './RunningSimulationDisplay';
 import defaultParameters from '../../constants/defaultParameters';
-import Panel from '../common/Panel';
 
 function Simulations() {
   const runningSimulation = useGetCurrentSimulation();
-  const completedSimulations = useGetCompletedSimulations() || [];
-  const pendingSimulations = useGetPendingSimulations() || [];
+  const allSimulations = useGetAllSimulations() || [];
   const formData = useRef(defaultParameters);
   const [openForm, setOpenForm] = useState(false);
   const [selectedSimulation, setSelectedSimulation] = useState(null);
 
   const idToSimulation = (id) => {
-    const all = [...completedSimulations, ...pendingSimulations, runningSimulation];
+    const all = [...allSimulations, runningSimulation];
     return _.find(all, (e) => e?.id === id);
   };
 
@@ -69,7 +66,7 @@ function Simulations() {
       <Stack direction="row" spacing={1}>
         <Stack>
           <SimulationButtons
-            runsDisabled={!pendingSimulations.length}
+            runsDisabled={!allSimulations.length}
           />
           <Box sx={{ textAlign: 'center', py: 1 }}>
             <Button startIcon={<Add />} variant="contained" color="secondary" onClick={onAddSimulation}>
@@ -82,30 +79,18 @@ function Simulations() {
             onSelect={onSelect}
             simulation={runningSimulation}
           />
-          <Panel label="Queued Runs">
-            {pendingSimulations.map((simulation) => (
+          <Stack>
+            <Typography variant="h6">List of runs</Typography>
+            {allSimulations.map((simulation) => (
               <SimulationEntry
                 key={simulation.id}
                 simulation={simulation}
-                status={SimulationStatus.PENDING}
                 isSelected={selectedSimulation === simulation.id}
                 onDuplicate={onDuplicate}
                 onSelect={onSelect}
               />
             ))}
-          </Panel>
-          <Panel label="Completed Runs">
-            {completedSimulations.map((simulation) => (
-              <SimulationEntry
-                key={simulation.id}
-                simulation={simulation}
-                status={SimulationStatus.COMPLETE}
-                isSelected={selectedSimulation === simulation.id}
-                onDuplicate={onDuplicate}
-                onSelect={onSelect}
-              />
-            ))}
-          </Panel>
+          </Stack>
         </Stack>
         <Stack direction="column" spacing={1}>
           <SimulationChart />
