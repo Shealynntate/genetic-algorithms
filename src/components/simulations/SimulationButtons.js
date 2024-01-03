@@ -1,9 +1,10 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Box, Button } from '@mui/material';
 import {
-  deleteRunningSimulation,
+  Box, Button, Typography, useTheme,
+} from '@mui/material';
+import {
   endSimulationEarly,
   pauseSimulations,
   resumeSimulations,
@@ -17,6 +18,7 @@ function PrimaryButton({ runsDisabled }) {
   const simulationState = useSelector((state) => state.ux.simulationState);
   const isPaused = useIsPaused();
   const dispatch = useDispatch();
+  const theme = useTheme();
   let isDisabled = runsDisabled;
   let action;
   switch (simulationState) {
@@ -45,9 +47,15 @@ function PrimaryButton({ runsDisabled }) {
     dispatch(endSimulationEarly());
   };
 
-  const onDelete = () => {
-    dispatch(deleteRunningSimulation());
-  };
+  if (isDisabled) {
+    return (
+      <Box sx={{ textAlign: 'center' }}>
+        <Typography sx={{ color: theme.palette.text.disabled }}>
+          Create a new simulation and watch it run!
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ textAlign: 'center', mb: 1 }}>
@@ -69,17 +77,6 @@ function PrimaryButton({ runsDisabled }) {
       >
         {primaryButtonLabels[simulationState]}
       </Button>
-      {isPaused && (
-        <Button
-          variant="outlined"
-          onClick={onDelete}
-          size="large"
-          color="error"
-          sx={{ ml: 1 }}
-        >
-          Delete
-        </Button>
-      )}
     </Box>
   );
 }

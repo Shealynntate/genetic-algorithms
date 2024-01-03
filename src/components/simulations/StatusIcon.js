@@ -7,13 +7,14 @@ import RunCircleOutlinedIcon from '@mui/icons-material/RunCircleOutlined';
 import PauseCircleOutlineOutlinedIcon from '@mui/icons-material/PauseCircleOutlineOutlined';
 import { SimulationStatus } from '../../constants/typeDefinitions';
 
+// TODO: Add PAUSED status?
 const statusIconMap = {
   [SimulationStatus.PENDING]: {
     icon: <PendingOutlinedIcon color="inherit" />,
     tooltip: 'Pending',
   },
   [SimulationStatus.RUNNING]: {
-    icon: <RunCircleOutlinedIcon color="action" />,
+    icon: <RunCircleOutlinedIcon color="info" />,
     tooltip: 'Running',
   },
   [SimulationStatus.PAUSED]: {

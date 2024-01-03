@@ -16,7 +16,7 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { addGraphEntry, removeGraphEntry } from '../../features/ux/uxSlice';
+import { addGraphEntry, deleteRunningSimulation, removeGraphEntry } from '../../features/ux/uxSlice';
 import { SimulationStatus } from '../../constants/typeDefinitions';
 import { ParametersType } from '../../constants/propTypes';
 import { deleteSimulation, renameSimulation } from '../../global/database';
@@ -39,7 +39,7 @@ function SimulationEntry({
   const isChecked = useIsGraphEntry(id);
   const color = useGraphColor(id);
   const isCheckable = status !== SimulationStatus.PENDING;
-  const isDeletable = status !== SimulationStatus.RUNNING;
+  const isRunning = status === SimulationStatus.RUNNING;
   const isEditable = status !== SimulationStatus.RUNNING;
   const elevation = isSelected ? 0 : 0;
   const border = isSelected ? `1px dashed ${theme.palette.primary.main}` : `0px solid ${theme.palette.divider}}`;
@@ -48,7 +48,11 @@ function SimulationEntry({
 
   const onDelete = (event) => {
     event.stopPropagation();
-    deleteSimulation(id);
+    if (isRunning) {
+      dispatch(deleteRunningSimulation());
+    } else {
+      deleteSimulation(id);
+    }
   };
 
   const onChangeName = async (event) => {
@@ -141,7 +145,6 @@ function SimulationEntry({
               startIcon={<DeleteIcon />}
               size="small"
               color="error"
-              disabled={!isDeletable}
               sx={{ justifyContent: 'flex-start' }}
             >
               Delete

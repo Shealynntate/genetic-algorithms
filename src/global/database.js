@@ -51,7 +51,7 @@ export async function insertSimulation({
   status = SimulationStatus.UNKNOWN,
 }) {
   return db[simulationsTable].add({
-    name: 'New Run',
+    name: 'Untitled Run',
     population,
     parameters,
     status,

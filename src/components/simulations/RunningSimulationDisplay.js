@@ -1,41 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Paper, Stack, Typography,
-} from '@mui/material';
-import { useTheme } from '@emotion/react';
+import { Box, Stack, Typography } from '@mui/material';
 import { ParametersType } from '../../constants/propTypes';
-import SimulationEntry from './SimulationEntry';
-import { SimulationStatus } from '../../constants/typeDefinitions';
 import { canvasParameters } from '../../constants/constants';
 import GlobalBest from '../canvas/GlobalBest';
-import Panel from '../common/Panel';
 import TargetCanvas from '../canvas/TargetCanvas';
 
 const { width, height } = canvasParameters;
 
-function RunningSimulationDisplay({
-  isSelected,
-  onDuplicate,
-  onSelect,
-  simulation,
-}) {
-  const theme = useTheme();
-
+function RunningSimulationDisplay({ simulation }) {
   if (!simulation) {
-    return (
-      <Paper sx={{ textAlign: 'center' }}>
-        <Typography sx={{ color: theme.palette.text.disabled }}>
-          Create a new simulation and watch it run!
-        </Typography>
-      </Paper>
-    );
+    return null;
   }
 
   const { target } = simulation.parameters.population;
 
   return (
-    <Panel label="In Progress">
+    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <Stack direction="row" spacing={1}>
         <Stack>
           <Typography variant="caption" pt={1}>Target</Typography>
@@ -46,28 +27,15 @@ function RunningSimulationDisplay({
           <GlobalBest />
         </Stack>
       </Stack>
-      <SimulationEntry
-        simulation={simulation}
-        status={SimulationStatus.RUNNING}
-        isSelected={isSelected}
-        onDuplicate={onDuplicate}
-        onSelect={onSelect}
-      />
-    </Panel>
+    </Box>
   );
 }
 
 RunningSimulationDisplay.propTypes = {
-  isSelected: PropTypes.bool,
-  onDuplicate: PropTypes.func,
-  onSelect: PropTypes.func,
   simulation: PropTypes.shape(ParametersType),
 };
 
 RunningSimulationDisplay.defaultProps = {
-  isSelected: false,
-  onDuplicate: () => {},
-  onSelect: () => {},
   simulation: null,
 };
 

@@ -8,9 +8,9 @@ const theme = createTheme({
       light: '#4cccba',
     },
     secondary: {
-      dark: '#b1813e',
-      main: '#feb95a', // mustard yellow
-      light: '#fec77b',
+      dark: '#745379',
+      main: '#89608E',
+      light: '#966D9C',
     },
     info: {
       dark: '#7896A5',
