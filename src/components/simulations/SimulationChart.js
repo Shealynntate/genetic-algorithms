@@ -1,37 +1,30 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {
+  useEffect, useMemo, useRef, useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 import { scaleLinear } from '@visx/scale';
 import { useTheme } from '@emotion/react';
 import { Grid } from '@visx/grid';
 import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
-import { Stack, Typography } from '@mui/material';
-import { minResultsThreshold } from '../../constants/constants';
+import { Box, Stack, Typography } from '@mui/material';
+import { MIN_BROWSER_WIDTH, minResultsThreshold } from '../../constants/constants';
 import defaultParameters from '../../constants/defaultParameters';
 import CustomCheckbox from '../common/Checkbox';
-import ChartBrush from '../graph/ChartBrush';
 import { useGetCompletedSimulationsAndResults, useGetCurrentSimulation } from '../../global/database';
 import SimulationGraphEntry from '../graph/SimulatonGraphEntry';
 import { SimulationGraph } from '../../constants/websiteCopy';
+import { useWindowSize } from '../../features/ux/uxSlice';
 
 const { maxGenerations: maxGens } = defaultParameters.stopCriteria;
-const graphWidth = 625;
-const graphHeight = 500;
-const brushHeight = 100;
+const graphHeight = 450;
 const margin = {
   left: 30,
   top: 4,
   right: 18,
   bottom: 15,
 };
-const brushMargin = {
-  left: 28,
-  top: 0,
-  right: 0,
-  bottom: 0,
-};
 
-const fullWidth = graphWidth + margin.left + margin.right;
 const fullHeight = graphHeight + margin.top + margin.bottom;
 
 const findMaxGeneration = (simulations) => {
@@ -104,6 +97,10 @@ const findYDomain = (x0, x1, simulations, settings) => {
 };
 
 function SimulationChart() {
+  const windowSize = useWindowSize();
+  const containerRef = useRef(null);
+  const [fullWidth, setFullWidth] = useState(MIN_BROWSER_WIDTH);
+  const graphWidth = fullWidth - margin.left - margin.right;
   const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
   const theme = useTheme();
   const completedSims = useGetCompletedSimulationsAndResults() || [];
@@ -124,12 +121,19 @@ function SimulationChart() {
   const checkedSimulations = completedSims.filter(({ id }) => (id in graphEntries));
   if (isCurrentSimGraphed) checkedSimulations.push(currentSim);
 
+  useEffect(() => {
+    if (containerRef.current == null) return;
+
+    const { width } = containerRef.current.getBoundingClientRect();
+    setFullWidth(width);
+  }, [windowSize]);
+
   const yScale = useMemo(
     () => scaleLinear({
       range: [graphHeight, 0],
       domain: domainY,
     }),
-    [domainY],
+    [domainY, windowSize],
   );
 
   const xScale = useMemo(
@@ -137,7 +141,7 @@ function SimulationChart() {
       range: [0, graphWidth],
       domain: domainX,
     }),
-    [domainX],
+    [domainX, windowSize],
   );
 
   const updateDomainY = () => {
@@ -172,31 +176,29 @@ function SimulationChart() {
     }
   }, [runningStats]);
 
-  const onChangeDomain = (x0, x1) => {
-    setDomainX([x0, x1]);
-  };
-
   return (
-    <Stack>
-      <Typography color="GrayText" sx={{ textAlign: 'center' }}>
-        {SimulationGraph.title}
-      </Typography>
-      <Stack direction="row" sx={{ justifyContent: 'end', pr: 2 }} spacing={2}>
-        <CustomCheckbox
-          label={SimulationGraph.meanCheckbox}
-          checked={showMean}
-          onCheck={setShowMean}
-        />
-        <CustomCheckbox
-          label={SimulationGraph.minCheckbox}
-          checked={showMin}
-          onCheck={setShowMin}
-        />
-        <CustomCheckbox
-          label={SimulationGraph.deviationCheckbox}
-          checked={showDeviation}
-          onCheck={setShowDeviation}
-        />
+    <Stack ref={containerRef}>
+      <Stack direction="row" sx={{ justifyContent: 'space-between' }} spacing={2}>
+        <Typography color="GrayText">
+          {SimulationGraph.title}
+        </Typography>
+        <Box sx={{ display: 'flex' }}>
+          <CustomCheckbox
+            label={SimulationGraph.meanCheckbox}
+            checked={showMean}
+            onCheck={setShowMean}
+          />
+          <CustomCheckbox
+            label={SimulationGraph.minCheckbox}
+            checked={showMin}
+            onCheck={setShowMin}
+          />
+          <CustomCheckbox
+            label={SimulationGraph.deviationCheckbox}
+            checked={showDeviation}
+            onCheck={setShowDeviation}
+          />
+        </Box>
       </Stack>
       <svg width={fullWidth} height={fullHeight}>
         <Group top={margin.top} left={margin.left}>
@@ -278,22 +280,6 @@ function SimulationChart() {
             fontSize: 9,
             textAnchor: 'middle',
           })}
-        />
-      </svg>
-      <svg
-        width={fullWidth}
-        height={brushHeight}
-        style={{ marginTop: '0.6rem' }}
-      >
-        <ChartBrush
-          width={graphWidth}
-          height={brushHeight}
-          maxFitness={1}
-          maxGenerations={findMaxGeneration(checkedSimulations)}
-          margin={brushMargin}
-          simulations={checkedSimulations}
-          setDomain={onChangeDomain}
-          showRunningSim={isCurrentSimGraphed}
         />
       </svg>
     </Stack>

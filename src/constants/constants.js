@@ -81,3 +81,7 @@ export const lineColors = [
 ];
 
 export const projectUrl = 'https://github.com/Shealynntate/genetic-algorithms';
+
+export const MIN_BROWSER_WIDTH = 400;
+
+export const MIN_BROWSER_HEIGHT = 400;

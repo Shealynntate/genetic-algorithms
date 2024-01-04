@@ -1,26 +1,13 @@
 import { createTheme } from '@mui/material';
+import { amber, cyan } from '@mui/material/colors';
 
 const theme = createTheme({
   palette: {
     primary: {
-      dark: '#168676',
-      main: '#20c0a9', // mint green
-      light: '#4cccba',
+      main: cyan[500],
     },
     secondary: {
-      dark: '#745379',
-      main: '#89608E',
-      light: '#966D9C',
-    },
-    info: {
-      dark: '#7896A5',
-      main: '#ACD7EC', // Light Steel Blue
-      light: '#BCDFEF',
-    },
-    error: {
-      dark: '#893830',
-      main: '#c45145', // faded brick red
-      light: '#cf736a',
+      main: amber[500],
     },
     background: {
       mask: [
@@ -79,5 +66,5 @@ const theme = createTheme({
     },
   },
 });
-// #F38181 dusty rose
+
 export default theme;

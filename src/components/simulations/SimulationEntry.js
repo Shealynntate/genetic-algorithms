@@ -42,7 +42,6 @@ function SimulationEntry({
   const isRunning = status === SimulationStatus.RUNNING;
   const isEditable = status !== SimulationStatus.RUNNING;
   const elevation = isSelected ? 0 : 0;
-  const border = isSelected ? `1px dashed ${theme.palette.primary.main}` : `0px solid ${theme.palette.divider}}`;
   const date = new Date(createdOn);
   const openMenu = Boolean(anchorEl);
 
@@ -83,7 +82,11 @@ function SimulationEntry({
   return (
     <Paper
       elevation={elevation}
-      sx={{ py: 1, px: 0, border }}
+      sx={{
+        py: 1,
+        px: 0,
+        border: isSelected ? `1px solid ${theme.palette.primary.main}` : null,
+      }}
       onClick={() => onSelect(id)}
     >
       <Stack direction="row" sx={{ position: 'relative' }} spacing={1}>
