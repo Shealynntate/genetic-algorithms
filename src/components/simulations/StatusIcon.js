@@ -27,11 +27,11 @@ const statusIconMap = {
   },
 };
 
-function StatusIcon({ status }) {
+function StatusIcon({ status, sx }) {
   const data = statusIconMap[status];
   return (
     <Tooltip title={data.tooltip}>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', ...sx }}>
         {data.icon}
       </Box>
     </Tooltip>
@@ -40,6 +40,12 @@ function StatusIcon({ status }) {
 
 StatusIcon.propTypes = {
   status: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  sx: PropTypes.objectOf(PropTypes.any),
+};
+
+StatusIcon.defaultProps = {
+  sx: {},
 };
 
 export default StatusIcon;

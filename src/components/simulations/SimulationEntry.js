@@ -22,6 +22,7 @@ import { deleteSimulation, renameSimulation } from '../../global/database';
 import { useGraphColor, useIsGraphEntry } from '../../features/hooks';
 import StatusIcon from './StatusIcon';
 import HoverPopover from './HoverPopover';
+import MaxFitnessDisplay from './MaxFitnessDisplay';
 
 function SimulationEntry({
   simulation,
@@ -30,7 +31,7 @@ function SimulationEntry({
   isSelected,
 }) {
   const {
-    id, createdOn, name, status,
+    id, createdOn, name, status, population,
   } = simulation;
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -109,6 +110,7 @@ function SimulationEntry({
             size="small"
             disabled={!isEditable}
           />
+          <StatusIcon status={status} sx={{ position: 'absolute', top: 0, right: 0 }} />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: '0.25rem' }}>
             <Typography
               color="GrayText"
@@ -124,7 +126,7 @@ function SimulationEntry({
             </Typography>
           </Box>
         </Stack>
-        <StatusIcon status={status} />
+        <MaxFitnessDisplay stats={population} />
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
             size="small"
