@@ -8,7 +8,6 @@ import {
   Checkbox,
   IconButton,
   Paper,
-  Popover,
   Stack,
   TextField,
   Typography,
@@ -22,6 +21,7 @@ import { ParametersType } from '../../constants/propTypes';
 import { deleteSimulation, renameSimulation } from '../../global/database';
 import { useGraphColor, useIsGraphEntry } from '../../features/hooks';
 import StatusIcon from './StatusIcon';
+import HoverPopover from './HoverPopover';
 
 function SimulationEntry({
   simulation,
@@ -41,7 +41,6 @@ function SimulationEntry({
   const isCheckable = status !== SimulationStatus.PENDING;
   const isRunning = status === SimulationStatus.RUNNING;
   const isEditable = status !== SimulationStatus.RUNNING;
-  const elevation = isSelected ? 0 : 0;
   const date = new Date(createdOn);
   const openMenu = Boolean(anchorEl);
 
@@ -74,14 +73,13 @@ function SimulationEntry({
     setAnchorEl(event.currentTarget);
   };
 
-  const onMenuClose = (event) => {
-    event.stopPropagation();
+  const onMenuClose = () => {
     setAnchorEl(null);
   };
 
   return (
     <Paper
-      elevation={elevation}
+      elevation={0}
       sx={{
         py: 1,
         px: 0,
@@ -128,11 +126,27 @@ function SimulationEntry({
         </Stack>
         <StatusIcon status={status} />
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton size="small" onClick={onMenuOpen}>
+          <IconButton
+            size="small"
+            onMouseEnter={onMenuOpen}
+          >
             <MoreVertIcon fontSize="inherit" />
           </IconButton>
         </Box>
-        <Popover open={openMenu} onClose={onMenuClose} anchorEl={anchorEl}>
+        <HoverPopover
+          open={openMenu}
+          anchorEl={anchorEl}
+          onClose={onMenuClose}
+          anchorOrigin={{
+            vertical: 'center',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'center',
+            horizontal: 'left',
+          }}
+          disableRestoreFocus
+        >
           <Stack>
             <Button
               onClick={(event) => onDuplicate(event, id)}
@@ -153,7 +167,7 @@ function SimulationEntry({
               Delete
             </Button>
           </Stack>
-        </Popover>
+        </HoverPopover>
       </Stack>
     </Paper>
   );
