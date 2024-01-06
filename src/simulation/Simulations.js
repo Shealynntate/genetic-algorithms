@@ -15,7 +15,7 @@ import {
   insertSimulation,
   useGetAllSimulations,
   useGetCurrentSimulation,
-} from '../database/database';
+} from '../database/api';
 import { SimulationStatus } from '../constants/typeDefinitions';
 import SimulationChart from './SimulationChart';
 import SimulationButtons from './SimulationButtons';

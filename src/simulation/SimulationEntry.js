@@ -18,7 +18,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { addGraphEntry, deleteRunningSimulation, removeGraphEntry } from '../features/ux/uxSlice';
 import { SimulationStatus } from '../constants/typeDefinitions';
 import { ParametersType } from '../constants/propTypes';
-import { deleteSimulation, renameSimulation } from '../database/database';
+import { deleteSimulation, renameSimulation } from '../database/api';
 import { useGraphColor, useIsGraphEntry } from '../features/hooks';
 import StatusIcon from './StatusIcon';
 import HoverPopover from './HoverPopover';

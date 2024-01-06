@@ -1,9 +1,15 @@
-import { useLiveQuery } from 'dexie-react-hooks'
 import GeneticAlgorithmsDatabase from './GeneticAlgorithmsDatabase'
-import { type MutableSimulation, type Simulation } from './types'
+import {
+  type Stats,
+  type Image,
+  type MutableSimulation,
+  type Simulation,
+  type Results
+} from './types'
+import { type Organism } from '../models/types'
 
 const db = new GeneticAlgorithmsDatabase()
-let currentSimulationId: number | undefined
+export let currentSimulationId: number | undefined
 
 // Simulations Table
 // --------------------------------------------------
@@ -33,6 +39,14 @@ export const getSimulations = async (ids: number[]): Promise<Array<Simulation | 
   return await db.simulations.bulkGet(ids)
 }
 
+export const getSimulationsByStatus = async (status: string): Promise<Simulation[]> => {
+  return await db.simulations.where('status').equals(status).toArray()
+}
+
+export const getSimulationByStatus = async (status: string): Promise<Simulation | undefined> => {
+  return await db.simulations.where('status').equals(status).first()
+}
+
 export const getCurrentSimulation = async (): Promise<Simulation | undefined> => {
   if (currentSimulationId === undefined) return undefined
 
@@ -44,7 +58,7 @@ export const getAllSimulations = async (): Promise<Simulation[]> => {
 }
 
 export const getPendingSimulations = async (): Promise<Simulation[]> => {
-  return await db.simulations.where('status').equals('pending').toArray()
+  return await getSimulationsByStatus('pending')
 }
 
 /**
@@ -73,8 +87,8 @@ export const updateCurrentSimulation = async (
 }
 
 // TODO: Move this logic into the sagas
-export const runNextPendingSimulation = async (): Promise<Simulation> => {
-  const next = await db.simulations.where('status').equals('pending').first()
+export const runNextPendingSimulation = async (): Promise<Simulation | undefined> => {
+  const next = await getSimulationByStatus('pending')
   if (next != null) {
     currentSimulationId = next.id
     await updateCurrentSimulation({ status: 'running' })
@@ -175,48 +189,73 @@ export const deleteCurrentSimulation = async (): Promise<number[]> => {
 
 // Simulation Results Table
 // --------------------------------------------------
-export const insertResultsEntry = async (simulationId: number, results = []) => await db.results.add({
-  simulationId,
-  createdOn: Date.now(),
-  lastUpdated: Date.now(),
-  results
-})
+export const insertResultsEntry = async (
+  simulationId: number,
+  results: Stats[] = []
+): Promise<number> => {
+  return await db.results.add({
+    simulationId,
+    createdOn: Date.now(),
+    lastUpdated: Date.now(),
+    results
+  })
+}
 
-export const insertResultsForCurrentSimulation = async (results) => (
-  await insertResultsEntry(currentSimulationId, results)
-)
+export const insertResultsForCurrentSimulation = async (results: Stats[]): Promise<number> => {
+  if (currentSimulationId == null) {
+    throw new Error('[insertResultsForCurrentSimulation] Current simulation ID is null')
+  }
+  return await insertResultsEntry(currentSimulationId, results)
+}
 
-export const getSimulationResults = async (simulationId: number) => (
-  await db.results.get({ simulationId })
-)
+export const getSimulationResults = async (simulationId: number): Promise<Results | undefined> => {
+  return await db.results.get({ simulationId })
+}
 
-export const getCurrentSimulationResults = async () => await getSimulationResults(currentSimulationId)
+export const getCurrentSimulationResults = async (): Promise<Results | undefined> => {
+  if (currentSimulationId == null) {
+    throw new Error('[getCurrentSimulationResults] Current simulation ID is not set')
+  }
+  return await getSimulationResults(currentSimulationId)
+}
 
-export const addResultsForCurrentSimulation = async (stats) => {
+export const addResultsForCurrentSimulation = async (stats: Stats): Promise<number> => {
   const entry = await getCurrentSimulationResults()
-  const { results } = entry
-  results.push(stats)
+  if (entry?.id == null) {
+    throw new Error('[addResultsForCurrentSimulation] No valid results entry found')
+  }
 
-  return await db.results.update(entry.id, { results })
+  return await db.results.update(entry.id, { results: [...entry.results, stats] })
 }
 
 // Images Table
 // --------------------------------------------------
-export const addImageToDatabase = async (genId, maxFitOrganism) => {
-  const { fitness, phenotype, genome: { chromosomes } } = maxFitOrganism
+export const addImageToDatabase = async (gen: number, maxFitOrganism: Organism): Promise<number> => {
+  if (currentSimulationId == null) {
+    throw new Error('[addImageToDatabase] Current simulation ID is not set, cannot add image')
+  }
+  const { fitness, phenotype, genome } = maxFitOrganism
 
   return await db.images.add({
-    gen: genId,
+    gen,
     fitness,
-    chromosomes,
+    genome,
     imageData: phenotype,
     simulationId: currentSimulationId
   })
 }
 
-export const getImages = async (simulationId) => await db.images.where('simulationId').equals(simulationId).toArray()
+/**
+ * Get all images for a given simulation ID.
+ * @param simulationId the id of the simulation to get images for
+ * @returns a promise that resolves to an array of images
+ */
+export const getImages = async (simulationId: number): Promise<Image[]> => {
+  return await db.images.where('simulationId').equals(simulationId).toArray()
+}
 
-export const getCurrentImages = async () => {
+// TODO: Should this throw if currentSimulationId is null?
+export const getCurrentImages = async (): Promise<Image[]> => {
   if (currentSimulationId == null) return []
 
   return await getImages(currentSimulationId)
@@ -224,93 +263,48 @@ export const getCurrentImages = async () => {
 
 // Gallery Table
 // --------------------------------------------------
-export const addGalleryEntry = async (simulationId: number, json) => await db.gallery.add({
-  createdOn: Date.now(),
-  simulationId,
-  name: `Entry ${simulationId}`,
-  json
-})
+export const addGalleryEntry = async (simulationId: number, json: string): Promise<number> => {
+  return await db.gallery.add({
+    createdOn: Date.now(),
+    simulationId,
+    name: `Entry ${simulationId}`,
+    json
+  })
+}
 
-export const renameGalleryEntry = async (id, name) => await db.gallery.update(id, { name })
+export const renameGalleryEntry = async (id: number, name: string): Promise<number> => {
+  return await db.gallery.update(id, { name })
+}
 
-export const deleteGalleryEntry = async (id) => { await db.gallery.delete(id) }
+export const deleteGalleryEntry = async (id: number): Promise<void> => {
+  await db.gallery.delete(id)
+}
 
 // All Tables
 // --------------------------------------------------
-export const clearDatabase = async () => {
-  const promises = []
-  const sims = await getAllSimulations()
-  sims.forEach(({ id, status }) => {
-    if (status === 'running') {
-      promises.push(db.simulations.delete(id))
-      promises.push(db.images.where('simulationId').equals(id).delete())
-    }
-  })
-  return await Promise.all(promises)
+export const clearRunningSimulations = async (): Promise<void> => {
+  const sims = await getSimulationsByStatus('running')
+  await Promise.all(
+    sims.map(async (sim): Promise<void> => {
+      if (sim?.id == null) {
+        console.error('[clearRunningSimulation] No running simulation ID found')
+        return
+      }
+      await deleteSimulation(sim.id)
+    })
+  )
 }
-
-// Hooks
-// --------------------------------------------------
-export const useImageDbQuery = () => useLiveQuery(
-  async () => {
-    if (currentSimulationId == null) return []
-
-    return await db.images.where('simulationId').equals(currentSimulationId).toArray()
-  },
-  [currentSimulationId]
-)
-
-export const useGetSimulations = (ids) => useLiveQuery(
-  async () => await db.simulations.bulkGet(ids)
-)
-
-export const useGetAllSimulations = () => useLiveQuery(
-  async () => await getAllSimulations()
-)
-
-export const useGetCurrentSimulation = () => useLiveQuery(
-  async () => await db.simulations.get({ status: 'running' })
-)
-
-export const useGetCompletedSimulations = () => useLiveQuery(
-  async () => await db.simulations.where('status').equals('complete').toArray()
-)
-
-export const useGetPendingSimulations = () => useLiveQuery(
-  async () => await db.simulations.where('status').equals('pending').toArray()
-)
-
-export const useGetGalleryEntries = () => useLiveQuery(
-  async () => await db.gallery.toArray()
-)
-
-export const useGetAllResults = () => useLiveQuery(
-  async () => await db.results.toArray()
-)
-
-export const useGetCompletedSimulationsAndResults = () => useLiveQuery(async () => {
-  const completedSimulations = await db.simulations.where('status').equals('complete').toArray() || []
-  const results = await db.results.toArray() || []
-
-  const findResult = (simId) => {
-    const result = results.find((entry) => entry.simulationId === simId)
-    return result ? result.results : []
-  }
-
-  return completedSimulations.map((simulation) => (
-    { ...simulation, results: findResult(simulation.id) }
-  ))
-})
 
 // Database Setup
 // --------------------------------------------------
-const dbSchema = {}
-Object.keys(TableFields).forEach((table) => {
-  dbSchema[table] = `++id,${TableFields[table].join()}`
-})
-
-db.version(1).stores(dbSchema)
-db.open()
-clearDatabase()
+const setupDatabase = async (): Promise<void> => {
+  try {
+    await db.open()
+    await clearRunningSimulations()
+  } catch (err) {
+    console.error('[setupDatabase] Error opening database', err)
+  }
+}
+setupDatabase().catch(console.error)
 
 export default db

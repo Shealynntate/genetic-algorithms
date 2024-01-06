@@ -1,11 +1,12 @@
 import { type SimulationStatus } from '../simulation/types'
+import { type Genome } from '../models/types'
 
-export interface ImagesDbEntry {
+export interface Image {
   id?: number
-  genId: number
+  gen: number
   simulationId: number
-  imageData: string
-  chromosomes: string
+  imageData?: ImageData
+  genome: Genome
   fitness: number
 }
 
@@ -21,15 +22,28 @@ export interface Simulation {
 
 export type MutableSimulation = Pick<Simulation, 'population' | 'parameters' | 'status' | 'name'>
 
-export interface ResultsDbEntry {
+/**
+ * The performance statistics for a generation.
+ */
+export interface Stats {
+  deviation: number
+  gen: number
+  isGlobalBest: boolean
+  maxFitness: number
+  minFitness: number
+  meanFitness: number
+  threshold: number
+}
+
+export interface Results {
   id?: number
   simulationId: number
   createdOn: number
   lastUpdated: number
-  results: string
+  results: Stats[]
 }
 
-export interface GalleryDbEntry {
+export interface GalleryEntry {
   id?: number
   createdOn: number
   simulationId: number
