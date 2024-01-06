@@ -1,8 +1,8 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import App from '../components/App';
-import Gallery from '../components/gallery/Gallery';
-import Simulations from '../components/simulations/Simulations';
+import App from '../navigation/App';
+import Gallery from '../gallery/Gallery';
+import Simulations from '../simulation/Simulations';
 import Progress from '../components/progress/Progress';
 import About from '../components/about/About';
 

@@ -1,28 +1,72 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true,
-    'jest/globals': true,
+    es2021: true
   },
   extends: [
-    'plugin:react/recommended',
-    'airbnb',
+    'standard-with-typescript',
+    'plugin:react/recommended'
   ],
   overrides: [
+    {
+      env: {
+        node: true
+      },
+      files: [
+        '.eslintrc.{js,cjs}'
+      ],
+      parserOptions: {
+        sourceType: 'script'
+      }
+    }
   ],
   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
+    parser: '@typescript-eslint/parser',
+    project: './tsconfig.json',
+    tsconfigRootDir: __dirname
   },
   plugins: [
     'react',
-    'jest',
+    'import'
   ],
-  root: true,
   rules: {
-    'react/jsx-filename-extension': [1, {
-      extensions: ['.js', '.jsx'],
-    }],
-    'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
+    'import/no-unresolved': 'error'
   },
-};
+  settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx']
+    },
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true, // always try to resolve types under `<root>@types` directory even it doesn't contain any source code, like `@types/unist`
+
+        // Choose from one of the "project" configs below or omit to use <root>/tsconfig.json by default
+
+        // use an array of glob patterns
+        project: [
+          'packages/*/tsconfig.json',
+          'other-packages/*/tsconfig.json'
+        ]
+      }
+    },
+    'import/order': [
+      'error',
+      {
+        groups: ['builtin', 'external', 'internal'],
+        pathGroups: [
+          {
+            pattern: 'react',
+            group: 'external',
+            position: 'before'
+          }
+        ],
+        pathGroupsExcludedImportTypes: ['react'],
+        'newlines-between': 'always',
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true
+        }
+      }
+    ]
+  }
+}

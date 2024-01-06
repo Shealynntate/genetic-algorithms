@@ -4,7 +4,7 @@ import { ThemeProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
 import { render, screen } from '@testing-library/react';
 import 'fake-indexeddb/auto';
-import Header from '../components/Header';
+import Header from '../navigation/Header';
 import store from '../store';
 import theme from '../theme';
 import populationService, { PopulationContext } from '../contexts/population-context';

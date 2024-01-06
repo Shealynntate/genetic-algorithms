@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-import { useGetCurrentSimulation } from '../../global/database';
-import SimulationGraphEntry from '../graph/SimulatonGraphEntry';
+import { useGetCurrentSimulation } from '../database/database';
+import SimulationGraphEntry from '../components/graph/SimulatonGraphEntry';
 
 function RunningSimulationGraph({
   xScale,

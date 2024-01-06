@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Box, CircularProgress, Tooltip, Typography,
 } from '@mui/material';
-import { StatsType } from '../../constants/propTypes';
+import { StatsType } from '../constants/propTypes';
 
 function MaxFitnessDisplay({ stats }) {
   const fitness = stats?.best?.organism?.fitness || 0;

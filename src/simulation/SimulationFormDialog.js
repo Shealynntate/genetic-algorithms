@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
-import SimulationForm from '../form/SimulationForm';
-import { ParametersType } from '../../constants/propTypes';
-import defaultParameters from '../../constants/defaultParameters';
+import SimulationForm from '../components/form/SimulationForm';
+import { ParametersType } from '../constants/propTypes';
+import defaultParameters from '../constants/defaultParameters';
 
 function SimulationFormDialog({ defaultValues, open, onClose }) {
   // Send to database and close form

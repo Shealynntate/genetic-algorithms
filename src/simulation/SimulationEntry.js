@@ -15,11 +15,11 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { addGraphEntry, deleteRunningSimulation, removeGraphEntry } from '../../features/ux/uxSlice';
-import { SimulationStatus } from '../../constants/typeDefinitions';
-import { ParametersType } from '../../constants/propTypes';
-import { deleteSimulation, renameSimulation } from '../../global/database';
-import { useGraphColor, useIsGraphEntry } from '../../features/hooks';
+import { addGraphEntry, deleteRunningSimulation, removeGraphEntry } from '../features/ux/uxSlice';
+import { SimulationStatus } from '../constants/typeDefinitions';
+import { ParametersType } from '../constants/propTypes';
+import { deleteSimulation, renameSimulation } from '../database/database';
+import { useGraphColor, useIsGraphEntry } from '../features/hooks';
 import StatusIcon from './StatusIcon';
 import HoverPopover from './HoverPopover';
 import MaxFitnessDisplay from './MaxFitnessDisplay';

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   AppBar,
   Box,
@@ -7,35 +7,35 @@ import {
   IconButton,
   Stack,
   Toolbar,
-  Typography,
-} from '@mui/material';
-import { GitHub } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { projectUrl } from '../constants/constants';
-import ChromosomesIcon from './common/ChromosomesIcon';
+  Typography
+} from '@mui/material'
+import { GitHub } from '@mui/icons-material'
+import { projectUrl } from '../constants/constants'
+import { useNavigate } from 'react-router-dom'
+import ChromosomesIcon from '../components/common/ChromosomesIcon'
 
-function Header() {
-  const navigate = useNavigate();
+function Header (): JSX.Element {
+  const navigate = useNavigate()
 
-  const onClickGithub = () => {
-    window.open(projectUrl);
-  };
+  const onClickGithub = (): void => {
+    window.open(projectUrl)
+  }
 
-  const onGalleryClick = () => {
-    navigate('/');
-  };
+  const onGalleryClick = (): void => {
+    navigate('/')
+  }
 
-  const onExperimentClick = () => {
-    navigate('/experiment');
-  };
+  const onExperimentClick = (): void => {
+    navigate('/experiment')
+  }
 
-  const onYourArtClick = () => {
-    navigate('/your-art');
-  };
+  const onYourArtClick = (): void => {
+    navigate('/your-art')
+  }
 
-  const onAboutClick = () => {
-    navigate('/about');
-  };
+  const onAboutClick = (): void => {
+    navigate('/about')
+  }
 
   return (
     <AppBar position="static">
@@ -57,7 +57,7 @@ function Header() {
         </Toolbar>
       </Container>
     </AppBar>
-  );
+  )
 }
 
-export default Header;
+export default Header

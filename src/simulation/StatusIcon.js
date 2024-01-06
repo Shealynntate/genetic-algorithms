@@ -5,7 +5,7 @@ import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import RunCircleOutlinedIcon from '@mui/icons-material/RunCircleOutlined';
 import PauseCircleOutlineOutlinedIcon from '@mui/icons-material/PauseCircleOutlineOutlined';
-import { SimulationStatus } from '../../constants/typeDefinitions';
+import { SimulationStatus } from '../constants/typeDefinitions';
 
 // TODO: Add PAUSED status?
 const statusIconMap = {

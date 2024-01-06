@@ -15,15 +15,15 @@ import {
   insertSimulation,
   useGetAllSimulations,
   useGetCurrentSimulation,
-} from '../../global/database';
-import { SimulationStatus } from '../../constants/typeDefinitions';
+} from '../database/database';
+import { SimulationStatus } from '../constants/typeDefinitions';
 import SimulationChart from './SimulationChart';
 import SimulationButtons from './SimulationButtons';
 import SimulationEntry from './SimulationEntry';
 import SimulationDetails from './SimulationDetails';
 import SimulationFormDialog from './SimulationFormDialog';
 import RunningSimulationDisplay from './RunningSimulationDisplay';
-import defaultParameters from '../../constants/defaultParameters';
+import defaultParameters from '../constants/defaultParameters';
 
 const statusToOrder = {
   [SimulationStatus.RUNNING]: 0,

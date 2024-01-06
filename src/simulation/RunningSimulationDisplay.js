@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Stack, Typography } from '@mui/material';
-import { ParametersType } from '../../constants/propTypes';
-import { canvasParameters } from '../../constants/constants';
-import GlobalBest from '../canvas/GlobalBest';
-import TargetCanvas from '../canvas/TargetCanvas';
+import { ParametersType } from '../constants/propTypes';
+import { canvasParameters } from '../constants/constants';
+import GlobalBest from '../components/canvas/GlobalBest';
+import TargetCanvas from '../components/canvas/TargetCanvas';
 
 const { width, height } = canvasParameters;
 

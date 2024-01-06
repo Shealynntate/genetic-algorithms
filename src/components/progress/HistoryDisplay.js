@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 import HistoryEntry from './HistoryEntry';
-import { useImageDbQuery } from '../../global/database';
+import { useImageDbQuery } from '../../database/database';
 
 function HistoryDisplay() {
   const images = useImageDbQuery() || [];

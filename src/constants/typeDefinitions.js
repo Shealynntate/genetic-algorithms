@@ -1,14 +1,14 @@
 export const SelectionType = {
   ROULETTE: 'ROULETTE',
   TOURNAMENT: 'TOURNAMENT',
-  SUS: 'SUS',
-};
+  SUS: 'SUS'
+}
 
 export const CrossoverType = {
   ONE_POINT: 'ONE_POINT',
   TWO_POINT: 'TWO_POINT',
-  UNIFORM: 'UNIFORM',
-};
+  UNIFORM: 'UNIFORM'
+}
 
 export const ProbabilityTypes = {
   // Mutation Probabilities
@@ -22,35 +22,27 @@ export const ProbabilityTypes = {
   RESET_CHROMOSOME: 'RESET_CHROMOSOME',
   PERMUTE_CHROMOSOMES: 'PERMUTE_CHROMOSOMES',
   // Crossover Probabilities
-  SWAP: 'SWAP',
-};
+  SWAP: 'SWAP'
+}
 
 export const DistributionTypes = {
   // Mutation Distribution Parameters
   COLOR_SIGMA: 'COLOR_SIGMA',
   POINT_SIGMA: 'POINT_SIGMA',
-  PERMUTE_SIGMA: 'PERMUTE_SIGMA',
-};
+  PERMUTE_SIGMA: 'PERMUTE_SIGMA'
+}
 
 export const AppState = {
   NONE: 'NONE',
   RUNNING: 'RUNNING',
   PAUSED: 'PAUSED',
-  COMPLETE: 'COMPLETE',
-};
+  COMPLETE: 'COMPLETE'
+}
 
 // ------------------------------------------------------------
 export const AlertState = {
   error: 'error',
   info: 'info',
   success: 'success',
-  warning: 'warning',
-};
-
-// Set in Database
-export const SimulationStatus = {
-  UNKNOWN: 'UNKNOWN',
-  PENDING: 'PENDING', // Created simulations waiting to be run or deleted
-  RUNNING: 'RUNNING', // Only one simuation is actively running at a time
-  COMPLETE: 'COMPLETE', // Simulation has reached one of the stop criteria
-};
+  warning: 'warning'
+}

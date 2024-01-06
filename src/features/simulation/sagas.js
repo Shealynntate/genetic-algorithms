@@ -21,7 +21,7 @@ import {
   runNextPendingSimulation,
   setCurrentSimulation,
   updateCurrentSimulation,
-} from '../../global/database';
+} from '../../database/database';
 import { approxEqual, setSigFigs } from '../../utils/utils';
 import {
   chromosomesToPhenotype,
