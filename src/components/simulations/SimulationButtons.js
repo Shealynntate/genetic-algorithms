@@ -2,8 +2,11 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
-  Box, Button, Typography, useTheme,
+  Box, Fab, Tooltip, Typography, useTheme,
 } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import StopIcon from '@mui/icons-material/Stop';
+import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined';
 import {
   endSimulationEarly,
   pauseSimulations,
@@ -17,6 +20,7 @@ import { primaryButtonLabels } from '../../constants/websiteCopy';
 function PrimaryButton({ runsDisabled }) {
   const simulationState = useSelector((state) => state.ux.simulationState);
   const isPaused = useIsPaused();
+  const isRunning = simulationState === AppState.RUNNING;
   const dispatch = useDispatch();
   const theme = useTheme();
   let isDisabled = runsDisabled;
@@ -58,25 +62,30 @@ function PrimaryButton({ runsDisabled }) {
   }
 
   return (
-    <Box sx={{ textAlign: 'center', mb: 1 }}>
-      {isPaused && (
-        <Button
-          variant="outlined"
-          onClick={onEndEarly}
-          size="large"
-          sx={{ mr: 1 }}
-        >
-          End Early
-        </Button>
-      )}
-      <Button
-        variant="contained"
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Fab
         onClick={onClick}
-        size="large"
+        size="extrasmall"
+        color="primary"
         disabled={isDisabled}
+        sx={{ boxShadow: 'none' }}
       >
-        {primaryButtonLabels[simulationState]}
-      </Button>
+        <Tooltip title={primaryButtonLabels[simulationState]}>
+          {isRunning ? <PauseOutlinedIcon fontSize="small" /> : <PlayArrowIcon fontSize="small" />}
+        </Tooltip>
+      </Fab>
+      {isPaused && (
+        <Tooltip title="End run early">
+          <Fab
+            size="extrasmall"
+            onClick={onEndEarly}
+            color="error"
+            sx={{ ml: 1, boxShadow: 'none' }}
+          >
+            <StopIcon fontSize="small" />
+          </Fab>
+        </Tooltip>
+      )}
     </Box>
   );
 }

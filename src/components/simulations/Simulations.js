@@ -93,17 +93,24 @@ function Simulations() {
               p: 1,
             }}
           >
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-              <Typography variant="h6">Experiment Runs</Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                mb: 1,
+                alignItems: 'center',
+              }}
+            >
+              <Stack direction="row" spacing={1}>
+                <Typography variant="h6">Experiment Runs</Typography>
+                <SimulationButtons runsDisabled={queuedSimulations.length === 0} />
+              </Stack>
               <Tooltip title="Add a new run">
                 <Fab
                   onClick={onAddSimulation}
                   color="secondary"
-                  variant="extended"
-                  size="small"
-                  sx={{
-                    boxShadow: 'none',
-                  }}
+                  size="extrasmall"
+                  sx={{ boxShadow: 'none' }}
                 >
                   <AddIcon fontSize="small" />
                 </Fab>
@@ -129,7 +136,6 @@ function Simulations() {
             onSelect={onSelect}
             simulation={runningSimulation}
           />
-          <SimulationButtons runsDisabled={queuedSimulations.length === 0} />
           <SimulationDetails simulation={idToSimulation(selectedSimulation)} />
         </Grid2>
       </Grid2>

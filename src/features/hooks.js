@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { AppState } from '../constants/typeDefinitions';
-import { RunningStates, defaultLineColor } from '../constants/constants';
+import { RunningStates } from '../constants/constants';
 
 export const useIsPaused = () => {
   const simulationState = useSelector((state) => state.ux.simulationState);
@@ -21,7 +21,7 @@ export const useIsGraphEntry = (id) => {
 export const useGraphColor = (id) => {
   const isEntry = useIsGraphEntry(id);
   const entries = useSelector((state) => state.ux.simulationGraphColors);
-  if (!isEntry) return defaultLineColor;
+  if (!isEntry) return null;
 
   return entries[id];
 };
