@@ -1,7 +1,83 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { type Image } from './types'
-import db, { currentSimulationId, getCurrentImages } from './api'
+import {
+  type Simulation,
+  type Image,
+  type GalleryEntry,
+  type Results,
+  type SimulationReport
+} from './types'
+import db, {
+  currentSimulationId,
+  getAllSimulations,
+  getCompletedSimulations,
+  getCurrentImages,
+  getCurrentSimulation,
+  getPendingSimulations,
+  getSimulationResults,
+  getSimulations
+} from './api'
 
+// Simulation Hooks
+// --------------------------------------------------
+export const useGetSimulations = (
+  ids: number[]
+): Array<Simulation | undefined> | undefined => useLiveQuery(
+  async () => await getSimulations(ids)
+)
+
+export const useGetAllSimulations = (): Simulation[] | undefined => useLiveQuery(
+  async () => await getAllSimulations()
+)
+
+export const useGetCurrentSimulation = (): Simulation | undefined => useLiveQuery(
+  async () => await getCurrentSimulation()
+)
+
+export const useGetCompletedSimulations = (): Simulation[] | undefined => useLiveQuery(
+  async () => await getCompletedSimulations()
+)
+
+export const useGetPendingSimulations = (): Simulation[] | undefined => useLiveQuery(
+  async () => await getPendingSimulations()
+)
+
+// Gallery Hooks
+// --------------------------------------------------
+export const useGetGalleryEntries = (): GalleryEntry[] | undefined => useLiveQuery(
+  async () => await db.gallery.toArray()
+)
+
+// Results Hooks
+// --------------------------------------------------
+export const useGetAllResults = (): Results[] | undefined => useLiveQuery(
+  async () => await db.results.toArray()
+)
+
+export const useGetCompletedSimulationReports = (): SimulationReport[] | undefined => useLiveQuery(
+  async () => {
+    const completedSimulations = await getCompletedSimulations()
+
+    const findResults = async (simId: number | undefined): Promise<Results | undefined> => {
+      if (simId == null) {
+        throw new Error('[useGetCompletedSimulationReports] Simulation ID is null')
+      }
+      return await getSimulationResults(simId)
+    }
+
+    return await Promise.all(
+      completedSimulations.map(async (simulation) => {
+        const results = await findResults(simulation.id)
+        if (results == null) {
+          throw new Error(`[useGetCompletedSimulationReports] Results are null: ${simulation.id}`)
+        }
+        return { simulation, results }
+      })
+    )
+  }
+)
+
+// Image Hooks
+// --------------------------------------------------
 export const useImageDbQuery = (): Image[] | undefined => useLiveQuery(
   async () => {
     if (currentSimulationId == null) return []
@@ -10,45 +86,3 @@ export const useImageDbQuery = (): Image[] | undefined => useLiveQuery(
   },
   [currentSimulationId]
 )
-
-export const useGetSimulations = (ids: number[]) => useLiveQuery(
-  async () => await db.simulations.bulkGet(ids)
-)
-
-export const useGetAllSimulations = () => useLiveQuery(
-  async () => await getAllSimulations()
-)
-
-export const useGetCurrentSimulation = () => useLiveQuery(
-  async () => await db.simulations.get({ status: 'running' })
-)
-
-export const useGetCompletedSimulations = () => useLiveQuery(
-  async () => await db.simulations.where('status').equals('complete').toArray()
-)
-
-export const useGetPendingSimulations = () => useLiveQuery(
-  async () => await db.simulations.where('status').equals('pending').toArray()
-)
-
-export const useGetGalleryEntries = () => useLiveQuery(
-  async () => await db.gallery.toArray()
-)
-
-export const useGetAllResults = () => useLiveQuery(
-  async () => await db.results.toArray()
-)
-
-export const useGetCompletedSimulationsAndResults = () => useLiveQuery(async () => {
-  const completedSimulations = await db.simulations.where('status').equals('complete').toArray() || []
-  const results = await db.results.toArray() || []
-
-  const findResult = (simId) => {
-    const result = results.find((entry) => entry.simulationId === simId)
-    return result ? result.results : []
-  }
-
-  return completedSimulations.map((simulation) => (
-    { ...simulation, results: findResult(simulation.id) }
-  ))
-})

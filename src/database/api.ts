@@ -61,6 +61,10 @@ export const getPendingSimulations = async (): Promise<Simulation[]> => {
   return await getSimulationsByStatus('pending')
 }
 
+export const getCompletedSimulations = async (): Promise<Simulation[]> => {
+  return await getSimulationsByStatus('complete')
+}
+
 /**
  * A way to update some of the fields of a simulation entry.
  * @param id the id of the simulation to update
@@ -191,13 +195,13 @@ export const deleteCurrentSimulation = async (): Promise<number[]> => {
 // --------------------------------------------------
 export const insertResultsEntry = async (
   simulationId: number,
-  results: Stats[] = []
+  stats: Stats[] = []
 ): Promise<number> => {
   return await db.results.add({
     simulationId,
     createdOn: Date.now(),
     lastUpdated: Date.now(),
-    results
+    stats
   })
 }
 
@@ -219,13 +223,13 @@ export const getCurrentSimulationResults = async (): Promise<Results | undefined
   return await getSimulationResults(currentSimulationId)
 }
 
-export const addResultsForCurrentSimulation = async (stats: Stats): Promise<number> => {
+export const addStatsForCurrentSimulation = async (stats: Stats): Promise<number> => {
   const entry = await getCurrentSimulationResults()
   if (entry?.id == null) {
-    throw new Error('[addResultsForCurrentSimulation] No valid results entry found')
+    throw new Error('[addStatsForCurrentSimulation] No valid results entry found')
   }
 
-  return await db.results.update(entry.id, { results: [...entry.results, stats] })
+  return await db.results.update(entry.id, { results: [...entry.stats, stats] })
 }
 
 // Images Table

@@ -40,7 +40,7 @@ export interface Results {
   simulationId: number
   createdOn: number
   lastUpdated: number
-  results: Stats[]
+  stats: Stats[]
 }
 
 export interface GalleryEntry {
@@ -49,4 +49,9 @@ export interface GalleryEntry {
   simulationId: number
   name: string
   json: string
+}
+
+export interface SimulationReport {
+  simulation: Simulation
+  results: Results
 }
