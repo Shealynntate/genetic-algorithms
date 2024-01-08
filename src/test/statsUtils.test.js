@@ -1,5 +1,5 @@
 import { testDistrubution, testDistrubutionAverage } from './utils';
-import { genRange } from '../utils/utils';
+import { genRange } from '../utils/utils.ts';
 import {
   computeProb,
   flipCoin,

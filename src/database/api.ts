@@ -6,7 +6,7 @@ import {
   type Simulation,
   type Results
 } from './types'
-import { type Organism } from '../models/types'
+import { type Organism } from '../population/types'
 
 const db = new GeneticAlgorithmsDatabase()
 export let currentSimulationId: number | undefined

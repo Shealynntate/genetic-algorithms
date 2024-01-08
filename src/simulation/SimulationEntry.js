@@ -15,13 +15,13 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { addGraphEntry, deleteRunningSimulation, removeGraphEntry } from '../features/ux/uxSlice';
+import { addGraphEntry, deleteRunningSimulation, removeGraphEntry } from '../ux/uxSlice';
 import { SimulationStatus } from '../constants/typeDefinitions';
 import { ParametersType } from '../constants/propTypes';
 import { deleteSimulation, renameSimulation } from '../database/api';
-import { useGraphColor, useIsGraphEntry } from '../features/hooks';
+import { useGraphColor, useIsGraphEntry } from '../ux/hooks';
 import StatusIcon from './StatusIcon';
-import HoverPopover from './HoverPopover';
+import HoverPopover from '../common/HoverPopover';
 import MaxFitnessDisplay from './MaxFitnessDisplay';
 
 function SimulationEntry({

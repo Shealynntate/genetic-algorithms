@@ -7,7 +7,7 @@ import 'fake-indexeddb/auto';
 import Header from '../navigation/Header';
 import store from '../store';
 import theme from '../theme';
-import populationService, { PopulationContext } from '../contexts/population-context';
+import populationService, { PopulationContext } from '../population/population-context';
 
 // import createWorker from '../web-workers/fitnessEvaluatorCreator';
 

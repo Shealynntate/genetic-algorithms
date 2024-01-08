@@ -88,19 +88,6 @@ export const ParametersType = {
   stopCriteria: PropTypes.shape(StopCriteriaType)
 }
 
-export const StatsType = {
-  genId: PropTypes.number,
-  maxFitness: PropTypes.number,
-  meanFitness: PropTypes.number,
-  minFitness: PropTypes.number,
-  deviation: PropTypes.number
-}
-
-export const ResultsType = {
-  threshold: PropTypes.number,
-  stats: PropTypes.shape(StatsType)
-}
-
 export const SimulationType = {
   id: PropTypes.number,
   createdOn: PropTypes.number,

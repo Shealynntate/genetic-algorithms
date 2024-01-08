@@ -7,7 +7,7 @@ import { RouterProvider } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import store from './store';
 import theme from './theme';
-import poulationService, { PopulationContext } from './contexts/population-context';
+import poulationService, { PopulationContext } from './population/population-context';
 import router from './router/router';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

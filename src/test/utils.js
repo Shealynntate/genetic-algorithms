@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { setSigFigs } from '../utils/utils';
+import { setSigFigs } from '../utils/utils.ts';
 
 // Helper Functions used across Tests
 // --------------------------------------------------

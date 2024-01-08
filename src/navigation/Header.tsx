@@ -12,7 +12,7 @@ import {
 import { GitHub } from '@mui/icons-material'
 import { projectUrl } from '../constants/constants'
 import { useNavigate } from 'react-router-dom'
-import ChromosomesIcon from '../components/common/ChromosomesIcon'
+import ChromosomesIcon from '../common/ChromosomesIcon'
 
 function Header (): JSX.Element {
   const navigate = useNavigate()

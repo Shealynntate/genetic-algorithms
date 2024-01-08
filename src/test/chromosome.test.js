@@ -1,9 +1,9 @@
 import { expectRange, mockRandom } from './utils';
 import { maxColorValue } from '../constants/constants';
-import { genRange } from '../utils/utils';
+import { genRange } from '../utils/utils.ts';
 import * as statsUtils from '../utils/statsUtils';
-import * as ChromosomeUtils from '../models/chromosomeUtils';
-import Chromosome from '../models/chromosome';
+import * as ChromosomeUtils from '../population/chromosomeUtils';
+import Chromosome from '../population/chromosome';
 
 // Test Helper Functions
 // --------------------------------------------------

@@ -1,6 +1,6 @@
-import Chromosome from '../models/chromosome';
-import Genome from '../models/genome';
-import Organism from '../models/organism';
+import Chromosome from '../population/chromosome';
+import Genome from '../population/genome';
+import Organism from '../population/organismModel';
 
 beforeEach(() => {
   // Reset ID generation

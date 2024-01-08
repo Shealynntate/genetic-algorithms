@@ -3,8 +3,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import App from '../navigation/App';
 import Gallery from '../gallery/Gallery';
 import Simulations from '../simulation/Simulations';
-import Progress from '../components/progress/Progress';
-import About from '../components/about/About';
+import Progress from '../progress/Progress';
+import About from '../about/About';
 
 const router = createBrowserRouter([
   {

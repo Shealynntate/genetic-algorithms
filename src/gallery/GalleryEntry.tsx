@@ -8,11 +8,8 @@ import { type GalleryEntryData } from './types'
 import { deleteGalleryEntry, renameGalleryEntry } from '../database/api'
 import { download, downloadJSON } from '../utils/fileUtils'
 import { canvasParameters } from '../constants/constants'
-import OrganismCanvas from '../components/canvas/OrganismCanvas'
-import TargetCanvas from '../components/canvas/TargetCanvas'
-
-const width = canvasParameters.width / 2
-const height = canvasParameters.height / 2
+import OrganismCanvas from '../canvas/OrganismCanvas'
+import TargetCanvas from '../canvas/TargetCanvas'
 
 interface GallerEntryProps {
   data: GalleryEntryData
@@ -20,24 +17,16 @@ interface GallerEntryProps {
 }
 
 function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Element {
-  const {
-    json,
-    id,
-    name,
-    simulationId
-  } = data
-  const {
-    gif,
-    globalBest,
-    totalGen,
-    parameters
-  } = JSON.parse(json)
+  const width = canvasParameters.width / 2
+  const height = canvasParameters.height / 2
+  const { json, id, name, simulationId } = data
+  const { gif, globalBest, totalGen, parameters } = JSON.parse(json)
 
   const [entryName, setEntryName] = useState(name)
   const isDevelopment = process.env.NODE_ENV === 'development'
 
   const onDelete = (): void => {
-    deleteGalleryEntry(id)
+    deleteGalleryEntry(id).catch(console.error)
   }
 
   const onDownload = (): void => {
@@ -47,11 +36,12 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
     }
   }
 
-  const onChangeName = async (event: ChangeEvent<HTMLInputElement>): void => {
+  const onChangeName = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target
     setEntryName(value)
 
-    await renameGalleryEntry(id, value)
+    // TODO: Snackbar for success/failure
+    renameGalleryEntry(id, value).catch(console.error)
   }
 
   return (

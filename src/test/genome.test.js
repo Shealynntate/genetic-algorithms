@@ -1,5 +1,5 @@
-import Chromosome from '../models/chromosome';
-import Genome from '../models/genome';
+import Chromosome from '../population/chromosome';
+import Genome from '../population/genome';
 
 describe('Creating A Genome', () => {
   test('Check Size and NumSides', () => {

@@ -9,12 +9,12 @@ import { AxisBottom, AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
 import { Box, Stack, Typography } from '@mui/material';
 import { MIN_BROWSER_WIDTH, minResultsThreshold } from '../constants/constants';
-import defaultParameters from '../constants/defaultParameters';
-import CustomCheckbox from '../components/common/Checkbox';
+import defaultParameters from '../parameters/config';
+import CustomCheckbox from '../common/Checkbox';
 import { useGetCompletedSimulationsAndResults, useGetCurrentSimulation } from '../database/api';
-import SimulationGraphEntry from '../components/graph/SimulatonGraphEntry';
+import SimulationGraphEntry from '../graph/SimulatonGraphEntry';
 import { SimulationGraph } from '../constants/websiteCopy';
-import { useWindowSize } from '../features/ux/uxSlice';
+import { useWindowSize } from '../ux/uxSlice';
 
 const { maxGenerations: maxGens } = defaultParameters.stopCriteria;
 const graphHeight = 450;

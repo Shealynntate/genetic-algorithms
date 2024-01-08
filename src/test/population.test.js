@@ -6,8 +6,8 @@ import {
   SelectionType,
 } from '../constants/typeDefinitions';
 // import GaussianNoise from '../utils/gaussianNoise';
-import Population from '../models/population';
-import Organism from '../models/organism';
+import Population from '../population/population';
+import Organism from '../population/organismModel';
 import { mockRandom } from './utils';
 
 const targetFitness = 1;

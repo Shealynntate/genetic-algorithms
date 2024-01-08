@@ -1,4 +1,4 @@
-import ChromosomeIcon from '../components/common/ChromosomeIcon';
+import ChromosomeIcon from '../common/ChromosomeIcon';
 import {
   AppState,
   CrossoverType,

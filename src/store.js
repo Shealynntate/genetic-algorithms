@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import createSagaMiddleware from 'redux-saga';
-import parametersReducer from './features/parameters/parametersSlice';
-import populationService from './contexts/population-context';
-import rootSaga from './features/rootSaga';
-import simulationReducer from './features/simulation/simulationSlice';
-import uxReducer from './features/ux/uxSlice';
+import parametersReducer from './parameters/parametersSlice';
+import populationService from './population/population-context';
+import rootSaga from './rootSaga';
+import simulationReducer from './simulation/simulationSlice';
+import uxReducer from './ux/uxSlice';
 
 const sagaMiddleware = createSagaMiddleware({
   context: {

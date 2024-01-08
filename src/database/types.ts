@@ -1,5 +1,5 @@
 import { type SimulationStatus } from '../simulation/types'
-import { type Genome } from '../models/types'
+import { type Genome } from '../population/types'
 
 export interface Image {
   id?: number

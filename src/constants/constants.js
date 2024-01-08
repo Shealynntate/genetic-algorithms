@@ -1,21 +1,5 @@
 import theme from '../theme';
-import { AppState, ProbabilityTypes } from './typeDefinitions';
-
-export const MutationProbabilities = [
-  ProbabilityTypes.TWEAK,
-  ProbabilityTypes.TWEAK_POINT,
-  ProbabilityTypes.TWEAK_COLOR,
-  ProbabilityTypes.ADD_POINT,
-  ProbabilityTypes.REMOVE_POINT,
-  ProbabilityTypes.ADD_CHROMOSOME,
-  ProbabilityTypes.REMOVE_CHROMOSOME,
-  ProbabilityTypes.RESET_CHROMOSOME,
-  ProbabilityTypes.PERMUTE_CHROMOSOMES,
-];
-
-export const CrossoverProbabilities = [
-  ProbabilityTypes.SWAP,
-];
+import { AppState } from './typeDefinitions';
 
 export const RunningStates = [
   AppState.RUNNING,
