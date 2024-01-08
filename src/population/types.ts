@@ -1,20 +1,97 @@
-import {
-  type SelectionType,
-  type CrossoverType,
-  type CrossoverTypes,
-  type CrossoverProbabilityParameters,
-  type MutationProbabilityParameters
-} from '../parameters/types'
-
-export type Phenotype = ImageData
-
-export interface Chromosome {
-  points: number[][]
-  color: number[]
+/**
+ * The boundaries used to compute the probability of an event
+ */
+export interface ProbabilityParameters {
+  startValue: number
+  endValue: number
+  startFitness: number
+  endFitness: number
 }
 
-export interface Genome {
-  chromosomes: Chromosome[]
+// Mutation
+// ------------------------------------------------------------
+export type DistributionTypes = 'colorSigma' | 'pointSigma' | 'permuteSigma'
+
+export type DistributionMap = {
+  [key in DistributionTypes]: number
+}
+
+export type MutationProbabilityTypes =
+  'tweak' |
+  'tweakPoint' |
+  'tweakColor' |
+  'addPoint' |
+  'removePoint' |
+  'addChromosome' |
+  'removeChromosome' |
+  'resetChromosome' |
+  'permuteChromosomes'
+
+export type MutationProbabilityParameters = {
+  [key in MutationProbabilityTypes]: ProbabilityParameters
+}
+
+export type MutationProbabilities = {
+  [key in MutationProbabilityTypes]: number
+}
+
+export interface MutationParameters {
+  genomeSize: number
+  probabilityParameters: MutationProbabilityParameters
+  distributionSigma: DistributionMap
+  isSinglePoint: boolean
+}
+
+export interface Mutation {
+  isSinglePoint: boolean
+  distributions: DistributionMap
+  probabilityParameters: MutationProbabilityParameters
+  probabilities: MutationProbabilities
+}
+
+// Crossover
+// ------------------------------------------------------------
+export type CrossoverType = 'onePoint' | 'twoPoint' | 'uniform'
+
+export type CrossoverProbabilityTypes = 'swap'
+
+export type CrossoverProbabilityParameters = {
+  [key in CrossoverProbabilityTypes]: ProbabilityParameters
+}
+
+/**
+ * Map of CrossoverTypes to probability values
+ */
+export type CrossoverProbabilities = {
+  [key in CrossoverProbabilityTypes]: number
+}
+
+/**
+ * The input parameters for creating a new Crossover model
+ */
+export interface CrossoverParameters {
+  type: CrossoverType
+  probabilityParameters: CrossoverProbabilityParameters
+}
+
+export interface Crossover {
+  type: CrossoverType
+  probabilityParameters: CrossoverProbabilityParameters
+  probabilities: CrossoverProbabilities
+}
+
+// Selection
+// ------------------------------------------------------------
+export type SelectionType = 'roulette' | 'tournament' | 'sus'
+
+export interface SelectionParameters {
+  type: SelectionType
+}
+
+export interface Selection {
+  type: SelectionType
+  eliteCount: number
+  tournamentSize: number
 }
 
 // Organism Types
@@ -36,33 +113,16 @@ export interface OrganismParameters {
   genome?: Genome
 }
 
-// Mutation
-// ------------------------------------------------------------
-export interface MutationParameters {
-  genomeSize: number
-  probabilityParameters: MutationProbabilityParameters
+export interface Chromosome {
+  points: number[][]
+  color: number[]
 }
 
-// Crossover
-// ------------------------------------------------------------
-/**
- * Map of CrossoverTypes to probability values
- */
-export type CrossoverProbabilities = {
-  [key in CrossoverTypes]: number
+export interface Genome {
+  chromosomes: Chromosome[]
 }
 
-/**
- * The input parameters for creating a new Crossover model
- */
-export interface CrossoverParameters {
-  type: CrossoverType
-  probabilityParameters: CrossoverProbabilityParameters
-}
-
-export interface SelectionParameters {
-  type: SelectionType
-}
+export type Phenotype = ImageData
 
 export type FitnessEvaluator = (organisms: Organism[]) => Organism[]
 
@@ -89,4 +149,13 @@ export interface RestorePopulationParameters extends PopulationParameters {
   organismId: number
   organisms: Organism[]
   best: Organism
+}
+
+export interface Population {
+  size: number
+  minPolygons: number
+  maxPolygons: number
+  minPoints: number
+  maxPoints: number
+  target: string
 }

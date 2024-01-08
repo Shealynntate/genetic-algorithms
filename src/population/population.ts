@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import { deviation } from 'd3-array'
 import { omit } from 'lodash'
 import {
@@ -7,12 +6,10 @@ import {
   type Organism,
   type FitnessEvaluator
 } from './types'
-// import Organism from './organism'
-import { SelectionType } from '../constants/typeDefinitions'
 import { statsSigFigs } from '../constants/constants'
 import { genRange, setSigFigs } from '../utils/utils'
 import { randomFloat, randomIndex } from '../utils/statsUtils'
-import Mutation from './mutation'
+import Mutation from './mutationModel'
 import Selection from './selection'
 import Crossover from './crossoverModel'
 import OrganismModel from './organismModel'

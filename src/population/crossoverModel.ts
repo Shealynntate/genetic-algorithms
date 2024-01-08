@@ -1,9 +1,10 @@
-import { type CrossoverProbabilities, type CrossoverParameters } from './types'
 import {
+  type CrossoverProbabilities,
+  type CrossoverParameters,
   type Crossover,
   type CrossoverProbabilityParameters,
   type CrossoverType
-} from '../parameters/types'
+} from './types'
 import { computeProb, flipCoin } from '../utils/statsUtils'
 import { objectKeys } from '../utils/utils'
 
