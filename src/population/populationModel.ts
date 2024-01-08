@@ -1,20 +1,23 @@
 import { deviation } from 'd3-array'
 import { omit } from 'lodash'
 import {
-  type RestorePopulationParameters,
   type PopulationParameters,
   type Organism,
-  type FitnessEvaluator
+  type FitnessEvaluator,
+  type OrganismRecord,
+  type Population,
+  type SelectionType
 } from './types'
+import { type Stats } from '../database/types'
+import CrossoverModel from './crossoverModel'
+import MutationModel from './mutationModel'
+import OrganismModel from './organismModel'
+import SelectionModel from './selectionModel'
 import { statsSigFigs } from '../constants/constants'
 import { genRange, setSigFigs } from '../utils/utils'
 import { randomFloat, randomIndex } from '../utils/statsUtils'
-import Mutation from './mutationModel'
-import Selection from './selection'
-import Crossover from './crossoverModel'
-import OrganismModel from './organismModel'
 
-class Population {
+class PopulationModel {
   // Static Properties
   // ------------------------------------------------------------
   static count: number = -1
@@ -26,30 +29,29 @@ class Population {
   maxGenomeSize: number
   maxPoints: number
   minPoints: number
-  crossover: Crossover
-  mutation: Mutation
-  selection: Selection
+  crossover: CrossoverModel
+  mutation: MutationModel
+  selection: SelectionModel
   organisms: Organism[]
-  best: Organism | null
+  best: OrganismRecord | null
   evaluateFitness: FitnessEvaluator
 
   // Static Methods
   // ------------------------------------------------------------
   static get nextGenId (): number {
-    Population.count += 1
+    PopulationModel.count += 1
 
-    return Population.count
+    return PopulationModel.count
   }
 
   static restorePopulation (
-    parameters: PopulationParameters,
-    evaluateFitness: FitnessEvaluator,
-    restoreParameters: RestorePopulationParameters
-  ): Population {
-    Population.count = restoreParameters.genId
-    OrganismModel.restoreId(restoreParameters.organismId)
+    parameters: Population,
+    evaluateFitness: FitnessEvaluator
+  ): PopulationModel {
+    PopulationModel.count = parameters.genId
+    OrganismModel.restoreId(parameters.organismId)
 
-    const population = new Population(parameters, evaluateFitness)
+    const population = new PopulationModel(parameters, evaluateFitness)
     population.organisms = restoreParameters.organisms
     population.best = restoreParameters.best
 
@@ -57,17 +59,17 @@ class Population {
   }
 
   static reset (): void {
-    Population.count = -1
+    PopulationModel.count = -1
   }
 
   // Instance Methods
   // ------------------------------------------------------------
   constructor (parameters: PopulationParameters, evaluateFitness: FitnessEvaluator) {
-    this.genId = Population.nextGenId
+    this.genId = PopulationModel.nextGenId
     this.target = parameters.target
-    this.crossover = new Crossover(parameters.crossover)
-    this.selection = new Selection(parameters.selection)
-    this.mutation = new Mutation(parameters.mutation)
+    this.crossover = new CrossoverModel(parameters.crossover)
+    this.selection = new SelectionModel(parameters.selection)
+    this.mutation = new MutationModel(parameters.mutation)
     this.maxGenomeSize = parameters.maxGenomeSize
     this.minPoints = parameters.minPoints
     this.maxPoints = parameters.maxPoints
@@ -84,62 +86,81 @@ class Population {
     // If the population is expanding, duplicate the first organism until we reach <size>
     // It's either the most fit organism or a random selection
     while (this.organisms.length < parameters.size) {
+      const bounds = {
+        maxGenomeSize: this.maxGenomeSize,
+        minPoints: this.minPoints,
+        maxPoints: this.maxPoints
+      }
       // Clone and mutate first organism
-      this.organisms.push(OrganismModel.cloneAndMutate(this.organisms[0], this.mutation))
+      this.organisms.push(
+        OrganismModel.cloneAndMutate(this.organisms[0], this.mutation, bounds)
+      )
     }
   }
 
-  serialize () {
-    const { best } = this
-    if (best) {
+  serialize (): Population {
+    const best = this.best
+    if (best != null) {
       best.organism = omit(best.organism, ['phenotype'])
     }
+
     return {
       genId: this.genId,
       organisms: this.organisms.map((o) => omit(o, ['phenotype'])),
       mutation: this.mutation.serialize(),
       crossover: this.crossover.serialize(),
       selection: this.selection.serialize(),
-      best,
-      organismId: Organism.getLatestId()
+      best: best ?? { gen: this.genId, organism: this.organisms[0] },
+      organismId: OrganismModel.getLatestId(),
+      size: this.size,
+      minPoints: this.minPoints,
+      maxPoints: this.maxPoints,
+      target: this.target
     }
   }
 
   async initialize (): Promise<void> {
     // Prep for the first call of runGeneration
-    this.organisms = await this.evaluateFitness(this.organisms)
+    this.organisms = await (this.evaluateFitness(this.organisms))
   }
 
-  async runGeneration () {
-    const parents = this.performSelection(this.selection)
+  async runGeneration (): Promise<Stats> {
+    const parents = this.performSelection(
+      this.selection.type,
+      this.selection.tournamentSize,
+      this.selection.eliteCount
+    )
     this.organisms = this.reproduce(parents, this.selection, this.crossover, this.mutation)
     // This is handled externally in a webWorker in order to parallelize the work
     this.organisms = await this.evaluateFitness(this.organisms)
 
-    this.genId = Population.nextGenId
+    this.genId = PopulationModel.nextGenId
     const stats = this.createStats()
     // Let Mutation and Crossover strategies update if needed
-    this.mutation.markNextGen(stats)
-    this.crossover.markNextGen(stats)
+    this.mutation.markNextGen(stats.maxFitness)
+    this.crossover.markNextGen(stats.maxFitness)
 
     return stats
   }
 
-  performSelection ({ type, tournamentSize, eliteCount }) {
+  performSelection (type: SelectionType, tournamentSize: number, eliteCount: number): Organism[][] {
     const count = (this.size - eliteCount) / 2
     switch (type) {
-      case SelectionType.ROULETTE:
+      case 'roulette':
         return this.rouletteSelection(count)
-      case SelectionType.TOURNAMENT:
+      case 'tournament':
         return this.tournamentSelection(count, tournamentSize)
-      case SelectionType.SUS:
+      case 'sus':
         return this.susSelection(count)
-      default:
-        throw new Error(`Invalid SelectionType ${type} provided`)
     }
   }
 
-  reproduce (parents, selection, crossover, mutation) {
+  reproduce (
+    parents: Organism[][],
+    selection: SelectionModel,
+    crossover: CrossoverModel,
+    mutation: MutationModel
+  ): Organism[] {
     const { eliteCount } = selection
     // Generate (N - eliteCount) offspring for the next generation
     const nextGen = this.getElites(eliteCount)
@@ -149,15 +170,16 @@ class Population {
       maxPoints: this.maxPoints
     }
     parents.forEach(([p1, p2]) => {
-      const offspring = Organism.reproduce(p1, p2, crossover, mutation, bounds)
+      const offspring = OrganismModel.reproduce(p1, p2, crossover, mutation, bounds)
       nextGen.push(...offspring)
     })
+
     return nextGen
   }
 
   // Parent Selection Algorithms
   // ------------------------------------------------------------
-  rouletteSelection (count) {
+  rouletteSelection (count: number): Organism[][] {
     const parents = []
     const cdf = this.createFitnessCDF()
     while (parents.length < count) {
@@ -168,7 +190,7 @@ class Population {
     return parents
   }
 
-  tournamentSelection (count, tournamentSize) {
+  tournamentSelection (count: number, tournamentSize: number): Organism[][] {
     const parents = []
     while (parents.length < count) {
       const p1 = this.tournamentSelectParent(tournamentSize)
@@ -178,7 +200,7 @@ class Population {
     return parents
   }
 
-  susSelection (count) {
+  susSelection (count: number): Organism[][] {
     const parents = []
     const cdf = this.createFitnessCDF()
     const step = cdf[cdf.length - 1] / this.size
@@ -195,7 +217,7 @@ class Population {
 
   // Parent Selection Algorithm Helpers
   // ------------------------------------------------------------
-  rouletteSelectParent (cdf) {
+  rouletteSelectParent (cdf: number[]): Organism {
     const total = cdf[cdf.length - 1]
     const n = randomFloat(0, total)
     let index = 0
@@ -209,7 +231,7 @@ class Population {
     return this.organisms[index]
   }
 
-  tournamentSelectParent (size) {
+  tournamentSelectParent (size: number): Organism {
     let best = this.randomOrganism()
     let fitA = best.fitness
     genRange(size).forEach(() => {
@@ -224,13 +246,14 @@ class Population {
     return best
   }
 
-  susSelectParent (cdf, value) {
+  susSelectParent (cdf: number[], value: number): Organism {
     const index = cdf.findIndex((f) => value <= f)
+
     return this.organisms[index]
   }
 
-  createFitnessCDF () {
-    const cdf = []
+  createFitnessCDF (): number[] {
+    const cdf: number[] = []
     let fitnessSum = 0
     this.organisms.forEach((org) => {
       fitnessSum += org.fitness
@@ -239,19 +262,19 @@ class Population {
     return cdf
   }
 
-  getElites (count) {
+  getElites (count: number): Organism[] {
     if (count === 0) return []
 
     const organisms = this.organismsByFitness()
-    return organisms.slice(0, count).map((org) => Organism.clone(org))
+    return organisms.slice(0, count).map((org) => OrganismModel.clone(org))
   }
 
-  randomOrganism () {
+  randomOrganism (): Organism {
     const index = randomIndex(this.size)
     return this.organisms[index]
   }
 
-  maxFitOrganism () {
+  maxFitOrganism (): Organism {
     return this.organismsByFitness()[0]
   }
 
@@ -261,11 +284,11 @@ class Population {
    * Sorts a copy of the list of organisms by fitness in descending order.
    * @returns the array of sorted organisms
    */
-  organismsByFitness () {
+  organismsByFitness (): Organism[] {
     return [...this.organisms].sort((a, b) => b.fitness - a.fitness)
   }
 
-  createStats () {
+  createStats (): Stats {
     let max = Number.MIN_SAFE_INTEGER
     let min = Number.MAX_SAFE_INTEGER
     let total = 0
@@ -282,16 +305,16 @@ class Population {
     const mean = total / this.size
     // Update the overall best organism
     let isGlobalBest = false
-    if (!this.best || max > this.best.organism.fitness) {
-      this.best = { genId: this.genId, organism: maxFitOrganism }
+    if (this.best == null || max > this.best.organism.fitness) {
+      this.best = { gen: this.genId, organism: maxFitOrganism }
       isGlobalBest = true
     }
+
     return {
-      genId: this.genId,
       meanFitness: setSigFigs(mean, statsSigFigs),
       maxFitness: setSigFigs(max, statsSigFigs),
       minFitness: setSigFigs(min, statsSigFigs),
-      deviation: setSigFigs(deviation(this.organisms, (o) => o.fitness), statsSigFigs),
+      deviation: setSigFigs(deviation(this.organisms, (o) => o.fitness) ?? 0, statsSigFigs),
       maxFitOrganism,
       isGlobalBest
     }
@@ -300,9 +323,9 @@ class Population {
   /**
    * The size of the population (number of organisms per generation)
    */
-  get size () {
+  get size (): number {
     return this.organisms.length
   }
 }
 
-export default Population
+export default PopulationModel

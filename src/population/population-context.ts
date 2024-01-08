@@ -1,10 +1,15 @@
 import { createContext } from 'react'
 import type WorkerBuilder from '../web-workers/workerBuilder'
-import { RestorePopulationParameters, type PopulationParameters, Organism } from './types'
+import {
+  type Population,
+  type PopulationParameters,
+  type Organism,
+  type WorkerMessage
+} from './types'
 import { workerBatchSize } from '../constants/constants'
 import createWorker from '../web-workers/fitnessEvaluatorCreator'
-import Population from './population'
-import Organism from './organismModel'
+import PopulationModel from './populationModel'
+import OrganismModel from './organismModel'
 
 /**
  * A class that serves as the interface between the App and the Population
@@ -13,7 +18,7 @@ import Organism from './organismModel'
  * It also manages the webWorker code for parallelizing the fitnessEvaluation work.
  */
 class PopulationService {
-  population: Population | null
+  population: PopulationModel | null
   workers: WorkerBuilder[]
 
   constructor () {
@@ -21,19 +26,22 @@ class PopulationService {
     this.workers = []
   }
 
-  async create (parameters: PopulationParameters): Promise<Population> {
+  async create (parameters: PopulationParameters): Promise<PopulationModel> {
     const { size, target } = parameters
     // Setup web workers for evaluateFitness work
     const numWorkers = Math.ceil(size / workerBatchSize)
     this.workers = [...Array(numWorkers)].map(() => createWorker(target))
-    this.population = new Population(parameters, this.evaluateFitness.bind(this))
+    this.population = new PopulationModel(parameters, this.evaluateFitness.bind(this))
     await this.population.initialize()
 
     return this.population
   }
 
-  async restore (parameters: RestorePopulationParameters): Promise<Population> {
-    this.population = Population.restorePopulation(parameters, this.evaluateFitness.bind(this))
+  async restore (parameters: Population): Promise<PopulationModel> {
+    this.population = PopulationModel.restorePopulation(
+      parameters,
+      this.evaluateFitness.bind(this)
+    )
     await this.population.initialize()
 
     return this.population
@@ -46,7 +54,7 @@ class PopulationService {
    */
   async evaluateFitness (organisms: Organism[]): Promise<Organism[]> {
     const size = organisms.length
-    const promises = []
+    const promises: Array<Promise<WorkerMessage>> = []
 
     for (let i = 0; i < this.workers.length; ++i) {
       const start = i * workerBatchSize
@@ -66,7 +74,7 @@ class PopulationService {
     }
 
     const results = await Promise.all(promises)
-    let orgs = []
+    let orgs: Organism[] = []
     for (let i = 0; i < results.length; ++i) {
       orgs = orgs.concat(results[i].updatedOrganisms)
     }
@@ -76,21 +84,23 @@ class PopulationService {
     return orgs
   }
 
-  serialize () {
-    return this.population.serialize()
+  serialize (): Population | undefined {
+    return this.population?.serialize()
   }
 
-  reset () {
+  reset (): void {
     // Reset the static state of the Population
-    Population.reset()
-    Organism.reset()
+    PopulationModel.reset()
+    OrganismModel.reset()
     this.population = null
     // Terminate the webWorkers
-    this.workers.forEach((worker) => worker.terminate())
+    this.workers.forEach((worker) => {
+      worker.terminate()
+    })
     this.workers = []
   }
 
-  getPopulation () {
+  getPopulation (): PopulationModel | null {
     return this.population
   }
 }

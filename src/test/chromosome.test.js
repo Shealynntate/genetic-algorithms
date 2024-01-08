@@ -3,7 +3,7 @@ import { maxColorValue } from '../constants/constants';
 import { genRange } from '../utils/utils.ts';
 import * as statsUtils from '../utils/statsUtils';
 import * as ChromosomeUtils from '../population/chromosomeUtils';
-import Chromosome from '../population/chromosome';
+import Chromosome from '../population/chromosomeModel';
 
 // Test Helper Functions
 // --------------------------------------------------

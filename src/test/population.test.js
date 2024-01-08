@@ -6,7 +6,7 @@ import {
   SelectionType,
 } from '../constants/typeDefinitions';
 // import GaussianNoise from '../utils/gaussianNoise';
-import Population from '../population/population';
+import Population from '../population/populationModel';
 import Organism from '../population/organismModel';
 import { mockRandom } from './utils';
 

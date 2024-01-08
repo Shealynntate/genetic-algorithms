@@ -86,6 +86,8 @@ export type SelectionType = 'roulette' | 'tournament' | 'sus'
 
 export interface SelectionParameters {
   type: SelectionType
+  eliteCount: number
+  tournamentSize: number
 }
 
 export interface Selection {
@@ -110,7 +112,12 @@ export interface OrganismParameters {
   id?: number
   size: number
   numSides: number
-  genome?: Genome
+}
+
+// Chromosome
+// ------------------------------------------------------------
+export interface ChromosomeParameters {
+  numSides: number
 }
 
 export interface Chromosome {
@@ -118,13 +125,32 @@ export interface Chromosome {
   color: number[]
 }
 
+// Genome
+// ------------------------------------------------------------
+export interface GenomeBounds {
+  maxGenomeSize: number
+  minPoints: number
+  maxPoints: number
+}
+
+export interface GenomeParameters {
+  size: number
+  numSides: number
+}
+
 export interface Genome {
   chromosomes: Chromosome[]
 }
 
+// ------------------------------------------------------------
 export type Phenotype = ImageData
 
-export type FitnessEvaluator = (organisms: Organism[]) => Organism[]
+export interface OrganismRecord {
+  organism: Organism
+  gen: number
+}
+
+export type FitnessEvaluator = (organisms: Organism[]) => Promise<Organism[]>
 
 /**
  * The parameters needed to create a new Population
@@ -144,18 +170,22 @@ export interface PopulationParameters {
 /**
  * The parameters needed to restore a Population from a previous run
  */
-export interface RestorePopulationParameters extends PopulationParameters {
+export interface Population {
   genId: number
   organismId: number
-  organisms: Organism[]
-  best: Organism
-}
-
-export interface Population {
   size: number
-  minPolygons: number
-  maxPolygons: number
   minPoints: number
   maxPoints: number
   target: string
+  organisms: Organism[]
+  best: OrganismRecord
+  mutation: Mutation
+  crossover: Crossover
+  selection: Selection
+}
+
+// Workers
+// ------------------------------------------------------------
+export interface WorkerMessage {
+  updatedOrganisms: Organism[]
 }
