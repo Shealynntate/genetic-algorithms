@@ -120,4 +120,6 @@ const populationService = new PopulationService()
 
 export const PopulationContext = createContext(populationService)
 
+export type PopulationServiceType = typeof populationService
+
 export default populationService

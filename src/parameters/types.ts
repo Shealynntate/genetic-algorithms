@@ -16,4 +16,6 @@ export interface ParametersState {
   crossover: Crossover
   mutation: Mutation
   stopCriteria: StopCriteria
+  minPolygons: number
+  maxPolygons: number
 }

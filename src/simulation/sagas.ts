@@ -1,6 +1,20 @@
 import { omit } from 'lodash'
-import { call, delay, getContext, put, race, select, take, takeEvery } from 'redux-saga/effects'
-import { type GlobalBest } from './types'
+import {
+  type SelectEffect,
+  call,
+  delay,
+  getContext,
+  put,
+  race,
+  select,
+  take,
+  takeEvery,
+  type SagaReturnType,
+  type CallEffect,
+  type GetContextEffect,
+  type PutEffect
+} from 'redux-saga/effects'
+import { type OrganismRecord } from './types'
 import { minResultsThreshold, saveThresholds } from '../constants/constants'
 import {
   addGalleryEntry,
@@ -11,11 +25,12 @@ import {
   getCurrentSimulation,
   runNextPendingSimulation,
   setCurrentSimulation,
-  updateCurrentSimulation
+  updateCurrentSimulation,
+  getSimulationByStatus
 } from '../database/api'
 import { approxEqual, setSigFigs } from '../utils/utils'
 import { chromosomesToPhenotype, createGif, createImageData } from '../utils/imageUtils'
-import { isRunningSelector } from '../ux/hooks'
+import { isRunningSelector } from '../navigation/hooks'
 import { setSimulationParameters } from '../parameters/parametersSlice'
 import {
   addGenStats,
@@ -31,19 +46,48 @@ import {
   removeGraphEntry,
   resumeSimulations,
   runSimulations
-} from '../ux/uxSlice'
+} from '../navigation/navigationSlice'
+import { type RootState } from '../store'
+import { type PopulationServiceType } from '../population/population-context'
+import { Simulation } from '../database/types'
+
+function * typedSelect<T> (selector: (state: RootState) => T): Generator<SelectEffect, T, T> {
+  const slice: T = yield select(selector)
+
+  return slice
+}
+
+function * typedCall<Fn extends (...args: any[]) => any> (
+  fn: Fn,
+  ...args: Parameters<Fn>
+): Generator<CallEffect<SagaReturnType<Fn>>, SagaReturnType<Fn>, SagaReturnType<Fn>> {
+  const value: SagaReturnType<typeof fn> = yield call(fn, ...args)
+
+  return value
+}
+
+function * typedGetContext<T> (key: string): Generator<GetContextEffect, T, T> {
+  const value: T = yield getContext(key)
+
+  return value
+}
 
 // Saga Functions
 // --------------------------------------------------
 function * restorePopulationSaga ({ payload: populationData }) {
-  const target: string = yield select((state) => state.parameters.target)
-  const populationService = yield getContext('population')
+  const target = yield * typedSelect((state: RootState) => state.parameters.target)
+  const populationService = yield * typedGetContext<PopulationServiceType>('population')
   const { data } = yield createImageData(target)
   yield populationService.restore({ target: data, ...populationData })
 }
 
-function * resetSimulationsSaga () {
-  const populationService = yield getContext('population')
+interface ClearCurrentSimulationAction {
+  payload: undefined
+  type: 'simulation/clearCurrentSimulation'
+}
+
+function * resetSimulationsSaga (): Generator<GetContextEffect | PutEffect<ClearCurrentSimulationAction>, void, PopulationServiceType> {
+  const populationService = yield * typedGetContext<PopulationServiceType>('population')
   yield put(clearCurrentSimulation())
   populationService.reset()
 }
@@ -69,15 +113,17 @@ function * createGalleryEntrySaga ({ totalGen, globalBest }) {
 }
 
 function * completeSimulationRunSaga () {
-  const globalBest = yield select((state) => state.simulation.globalBest)
-  const currentBest = yield select((state) => state.simulation.currentBest)
-  const currentStats = yield select((state) => state.simulation.currentGenStats)
-  const results = yield select((state) => state.simulation.runningStatsRecord)
-  const { population } = yield getContext('population')
-  const currentMax = Math.trunc(currentBest.organism.fitness * 1000) / 1000
+  const globalBest = yield * typedSelect((state) => state.simulation.globalBest)
+  const currentBest = yield * typedSelect((state) => state.simulation.currentBest)
+  const currentStats = yield * typedSelect((state) => state.simulation.currentGenStats)
+  const results = yield * typedSelect((state) => state.simulation.runningStatsRecord)
+  const populationService = yield * typedGetContext<PopulationServiceType>('population')
+  const population = populationService.getPopulation()
+  const fitness = globalBest?.organism.fitness ?? 0
+  const currentMax = Math.trunc(fitness * 1000) / 1000
   // Create a Gallery Entry for the run
   yield call(createGalleryEntrySaga, {
-    totalGen: currentBest.genId,
+    totalGen: currentBest?.gen ?? 0,
     globalBest
   })
   // Stop the simulation and add the results to database
@@ -85,7 +131,7 @@ function * completeSimulationRunSaga () {
   yield put(addGenStats(lastGenResults))
   yield updateCurrentSimulation({
     population: population.serialize(),
-    status: SimulationStatus.COMPLETE
+    status: 'complete'
   })
   yield insertResultsForCurrentSimulation([...results, lastGenResults])
   yield call(resetSimulationsSaga)
@@ -96,8 +142,8 @@ function * generationResultsCheckSaga ({
   currentBest,
   stats
 }) {
-  const globalBest = yield select((state) => state.simulation.globalBest)
-  const statsRecord = yield select((state) => state.simulation.runningStatsRecord)
+  const globalBest = yield * typedSelect((state) => state.simulation.globalBest)
+  const statsRecord = yield * typedSelect((state) => state.simulation.runningStatsRecord)
 
   const { targetFitness, maxGenerations } = stopCriteria
   const isSuccess = hasReachedTarget(globalBest, targetFitness)
@@ -107,7 +153,7 @@ function * generationResultsCheckSaga ({
   const currentMax = setSigFigs(stats.maxFitness, 3)
   if (currentMax >= minResultsThreshold) {
     let latestThreshold = 0
-    if (statsRecord.length) {
+    if (statsRecord.length > 0) {
       latestThreshold = statsRecord[statsRecord.length - 1].threshold
     }
     // If the results are a new GlobalBest or are different enough from the previously
@@ -125,12 +171,12 @@ function * generationResultsCheckSaga ({
   return false
 }
 
-function * runSimulationSaga ({ parameters }) {
-  const populationService = yield getContext('population')
+function * runSimulationSaga (parameters: Simulation) {
+  const populationService = yield * typedGetContext<PopulationServiceType>('population')
   let population = populationService.getPopulation()
 
   // Initialize the population if we're starting a new run
-  if (!population) {
+  if (population == null) {
     const {
       crossover,
       mutation,
@@ -165,8 +211,9 @@ function * runSimulationSaga ({ parameters }) {
   yield put(setSimulationParameters(parameters))
   // Run the experiment in a loop until one of the stop criteria is met
   while (true) {
+    const isRunning = yield * typedSelect(isRunningSelector)
     // If the experiment has been paused, wait until a resume or endEarly action has been fired
-    if (!(yield select(isRunningSelector))) {
+    if (!isRunning) {
       const { endSim, deleteSim } = yield race({
         resume: take(resumeSimulations),
         endSim: take(endSimulationEarly),
@@ -215,8 +262,8 @@ function * runSimulationSaga ({ parameters }) {
     }))
 
     // Update the list of maxFitness scores
-    const result = yield call(generationResultsCheckSaga, {
-      currentBest: { organism, genId: stats.genId },
+    const result = yield * typedCall(generationResultsCheckSaga, {
+      currentBest: { organism, gen: stats.genId },
       stats,
       stopCriteria: parameters.stopCriteria
     })
@@ -226,17 +273,18 @@ function * runSimulationSaga ({ parameters }) {
 }
 
 function * runSimulationsSaga () {
-  let pendingSimulation = yield runNextPendingSimulation()
+  while (true) {
+    const pendingSimulation: Simulation | undefined = yield getSimulationByStatus('pending')
+    if (pendingSimulation == null) break
 
-  while (pendingSimulation) {
-    const doContinue = yield call(runSimulationSaga, pendingSimulation)
+    yield setCurrentSimulation(pendingSimulation.id)
+    yield updateCurrentSimulation({ status: 'running' })
+    const next: boolean = yield * typedCall(runSimulationSaga, pendingSimulation)
     // If user reset simulations, exit early and don't mark them complete
-    if (!doContinue) return
-
-    pendingSimulation = yield runNextPendingSimulation()
+    if (!next) return
   }
-
-  yield setCurrentSimulation(null)
+  // All simulations have completed, signal that the run is over
+  yield setCurrentSimulation()
   yield put(endSimulations())
 }
 
@@ -258,7 +306,7 @@ const shouldSaveGenImage = (genId: number): boolean => {
   return false
 }
 
-const hasReachedTarget = (globalBest: GlobalBest | undefined, target: number): boolean => {
+const hasReachedTarget = (globalBest: OrganismRecord | undefined, target: number): boolean => {
   if (globalBest == null) return false
 
   const { fitness } = globalBest.organism

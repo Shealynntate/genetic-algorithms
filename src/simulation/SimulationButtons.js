@@ -12,8 +12,8 @@ import {
   pauseSimulations,
   resumeSimulations,
   runSimulations,
-} from '../ux/uxSlice';
-import { useIsPaused } from '../ux/hooks';
+} from '../navigation/navigationSlice';
+import { useIsPaused } from '../navigation/hooks';
 import { AppState } from '../constants/typeDefinitions';
 import { primaryButtonLabels } from '../constants/websiteCopy';
 

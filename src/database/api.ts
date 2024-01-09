@@ -89,17 +89,6 @@ export const updateCurrentSimulation = async (
   return await updateSimulation(currentSimulationId, data)
 }
 
-// TODO: Move this logic into the sagas
-export const runNextPendingSimulation = async (): Promise<Simulation | undefined> => {
-  const next = await getSimulationByStatus('pending')
-  if (next != null) {
-    currentSimulationId = next.id
-    await updateCurrentSimulation({ status: 'running' })
-  }
-
-  return next
-}
-
 /**
  * Update the name of a simulation entry.
  * @param simulationId the id of the simulation to rename
@@ -117,7 +106,7 @@ export const renameSimulation = async (simulationId: number, name: string): Prom
  * @returns the simulation entry for the current simulation, or null if no simulation is set
  */
 export const setCurrentSimulation = async (
-  simulationId: number | null
+  simulationId?: number
 ): Promise<Simulation | null> => {
   if (simulationId == null) {
     // Clear out current simulation state

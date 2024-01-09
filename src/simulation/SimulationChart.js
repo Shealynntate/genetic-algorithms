@@ -14,7 +14,7 @@ import CustomCheckbox from '../common/Checkbox';
 import { useGetCompletedSimulationsAndResults, useGetCurrentSimulation } from '../database/api';
 import SimulationGraphEntry from '../graph/SimulatonGraphEntry';
 import { SimulationGraph } from '../constants/websiteCopy';
-import { useWindowSize } from '../ux/uxSlice';
+import { useWindowSize } from '../navigation/navigationSlice';
 
 const { maxGenerations: maxGens } = defaultParameters.stopCriteria;
 const graphHeight = 450;

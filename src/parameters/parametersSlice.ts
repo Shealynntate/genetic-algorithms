@@ -16,14 +16,14 @@ export const parametersSlice = createSlice({
       state.population.target = action.payload
     },
     setMinPolygons: (state, action) => {
-      state.population.minPolygons = action.payload
+      state.minPolygons = action.payload
     },
     setMaxPolygons: (state, action) => {
-      state.population.maxPolygons = action.payload
+      state.maxPolygons = action.payload
     },
     setPolygons: (state, action) => {
-      state.population.minPolygons = action.payload.minPolygons
-      state.population.maxPolygons = action.payload.maxPolyGons
+      state.minPolygons = action.payload.minPolygons
+      state.maxPolygons = action.payload.maxPolyGons
     },
     // Crossover
     setCrossoverType: (state, action) => {
