@@ -6,9 +6,10 @@ import {
   type FitnessEvaluator,
   type OrganismRecord,
   type Population,
-  type SelectionType
+  type SelectionType,
+  type RestorePopulationParameters,
+  type GenerationStats
 } from './types'
-import { type Stats } from '../database/types'
 import CrossoverModel from './crossoverModel'
 import MutationModel from './mutationModel'
 import OrganismModel from './organismModel'
@@ -45,11 +46,12 @@ class PopulationModel {
   }
 
   static restorePopulation (
-    parameters: Population,
+    parameters: PopulationParameters,
+    restoreParameters: RestorePopulationParameters,
     evaluateFitness: FitnessEvaluator
   ): PopulationModel {
-    PopulationModel.count = parameters.genId
-    OrganismModel.restoreId(parameters.organismId)
+    PopulationModel.count = restoreParameters.genId
+    OrganismModel.restoreId(restoreParameters.organismId)
 
     const population = new PopulationModel(parameters, evaluateFitness)
     population.organisms = restoreParameters.organisms
@@ -124,7 +126,7 @@ class PopulationModel {
     this.organisms = await (this.evaluateFitness(this.organisms))
   }
 
-  async runGeneration (): Promise<Stats> {
+  async runGeneration (): Promise<GenerationStats> {
     const parents = this.performSelection(
       this.selection.type,
       this.selection.tournamentSize,
@@ -288,11 +290,11 @@ class PopulationModel {
     return [...this.organisms].sort((a, b) => b.fitness - a.fitness)
   }
 
-  createStats (): Stats {
+  createStats (): GenerationStats {
     let max = Number.MIN_SAFE_INTEGER
     let min = Number.MAX_SAFE_INTEGER
     let total = 0
-    let maxFitOrganism = null
+    let maxFitOrganism = this.organisms[0]
     for (let i = 0; i < this.size; ++i) {
       const { fitness } = this.organisms[i]
       if (fitness < min) min = fitness
@@ -311,6 +313,7 @@ class PopulationModel {
     }
 
     return {
+      gen: this.genId,
       meanFitness: setSigFigs(mean, statsSigFigs),
       maxFitness: setSigFigs(max, statsSigFigs),
       minFitness: setSigFigs(min, statsSigFigs),

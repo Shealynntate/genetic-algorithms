@@ -37,15 +37,13 @@ export type MutationProbabilities = {
 
 export interface MutationParameters {
   genomeSize: number
-  probabilityParameters: MutationProbabilityParameters
-  distributionSigma: DistributionMap
-  isSinglePoint: boolean
-}
-
-export interface Mutation {
   isSinglePoint: boolean
   distributions: DistributionMap
   probabilityParameters: MutationProbabilityParameters
+}
+
+export interface Mutation extends MutationParameters {
+  // Probability values computed when the population is initialized
   probabilities: MutationProbabilities
 }
 
@@ -167,6 +165,13 @@ export interface PopulationParameters {
   selection: SelectionParameters
 }
 
+export interface RestorePopulationParameters {
+  genId: number
+  organismId: number
+  organisms: Organism[]
+  best: OrganismRecord
+}
+
 /**
  * The parameters needed to restore a Population from a previous run
  */
@@ -188,4 +193,22 @@ export interface Population {
 // ------------------------------------------------------------
 export interface WorkerMessage {
   updatedOrganisms: Organism[]
+}
+
+/**
+ * The performance statistics for a generation.
+ */
+export interface GenerationStats {
+  deviation: number
+  gen: number
+  isGlobalBest: boolean
+  maxFitness: number
+  minFitness: number
+  meanFitness: number
+  maxFitOrganism: Organism
+}
+
+export interface GenerationStatsRecord {
+  threshold: number
+  stats: GenerationStats
 }

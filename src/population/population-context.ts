@@ -37,9 +37,20 @@ class PopulationService {
     return this.population
   }
 
-  async restore (parameters: Population): Promise<PopulationModel> {
+  async restore (
+    state: Population,
+    minGenomeSize: number,
+    maxGenomeSize: number
+  ): Promise<PopulationModel> {
+    const { genId, organismId, organisms, best, ...parameters } = state
     this.population = PopulationModel.restorePopulation(
-      parameters,
+      { minGenomeSize, maxGenomeSize, ...parameters },
+      {
+        genId,
+        organismId,
+        organisms,
+        best
+      },
       this.evaluateFitness.bind(this)
     )
     await this.population.initialize()

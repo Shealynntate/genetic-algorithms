@@ -23,12 +23,12 @@ class MutationModel {
   isSinglePoint: boolean
 
   constructor (parameters: MutationParameters) {
-    const { distributionSigma } = parameters
+    const { distributions } = parameters
     this.probabilityParameters = parameters.probabilityParameters
-    this.distributions = distributionSigma
-    this.colorDist = new GaussianNoise(distributionSigma.colorSigma)
-    this.pointDist = new GaussianNoise(distributionSigma.pointSigma)
-    this.permuteDist = new GaussianNoise(distributionSigma.permuteSigma)
+    this.distributions = distributions
+    this.colorDist = new GaussianNoise(distributions.colorSigma)
+    this.pointDist = new GaussianNoise(distributions.pointSigma)
+    this.permuteDist = new GaussianNoise(distributions.permuteSigma)
     this.genomeSize = parameters.genomeSize
     this.isSinglePoint = parameters.isSinglePoint
     this.probabilities = this.computeProbabilities(0)
@@ -107,6 +107,7 @@ class MutationModel {
 
   serialize (): Mutation {
     return {
+      genomeSize: this.genomeSize,
       isSinglePoint: this.isSinglePoint,
       distributions: this.distributions,
       probabilityParameters: this.probabilityParameters,

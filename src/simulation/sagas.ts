@@ -13,7 +13,7 @@ import {
   setCurrentSimulation,
   updateCurrentSimulation
 } from '../database/api'
-import { approxEqual, setSigFigs } from '../utils/utils.ts'
+import { approxEqual, setSigFigs } from '../utils/utils'
 import { chromosomesToPhenotype, createGif, createImageData } from '../utils/imageUtils'
 import { isRunningSelector } from '../ux/hooks'
 import { setSimulationParameters } from '../parameters/parametersSlice'

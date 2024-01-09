@@ -1,12 +1,11 @@
 import GeneticAlgorithmsDatabase from './GeneticAlgorithmsDatabase'
 import {
-  type Stats,
   type Image,
   type MutableSimulation,
   type Simulation,
   type Results
 } from './types'
-import { type Organism } from '../population/types'
+import { type Organism, type GenerationStatsRecord } from '../population/types'
 
 const db = new GeneticAlgorithmsDatabase()
 export let currentSimulationId: number | undefined
@@ -195,7 +194,7 @@ export const deleteCurrentSimulation = async (): Promise<number[]> => {
 // --------------------------------------------------
 export const insertResultsEntry = async (
   simulationId: number,
-  stats: Stats[] = []
+  stats: GenerationStatsRecord[] = []
 ): Promise<number> => {
   return await db.results.add({
     simulationId,
@@ -205,7 +204,7 @@ export const insertResultsEntry = async (
   })
 }
 
-export const insertResultsForCurrentSimulation = async (results: Stats[]): Promise<number> => {
+export const insertResultsForCurrentSimulation = async (results: GenerationStatsRecord[]): Promise<number> => {
   if (currentSimulationId == null) {
     throw new Error('[insertResultsForCurrentSimulation] Current simulation ID is null')
   }
@@ -223,7 +222,7 @@ export const getCurrentSimulationResults = async (): Promise<Results | undefined
   return await getSimulationResults(currentSimulationId)
 }
 
-export const addStatsForCurrentSimulation = async (stats: Stats): Promise<number> => {
+export const addStatsForCurrentSimulation = async (stats: GenerationStatsRecord): Promise<number> => {
   const entry = await getCurrentSimulationResults()
   if (entry?.id == null) {
     throw new Error('[addStatsForCurrentSimulation] No valid results entry found')
