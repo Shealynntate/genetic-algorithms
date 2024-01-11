@@ -1,12 +1,9 @@
 import { createAction, createSlice } from '@reduxjs/toolkit'
 import { type SimulationState } from './types'
+import { type Simulation } from '../database/types'
 
 const initialState: SimulationState = {
   targetFitnessReached: false,
-  globalBest: null,
-  currentBest: null,
-  // The current gen's stats, updated every generation
-  currentGenStats: null,
   runningStatsRecord: []
 }
 
@@ -31,8 +28,8 @@ export const simulationSlice = createSlice({
     },
     clearCurrentSimulation: (state) => {
       state.runningStatsRecord = []
-      state.currentBest = null
-      state.globalBest = null
+      state.currentBest = undefined
+      state.globalBest = undefined
     },
     // Set both the currentBest and current stats in one call
     updateCurrentGen: (state, action) => {
@@ -45,12 +42,12 @@ export const simulationSlice = createSlice({
 
 export const RESTORE_POPULATION = 'simulation/restorePopulation'
 
-export const restorePopulation = createAction(
-  RESTORE_POPULATION,
-  (data) => ({
-    type: RESTORE_POPULATION,
-    payload: data
-  })
+export const restorePopulation = createAction<Simulation>(
+  RESTORE_POPULATION
+  // (data: Simulation) => ({
+  //   type: RESTORE_POPULATION,
+  //   payload: data
+  // })
 )
 
 export const {

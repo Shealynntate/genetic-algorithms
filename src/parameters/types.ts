@@ -1,8 +1,8 @@
 import {
-  type Population,
-  type Selection,
-  type Crossover,
-  type Mutation
+  type PopulationParameters,
+  type SelectionParameters,
+  type CrossoverParameters,
+  type MutationParameters
 } from '../population/types'
 
 export interface StopCriteria {
@@ -11,10 +11,10 @@ export interface StopCriteria {
 }
 
 export interface ParametersState {
-  population: Population
-  selection: Selection
-  crossover: Crossover
-  mutation: Mutation
+  population: PopulationParameters
+  selection: SelectionParameters
+  crossover: CrossoverParameters
+  mutation: MutationParameters
   stopCriteria: StopCriteria
   minPolygons: number
   maxPolygons: number

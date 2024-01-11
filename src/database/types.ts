@@ -1,5 +1,6 @@
 import { type SimulationStatus } from '../simulation/types'
-import { type Stats, type Genome } from '../population/types'
+import { type GenerationStatsRecord, type Genome, type Population } from '../population/types'
+import { type ParametersState } from '../parameters/types'
 
 export interface Image {
   id?: number
@@ -16,8 +17,8 @@ export interface Simulation {
   status: SimulationStatus
   name: string
   lastUpdated: number
-  parameters: string
-  population: number
+  parameters: ParametersState
+  population: Population
 }
 
 export type MutableSimulation = Pick<Simulation, 'population' | 'parameters' | 'status' | 'name'>
@@ -27,7 +28,7 @@ export interface Results {
   simulationId: number
   createdOn: number
   lastUpdated: number
-  stats: Stats[]
+  stats: GenerationStatsRecord[]
 }
 
 export interface GalleryEntry {

@@ -208,6 +208,9 @@ export interface GenerationStats {
   maxFitOrganism: Organism
 }
 
+/**
+ * For storing the stats of a generation in the database and in redux
+ */
 export interface GenerationStatsRecord {
   threshold: number
   stats: GenerationStats

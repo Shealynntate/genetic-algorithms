@@ -2,6 +2,7 @@ import { useLayoutEffect, useState } from 'react'
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type NavigationState } from './types'
 import { lineColors, MIN_BROWSER_WIDTH, MIN_BROWSER_HEIGHT } from '../constants/constants'
+import { clearCurrentSimulation } from '../simulation/simulationSlice'
 
 const initialState: NavigationState = {
   simulationState: 'none',
@@ -32,11 +33,11 @@ export const navigationSlice = createSlice({
     },
     endSimulationEarly: (state) => {
       // This is called from a PAUSED state, resume running to process the next run
-      state.simulationState = 'running'
+      state.simulationState = 'complete'
     },
     deleteRunningSimulation: (state) => {
       // This is called from a PAUSED state, resume running to process the next run
-      state.simulationState = 'running'
+      state.simulationState = 'none'
     },
     // Graph Entries
     addGraphEntry: (state, action: PayloadAction<number>) => {
@@ -60,6 +61,12 @@ export const navigationSlice = createSlice({
       state.simulationGraphColors.delete(action.payload)
       state.simulationGraphIndices.delete(action.payload)
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(clearCurrentSimulation, (state) => {
+        state.simulationState = 'complete'
+      })
   }
 })
 

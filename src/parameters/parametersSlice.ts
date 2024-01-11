@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { defaultParameters } from './config'
 import { type ParametersState } from './types'
@@ -29,18 +28,12 @@ export const parametersSlice = createSlice({
     setCrossoverType: (state, action) => {
       state.crossover.type = action.payload
     },
-    setCrossoverProbabilities: (state, action) => {
-      state.crossover.probabilities = { ...state.crossover.probabilities, ...action.payload }
-    },
     // Mutation
     setColorSigma: (state, action) => {
       state.mutation.distributions.colorSigma = action.payload
     },
     setPointSigma: (state, action) => {
       state.mutation.distributions.pointSigma = action.payload
-    },
-    setMutationProbabilities: (state, action) => {
-      state.mutation.probabilities = { ...state.mutation.probabilities, ...action.payload }
     },
     // Selection
     setSelectionType: (state, action) => {
@@ -73,10 +66,8 @@ export const {
   setMaxPolygons,
   setPolygons,
   setCrossoverType,
-  setCrossoverProbabilities,
   setColorSigma,
   setPointSigma,
-  setMutationProbabilities,
   setSelectionType,
   setEliteCount,
   setSimulationParameters

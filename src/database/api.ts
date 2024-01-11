@@ -107,14 +107,13 @@ export const renameSimulation = async (simulationId: number, name: string): Prom
  */
 export const setCurrentSimulation = async (
   simulationId?: number
-): Promise<Simulation | null> => {
+): Promise<Simulation | undefined> => {
   if (simulationId == null) {
     // Clear out current simulation state
     currentSimulationId = undefined
 
-    return null
+    return undefined
   }
-
   const entry = await db.simulations.get(simulationId)
   if (entry == null) {
     throw new Error(`[setCurrentSimulation] No entry found for simulationId ${simulationId}`)
@@ -122,6 +121,17 @@ export const setCurrentSimulation = async (
   currentSimulationId = simulationId
 
   return entry
+}
+
+/**
+ * Find the next pending simulation to run and set it as the current simulation.
+ * @returns the next pending simulation to run, or undefined if none are pending
+ */
+export const getNextSimulationToRun = async (): Promise<Simulation | undefined> => {
+  const simulation = await getSimulationByStatus('pending')
+  if (simulation == null) return undefined
+
+  return await setCurrentSimulation(simulation.id)
 }
 
 // export const duplicateSimulation = async (simId: number, isSaved = 1) => {
