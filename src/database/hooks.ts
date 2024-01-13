@@ -2,10 +2,10 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import {
   type Simulation,
   type Image,
-  type GalleryEntry,
   type Results,
   type SimulationReport
 } from './types'
+import { type GalleryEntryData } from '../gallery/types'
 import db, {
   currentSimulationId,
   getAllSimulations,
@@ -43,7 +43,7 @@ export const useGetPendingSimulations = (): Simulation[] | undefined => useLiveQ
 
 // Gallery Hooks
 // --------------------------------------------------
-export const useGetGalleryEntries = (): GalleryEntry[] | undefined => useLiveQuery(
+export const useGetGalleryEntries = (): GalleryEntryData[] | undefined => useLiveQuery(
   async () => await db.gallery.toArray()
 )
 

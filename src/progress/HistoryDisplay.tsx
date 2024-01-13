@@ -1,10 +1,10 @@
-import React from 'react';
-import { Box } from '@mui/material';
-import HistoryEntry from './HistoryEntry';
-import { useImageDbQuery } from '../database/api';
+import React from 'react'
+import { Box } from '@mui/material'
+import HistoryEntry from './HistoryEntry'
+import { useImageDbQuery } from '../database/hooks'
 
-function HistoryDisplay() {
-  const images = useImageDbQuery() || [];
+function HistoryDisplay (): JSX.Element {
+  const images = useImageDbQuery() ?? []
 
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -17,7 +17,7 @@ function HistoryDisplay() {
         />
       ))}
     </Box>
-  );
+  )
 }
 
-export default HistoryDisplay;
+export default HistoryDisplay

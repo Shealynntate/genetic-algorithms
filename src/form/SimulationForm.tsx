@@ -27,11 +27,11 @@ const singlePointFields: MutationProbabilityType[] = ['tweak']
 const nonSinglePointFields: MutationProbabilityType[] = ['tweakColor', 'tweakPoint']
 
 interface SimulationFormProps {
-  imageHeight: number
-  imageWidth: number
-  onSubmit: () => void
-  defaultValues: ParametersState
-  readOnly: boolean
+  imageHeight?: number
+  imageWidth?: number
+  onSubmit?: (data: ParametersState) => void
+  defaultValues?: ParametersState
+  readOnly?: boolean
 }
 
 function SimulationForm ({

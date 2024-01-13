@@ -18,7 +18,7 @@ export interface Simulation {
   name: string
   lastUpdated: number
   parameters: ParametersState
-  population: Population
+  population?: Population
 }
 
 export type MutableSimulation = Pick<Simulation, 'population' | 'parameters' | 'status' | 'name'>
@@ -29,14 +29,6 @@ export interface Results {
   createdOn: number
   lastUpdated: number
   stats: GenerationStatsRecord[]
-}
-
-export interface GalleryEntry {
-  id?: number
-  createdOn: number
-  simulationId: number
-  name: string
-  json: string
 }
 
 export interface SimulationReport {

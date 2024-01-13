@@ -1,30 +1,41 @@
-import React, { memo } from 'react';
-import PropTypes from 'prop-types';
-import { ResultsType } from '../constants/propTypes';
-import DeviationLine from './DeviationLine';
-import Line from './Line';
-import theme from '../theme';
+import React, { memo } from 'react'
+import { type GenerationStatsRecord } from '../population/types'
+import DeviationLine from './DeviationLine'
+import Line from './Line'
+import theme from '../theme'
 
-const meanLineWidth = 0.8;
-const minLineWidth = 0.4;
+const meanLineWidth = 0.8
+const minLineWidth = 0.4
 
-function SimulationGraphEntry({
-  color,
+interface SimulationGraphEntryProps {
+  color?: string
+  id: number
+  graphHeight: number
+  data: GenerationStatsRecord[]
+  showDeviation?: boolean
+  showMean?: boolean
+  showMin?: boolean
+  xScale: (value: number) => number
+  yScale: (value: number) => number
+}
+
+function SimulationGraphEntry ({
+  color = theme.palette.primary.main,
   data,
   id,
   graphHeight,
-  showDeviation,
-  showMean,
-  showMin,
+  showDeviation = false,
+  showMean = false,
+  showMin = false,
   xScale,
-  yScale,
-}) {
+  yScale
+}: SimulationGraphEntryProps): JSX.Element | null {
   return (
     <>
       {showMean && (
         <Line
           data={data}
-          x={({ stats }) => xScale(stats.genId)}
+          x={({ stats }) => xScale(stats.gen)}
           y={({ stats }) => yScale(stats.meanFitness)}
           color={color}
           type="dashed"
@@ -44,7 +55,7 @@ function SimulationGraphEntry({
       {showMin && (
         <Line
           data={data}
-          x={({ stats }) => xScale(stats.genId)}
+          x={({ stats }) => xScale(stats.gen)}
           y={({ stats }) => yScale(stats.minFitness)}
           color={color}
           width={minLineWidth}
@@ -53,30 +64,11 @@ function SimulationGraphEntry({
       <Line
         data={data}
         color={color}
-        x={({ stats }) => xScale(stats.genId)}
+        x={({ stats }) => xScale(stats.gen)}
         y={({ stats }) => yScale(stats.maxFitness)}
       />
     </>
-  );
+  )
 }
 
-SimulationGraphEntry.propTypes = {
-  color: PropTypes.string,
-  id: PropTypes.number.isRequired,
-  graphHeight: PropTypes.number.isRequired,
-  data: PropTypes.arrayOf(PropTypes.shape(ResultsType)).isRequired,
-  showDeviation: PropTypes.bool,
-  showMean: PropTypes.bool,
-  showMin: PropTypes.bool,
-  xScale: PropTypes.func.isRequired,
-  yScale: PropTypes.func.isRequired,
-};
-
-SimulationGraphEntry.defaultProps = {
-  color: theme.palette.primary.main,
-  showDeviation: false,
-  showMean: false,
-  showMin: false,
-};
-
-export default memo(SimulationGraphEntry);
+export default memo(SimulationGraphEntry)

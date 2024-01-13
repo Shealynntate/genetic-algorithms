@@ -17,7 +17,9 @@ export let currentSimulationId: number | undefined
  * @param simulation the simulation entry to insert
  * @returns the id of the inserted simulation
  */
-export const insertSimulation = async (simulation: Simulation): Promise<number> => {
+export const insertSimulation = async (
+  simulation: Pick<Simulation, 'population' | 'parameters' | 'status'>
+): Promise<number> => {
   const { population, parameters, status = 'unknown' } = simulation
 
   return await db.simulations.add({

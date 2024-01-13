@@ -1,13 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  Box, CircularProgress, Tooltip, Typography,
-} from '@mui/material';
-import { StatsType } from '../constants/propTypes';
+import React from 'react'
+import { Box, CircularProgress, Tooltip, Typography } from '@mui/material'
 
-function MaxFitnessDisplay({ stats }) {
-  const fitness = stats?.best?.organism?.fitness || 0;
-  const fitnessPercent = (100 * fitness);
+interface MaxFitnessDisplayProps {
+  maxFitness: number
+}
+
+function MaxFitnessDisplay ({ maxFitness }: MaxFitnessDisplayProps): JSX.Element {
+  const fitnessPercent = (100 * maxFitness)
 
   return (
     <Tooltip title={`Max Fitness: ${fitnessPercent.toFixed(4)}`}>
@@ -16,7 +15,7 @@ function MaxFitnessDisplay({ stats }) {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          position: 'relative',
+          position: 'relative'
         }}
       >
         <CircularProgress variant="determinate" value={fitnessPercent} />
@@ -27,15 +26,7 @@ function MaxFitnessDisplay({ stats }) {
         </Box>
       </Box>
     </Tooltip>
-  );
+  )
 }
 
-MaxFitnessDisplay.propTypes = {
-  stats: PropTypes.shape(StatsType),
-};
-
-MaxFitnessDisplay.defaultProps = {
-  stats: null,
-};
-
-export default MaxFitnessDisplay;
+export default MaxFitnessDisplay

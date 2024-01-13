@@ -1,9 +1,9 @@
-import { type GenomeBounds, type Chromosome, type Genome, type GenomeParameters } from './types.js'
-import type CrossoverModel from './crossoverModel.js'
-import type MutationModel from './mutationModel.js'
-import { genRange } from '../utils/utils.js'
-import { randomIndex } from '../utils/statsUtils.js'
-import ChromosomeModel from './chromosomeModel.js'
+import { type GenomeBounds, type Chromosome, type Genome, type GenomeParameters } from './types'
+import type CrossoverModel from './crossoverModel'
+import type MutationModel from './mutationModel'
+import { genRange } from '../utils/utils'
+import { randomIndex } from '../utils/statsUtils'
+import ChromosomeModel from './chromosomeModel'
 
 const GenomeModel = {
   // Creation Methods
