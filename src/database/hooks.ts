@@ -76,6 +76,20 @@ export const useGetCompletedSimulationReports = (): SimulationReport[] | undefin
   }
 )
 
+export const useGetCurrentSimulationReport = (): SimulationReport | undefined => useLiveQuery(
+  async () => {
+    const simulation = await getCurrentSimulation()
+    if (simulation?.id == null) {
+      throw new Error('[useGetCurrentSimulationReport] Simulation is null')
+    }
+    const results = await getSimulationResults(simulation.id)
+    if (results == null) {
+      throw new Error('[useGetCurrentSimulationReport] Results are null')
+    }
+    return { simulation, results }
+  }
+)
+
 // Image Hooks
 // --------------------------------------------------
 export const useImageDbQuery = (): Image[] | undefined => useLiveQuery(

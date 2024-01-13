@@ -1,24 +1,32 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Threshold } from '@visx/threshold';
-import { curveMonotoneX } from '@visx/curve';
-import { SimulationType } from '../constants/propTypes';
-import Line from './Line';
+import React from 'react'
+import { Threshold } from '@visx/threshold'
+import { curveMonotoneX } from '@visx/curve'
+import { type GenerationStatsRecord } from '../population/types'
+import Line from './Line'
 
-function DeviationLine({
+interface DeviationLineProps {
+  id: number
+  color: string
+  data?: GenerationStatsRecord[]
+  xScale: (value: number) => number
+  yScale: (value: number) => number
+  yMax: number
+}
+
+function DeviationLine ({
   color,
-  data,
+  data = [],
   id,
   xScale,
   yScale,
-  yMax,
-}) {
+  yMax
+}: DeviationLineProps): JSX.Element {
   return (
     <>
       <Threshold
         id={`id-${id}`}
         data={data}
-        x={({ stats }) => xScale(stats.genId)}
+        x={({ stats }) => xScale(stats.gen)}
         y0={({ stats }) => (
           yScale(stats.meanFitness - stats.deviation)
         )}
@@ -30,16 +38,16 @@ function DeviationLine({
         clipBelowTo={yMax}
         belowAreaProps={{
           fill: color,
-          fillOpacity: 0.1,
+          fillOpacity: 0.1
         }}
         aboveAreaProps={{
           fill: color,
-          fillOpacity: 0.1,
+          fillOpacity: 0.1
         }}
       />
       <Line
         data={data}
-        x={({ stats }) => xScale(stats.genId)}
+        x={({ stats }) => xScale(stats.gen)}
         y={({ stats }) => (
           yScale(stats.meanFitness - stats.deviation)
         )}
@@ -48,7 +56,7 @@ function DeviationLine({
       />
       <Line
         data={data}
-        x={({ stats }) => xScale(stats.genId)}
+        x={({ stats }) => xScale(stats.gen)}
         y={({ stats }) => (
           yScale(stats.meanFitness + stats.deviation)
         )}
@@ -56,20 +64,7 @@ function DeviationLine({
         width={0.3}
       />
     </>
-  );
+  )
 }
 
-DeviationLine.propTypes = {
-  color: PropTypes.string.isRequired,
-  data: PropTypes.arrayOf(PropTypes.shape(SimulationType)),
-  id: PropTypes.number.isRequired,
-  xScale: PropTypes.func.isRequired,
-  yScale: PropTypes.func.isRequired,
-  yMax: PropTypes.number.isRequired,
-};
-
-DeviationLine.defaultProps = {
-  data: [],
-};
-
-export default DeviationLine;
+export default DeviationLine

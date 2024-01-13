@@ -1,16 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useTheme } from '@emotion/react';
-import { Group } from '@visx/group';
+import React from 'react'
+import { useTheme } from '@mui/material/styles'
+import { Group } from '@visx/group'
 
-const pathHeight = 15;
-const pathWidth = 8;
+const pathHeight = 15
+const pathWidth = 8
 
-function BrushHandle({ x, height, isBrushActive }) {
-  const theme = useTheme();
+interface BrushHandleProps {
+  x: number
+  height: number
+  isBrushActive: boolean
+}
+
+function BrushHandle ({ x, height, isBrushActive }: BrushHandleProps): JSX.Element | null {
+  const theme = useTheme()
 
   if (!isBrushActive) {
-    return null;
+    return null
   }
 
   return (
@@ -24,13 +29,7 @@ function BrushHandle({ x, height, isBrushActive }) {
         style={{ cursor: 'ew-resize' }}
       />
     </Group>
-  );
+  )
 }
 
-BrushHandle.propTypes = {
-  x: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
-  isBrushActive: PropTypes.bool.isRequired,
-};
-
-export default BrushHandle;
+export default BrushHandle
