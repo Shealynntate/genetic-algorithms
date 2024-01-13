@@ -1,22 +1,20 @@
-import theme from '../theme';
-import { AppState } from './typeDefinitions';
+import { type AppState } from '../navigation/types'
+import theme from '../theme'
 
-export const RunningStates = [
-  AppState.RUNNING,
-];
+export const RunningStates: AppState[] = ['running']
 
 // --------------------------------------------------
-export const maxPopulation = 500;
+export const maxPopulation = 500
 
-export const maxGenerations = 500_000;
+export const maxGenerations = 500_000
 
-export const targetFitness = 1;
+export const targetFitness = 1
 
-export const statsSigFigs = 5;
+export const statsSigFigs = 5
 
-export const workerBatchSize = 40;
+export const workerBatchSize = 40
 
-export const minResultsThreshold = 0.90;
+export const minResultsThreshold = 0.90
 
 export const saveThresholds = [
   { threshold: 60, mod: 20 },
@@ -26,20 +24,20 @@ export const saveThresholds = [
   { threshold: 5_000, mod: 500 },
   { threshold: 10_000, mod: 1_000 },
   { threshold: 50_000, mod: 5_000 },
-  { threshold: maxGenerations, mod: 10_000 },
-];
+  { threshold: maxGenerations, mod: 10_000 }
+]
 
 // ------------------------------------------------------------
-export const maxColorValue = 255;
+export const maxColorValue = 255
 
-export const numColorChannels = 4;
+export const numColorChannels = 4
 
 export const canvasParameters = {
   width: 200,
-  height: 200,
-};
+  height: 200
+}
 
-export const defaultLineColor = theme.palette.primary.main;
+export const defaultLineColor = theme.palette.primary.main
 
 export const lineColors = [
   theme.palette.primary.main,
@@ -61,11 +59,11 @@ export const lineColors = [
   theme.palette.error.dark,
   theme.palette.warning.dark,
   theme.palette.info.dark,
-  theme.palette.success.dark,
-];
+  theme.palette.success.dark
+]
 
-export const projectUrl = 'https://github.com/Shealynntate/genetic-algorithms';
+export const projectUrl = 'https://github.com/Shealynntate/genetic-algorithms'
 
-export const MIN_BROWSER_WIDTH = 400;
+export const MIN_BROWSER_WIDTH = 400
 
-export const MIN_BROWSER_HEIGHT = 400;
+export const MIN_BROWSER_HEIGHT = 400

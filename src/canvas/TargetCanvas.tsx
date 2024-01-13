@@ -7,14 +7,14 @@ interface TargetCanvasProps {
   width: number
   height: number
   target: string
-  willReadFrequently: boolean
+  willReadFrequently?: boolean
 }
 
 function TargetCanvas ({
   height,
   target,
   width,
-  willReadFrequently
+  willReadFrequently = false
 }: TargetCanvasProps): JSX.Element {
   const [imageData, setImageData] = useState<ImageData | null>(null)
 

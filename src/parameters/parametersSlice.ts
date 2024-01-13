@@ -15,29 +15,29 @@ export const parametersSlice = createSlice({
       state.population.target = action.payload
     },
     setMinPolygons: (state, action) => {
-      state.minPolygons = action.payload
+      state.population.minGenomeSize = action.payload
     },
     setMaxPolygons: (state, action) => {
-      state.maxPolygons = action.payload
+      state.population.maxGenomeSize = action.payload
     },
     setPolygons: (state, action) => {
-      state.minPolygons = action.payload.minPolygons
-      state.maxPolygons = action.payload.maxPolyGons
+      state.population.minGenomeSize = action.payload.minPolygons
+      state.population.maxGenomeSize = action.payload.maxPolyGons
     },
     // Crossover
     setCrossoverType: (state, action) => {
-      state.crossover.type = action.payload
+      state.population.crossover.type = action.payload
     },
     // Mutation
     setColorSigma: (state, action) => {
-      state.mutation.distributions.colorSigma = action.payload
+      state.population.mutation.distributions.colorSigma = action.payload
     },
     setPointSigma: (state, action) => {
-      state.mutation.distributions.pointSigma = action.payload
+      state.population.mutation.distributions.pointSigma = action.payload
     },
     // Selection
     setSelectionType: (state, action) => {
-      state.selection.type = action.payload
+      state.population.selection.type = action.payload
     },
     setEliteCount: (state, action) => {
       const count = action.payload
@@ -45,10 +45,10 @@ export const parametersSlice = createSlice({
       if (count > popSize) {
         throw new Error(`Elite count ${count} cannot exceed population size ${popSize}`)
       }
-      state.selection.eliteCount = count
+      state.population.selection.eliteCount = count
     },
     setTournamentSize: (state, action) => {
-      state.selection.tournamentSize = action.payload
+      state.population.selection.tournamentSize = action.payload
     },
     setSimulationParameters: (state, action: PayloadAction<ParametersState>) => {
       const parameters = action.payload

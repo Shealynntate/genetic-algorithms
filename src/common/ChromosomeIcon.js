@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { SvgIcon } from '@mui/material';
 import React from 'react';
 

@@ -9,89 +9,90 @@ import { targetFitness, maxPopulation, maxGenerations } from '../constants/const
 export const defaultParameters: ParametersState = {
   population: {
     size: 200,
-    minPolygons: 50,
-    maxPolygons: 50,
+    minGenomeSize: 1,
+    maxGenomeSize: 50,
     minPoints: 3,
     maxPoints: 10,
-    target: defaultTarget
-  },
-  selection: {
-    type: 'tournament',
-    eliteCount: 0,
-    tournamentSize: 2
-  },
-  crossover: {
-    type: 'twoPoint',
-    probabilities: {
-      swap: {
-        startValue: 0.9,
-        endValue: 0.9,
-        startFitness: 0,
-        endFitness: targetFitness
-      }
-    }
-  },
-  mutation: {
-    isSinglePoint: true,
-    distributions: {
-      colorSigma: 0.06,
-      pointSigma: 0.06,
-      permuteSigma: 0.05
+    target: defaultTarget,
+    selection: {
+      type: 'tournament',
+      eliteCount: 0,
+      tournamentSize: 2
     },
-    probabilities: {
-      tweak: {
-        startValue: 0.04,
-        endValue: 0.04,
-        startFitness: 0,
-        endFitness: targetFitness
+    crossover: {
+      type: 'twoPoint',
+      probabilityParameters: {
+        swap: {
+          startValue: 0.9,
+          endValue: 0.9,
+          startFitness: 0,
+          endFitness: targetFitness
+        }
+      }
+    },
+    mutation: {
+      isSinglePoint: true,
+      genomeSize: 50,
+      distributions: {
+        colorSigma: 0.06,
+        pointSigma: 0.06,
+        permuteSigma: 0.05
       },
-      tweakColor: {
-        startValue: 0.01,
-        endValue: 0.003,
-        startFitness: 0,
-        endFitness: targetFitness
-      },
-      tweakPoint: {
-        startValue: 0.01,
-        endValue: 0.003,
-        startFitness: 0,
-        endFitness: targetFitness
-      },
-      addPoint: {
-        startValue: 0.0015,
-        endValue: 0.0015,
-        startFitness: 0,
-        endFitness: targetFitness
-      },
-      removePoint: {
-        startValue: 0.0015,
-        endValue: 0.0015,
-        startFitness: 0,
-        endFitness: targetFitness
-      },
-      addChromosome: {
-        startValue: 0,
-        endValue: 0,
-        startFitness: 0,
-        endFitness: targetFitness
-      },
-      removeChromosome: {
-        startValue: 0,
-        endValue: 0,
-        startFitness: 0,
-        endFitness: targetFitness
-      },
-      resetChromosome: {
-        startValue: 0.0006,
-        endValue: 0.0006,
-        startFitness: 0,
-        endFitness: targetFitness
-      },
-      permuteChromosomes: {
-        startValue: 0.0015,
-        endValue: 0.0015,
-        startFitness: 0,
-        endFitness: targetFitness
+      probabilityParameters: {
+        tweak: {
+          startValue: 0.04,
+          endValue: 0.04,
+          startFitness: 0,
+          endFitness: targetFitness
+        },
+        tweakColor: {
+          startValue: 0.01,
+          endValue: 0.003,
+          startFitness: 0,
+          endFitness: targetFitness
+        },
+        tweakPoint: {
+          startValue: 0.01,
+          endValue: 0.003,
+          startFitness: 0,
+          endFitness: targetFitness
+        },
+        addPoint: {
+          startValue: 0.0015,
+          endValue: 0.0015,
+          startFitness: 0,
+          endFitness: targetFitness
+        },
+        removePoint: {
+          startValue: 0.0015,
+          endValue: 0.0015,
+          startFitness: 0,
+          endFitness: targetFitness
+        },
+        addChromosome: {
+          startValue: 0,
+          endValue: 0,
+          startFitness: 0,
+          endFitness: targetFitness
+        },
+        removeChromosome: {
+          startValue: 0,
+          endValue: 0,
+          startFitness: 0,
+          endFitness: targetFitness
+        },
+        resetChromosome: {
+          startValue: 0.0006,
+          endValue: 0.0006,
+          startFitness: 0,
+          endFitness: targetFitness
+        },
+        permuteChromosomes: {
+          startValue: 0.0015,
+          endValue: 0.0015,
+          startFitness: 0,
+          endFitness: targetFitness
+        }
       }
     }
   },

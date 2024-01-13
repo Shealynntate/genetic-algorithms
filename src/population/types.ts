@@ -16,23 +16,19 @@ export type DistributionMap = {
   [key in DistributionTypes]: number
 }
 
-export type MutationProbabilityTypes =
-  'tweak' |
-  'tweakPoint' |
-  'tweakColor' |
-  'addPoint' |
-  'removePoint' |
-  'addChromosome' |
-  'removeChromosome' |
-  'resetChromosome' |
-  'permuteChromosomes'
+export const mutationProbabilityTypes = [
+  'tweak', 'tweakPoint', 'tweakColor', 'addPoint', 'removePoint', 'addChromosome',
+  'removeChromosome', 'resetChromosome', 'permuteChromosomes'
+] as const
+
+export type MutationProbabilityType = typeof mutationProbabilityTypes[number]
 
 export type MutationProbabilityParameters = {
-  [key in MutationProbabilityTypes]: ProbabilityParameters
+  [key in MutationProbabilityType]: ProbabilityParameters
 }
 
 export type MutationProbabilities = {
-  [key in MutationProbabilityTypes]: number
+  [key in MutationProbabilityType]: number
 }
 
 export interface MutationParameters {
