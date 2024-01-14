@@ -26,6 +26,10 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
   const isDevelopment = process.env.NODE_ENV === 'development'
 
   const onDelete = (): void => {
+    if (id == null) {
+      console.error('Cannot delete gallery entry with no id')
+      return
+    }
     deleteGalleryEntry(id).catch(console.error)
   }
 
@@ -41,6 +45,10 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
     setEntryName(value)
 
     // TODO: Snackbar for success/failure
+    if (id == null) {
+      console.error('Cannot rename gallery entry with no id')
+      return
+    }
     renameGalleryEntry(id, value).catch(console.error)
   }
 

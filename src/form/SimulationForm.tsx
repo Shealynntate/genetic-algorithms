@@ -99,6 +99,7 @@ function SimulationForm ({
                   control={control}
                   text='Size'
                   tooltip='How many organisms are in the population'
+                  validate={(value) => (value % 2 === 0 || 'Population size must be even')}
                 />
                 <NumberInput
                   errors={errors}
@@ -107,6 +108,9 @@ function SimulationForm ({
                   control={control}
                   text='Min △'
                   tooltip='Min number of chromosomes (polygons) an organism can have'
+                  validate={(v, state) => (
+                    (v <= state.population.maxGenomeSize) || 'Min polygons can\'t be greater than max polygons'
+                  )}
                 />
                 <NumberInput
                   errors={errors}
@@ -115,6 +119,9 @@ function SimulationForm ({
                   control={control}
                   text='Max △'
                   tooltip='Max number of chromosomes (polygons) an organism can have'
+                  validate={(v, state) => (
+                    (v >= state.population.minGenomeSize) || 'Max polygons can\'t be less than min polygons'
+                  )}
                 />
                 <NumberInput
                   errors={errors}
@@ -123,6 +130,9 @@ function SimulationForm ({
                   control={control}
                   text='Min Sides'
                   tooltip='Min number of points a chromosome (polygon) can have'
+                  validate={(v, state) => (
+                    (v <= state.population.maxPoints) || 'Min number of sides can\'t be greater than max sides'
+                  )}
                 />
                 <NumberInput
                   errors={errors}
@@ -131,6 +141,9 @@ function SimulationForm ({
                   control={control}
                   text='Max Sides'
                   tooltip='Max number of points a chromosome (polygon) can have'
+                  validate={(v, state) => (
+                    (v >= state.population.minPoints) || 'Max number of sides can\'t be less than min sides'
+                  )}
                 />
               </Stack>
             </Stack>
@@ -164,6 +177,9 @@ function SimulationForm ({
                   control={control}
                   readOnly={readOnly}
                   text='Elite Count'
+                  validate={(v, state) => (
+                    ((v % 2 === 0) && v < state.population.size) || 'Elite count must be even and less than the population size'
+                  )}
                 />
                 <Box>
                   <NumberInput
@@ -172,6 +188,9 @@ function SimulationForm ({
                     control={control}
                     readOnly={readOnly}
                     text='Tourney Size'
+                    validate={(v, state) => (
+                      (v < state.population.size) || 'Tournament size must be less than the population size'
+                    )}
                   />
                 </Box>
               </Box>

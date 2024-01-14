@@ -1,23 +1,37 @@
 import React from 'react'
-import { type Control, Controller, type FieldErrors, type FieldValues, type Path } from 'react-hook-form'
+import {
+  type Control,
+  Controller,
+  type FieldErrors,
+  type FieldValues,
+  type Validate,
+  type PathValue,
+  type FieldPathByValue
+} from 'react-hook-form'
 import { Input, type InputProps, Stack, Tooltip, Typography } from '@mui/material'
 import _ from 'lodash'
-import { ParameterValidation } from '../parameters/config'
 import ErrorTooltip from '../common/ErrorTooltip'
 
-interface NumberInputProps<T extends FieldValues> extends InputProps {
-  name: Path<T>
-  control: Control<T>
+interface NumberInputProps<
+  TFieldValues extends FieldValues,
+  TPath extends FieldPathByValue<TFieldValues, number>
+> extends InputProps {
+  name: TPath
+  control: Control<TFieldValues, number>
   readOnly: boolean
   text: string
   tooltip?: string
   min?: number
   max?: number
   step?: number
-  errors: FieldErrors<T>
+  validate?: Validate<PathValue<TFieldValues, TPath>, TFieldValues>
+  errors: FieldErrors<TFieldValues>
 }
 
-function NumberInput<T extends FieldValues> ({
+function NumberInput<
+  TFieldValues extends FieldValues,
+  TPath extends FieldPathByValue<TFieldValues, number>
+> ({
   name,
   control,
   text,
@@ -26,10 +40,10 @@ function NumberInput<T extends FieldValues> ({
   max,
   step,
   errors,
+  validate,
   readOnly = false,
   ...props
-}: NumberInputProps<T>): JSX.Element {
-  const validate = _.get(ParameterValidation, name, () => true)
+}: NumberInputProps<TFieldValues, TPath>): JSX.Element {
   const error = _.get(errors, name)
 
   return (

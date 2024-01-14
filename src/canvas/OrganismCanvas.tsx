@@ -6,14 +6,14 @@ interface OrganismCanvasProps {
   organism: Organism
   width: number
   height: number
-  willReadFrequently: boolean
+  willReadFrequently?: boolean
 }
 
 function OrganismCanvas ({
   organism,
   width,
   height,
-  willReadFrequently
+  willReadFrequently = false
 }: OrganismCanvasProps): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 

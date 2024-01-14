@@ -1,5 +1,5 @@
 import { randomNormal } from 'd3'
-import { setSigFigs } from './utils.js'
+import { setSigFigs } from './utils'
 
 const sigFigs = 5
 

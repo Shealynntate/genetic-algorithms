@@ -1,8 +1,9 @@
 import { useSelector } from 'react-redux'
 import { type RootState } from '../store'
+import { type AppState } from './types'
 import { RunningStates } from '../constants/constants'
 
-const currentStateSelector = ({ navigation }: RootState): string => (navigation.simulationState)
+const currentStateSelector = ({ navigation }: RootState): AppState => (navigation.simulationState)
 
 export const useIsPaused = (): boolean => {
   const simulationState = useSelector((state: RootState) => state.navigation.simulationState)

@@ -228,17 +228,3 @@ export const ParameterBounds = {
     }
   }
 }
-
-export const ParameterValidation = {
-  population: {
-    size: (v: number) => ((v % 2 === 0) || 'Population size must be even'),
-    minPolygons: (v: number, gv) => ((v <= gv('population.maxPolygons')) || 'Min polygons can\'t be greater than max polygons'),
-    maxPolygons: (v: number, gv) => ((v >= gv('population.minPolygons')) || 'Max polygons can\'t be less than min polygons'),
-    minPoints: (v: number, gv) => ((v <= gv('population.maxPoints')) || 'Min number of sides can\'t be greater than max sides'),
-    maxPoints: (v: number, gv) => ((v >= gv('population.minPoints')) || 'Max number of sides can\'t be less than min sides')
-  },
-  selection: {
-    eliteCount: (v: number, gv) => (((v % 2 === 0) && v < gv('population.size')) || 'Elite count must be even and less than the population size'),
-    tournamentSize: (v: number, gv) => ((v < gv('population.size')) || 'Tournament size must be less than the population size')
-  }
-}

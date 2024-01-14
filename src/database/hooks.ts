@@ -80,11 +80,11 @@ export const useGetCurrentSimulationReport = (): SimulationReport | undefined =>
   async () => {
     const simulation = await getCurrentSimulation()
     if (simulation?.id == null) {
-      throw new Error('[useGetCurrentSimulationReport] Simulation is null')
+      return undefined
     }
     const results = await getSimulationResults(simulation.id)
     if (results == null) {
-      throw new Error('[useGetCurrentSimulationReport] Results are null')
+      return undefined
     }
     return { simulation, results }
   }

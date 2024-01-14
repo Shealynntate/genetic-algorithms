@@ -1,10 +1,6 @@
 import Dexie from 'dexie'
-import {
-  type Simulation,
-  type Image,
-  type Results,
-  type GalleryEntry
-} from './types'
+import { type Simulation, type Image, type Results } from './types'
+import { type GalleryEntryData } from '../gallery/types'
 
 const databaseName = 'GeneticAlgorithmsDB'
 
@@ -13,7 +9,7 @@ class GeneticAlgorithms extends Dexie {
   images!: Dexie.Table<Image, number>
   simulations!: Dexie.Table<Simulation, number>
   results!: Dexie.Table<Results, number>
-  gallery!: Dexie.Table<GalleryEntry, number>
+  gallery!: Dexie.Table<GalleryEntryData, number>
 
   constructor () {
     super(databaseName)
