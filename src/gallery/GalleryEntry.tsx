@@ -57,12 +57,14 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
       <Stack direction='row' spacing={1}>
         <Stack spacing={1}>
           <Tooltip title='final result'>
-            <OrganismCanvas organism={globalBest.organism} width={width} height={height} />
+            <Box sx={{ m: 0, p: 0, lineHeight: 0 }}>
+              <OrganismCanvas organism={globalBest.organism} width={width} height={height} />
+            </Box>
           </Tooltip>
-          <Tooltip
-            title='The target image'
-          >
-            <TargetCanvas width={width} height={height} target={parameters.population.target} />
+          <Tooltip title='The target image'>
+            <Box sx={{ m: 0, p: 0, lineHeight: 0 }}>
+              <TargetCanvas width={width} height={height} target={parameters.population.target} />
+            </Box>
           </Tooltip>
         </Stack>
         <Tooltip title='A timelapse of the evolution of the best solution'>

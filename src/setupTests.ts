@@ -2,8 +2,8 @@
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom';
-import PropTypes from 'prop-types';
+import '@testing-library/jest-dom'
+import PropTypes from 'prop-types'
 
 Object.defineProperty(
   window,
@@ -11,6 +11,6 @@ Object.defineProperty(
   {
     width: PropTypes.number,
     height: PropTypes.number,
-    data: PropTypes.arrayOf(PropTypes.number),
-  },
-);
+    data: PropTypes.arrayOf(PropTypes.number)
+  }
+)

@@ -1,4 +1,5 @@
-import { setSigFigs } from './utils.ts';
+import { type ProbabilityParameters } from '../population/types.js'
+import { setSigFigs } from './utils'
 
 // A Collection of math and probability based functions
 // --------------------------------------------------
@@ -8,7 +9,7 @@ import { setSigFigs } from './utils.ts';
  * @param {*} num - the number of sig figs (places after the decimal), default is 5
  * @returns the random floating point number
  */
-export const rand = (num = 5) => setSigFigs(Math.random(), num);
+export const rand = (num: number = 5): number => setSigFigs(Math.random(), num)
 
 /**
  * Generates a random floating point number shifted to be in the specified range
@@ -16,11 +17,11 @@ export const rand = (num = 5) => setSigFigs(Math.random(), num);
  * @param {*} end - the value the number must be less than or equal to
  * @returns a random float between [start, end] inclusive
  */
-export const randomFloat = (start, end) => {
-  const range = Math.random() * (end - start + 1);
-  const result = range + start - 0.5;
-  return Math.min(Math.max(start, result), end);
-};
+export const randomFloat = (start: number, end: number): number => {
+  const range = Math.random() * (end - start + 1)
+  const result = range + start - 0.5
+  return Math.min(Math.max(start, result), end)
+}
 
 /**
  * Generates a random integer shifted to be in the specified range
@@ -28,17 +29,17 @@ export const randomFloat = (start, end) => {
  * @param {*} end - th evalue the number must be less than or equal to
  * @returns a random integer between [start, end] inclusive
  */
-export const randomInt = (start, end) => {
-  const range = Math.random() * (end - start + 1);
-  return Math.round(range + start - 0.5);
-};
+export const randomInt = (start: number, end: number): number => {
+  const range = Math.random() * (end - start + 1)
+  return Math.round(range + start - 0.5)
+}
 
 /**
  * Generates a random index into an array of the specified length
  * @param {*} length - The length of the array
  * @returns An index value between [0, length)
  */
-export const randomIndex = (length) => (Math.trunc(Math.random() * length));
+export const randomIndex = (length: number): number => (Math.trunc(Math.random() * length))
 
 /**
  * Flips a biased coin and returns true (heads) or false (tails)
@@ -46,7 +47,7 @@ export const randomIndex = (length) => (Math.trunc(Math.random() * length));
  * By default it's set to 0.5, making it a fair coin
  * @returns the result of flipping the coin - true or false
  */
-export const flipCoin = (bias = 0.5) => (Math.random() <= bias);
+export const flipCoin = (bias: number = 0.5): boolean => (Math.random() <= bias)
 
 /**
  * Computes the probability to use given the current fitness level.
@@ -62,11 +63,11 @@ export const computeProb = ({
   startValue,
   endValue,
   startFitness,
-  endFitness,
-}, fitness) => {
-  if (fitness <= startFitness) return startValue;
-  if (fitness >= endFitness) return endValue;
-  const slope = (endValue - startValue) / (endFitness - startFitness);
-  const intercept = startValue - slope * startFitness;
-  return fitness * slope + intercept;
-};
+  endFitness
+}: ProbabilityParameters, fitness: number): number => {
+  if (fitness <= startFitness) return startValue
+  if (fitness >= endFitness) return endValue
+  const slope = (endValue - startValue) / (endFitness - startFitness)
+  const intercept = startValue - slope * startFitness
+  return fitness * slope + intercept
+}
