@@ -1,11 +1,11 @@
-import React from 'react';
-import { Stack, Typography } from '@mui/material';
-import Panel from '../common/Panel';
-import ExampleText from '../common/ExampleText';
-import Keyword from '../common/Keyword';
-import SectionTitle from '../common/SectionTitle';
+import React from 'react'
+import { Stack, Typography } from '@mui/material'
+import Panel from '../common/Panel'
+import ExampleText from '../common/ExampleText'
+import Keyword from '../common/Keyword'
+import SectionTitle from '../common/SectionTitle'
 
-function AlgorithmPanel() {
+function AlgorithmPanel (): JSX.Element {
   return (
     <Panel label="The Algorithm" px={2} pb={2}>
       <SectionTitle>Goal</SectionTitle>
@@ -95,7 +95,7 @@ function AlgorithmPanel() {
         This process repeats until an organism in the population hits our target or run out of time.
       </Typography>
     </Panel>
-  );
+  )
 }
 
-export default AlgorithmPanel;
+export default AlgorithmPanel

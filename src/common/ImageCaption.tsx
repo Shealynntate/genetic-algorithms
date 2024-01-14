@@ -1,8 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Typography } from '@mui/material';
+import React from 'react'
+import { Box, Typography } from '@mui/material'
 
-function ImageCaption({ gen, fitness }) {
+interface ImageCaptionProps {
+  gen: number
+  fitness: number
+}
+
+function ImageCaption ({ gen, fitness }: ImageCaptionProps): JSX.Element {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between', lineHeight: 1 }}>
       <Box>
@@ -18,12 +22,7 @@ function ImageCaption({ gen, fitness }) {
         </Typography>
       </Box>
     </Box>
-  );
+  )
 }
 
-ImageCaption.propTypes = {
-  gen: PropTypes.number.isRequired,
-  fitness: PropTypes.number.isRequired,
-};
-
-export default ImageCaption;
+export default ImageCaption

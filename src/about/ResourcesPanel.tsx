@@ -1,9 +1,9 @@
-import React from 'react';
-import { List, Typography } from '@mui/material';
-import Panel from '../common/Panel';
-import Resource from './Resource';
+import React from 'react'
+import { List, Typography } from '@mui/material'
+import Panel from '../common/Panel'
+import Resource from './Resource'
 
-function ResourcesPanel() {
+function ResourcesPanel (): JSX.Element {
   return (
     <Panel label="Resources">
       <Typography>
@@ -44,7 +44,7 @@ function ResourcesPanel() {
         />
       </List>
     </Panel>
-  );
+  )
 }
 
-export default ResourcesPanel;
+export default ResourcesPanel

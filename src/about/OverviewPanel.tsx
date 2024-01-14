@@ -1,11 +1,11 @@
-import React from 'react';
-import { Stack, Typography } from '@mui/material';
-import Panel from '../common/Panel';
-import SectionTitle from '../common/SectionTitle';
-import Keyword from '../common/Keyword';
-import ExampleText from '../common/ExampleText';
+import React from 'react'
+import { Stack, Typography } from '@mui/material'
+import Panel from '../common/Panel'
+import SectionTitle from '../common/SectionTitle'
+import Keyword from '../common/Keyword'
+import ExampleText from '../common/ExampleText'
 
-function OverviewPanel() {
+function OverviewPanel (): JSX.Element {
   return (
     <Panel label="Overview" px={2} pb={2}>
       <SectionTitle>Metaheuristics</SectionTitle>
@@ -63,7 +63,7 @@ function OverviewPanel() {
         <ExampleText>The example text will be in this color.</ExampleText>
       </Typography>
     </Panel>
-  );
+  )
 }
 
-export default OverviewPanel;
+export default OverviewPanel

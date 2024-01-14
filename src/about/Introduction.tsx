@@ -1,10 +1,10 @@
-import React from 'react';
-import { Link, Stack, Typography } from '@mui/material';
-import Panel from '../common/Panel';
-import Keyword from '../common/Keyword';
-import SectionTitle from '../common/SectionTitle';
+import React from 'react'
+import { Link, Stack, Typography } from '@mui/material'
+import Panel from '../common/Panel'
+import Keyword from '../common/Keyword'
+import SectionTitle from '../common/SectionTitle'
 
-function Introduction() {
+function Introduction (): JSX.Element {
   return (
     <Panel label="Introduction" px={2}>
       <Stack direction="row" spacing={2}>
@@ -58,7 +58,7 @@ function Introduction() {
       <Typography
         color="GrayText"
         sx={{
-          display: 'inline-block', pt: 1, pr: 1, pb: 1,
+          display: 'inline-block', pt: 1, pr: 1, pb: 1
         }}
       >
         Full credit to Robert Johansson for this project idea. Check it out at
@@ -71,7 +71,7 @@ function Introduction() {
         Genetic Programming: Evolution of the Mona Lisa
       </Link>
     </Panel>
-  );
+  )
 }
 
-export default Introduction;
+export default Introduction

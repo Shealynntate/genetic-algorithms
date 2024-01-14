@@ -1,7 +1,7 @@
-import { SvgIcon } from '@mui/material';
-import React from 'react';
+import React from 'react'
+import { SvgIcon, type SvgIconProps } from '@mui/material'
 
-function ChromosomeIcon(props) {
+function ChromosomeIcon (props: SvgIconProps): JSX.Element {
   return (
     <SvgIcon {...props}>
       <svg
@@ -47,7 +47,7 @@ l188 -191 -187 -190 c-205 -207 -269 -293 -320 -423 -57 -148 -56 -136 -56
         </g>
       </svg>
     </SvgIcon>
-  );
+  )
 }
 
-export default ChromosomeIcon;
+export default ChromosomeIcon

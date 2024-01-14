@@ -58,8 +58,8 @@ function ImageInput ({
   const onDrop = async (acceptedFile: File): Promise<void> => {
     try {
       const data = await fileToBase64(acceptedFile)
-      setTarget(data)
-      onChange(data)
+      setTarget(data as string)
+      onChange(data as string)
     } catch (error) {
       setAlertState('error')
     }

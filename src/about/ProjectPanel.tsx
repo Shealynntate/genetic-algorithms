@@ -1,11 +1,11 @@
-import React from 'react';
-import { Link, Stack, Typography } from '@mui/material';
-import Panel from '../common/Panel';
-import Keyword from '../common/Keyword';
-import SectionTitle from '../common/SectionTitle';
-import { projectUrl } from '../constants/constants';
+import React from 'react'
+import { Link, Stack, Typography } from '@mui/material'
+import Panel from '../common/Panel'
+import Keyword from '../common/Keyword'
+import SectionTitle from '../common/SectionTitle'
+import { projectUrl } from '../constants/constants'
 
-function ProjectPanel() {
+function ProjectPanel (): JSX.Element {
   return (
     <Panel label="This Project" px={2}>
       <SectionTitle>Things I&apos;ve Learned</SectionTitle>
@@ -65,7 +65,7 @@ function ProjectPanel() {
         </Link>
       </Typography>
     </Panel>
-  );
+  )
 }
 
-export default ProjectPanel;
+export default ProjectPanel
