@@ -37,7 +37,7 @@ const ChromosomeModel = {
     }
     for (let i = 0; i < chromosome.points.length; ++i) {
       if (mutation.doTweakPoint()) {
-        chromosome.points[i] = tweakPoint(mutation, ...chromosome.points[i])
+        chromosome.points[i] = tweakPoint(mutation, chromosome.points[i][0], chromosome.points[i][1])
       }
     }
     return chromosome

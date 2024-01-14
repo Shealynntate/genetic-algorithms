@@ -39,9 +39,12 @@ const scalePoint = (point: number[], { w, h }: Dim): number[] => (
 
 // Canvas, ImageData and Phenotype Functions
 // --------------------------------------------------
-export const createImageData = async (src: string, options = {}) => {
+export const createImageData = async (
+  src: string,
+  width: number,
+  height: number
+): Promise<ImageData> => {
   const image = await createImage(src)
-  const { width = canvasParameters.width, height = canvasParameters.height } = options
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
   if (ctx == null) {
@@ -87,7 +90,7 @@ export const genomeToPhenotype = (genome: Genome): ImageData | undefined => {
 export const createGif = async (images: ImageData[]): Promise<string> => {
   const { width, height } = canvasParameters
   const imgs = await Promise.all(images.map(async (image) => (await imageDataToImage(image))))
-  const promise = new Promise((resolve, reject) => {
+  const promise = new Promise<string>((resolve, reject) => {
     gifshot.createGIF(
       {
         images: imgs,
@@ -103,7 +106,7 @@ export const createGif = async (images: ImageData[]): Promise<string> => {
         errorMsg,
         image // base64 image (gif)
       }) => {
-        if (error) {
+        if (error != null) {
           reject(new Error(`[Gifshot] ${errorCode}: ${errorMsg}`))
         }
         resolve(image)

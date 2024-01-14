@@ -1,36 +1,38 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
-import { useGetCurrentSimulation } from '../database/api';
-import SimulationGraphEntry from '../graph/SimulatonGraphEntry';
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { type RootState } from '../store'
+import { useGetCurrentSimulation } from '../database/hooks'
+import SimulationGraphEntry from '../graph/SimulatonGraphEntry'
 
-function RunningSimulationGraph({
+interface RunningSimulationGraphProps {
+  xScale: (value: number) => number
+  yScale: (value: number) => number
+  graphHeight: number
+}
+
+function RunningSimulationGraph ({
   xScale,
   yScale,
-  graphHeight,
-}) {
-  const runningStats = useSelector((state) => state.simulation.runningStatsRecord);
-  const graphEntries = useSelector((state) => state.ux.simulationGraphColors);
-  const currentSim = useGetCurrentSimulation();
+  graphHeight
+}: RunningSimulationGraphProps): JSX.Element | null {
+  const runningStats = useSelector((state: RootState) => state.simulation.runningStatsRecord)
+  const graphEntries = useSelector((state: RootState) => state.navigation.simulationGraphColors)
+  const currentSim = useGetCurrentSimulation()
 
-  if (!currentSim) return null;
+  if (currentSim?.id == null) {
+    return null
+  }
 
   return (
     <SimulationGraphEntry
-      color={graphEntries[currentSim.id]}
+      color={graphEntries.get(currentSim.id)}
       data={runningStats}
       id={currentSim.id}
       graphHeight={graphHeight}
       xScale={xScale}
       yScale={yScale}
     />
-  );
+  )
 }
 
-RunningSimulationGraph.propTypes = {
-  xScale: PropTypes.func.isRequired,
-  yScale: PropTypes.func.isRequired,
-  graphHeight: PropTypes.number.isRequired,
-};
-
-export default RunningSimulationGraph;
+export default RunningSimulationGraph

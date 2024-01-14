@@ -21,7 +21,7 @@ function TargetCanvas ({
   useEffect(() => {
     let isMounted = true
     const updateImage = async (): Promise<void> => {
-      const result = await createImageData(target, { width, height })
+      const result = await createImageData(target, width, height)
       if (isMounted) {
         setImageData(result)
       }

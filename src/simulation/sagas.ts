@@ -120,7 +120,14 @@ const createGalleryEntry = async (totalGen: number, globalBest: OrganismRecord):
 function * restorePopulationSaga (action: RestoreSimulationAction): Generator<Promise<PopulationModel>, void, unknown> {
   const simulation = action.payload
   const { population, parameters } = simulation
-  yield populationService.restore(population, parameters.minPolygons, parameters.maxPolygons)
+  if (population == null) {
+    throw new Error('[restorePopulationSaga] No population found')
+  }
+  yield populationService.restore(
+    population,
+    parameters.population.minGenomeSize,
+    parameters.population.maxGenomeSize
+  )
 }
 
 function * resetSimulationsSaga (): Generator<GetContextEffect | PutEffect<ClearCurrentSimulationAction>, void, PopulationServiceType> {
@@ -223,12 +230,12 @@ function * runSimulationSaga (population: PopulationModel): any {
 function * runSimulationsSaga (): RunSimulationsSagaReturnType {
   while (true) {
     const next: Simulation | undefined = yield getNextSimulationToRun()
-    if (next == null) break
+    if (next?.population == null) break
 
     const population: PopulationModel = yield populationService.create({
       size: next.population.size,
-      minGenomeSize: next.parameters.minPolygons,
-      maxGenomeSize: next.parameters.maxPolygons,
+      minGenomeSize: next.parameters.population.minGenomeSize,
+      maxGenomeSize: next.parameters.population.maxGenomeSize,
       minPoints: next.population.minPoints,
       maxPoints: next.population.maxPoints,
       target: next.population.target,

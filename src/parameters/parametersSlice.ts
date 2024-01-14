@@ -1,7 +1,6 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { defaultParameters } from './config'
 import { type ParametersState } from './types'
-import { objectKeys } from '../utils/utils'
 
 export const parametersSlice = createSlice({
   name: 'parameters',
@@ -52,9 +51,7 @@ export const parametersSlice = createSlice({
     },
     setSimulationParameters: (state, action: PayloadAction<ParametersState>) => {
       const parameters = action.payload
-      objectKeys(parameters).forEach((key) => {
-        state[key] = parameters[key]
-      })
+      state = parameters
     }
   }
 })
