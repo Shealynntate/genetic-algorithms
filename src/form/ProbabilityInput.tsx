@@ -30,7 +30,6 @@ function ProbabilityInput<T extends FieldValues> ({
   readOnly = false,
   ...props
 }: ProbabilityInputProps<T>): JSX.Element {
-  console.log({ name })
   return (
     <Box sx={{ display: hide ? 'none' : 'flex', height: 'fit-content' }}>
       <Tooltip title={tooltip}>
@@ -39,7 +38,7 @@ function ProbabilityInput<T extends FieldValues> ({
           {Icon != null && <Icon />}
         </>
       </Tooltip>
-      <Stack sx={{ textAlign: 'center', pl: 2 }}>
+      <Stack direction='row' sx={{ textAlign: 'center', pl: 2 }}>
         <Controller
           control={control}
           name={`${name}.startValue` as Path<T>}
@@ -57,30 +56,28 @@ function ProbabilityInput<T extends FieldValues> ({
             />
           )}
         />
+        <Stack sx={{ justifyContent: 'center' }}>
+          <DoubleArrowIcon fontSize="small" />
+        </Stack>
         <Controller
           control={control}
           name={`${name}.endValue` as Path<T>}
           render={({ field: { onChange, value } }) => (
             <Input
-              readOnly={readOnly}
               onChange={onChange}
               value={value}
+              readOnly={readOnly}
               inputProps={{
-                min: 0,
-                max: 1,
-                step: 0.001,
+                min,
+                max,
+                step,
                 type: 'number'
               }}
-              disableUnderline
-              sx={{ display: 'none' }}
             />
           )}
         />
       </Stack>
-      <Stack sx={{ justifyContent: 'center' }}>
-        <DoubleArrowIcon fontSize="small" />
-      </Stack>
-      <Stack>
+      {/* <Stack>
       <Controller
         control={control}
         name={`${name}.startFitness` as Path<T>}
@@ -117,7 +114,7 @@ function ProbabilityInput<T extends FieldValues> ({
           />
         )}
       />
-      </Stack>
+      </Stack> */}
     </Box>
   )
 }
