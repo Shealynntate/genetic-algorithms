@@ -4,4 +4,22 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
 
-Object.defineProperty(window, 'ImageData', ImageData)
+interface MyImageData {
+  width: number
+  height: number
+  data: Uint8ClampedArray
+}
+
+Object.defineProperty(
+  window,
+  'ImageData',
+  {
+    value: class ImageData implements MyImageData {
+      constructor (
+        public width: number,
+        public height: number,
+        public data: Uint8ClampedArray
+      ) {}
+    }
+  }
+)

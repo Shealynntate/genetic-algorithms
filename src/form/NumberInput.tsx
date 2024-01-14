@@ -63,6 +63,7 @@ function NumberInput<
               </Tooltip>
               <Input
                 {...props}
+                value={value}
                 onChange={onChange}
                 readOnly={readOnly}
                 inputProps={{ min, max, step, type: 'number' }}

@@ -30,6 +30,7 @@ function ProbabilityInput<T extends FieldValues> ({
   readOnly = false,
   ...props
 }: ProbabilityInputProps<T>): JSX.Element {
+  console.log({ name })
   return (
     <Box sx={{ display: hide ? 'none' : 'flex', height: 'fit-content' }}>
       <Tooltip title={tooltip}>
