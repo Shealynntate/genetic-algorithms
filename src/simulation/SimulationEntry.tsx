@@ -37,6 +37,7 @@ function SimulationEntry ({
 }: SimulationEntryProps): JSX.Element {
   const { id, createdOn, name, status, population } = simulation
   const maxFitness = population?.best?.organism?.fitness ?? 0
+  const gen = population?.genId ?? 0
   const theme = useTheme()
   const dispatch = useDispatch()
   const [nameValue, setNameValue] = useState(name)
@@ -131,7 +132,7 @@ function SimulationEntry ({
               color="GrayText"
               sx={{ fontSize: '0.7rem' }}
             >
-              {date.toLocaleString()}
+              {`${gen.toLocaleString()} generations`}
             </Typography>
           </Box>
         </Stack>
@@ -157,7 +158,13 @@ function SimulationEntry ({
             horizontal: 'left'
           }}
         >
-          <Stack>
+          <Stack p={0}>
+            <Typography
+              color="GrayText"
+              sx={{ fontSize: '0.7rem' }}
+            >
+              {date.toLocaleString()}
+            </Typography>
             <Button
               onClick={(event) => { onDuplicate(event, id) }}
               startIcon={<ContentCopyIcon />}

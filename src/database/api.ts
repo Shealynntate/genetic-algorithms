@@ -122,7 +122,6 @@ export const setCurrentSimulation = async (
     throw new Error(`[setCurrentSimulation] No entry found for simulationId ${simulationId}`)
   }
   currentSimulationId = simulationId
-  console.log('[setCurrentSimulation] currentSimulationId', currentSimulationId, entry)
 
   return entry
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { Popover } from '@mui/material'
 import { Box } from '@mui/system'
-import useMousePosition from '../simulation/useMousePosition'
+import { useMousePosition } from '../navigation/hooks'
 
 const buffer = [3 * 16, 16]
 

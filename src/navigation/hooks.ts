@@ -1,7 +1,8 @@
 import { useSelector } from 'react-redux'
 import { type RootState } from '../store'
-import { type AppState } from './types'
+import { type MousePosition, type AppState } from './types'
 import { RunningStates } from '../constants/constants'
+import { useEffect, useState } from 'react'
 
 const currentStateSelector = ({ navigation }: RootState): AppState => (navigation.simulationState)
 
@@ -25,3 +26,19 @@ export const useGraphColor = (id: number): string | undefined => {
 
   return entries[id]
 }
+
+export const useMousePosition = (): MousePosition => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  useEffect(() => {
+    const updateMousePosition = (ev: MouseEvent): void => {
+      setMousePosition({ x: ev.clientX, y: ev.clientY })
+    }
+    window.addEventListener('mousemove', updateMousePosition)
+    return () => {
+      window.removeEventListener('mousemove', updateMousePosition)
+    }
+  }, [])
+  return mousePosition
+}
+
+export default useMousePosition

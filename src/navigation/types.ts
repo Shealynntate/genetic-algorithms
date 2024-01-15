@@ -7,3 +7,8 @@ export interface NavigationState {
   simulationGraphColors: Record<number, string>
   simulationGraphIndices: Record<number, number>
 }
+
+export interface MousePosition {
+  x: number
+  y: number
+}

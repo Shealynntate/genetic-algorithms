@@ -198,7 +198,10 @@ function * runSimulationSaga (population: PopulationModel): any {
       yield put(setGlobalBest({ gen: runGenResult.gen, organism }))
     }
     // Update the list of maxFitness scores
-    yield put(updateCurrentGen({ currentBest: { organism, genId: runGenResult.gen }, runGenResult }))
+    yield put(updateCurrentGen({
+      currentBest: { organism, genId: runGenResult.gen },
+      stats: { stats: runGenResult, threshold: runGenResult.maxFitness }
+    }))
     // --------------------------------------------------
     // Update the list of maxFitness scores
     const { globalBest, runningStatsRecord } = yield * typedSelect((state) => state.simulation)

@@ -30,6 +30,14 @@ export const useGetAllSimulations = (): Simulation[] | undefined => useLiveQuery
   [currentSimulationId]
 )
 
+export const useGetAllButCurrentSimulation = (): Simulation[] | undefined => useLiveQuery(
+  async () => {
+    const allSimulations = await getAllSimulations()
+    return allSimulations.filter(sim => sim.id !== currentSimulationId)
+  },
+  [currentSimulationId]
+)
+
 export const useGetCurrentSimulation = (): Simulation | undefined => useLiveQuery(
   async () => await getCurrentSimulation(),
   [currentSimulationId]

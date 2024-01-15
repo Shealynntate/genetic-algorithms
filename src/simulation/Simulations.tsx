@@ -7,7 +7,7 @@ import { type Simulation } from '../database/types'
 import { type ParametersState } from '../parameters/types'
 import { type SimulationStatus } from './types'
 import { insertSimulation } from '../database/api'
-import { useGetAllSimulations, useGetCurrentSimulation } from '../database/hooks'
+import { useGetAllButCurrentSimulation } from '../database/hooks'
 import SimulationChart from './SimulationChart'
 import SimulationButtons from './SimulationButtons'
 import SimulationEntry from './SimulationEntry'
@@ -15,6 +15,7 @@ import SimulationDetails from './SimulationDetails'
 import SimulationFormDialog from './SimulationFormDialog'
 import RunningSimulationDisplay from './RunningSimulationDisplay'
 import { defaultParameters } from '../parameters/config'
+import { useCreateRunningSimulation } from './hooks'
 
 const statusToOrder: Record<SimulationStatus, number> = {
   running: 0,
@@ -31,13 +32,15 @@ const sortSimulations = (simulations: Simulation[]): Simulation[] => {
 
 function Simulations (): JSX.Element {
   const theme = useTheme()
-  const runningSimulation = useGetCurrentSimulation()
-  const simulations = useGetAllSimulations() ?? []
-  const allSimulations = sortSimulations(simulations)
-  const queuedSimulations = allSimulations.filter((s) => s.status === 'pending')
+  const runningSimulation = useCreateRunningSimulation()
+  const simulations = useGetAllButCurrentSimulation() ?? []
   const formData = useRef<ParametersState>(defaultParameters)
   const [openForm, setOpenForm] = useState(false)
   const [selectedSimulation, setSelectedSimulation] = useState<number | null>(null)
+  const allSimulations = sortSimulations(
+    runningSimulation == null ? simulations : [...simulations, runningSimulation]
+  )
+  const queuedSimulations = allSimulations.filter((s) => s.status === 'pending')
 
   const idToSimulation = (id: number | null): Simulation | undefined => {
     if (id == null) {
