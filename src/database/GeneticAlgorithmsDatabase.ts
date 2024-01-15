@@ -13,7 +13,7 @@ class GeneticAlgorithms extends Dexie {
 
   constructor () {
     super(databaseName)
-    this.version(1).stores({
+    this.version(2).stores({
       images: '++id,simulationId,gen',
       simulations: '++id,createdOn,status,name,lastUpdated',
       results: '++id,simulationId,createdOn,lastUpdated',
