@@ -1,4 +1,3 @@
-import { omit } from 'lodash'
 import {
   call,
   delay,
@@ -188,7 +187,7 @@ function * runSimulationSaga (population: PopulationModel): any {
     }
     // First run the next generation of the simulation
     const runGenResult: GenerationStats = yield population.runGeneration()
-    const organism = omit(runGenResult.maxFitOrganism, ['phenotype'])
+    const organism = runGenResult.maxFitOrganism
     // Should we store a copy of the maxFitOrganism for Image History?
     if (shouldSaveGenImage(population.genId)) {
       yield call(addImageToDatabase, population.genId, runGenResult.maxFitOrganism)
@@ -231,7 +230,6 @@ function * runSimulationsSaga (): RunSimulationsSagaReturnType {
   while (true) {
     const next: Simulation | undefined = yield getNextSimulationToRun()
     if (next == null) break
-    console.log(next.parameters.population.target)
 
     const population: PopulationModel = yield populationService.create({
       size: next.parameters.population.size,

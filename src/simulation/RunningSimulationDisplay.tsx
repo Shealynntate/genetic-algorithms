@@ -39,7 +39,7 @@ function RunningSimulationDisplay ({ simulation }: RunningSimulationDisplayProps
                 height={height}
                 willReadFrequently={false}
               />
-              <ImageCaption gen={globalBest.gen} fitness={globalBest.organism.fitness} />
+              <ImageCaption gen={globalBest.gen ?? 0} fitness={globalBest.organism.fitness} />
             </>
               )
             : (

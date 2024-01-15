@@ -30,7 +30,8 @@ export const useGetAllSimulations = (): Simulation[] | undefined => useLiveQuery
 )
 
 export const useGetCurrentSimulation = (): Simulation | undefined => useLiveQuery(
-  async () => await getCurrentSimulation()
+  async () => await getCurrentSimulation(),
+  [currentSimulationId]
 )
 
 export const useGetCompletedSimulations = (): Simulation[] | undefined => useLiveQuery(

@@ -6,6 +6,7 @@ import {
   type Results
 } from './types'
 import { type Organism, type GenerationStatsRecord } from '../population/types'
+import { genomeToPhenotype } from '../utils/imageUtils'
 
 const db = new GeneticAlgorithmsDatabase()
 export let currentSimulationId: number | undefined
@@ -121,6 +122,7 @@ export const setCurrentSimulation = async (
     throw new Error(`[setCurrentSimulation] No entry found for simulationId ${simulationId}`)
   }
   currentSimulationId = simulationId
+  console.log('[setCurrentSimulation] currentSimulationId', currentSimulationId, entry)
 
   return entry
 }
@@ -238,7 +240,8 @@ export const addImageToDatabase = async (gen: number, maxFitOrganism: Organism):
   if (currentSimulationId == null) {
     throw new Error('[addImageToDatabase] Current simulation ID is not set, cannot add image')
   }
-  const { fitness, phenotype, genome } = maxFitOrganism
+  const { fitness, genome } = maxFitOrganism
+  const phenotype = genomeToPhenotype(genome)
 
   return await db.images.add({
     gen,

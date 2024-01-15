@@ -96,7 +96,6 @@ export interface Organism {
   id: number
   genome: Genome
   fitness: number
-  phenotype?: Phenotype
 }
 
 /**

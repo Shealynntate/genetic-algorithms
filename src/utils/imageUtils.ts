@@ -1,7 +1,7 @@
 import gifshot from 'gifshot'
 import { type Dim } from './types'
 import { canvasParameters } from '../constants/constants'
-import { type Genome } from '../population/types'
+import { type Phenotype, type Genome } from '../population/types'
 
 // Internal Helper Functions
 // --------------------------------------------------
@@ -76,7 +76,7 @@ export const renderGenomeToCanvas = (
   })
 }
 
-export const genomeToPhenotype = (genome: Genome): ImageData | undefined => {
+export const genomeToPhenotype = (genome: Genome): Phenotype | undefined => {
   const { width, height } = canvasParameters
   const canvas = document.createElement('canvas')
   canvas.width = width

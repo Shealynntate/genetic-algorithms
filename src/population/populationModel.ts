@@ -1,5 +1,4 @@
 import { deviation } from 'd3-array'
-import { omit } from 'lodash'
 import {
   type PopulationParameters,
   type Organism,
@@ -102,13 +101,10 @@ class PopulationModel {
 
   serialize (): Population {
     const best = this.best
-    if (best != null) {
-      best.organism = omit(best.organism, ['phenotype'])
-    }
 
     return {
       genId: this.genId,
-      organisms: this.organisms.map((o) => omit(o, ['phenotype'])),
+      organisms: this.organisms,
       mutation: this.mutation.serialize(),
       crossover: this.crossover.serialize(),
       selection: this.selection.serialize(),
