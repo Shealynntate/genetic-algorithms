@@ -97,7 +97,7 @@ export const useGetCurrentSimulationReport = (): SimulationReport | undefined =>
       return undefined
     }
     return { simulation, results }
-  }
+  }, [currentSimulationId]
 )
 
 // Image Hooks

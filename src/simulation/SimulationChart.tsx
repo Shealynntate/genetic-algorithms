@@ -132,9 +132,9 @@ function SimulationChart (): JSX.Element {
 
   const bgColor = theme.palette.background.default
   const axisColor = theme.palette.grey[400]
-  const isCurrentSimGraphed = currentSim?.results.id != null && currentSim.results.id in graphEntries
+  const isCurrentSimGraphed = currentSim?.simulation.id != null && currentSim.simulation.id in graphEntries
   // Determine which simulations are being graphed
-  const checkedSimulations = completedSims.filter(({ results }) => (results.id != null && results.id in graphEntries))
+  const checkedSimulations = completedSims.filter(({ simulation }) => (simulation.id != null && simulation.id in graphEntries))
   if (isCurrentSimGraphed) checkedSimulations.push(currentSim)
 
   useEffect(() => {
@@ -237,8 +237,8 @@ function SimulationChart (): JSX.Element {
           {checkedSimulations.map(({ simulation, results }) => (
             <React.Fragment key={`graph-line-${simulation.id}`}>
               <SimulationGraphEntry
-                color={graphEntries[results.id as number]}
-                id={results.id as number}
+                color={graphEntries[simulation.id as number]}
+                id={simulation.id as number}
                 graphHeight={graphHeight}
                 data={results.stats}
                 showDeviation={showDeviation}

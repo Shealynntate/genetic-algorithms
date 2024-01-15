@@ -217,7 +217,7 @@ function * runSimulationSaga (population: PopulationModel): any {
       // If the results are a new GlobalBest or are different enough from the previously
       // recorded value, add them to the record
       if (currentMax !== latestThreshold || runGenResult.isGlobalBest || isStopping) {
-        yield put(addGenStats({ threshold: currentMax, runGenResult }))
+        yield put(addGenStats({ threshold: currentMax, stats: runGenResult }))
         yield call(insertResultsForCurrentSimulation, runningStatsRecord)
       }
     }
