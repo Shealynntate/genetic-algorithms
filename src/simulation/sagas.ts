@@ -195,7 +195,7 @@ function * runSimulationSaga (population: PopulationModel): any {
     }
     // Check if the latest generation's most fit organism can beat our global best
     if (runGenResult.isGlobalBest) {
-      yield put(setGlobalBest({ genId: runGenResult.gen, organism }))
+      yield put(setGlobalBest({ gen: runGenResult.gen, organism }))
     }
     // Update the list of maxFitness scores
     yield put(updateCurrentGen({ currentBest: { organism, genId: runGenResult.gen }, runGenResult }))

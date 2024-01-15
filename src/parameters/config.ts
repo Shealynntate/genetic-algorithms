@@ -9,7 +9,7 @@ import { targetFitness, maxPopulation, maxGenerations } from '../constants/const
 export const defaultParameters: ParametersState = {
   population: {
     size: 200,
-    minGenomeSize: 1,
+    minGenomeSize: 50,
     maxGenomeSize: 50,
     minPoints: 3,
     maxPoints: 10,

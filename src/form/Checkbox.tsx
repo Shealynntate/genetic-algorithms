@@ -31,6 +31,7 @@ function CustomCheckbox<T extends FieldValues> ({
             sx={{ pb: 0, pr: 0.5 }}
             onChange={onChange}
             value={value as boolean ?? false}
+            checked={value as boolean ?? false}
           />
           <Tooltip title={tooltip}>
             <>
