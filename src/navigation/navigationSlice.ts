@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-dynamic-delete */
 import { useLayoutEffect, useState } from 'react'
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type NavigationState } from './types'
@@ -7,9 +8,9 @@ import { clearCurrentSimulation } from '../simulation/simulationSlice'
 const initialState: NavigationState = {
   simulationState: 'none',
   // Map of simulation id to color value for the graph
-  simulationGraphColors: new Map(),
+  simulationGraphColors: {},
   // Map of simulation id to color index, for internal bookkeeping
-  simulationGraphIndices: new Map()
+  simulationGraphIndices: {}
 }
 
 export const navigationSlice = createSlice({
@@ -54,12 +55,13 @@ export const navigationSlice = createSlice({
           break
         }
       }
-      state.simulationGraphColors.set(id, lineColors[next])
-      state.simulationGraphIndices.set(id, next)
+      state.simulationGraphColors[id] = lineColors[next]
+      state.simulationGraphIndices[id] = next
     },
     removeGraphEntry: (state, action: PayloadAction<number>) => {
-      state.simulationGraphColors.delete(action.payload)
-      state.simulationGraphIndices.delete(action.payload)
+      const key = action.payload
+      delete state.simulationGraphColors[key]
+      delete state.simulationGraphIndices[key]
     }
   },
   extraReducers: (builder) => {

@@ -4,7 +4,7 @@ import { canvasParameters, maxColorValue, numColorChannels } from '../constants/
 
 const { width, height } = canvasParameters
 
-const createWorker = (target: string): WorkerBuilder => {
+const createWorker = (target: Uint8ClampedArray): WorkerBuilder => {
   // Create a new worker
   const worker = new WorkerBuilder(fitnessEvaluator as unknown as string)
   // Create a canvas to transfer to the worker

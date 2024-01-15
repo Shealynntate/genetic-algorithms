@@ -23,5 +23,5 @@ export const useIsGraphEntry = (id: number): boolean => {
 export const useGraphColor = (id: number): string | undefined => {
   const entries = useSelector((state: RootState) => state.navigation.simulationGraphColors)
 
-  return entries.get(id)
+  return entries[id]
 }

@@ -22,9 +22,9 @@ interface PrimaryButtonProps {
 function PrimaryButton ({ runsDisabled = false }: PrimaryButtonProps): JSX.Element {
   const simulationState = useSelector((state: RootState) => state.navigation.simulationState)
   const isPaused = useIsPaused()
-  const isRunning = simulationState === 'running'
   const dispatch = useDispatch()
   const theme = useTheme()
+  const isRunning = simulationState === 'running'
   let isDisabled = runsDisabled
   let action: ActionCreatorWithoutPayload | undefined
   switch (simulationState) {
@@ -67,17 +67,17 @@ function PrimaryButton ({ runsDisabled = false }: PrimaryButtonProps): JSX.Eleme
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      <Fab
-        onClick={onClick}
-        size="extrasmall"
-        color="primary"
-        disabled={isDisabled}
-        sx={{ boxShadow: 'none' }}
-      >
-        <Tooltip title={primaryButtonLabels[simulationState]}>
+      <Tooltip title={primaryButtonLabels[simulationState]}>
+        <Fab
+          onClick={onClick}
+          size="extrasmall"
+          color="primary"
+          disabled={isDisabled}
+          sx={{ boxShadow: 'none' }}
+        >
           {isRunning ? <PauseOutlinedIcon fontSize="small" /> : <PlayArrowIcon fontSize="small" />}
-        </Tooltip>
-      </Fab>
+        </Fab>
+      </Tooltip>
       {isPaused && (
         <Tooltip title="End run early">
           <Fab

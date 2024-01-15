@@ -237,7 +237,7 @@ function SimulationChart (): JSX.Element {
           {checkedSimulations.map(({ simulation, results }) => (
             <React.Fragment key={`graph-line-${simulation.id}`}>
               <SimulationGraphEntry
-                color={graphEntries.get(results.id as number)}
+                color={graphEntries[results.id as number]}
                 id={results.id as number}
                 graphHeight={graphHeight}
                 data={results.stats}

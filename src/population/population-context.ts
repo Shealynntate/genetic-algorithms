@@ -6,10 +6,11 @@ import {
   type Organism,
   type WorkerMessage
 } from './types'
-import { workerBatchSize } from '../constants/constants'
+import { canvasParameters, workerBatchSize } from '../constants/constants'
 import createWorker from '../web-workers/fitnessEvaluatorCreator'
 import PopulationModel from './populationModel'
 import OrganismModel from './organismModel'
+import { createImageData } from '../utils/imageUtils'
 
 /**
  * A class that serves as the interface between the App and the Population
@@ -28,9 +29,10 @@ class PopulationService {
 
   async create (parameters: PopulationParameters): Promise<PopulationModel> {
     const { size, target } = parameters
+    const imageData = await createImageData(target, canvasParameters.width, canvasParameters.height)
     // Setup web workers for evaluateFitness work
     const numWorkers = Math.ceil(size / workerBatchSize)
-    this.workers = [...Array(numWorkers)].map(() => createWorker(target))
+    this.workers = [...Array(numWorkers)].map(() => createWorker(imageData.data))
     this.population = new PopulationModel(parameters, this.evaluateFitness.bind(this))
     await this.population.initialize()
 

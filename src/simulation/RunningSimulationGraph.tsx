@@ -25,7 +25,7 @@ function RunningSimulationGraph ({
 
   return (
     <SimulationGraphEntry
-      color={graphEntries.get(currentSim.id)}
+      color={graphEntries[currentSim.id]}
       data={runningStats}
       id={currentSim.id}
       graphHeight={graphHeight}

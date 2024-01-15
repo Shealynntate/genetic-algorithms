@@ -73,6 +73,7 @@ export default (): void => {
       target
     }
   }: Input) => {
+    console.log({ target })
     // If the canvas is provided, then we're initializing the FitnessEvaluator
     if (canvas !== undefined) {
       fitnessEvaluator = new FitnessEvaluator(canvas, numColorChannels, maxColorValue, target)

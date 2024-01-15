@@ -230,18 +230,19 @@ function * runSimulationSaga (population: PopulationModel): any {
 function * runSimulationsSaga (): RunSimulationsSagaReturnType {
   while (true) {
     const next: Simulation | undefined = yield getNextSimulationToRun()
-    if (next?.population == null) break
+    if (next == null) break
+    console.log(next.parameters.population.target)
 
     const population: PopulationModel = yield populationService.create({
-      size: next.population.size,
+      size: next.parameters.population.size,
       minGenomeSize: next.parameters.population.minGenomeSize,
       maxGenomeSize: next.parameters.population.maxGenomeSize,
-      minPoints: next.population.minPoints,
-      maxPoints: next.population.maxPoints,
-      target: next.population.target,
-      mutation: next.population.mutation,
-      crossover: next.population.crossover,
-      selection: next.population.selection
+      minPoints: next.parameters.population.minPoints,
+      maxPoints: next.parameters.population.maxPoints,
+      target: next.parameters.population.target,
+      mutation: next.parameters.population.mutation,
+      crossover: next.parameters.population.crossover,
+      selection: next.parameters.population.selection
     })
     yield updateCurrentSimulation({ status: 'running', population: population.serialize() })
     yield put(setSimulationParameters(next.parameters))
