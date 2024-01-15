@@ -106,7 +106,8 @@ export const createGif = async (images: ImageData[]): Promise<string> => {
         errorMsg,
         image // base64 image (gif)
       }) => {
-        if (error != null) {
+        if (error) {
+          console.error(error)
           reject(new Error(`[Gifshot] ${errorCode}: ${errorMsg}`))
         }
         resolve(image)

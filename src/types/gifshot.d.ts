@@ -36,7 +36,7 @@ declare module 'gifshot' {
     callback: (obj: {
       image: string
       cameraStream: MediaStream
-      error: string
+      error: boolean
       errorCode: number
       errorMsg: string
     }) => void,

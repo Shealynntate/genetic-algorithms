@@ -209,14 +209,14 @@ function * runSimulationSaga (population: PopulationModel): any {
     const isStopping = isSuccess || runGenResult.gen >= stopCriteria.maxGenerations
     // Add the current stats to the record if they meet the requirements
     const currentMax = setSigFigs(runGenResult.maxFitness, 3)
-    if (currentMax >= minResultsThreshold) {
+    if (population.genId === 1 || currentMax >= minResultsThreshold) {
       let latestThreshold = 0
       if (runningStatsRecord.length > 0) {
         latestThreshold = runningStatsRecord[runningStatsRecord.length - 1].threshold
       }
       // If the results are a new GlobalBest or are different enough from the previously
       // recorded value, add them to the record
-      if (currentMax !== latestThreshold || runGenResult.isGlobalBest || isStopping) {
+      if (population.genId === 1 || currentMax !== latestThreshold || runGenResult.isGlobalBest || isStopping) {
         yield put(addGenStats({ threshold: currentMax, stats: runGenResult }))
         yield call(insertResultsForCurrentSimulation, runningStatsRecord)
       }
