@@ -26,28 +26,30 @@ const statusToOrder: Record<SimulationStatus, number> = {
 }
 
 const sortSimulations = (simulations: Simulation[]): Simulation[] => {
+  // Remove duplicate simulations by id
+  simulations = _.uniqBy(simulations, (s) => s.id)
   const sorted = _.sortBy(simulations, (s) => statusToOrder[s.status])
   return sorted
 }
 
 function Simulations (): JSX.Element {
   const theme = useTheme()
+  const formData = useRef<ParametersState>(defaultParameters)
   const runningSimulation = useCreateRunningSimulation()
   const simulations = useGetAllButCurrentSimulation() ?? []
-  const formData = useRef<ParametersState>(defaultParameters)
-  const [openForm, setOpenForm] = useState(false)
   const [selectedSimulation, setSelectedSimulation] = useState<number | null>(null)
+  const [openForm, setOpenForm] = useState(false)
+
   const allSimulations = sortSimulations(
     runningSimulation == null ? simulations : [...simulations, runningSimulation]
   )
-  const queuedSimulations = allSimulations.filter((s) => s.status === 'pending')
+  const hasQueuedSimulations = allSimulations.some((s) => s.status === 'pending' || s.status === 'paused' || s.status === 'running')
 
   const idToSimulation = (id: number | null): Simulation | undefined => {
     if (id == null) {
       return undefined
     }
-    const all = [...allSimulations, runningSimulation]
-    return _.find(all, (e) => e?.id === id)
+    return _.find(allSimulations, (e) => e?.id === id)
   }
 
   const onAddSimulation = (): void => {
@@ -60,10 +62,11 @@ function Simulations (): JSX.Element {
 
   const onSubmitForm = (parameters: ParametersState): void => {
     setOpenForm(false)
-    formData.current = defaultParameters
     if (parameters != null) {
       insertSimulation({ parameters, status: 'pending' }).catch(console.error)
     }
+    // Reset the form data for the next time the form is opened
+    formData.current = defaultParameters
   }
 
   const onSelect = (id: number | null): void => {
@@ -105,7 +108,7 @@ function Simulations (): JSX.Element {
             >
               <Stack direction="row" spacing={1}>
                 <Typography variant="h6">Experiment Runs</Typography>
-                <SimulationButtons runsDisabled={queuedSimulations.length === 0} />
+                <SimulationButtons runsDisabled={!hasQueuedSimulations} />
               </Stack>
               <Tooltip title="Add a new run">
                 <Fab

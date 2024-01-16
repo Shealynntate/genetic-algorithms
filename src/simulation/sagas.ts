@@ -47,6 +47,7 @@ import {
   runSimulations
 } from '../navigation/navigationSlice'
 import { type RootState } from '../store'
+import { type AppState } from '../navigation/types'
 import populationService, { type PopulationServiceType } from '../population/population-context'
 import { type Simulation } from '../database/types'
 import type PopulationModel from '../population/populationModel'
@@ -80,7 +81,8 @@ function * typedGetContext<T> (key: string): Generator<GetContextEffect, T, T> {
 // }
 
 type RunSimulationsSagaReturnType =
-  Generator<Promise<PopulationModel>
+  Generator<SelectEffect
+  | Promise<PopulationModel>
   | Promise<Simulation | undefined>
   | Promise<number>
   | PutEffect<SetSimulationParametersAction>
@@ -234,6 +236,7 @@ function * runSimulationsSaga (): RunSimulationsSagaReturnType {
     const next: Simulation | undefined = yield getNextSimulationToRun()
     if (next == null) break
 
+    populationService.reset()
     const population: PopulationModel = yield populationService.create({
       size: next.parameters.population.size,
       minGenomeSize: next.parameters.population.minGenomeSize,
@@ -247,9 +250,11 @@ function * runSimulationsSaga (): RunSimulationsSagaReturnType {
     })
     yield updateCurrentSimulation({ status: 'running', population: population.serialize() })
     yield put(setSimulationParameters(next.parameters))
-    const doContinue: boolean = (yield * typedCall(runSimulationSaga, population)) as boolean
-    // If user reset simulations, exit early and don't mark them complete
-    if (!doContinue) return
+    // Run the simulation until a stopping condition is met
+    yield * typedCall(runSimulationSaga, population)
+    // Now that the simulation has stopped, check what state we're in
+    const currentState: AppState = yield * typedSelect((state) => state.navigation.simulationState)
+    if (currentState !== 'running') break
   }
   // All simulations have completed, signal that the run is over
   yield setCurrentSimulation()

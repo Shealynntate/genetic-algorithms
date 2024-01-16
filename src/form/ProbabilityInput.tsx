@@ -44,7 +44,7 @@ function ProbabilityInput<T extends FieldValues> ({
           name={`${name}.startValue` as Path<T>}
           render={({ field: { onChange, value } }) => (
             <Input
-              onChange={onChange}
+              onChange={(event) => { onChange(+event.target.value) }}
               value={value}
               readOnly={readOnly}
               inputProps={{
@@ -64,7 +64,7 @@ function ProbabilityInput<T extends FieldValues> ({
           name={`${name}.endValue` as Path<T>}
           render={({ field: { onChange, value } }) => (
             <Input
-              onChange={onChange}
+              onChange={(event) => { onChange(+event.target.value) }}
               value={value}
               readOnly={readOnly}
               inputProps={{
@@ -83,7 +83,7 @@ function ProbabilityInput<T extends FieldValues> ({
         name={`${name}.startFitness` as Path<T>}
         render={({ field: { onChange, value } }) => (
           <Input
-            onChange={onChange}
+            onChange={(event) => { onChange(+event.target.value) }}
             value={value}
             readOnly={readOnly}
             inputProps={{
@@ -100,7 +100,7 @@ function ProbabilityInput<T extends FieldValues> ({
         name={`${name}.endFitness` as Path<T>}
         render={({ field: { onChange, value } }) => (
           <Input
-            onChange={onChange}
+            onChange={(event) => { onChange(+event.target.value) }}
             value={value}
             readOnly={readOnly}
             inputProps={{

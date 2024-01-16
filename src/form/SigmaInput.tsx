@@ -32,7 +32,7 @@ function SigmaInput<T extends FieldValues> ({
             </>
           </Tooltip>
           <Input
-            onChange={onChange}
+            onChange={(event) => { onChange(+event.target.value) }}
             value={value}
             readOnly={readOnly}
             inputProps={{

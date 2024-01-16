@@ -51,7 +51,8 @@ export const parametersSlice = createSlice({
     },
     setSimulationParameters: (state, action: PayloadAction<ParametersState>) => {
       const parameters = action.payload
-      state = parameters
+      state.population = parameters.population
+      state.stopCriteria = parameters.stopCriteria
     }
   }
 })

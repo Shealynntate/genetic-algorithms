@@ -64,9 +64,10 @@ function NumberInput<
               <Input
                 {...props}
                 value={value}
-                onChange={onChange}
+                onChange={(event) => { onChange(+event.target.value) }}
                 readOnly={readOnly}
                 inputProps={{ min, max, step, type: 'number' }}
+                type='number'
               />
             </Stack>
           </ErrorTooltip>
