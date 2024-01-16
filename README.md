@@ -9,25 +9,25 @@
 </p>
 
 # Resources
-Full credit to Robert Johansson for this project idea. Check it out at ![Genetic Programming: Evolution of the Mona Lisa](https://rogerjohansson.blog/2008/12/07/genetic-programming-evolution-of-mona-lisa/)
+Full credit to Robert Johansson for this project idea. Check it out at [Genetic Programming: Evolution of the Mona Lisa](https://rogerjohansson.blog/2008/12/07/genetic-programming-evolution-of-mona-lisa/)
 
 Here&apos;s a list of other resources I used while working on this project:
 
-![Essentials of Metaheuristics](https://cs.gmu.edu/~sean/book/metaheuristics/Essentials.pdf)
+[Essentials of Metaheuristics](https://cs.gmu.edu/~sean/book/metaheuristics/Essentials.pdf)
 
-![Analyzing Mutation Schemes for Real-Parameter Genetic Algorithms](https://www.egr.msu.edu/~kdeb/papers/k2012016.pdf)
+[Analyzing Mutation Schemes for Real-Parameter Genetic Algorithms](https://www.egr.msu.edu/~kdeb/papers/k2012016.pdf)
 
-![Choosing Mutation and Crossover Ratios for Genetic Algorithms](https://pdfs.semanticscholar.org/5a25/a4d30528160eef96adbce1d7b03507ebd3d7.pdf)
+[Choosing Mutation and Crossover Ratios for Genetic Algorithms](https://pdfs.semanticscholar.org/5a25/a4d30528160eef96adbce1d7b03507ebd3d7.pdf)
 
-![Analyzing the Performance of Mutation Operators to Solve the Traveling Salesman Problem](https://arxiv.org/pdf/1203.3099.pdf)
+[Analyzing the Performance of Mutation Operators to Solve the Traveling Salesman Problem](https://arxiv.org/pdf/1203.3099.pdf)
           
-![Initial Population for Genetic Algorithms: A Metric Approach](https://www.researchgate.net/publication/220862320_Initial_Population_for_Genetic_Algorithms_A_Metric_Approach)
+[Initial Population for Genetic Algorithms: A Metric Approach](https://www.researchgate.net/publication/220862320_Initial_Population_for_Genetic_Algorithms_A_Metric_Approach)
       
-![Self-Adaptive Simulated Binary Crossover for Real-Parameter Optimization](https://www.researchgate.net/publication/220742263_Self-adaptive_simulated_binary_crossover_for_real-parameter_optimization)
+[Self-Adaptive Simulated Binary Crossover for Real-Parameter Optimization](https://www.researchgate.net/publication/220742263_Self-adaptive_simulated_binary_crossover_for_real-parameter_optimization)
 
-![Genetic Programming Needs Better Benchmarks](http://gpbenchmarks.org/wp-content/uploads/2019/08/paper1.pdf)
+[Genetic Programming Needs Better Benchmarks](http://gpbenchmarks.org/wp-content/uploads/2019/08/paper1.pdf)
 
-![A Genetic Algorithm for Image Recreation — Can it Paint the Mona Lisa?](https://medium.com/@sebastian.charmot/genetic-algorithm-for-image-recreation-4ca546454aaa)
+[A Genetic Algorithm for Image Recreation — Can it Paint the Mona Lisa?](https://medium.com/@sebastian.charmot/genetic-algorithm-for-image-recreation-4ca546454aaa)
 
 # Genetic Algorithms Overview
 ## Metaheuristics
