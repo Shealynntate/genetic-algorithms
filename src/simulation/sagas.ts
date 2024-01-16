@@ -19,25 +19,19 @@ import { minResultsThreshold, saveThresholds } from '../constants/constants'
 import {
   addGalleryEntry,
   addImageToDatabase,
-  insertResultsForCurrentSimulation,
   deleteCurrentSimulation,
   getCurrentImages,
   getCurrentSimulation,
   setCurrentSimulation,
   updateCurrentSimulation,
-  getNextSimulationToRun
+  getNextSimulationToRun,
+  addStatsForCurrentSimulation
 } from '../database/api'
 import { approxEqual, setSigFigs } from '../utils/utils'
 import { genomeToPhenotype, createGif } from '../utils/imageUtils'
 import { isRunningSelector } from '../navigation/hooks'
 import { setSimulationParameters } from '../parameters/parametersSlice'
-import {
-  addGenStats,
-  setGlobalBest,
-  updateCurrentGen,
-  clearCurrentSimulation,
-  restorePopulation
-} from './simulationSlice'
+import { setGlobalBest, updateCurrentGen, clearCurrentSimulation, restorePopulation, setLastThreshold } from './simulationSlice'
 import {
   deleteRunningSimulation,
   endSimulationEarly,
@@ -51,7 +45,7 @@ import { type AppState } from '../navigation/types'
 import populationService, { type PopulationServiceType } from '../population/population-context'
 import { type Simulation } from '../database/types'
 import type PopulationModel from '../population/populationModel'
-import { type GenerationStats } from '../population/types'
+import { type GenerationStatsRecord, type GenerationStats } from '../population/types'
 
 function * typedSelect<T> (selector: (state: RootState) => T): Generator<SelectEffect, T, T> {
   const slice: T = yield select(selector)
@@ -206,21 +200,18 @@ function * runSimulationSaga (population: PopulationModel): any {
     }))
     // --------------------------------------------------
     // Update the list of maxFitness scores
-    const { globalBest, runningStatsRecord } = yield * typedSelect((state) => state.simulation)
+    const { globalBest, lastThreshold } = yield * typedSelect((state) => state.simulation)
     const isSuccess = hasReachedTarget(globalBest, stopCriteria.targetFitness)
     const isStopping = isSuccess || runGenResult.gen >= stopCriteria.maxGenerations
     // Add the current stats to the record if they meet the requirements
     const currentMax = setSigFigs(runGenResult.maxFitness, 3)
     if (population.genId === 1 || currentMax >= minResultsThreshold) {
-      let latestThreshold = 0
-      if (runningStatsRecord.length > 0) {
-        latestThreshold = runningStatsRecord[runningStatsRecord.length - 1].threshold
-      }
       // If the results are a new GlobalBest or are different enough from the previously
       // recorded value, add them to the record
-      if (population.genId === 1 || currentMax !== latestThreshold || runGenResult.isGlobalBest || isStopping) {
-        yield put(addGenStats({ threshold: currentMax, stats: runGenResult }))
-        yield call(insertResultsForCurrentSimulation, runningStatsRecord)
+      if (population.genId === 1 || currentMax !== lastThreshold || runGenResult.isGlobalBest || isStopping) {
+        const genStats: GenerationStatsRecord = { threshold: currentMax, stats: runGenResult }
+        yield call(addStatsForCurrentSimulation, genStats)
+        yield put(setLastThreshold(currentMax))
       }
     }
     // Check if the simulation is over

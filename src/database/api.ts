@@ -225,12 +225,13 @@ export const getCurrentSimulationResults = async (): Promise<Results | undefined
 }
 
 export const addStatsForCurrentSimulation = async (stats: GenerationStatsRecord): Promise<number> => {
+  // If the Simulation doesn't already have a results entry, create one
   const entry = await getCurrentSimulationResults()
   if (entry?.id == null) {
-    throw new Error('[addStatsForCurrentSimulation] No valid results entry found')
+    return await insertResultsForCurrentSimulation([stats])
+  } else {
+    return await db.results.update(entry.id, { stats: [...entry.stats, stats] })
   }
-
-  return await db.results.update(entry.id, { results: [...entry.stats, stats] })
 }
 
 // Images Table

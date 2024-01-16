@@ -119,10 +119,6 @@ function SimulationChart (): JSX.Element {
   const theme = useTheme()
   const completedSims: SimulationReport[] = useGetCompletedSimulationReports() ?? []
   const currentSim = useGetCurrentSimulationReport()
-  const runningStats = useSelector((state: RootState) => state.simulation.runningStatsRecord)
-  if (currentSim != null) {
-    currentSim.results.stats = runningStats
-  }
   // Local state
   const [domainY, setDomainY] = useState([minResultsThreshold, 1])
   const [domainX, setDomainX] = useState([0, maxGens])
@@ -192,7 +188,7 @@ function SimulationChart (): JSX.Element {
     if (isCurrentSimGraphed) {
       updateDomainY()
     }
-  }, [runningStats])
+  }, [currentSim])
 
   return (
     <Stack ref={containerRef}>

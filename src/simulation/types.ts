@@ -15,8 +15,8 @@ export interface SimulationState {
   currentBest?: OrganismRecord
   // The current gen's stats, updated every generation
   currentGenStats?: GenerationStatsRecord
-  // A record of every fitness threshold passed to be stored in the db at end of the run
-  runningStatsRecord: GenerationStatsRecord[]
+  // The last threshold value that was used to store records in the db
+  lastThreshold: number
 }
 
 // Action Types

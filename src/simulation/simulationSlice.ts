@@ -4,7 +4,7 @@ import { type Simulation } from '../database/types'
 
 const initialState: SimulationState = {
   targetFitnessReached: false,
-  runningStatsRecord: []
+  lastThreshold: 0
 }
 
 export const simulationSlice = createSlice({
@@ -23,13 +23,15 @@ export const simulationSlice = createSlice({
     setCurrentGenStats: (state, action) => {
       state.currentGenStats = action.payload
     },
-    addGenStats: (state, action) => {
-      state.runningStatsRecord.push(action.payload)
+    setLastThreshold: (state, action) => {
+      state.lastThreshold = action.payload
     },
     clearCurrentSimulation: (state) => {
-      state.runningStatsRecord = []
       state.currentBest = undefined
       state.globalBest = undefined
+      state.currentGenStats = undefined
+      state.targetFitnessReached = false
+      state.lastThreshold = 0
     },
     // Set both the currentBest and current stats in one call
     updateCurrentGen: (state, action) => {
@@ -55,7 +57,7 @@ export const {
   setCurrentBest,
   setTargetFitnessReached,
   setCurrentGenStats,
-  addGenStats,
+  setLastThreshold,
   clearCurrentSimulation,
   updateCurrentGen
 } = simulationSlice.actions
