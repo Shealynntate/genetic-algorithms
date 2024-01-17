@@ -19,7 +19,7 @@ export const useCreateRunningSimulation = (): Simulation | undefined => {
     population: {
       ...defaultPopulation,
       best: globalBest ?? dbSimulation.population?.best as OrganismRecord,
-      genId: latestStats?.stats.gen ?? dbSimulation.population?.genId as number
+      genId: latestStats?.stats?.gen ?? dbSimulation.population?.genId as number
     }
   }
   return simulation

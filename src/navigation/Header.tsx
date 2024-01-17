@@ -33,10 +33,6 @@ function Header (): JSX.Element {
     navigate('/your-art')
   }
 
-  const onAboutClick = (): void => {
-    navigate('/about')
-  }
-
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -49,7 +45,6 @@ function Header (): JSX.Element {
             <Button onClick={onGalleryClick} color="inherit">Gallery</Button>
             <Button onClick={onExperimentClick} color="inherit">Experiment</Button>
             <Button onClick={onYourArtClick} color="inherit">Your Art</Button>
-            <Button onClick={onAboutClick} color="inherit">About</Button>
             <IconButton size="large" onClick={onClickGithub}>
               <GitHub fontSize="inherit" />
             </IconButton>

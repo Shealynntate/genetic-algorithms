@@ -10,7 +10,7 @@ export const maxGenerations = 500_000
 
 export const targetFitness = 1
 
-export const statsSigFigs = 5
+export const statsSigFigs = 4
 
 export const workerBatchSize = 40
 

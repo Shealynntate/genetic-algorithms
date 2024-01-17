@@ -303,7 +303,8 @@ class PopulationModel {
     const mean = total / this.size
     // Update the overall best organism
     let isGlobalBest = false
-    if (this.best == null || max > this.best.organism.fitness) {
+    max = setSigFigs(max, statsSigFigs)
+    if (this.best == null || max > setSigFigs(this.best.organism.fitness, statsSigFigs)) {
       this.best = { gen: this.genId, organism: maxFitOrganism }
       isGlobalBest = true
     }
