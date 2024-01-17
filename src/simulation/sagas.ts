@@ -196,7 +196,7 @@ function * runSimulationSaga (population: PopulationModel): any {
     // Update the list of maxFitness scores
     const currentMax = setSigFigs(runGenResult.maxFitness, 3)
     const genStats: GenerationStatsRecord = { threshold: currentMax, stats: runGenResult }
-    yield put(updateCurrentGen(genStats))
+    yield put(updateCurrentGen({ stats: genStats, currentBest: organism }))
     // --------------------------------------------------
     // Update the list of maxFitness scores
     const { globalBest, lastThreshold } = yield * typedSelect((state) => state.simulation)

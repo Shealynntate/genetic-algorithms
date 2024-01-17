@@ -8,7 +8,7 @@ import { useGetCurrentSimulation } from '../database/hooks'
 export const useCreateRunningSimulation = (): Simulation | undefined => {
   const dbSimulation = useGetCurrentSimulation()
   const globalBest = useSelector((state: RootState) => state.simulation.globalBest)
-  const latestStats = useSelector((state: RootState) => state.simulation.currentGenStats)
+  const currentGenStats = useSelector((state: RootState) => state.simulation.currentGenStats)
   // const dbReport = useGetCurrentSimulationReport()
   if (dbSimulation == null) {
     return undefined
@@ -19,7 +19,7 @@ export const useCreateRunningSimulation = (): Simulation | undefined => {
     population: {
       ...defaultPopulation,
       best: globalBest ?? dbSimulation.population?.best as OrganismRecord,
-      genId: latestStats?.stats?.gen ?? dbSimulation.population?.genId as number
+      genId: currentGenStats?.stats.gen ?? dbSimulation.population?.genId as number
     }
   }
   return simulation
