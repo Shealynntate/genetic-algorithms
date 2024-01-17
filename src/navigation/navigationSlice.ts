@@ -7,6 +7,8 @@ import { clearCurrentSimulation } from '../simulation/simulationSlice'
 
 const initialState: NavigationState = {
   simulationState: 'none',
+  // Show the create simulation tooltip when the app is first loaded
+  showCreateSimulationModal: true,
   // Map of simulation id to color value for the graph
   simulationGraphColors: {},
   // Map of simulation id to color index, for internal bookkeeping
@@ -19,6 +21,9 @@ export const navigationSlice = createSlice({
   reducers: {
     setAppState: (state, action) => {
       state.simulationState = action.payload
+    },
+    setShowCreateSimulationModal: (state, action) => {
+      state.showCreateSimulationModal = action.payload
     },
     runSimulations: (state) => {
       state.simulationState = 'running'
@@ -81,7 +86,8 @@ export const {
   endSimulationEarly,
   deleteRunningSimulation,
   addGraphEntry,
-  removeGraphEntry
+  removeGraphEntry,
+  setShowCreateSimulationModal
 } = navigationSlice.actions
 
 /**

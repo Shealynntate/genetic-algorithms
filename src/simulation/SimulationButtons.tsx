@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Box, Fab, Tooltip, Typography, useTheme } from '@mui/material'
+import { Box, Fab, Tooltip } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import StopIcon from '@mui/icons-material/Stop'
 import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined'
@@ -19,11 +19,10 @@ interface PrimaryButtonProps {
   runsDisabled?: boolean
 }
 
-function PrimaryButton ({ runsDisabled = false }: PrimaryButtonProps): JSX.Element {
+function PrimaryButton ({ runsDisabled = false }: PrimaryButtonProps): JSX.Element | null {
   const simulationState = useSelector((state: RootState) => state.navigation.simulationState)
   const isPaused = useIsPaused()
   const dispatch = useDispatch()
-  const theme = useTheme()
   const isRunning = simulationState === 'running'
   let isDisabled = runsDisabled
   let action: ActionCreatorWithoutPayload | undefined
@@ -56,13 +55,7 @@ function PrimaryButton ({ runsDisabled = false }: PrimaryButtonProps): JSX.Eleme
   }
 
   if (isDisabled) {
-    return (
-      <Box sx={{ textAlign: 'center' }}>
-        <Typography sx={{ color: theme.palette.text.disabled }}>
-          Create a new simulation and watch it run!
-        </Typography>
-      </Box>
-    )
+    return null
   }
 
   return (
