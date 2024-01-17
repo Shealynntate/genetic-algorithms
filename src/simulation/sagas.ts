@@ -25,7 +25,7 @@ import {
   setCurrentSimulation,
   updateCurrentSimulation,
   getNextSimulationToRun,
-  addStatsForCurrentSimulation
+  addResultsForCurrentSimulation
 } from '../database/api'
 import { approxEqual, setSigFigs } from '../utils/utils'
 import { genomeToPhenotype, createGif } from '../utils/imageUtils'
@@ -207,7 +207,7 @@ function * runSimulationSaga (population: PopulationModel): any {
       // If the results are a new GlobalBest or are different enough from the previously
       // recorded value, add them to the record
       if (population.genId === 1 || currentMax !== lastThreshold || runGenResult.isGlobalBest || isStopping) {
-        yield call(addStatsForCurrentSimulation, genStats)
+        yield call(addResultsForCurrentSimulation, genStats)
         yield put(setLastThreshold(currentMax))
       }
     }

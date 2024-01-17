@@ -1,10 +1,5 @@
 import GeneticAlgorithmsDatabase from './GeneticAlgorithmsDatabase'
-import {
-  type Image,
-  type MutableSimulation,
-  type Simulation,
-  type Results
-} from './types'
+import { type Image, type MutableSimulation, type Simulation } from './types'
 import { type Organism, type GenerationStatsRecord } from '../population/types'
 import { genomeToPhenotype } from '../utils/imageUtils'
 
@@ -194,44 +189,34 @@ export const deleteCurrentSimulation = async (): Promise<number[]> => {
 
 // Simulation Results Table
 // --------------------------------------------------
-export const insertResultsEntry = async (
+export const addResultsEntry = async (
   simulationId: number,
-  stats: GenerationStatsRecord[] = []
+  stats: GenerationStatsRecord
 ): Promise<number> => {
   return await db.results.add({
     simulationId,
     createdOn: Date.now(),
-    lastUpdated: Date.now(),
     stats
   })
 }
 
-export const insertResultsForCurrentSimulation = async (results: GenerationStatsRecord): Promise<number> => {
+export const addResultsForCurrentSimulation = async (results: GenerationStatsRecord): Promise<number> => {
   if (currentSimulationId == null) {
     throw new Error('[insertResultsForCurrentSimulation] Current simulation ID is null')
   }
-  return await insertResultsEntry(currentSimulationId, [results])
+  return await addResultsEntry(currentSimulationId, results)
 }
 
-export const addStatsForCurrentSimulation = async (stats: GenerationStatsRecord): Promise<number> => {
-  // If the Simulation doesn't already have a results entry, create one
-  const entry = await getCurrentSimulationResults()
-  if (entry?.id == null) {
-    return await insertResultsForCurrentSimulation(stats)
-  } else {
-    return await db.results.update(entry.id, { stats: [...entry.stats, stats] })
-  }
+export const getSimulationRecords = async (simulationId: number): Promise<GenerationStatsRecord[]> => {
+  const results = await db.results.where({ simulationId }).toArray()
+  return results.map((result) => result.stats)
 }
 
-export const getSimulationResults = async (simulationId: number): Promise<Results | undefined> => {
-  return await db.results.get({ simulationId })
-}
-
-export const getCurrentSimulationResults = async (): Promise<Results | undefined> => {
+export const getCurrentSimulationRecords = async (): Promise<GenerationStatsRecord[]> => {
   if (currentSimulationId == null) {
     throw new Error('[getCurrentSimulationResults] Current simulation ID is not set')
   }
-  return await getSimulationResults(currentSimulationId)
+  return await getSimulationRecords(currentSimulationId)
 }
 
 // Images Table

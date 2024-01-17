@@ -79,7 +79,7 @@ const findYDomain = (
       return
     }
 
-    results.stats.forEach(({ stats }) => {
+    results.forEach(({ stats }) => {
       const { gen } = stats
       if (gen <= x0) {
         leftBound = stats.minFitness
@@ -236,7 +236,7 @@ function SimulationChart (): JSX.Element {
                 color={graphEntries[simulation.id as number]}
                 id={simulation.id as number}
                 graphHeight={graphHeight}
-                data={results.stats}
+                data={results}
                 showDeviation={showDeviation}
                 showMean={showMean}
                 showMin={showMin}

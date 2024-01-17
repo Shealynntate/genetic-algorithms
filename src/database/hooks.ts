@@ -6,6 +6,7 @@ import {
   type SimulationReport
 } from './types'
 import { type GalleryEntryData } from '../gallery/types'
+import { type GenerationStatsRecord } from '../population/types'
 import db, {
   currentSimulationId,
   getAllSimulations,
@@ -13,7 +14,7 @@ import db, {
   getCurrentImages,
   getCurrentSimulation,
   getPendingSimulations,
-  getSimulationResults,
+  getSimulationRecords,
   getSimulations
 } from './api'
 
@@ -67,11 +68,11 @@ export const useGetCompletedSimulationReports = (): SimulationReport[] | undefin
   async () => {
     const completedSimulations = await getCompletedSimulations()
 
-    const findResults = async (simId: number | undefined): Promise<Results | undefined> => {
+    const findResults = async (simId: number | undefined): Promise<GenerationStatsRecord[] | undefined> => {
       if (simId == null) {
         throw new Error('[useGetCompletedSimulationReports] Simulation ID is null')
       }
-      return await getSimulationResults(simId)
+      return await getSimulationRecords(simId)
     }
 
     return await Promise.all(
@@ -92,7 +93,7 @@ export const useGetCurrentSimulationReport = (): SimulationReport | undefined =>
     if (simulation?.id == null) {
       return undefined
     }
-    const results = await getSimulationResults(simulation.id)
+    const results = await getSimulationRecords(simulation.id)
     if (results == null) {
       return undefined
     }

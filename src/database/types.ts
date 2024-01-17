@@ -27,11 +27,10 @@ export interface Results {
   id?: number
   simulationId: number
   createdOn: number
-  lastUpdated: number
-  stats: GenerationStatsRecord[]
+  stats: GenerationStatsRecord
 }
 
 export interface SimulationReport {
   simulation: Simulation
-  results: Results
+  results: GenerationStatsRecord[] // The combined records from all generations
 }
