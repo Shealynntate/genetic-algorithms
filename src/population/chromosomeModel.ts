@@ -61,7 +61,7 @@ const ChromosomeModel = {
 
   /**
    * Adds a randomly generated (x,y) point to the Chromosome if possible
-   * @param {*} chromosomes - an array of Chromosome objects
+   * @param {*} chromosome - an array of Chromosome objects
    * @returns true if the add mutation was successful, false if the chromosome already has the
    * maximum number of points allowed
    */
