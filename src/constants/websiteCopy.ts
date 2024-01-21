@@ -219,7 +219,7 @@ export const MutationProbabilityFormFields: Record<MutationProbabilityType, Form
 }
 
 export const SimulationGraph = {
-  title: 'Simulation vs Generations',
+  title: 'Fitness vs Generations',
   minCheckbox: 'Min',
   meanCheckbox: 'Mean',
   deviationCheckbox: 'Deviation'

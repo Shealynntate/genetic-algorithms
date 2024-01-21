@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Stack, Typography, useTheme } from '@mui/material'
+import { clamp } from 'lodash'
 import { useSelector } from 'react-redux'
 import { scaleLinear } from '@visx/scale'
 import { Grid } from '@visx/grid'
 import { AxisBottom, AxisLeft } from '@visx/axis'
 import { Group } from '@visx/group'
-import { MIN_BROWSER_WIDTH, minResultsThreshold } from '../constants/constants'
+import { MIN_BROWSER_WIDTH } from '../constants/constants'
 import CustomCheckbox from '../common/Checkbox'
 import { useGetCompletedSimulationReports, useGetCurrentSimulationReport } from '../database/hooks'
 import SimulationGraphEntry from '../graph/SimulatonGraphEntry'
@@ -13,8 +14,9 @@ import { SimulationGraph } from '../constants/websiteCopy'
 import { useWindowSize } from '../navigation/navigationSlice'
 import { type SimulationReport } from '../database/types'
 import { type RootState } from '../store'
-import { type GenerationStats } from '../population/types'
+import { type Point } from '@visx/brush/lib/types'
 import { defaultParameters } from '../parameters/config'
+import { localPoint } from '@visx/event'
 
 const { maxGenerations: maxGens } = defaultParameters.stopCriteria
 const graphHeight = 450
@@ -36,83 +38,10 @@ const findMaxGeneration = (simulations: SimulationReport[]): number => {
   return result
 }
 
-const findMin = (
-  stats: GenerationStats,
-  showMean: boolean,
-  showMin: boolean,
-  showDeviation: boolean
-): number => {
-  const { maxFitness, meanFitness, minFitness, deviation } = stats
-
-  if (showMin && showDeviation) { return Math.min(minFitness, meanFitness - deviation) }
-  if (showDeviation) { return meanFitness - deviation }
-  if (showMin) { return minFitness }
-  if (showMean) { return meanFitness }
-
-  return maxFitness
-}
-
-const findMax = (stats: GenerationStats, showDeviation: boolean): number => {
-  const { maxFitness, meanFitness, deviation } = stats
-  if (showDeviation) {
-    return Math.max(maxFitness, meanFitness + deviation)
-  }
-
-  return maxFitness
-}
-
-const findYDomain = (
-  x0: number,
-  x1: number,
-  simulations: SimulationReport[],
-  showMean: boolean,
-  showMin: boolean,
-  showDeviation: boolean
-): number[] => {
-  const epsilon = 0.005
-  let y0 = -1
-  let y1 = -1
-  simulations.forEach(({ results }) => {
-    let leftBound: number | null = null
-    let rightBound: number | null = null
-    if (results == null) {
-      return
-    }
-
-    results.forEach(({ stats }) => {
-      const { gen } = stats
-      if (gen <= x0) {
-        leftBound = stats.minFitness
-      }
-      if (rightBound == null && gen >= x1) {
-        rightBound = stats.maxFitness
-      }
-      const max = findMax(stats, showDeviation)
-      const min = findMin(stats, showMean, showMin, showDeviation)
-
-      if (gen >= x0 && gen <= x1) {
-        y0 = y0 < 0 ? min : Math.min(y0, min)
-        y1 = y1 < 0 ? max : Math.max(y1, max)
-      }
-    })
-    if (leftBound != null && y0 < 0) {
-      y0 = findMin(leftBound, showMean, showMin, showDeviation)
-    }
-    if (rightBound != null && y1 < 0) {
-      y1 = findMax(rightBound, showDeviation)
-    }
-  })
-  if (y0 < 0) y0 = minResultsThreshold
-  if (y1 < 0) y1 = 1
-  y0 -= epsilon
-  y1 += epsilon
-
-  return [y0, y1]
-}
-
 function SimulationChart (): JSX.Element {
   const windowSize = useWindowSize()
   const containerRef = useRef<HTMLDivElement>(null)
+  const graphRef = useRef<SVGSVGElement>(null)
   const [fullWidth, setFullWidth] = useState(MIN_BROWSER_WIDTH)
   const graphWidth = fullWidth - margin.left - margin.right
   const graphEntries = useSelector((state: RootState) => state.navigation.simulationGraphColors)
@@ -120,11 +49,12 @@ function SimulationChart (): JSX.Element {
   const completedSims: SimulationReport[] = useGetCompletedSimulationReports() ?? []
   const currentSim = useGetCurrentSimulationReport()
   // Local state
-  const [domainY, setDomainY] = useState([minResultsThreshold, 1])
+  const [domainY, setDomainY] = useState([0, 1])
   const [domainX, setDomainX] = useState([0, maxGens])
   const [showMean, setShowMean] = useState(true)
   const [showDeviation, setShowDeviation] = useState(false)
   const [showMin, setShowMin] = useState(false)
+  const [lastMousePos, setLastMousePos] = useState<Point | null>(null)
 
   const bgColor = theme.palette.background.default
   const axisColor = theme.palette.grey[400]
@@ -156,39 +86,74 @@ function SimulationChart (): JSX.Element {
     [domainX, windowSize]
   )
 
-  const updateDomainY = (): void => {
-    const result = findYDomain(
-      domainX[0],
-      domainX[1],
-      checkedSimulations,
-      showMean,
-      showMin,
-      showDeviation
-    )
+  const buffer = [20, 0.01]
+  const handleWheel = (event: React.WheelEvent): void => {
+    // Treat mousePos as center of zoom in point
+    const mousePos = localPoint(event)
+    if (mousePos == null) return
+    // Negative deltaY means zoom in
+    const sign = Math.sign(event.deltaY)
+    const value = Math.log(Math.abs(event.deltaY))
+    const zoomFactor = [1 + sign * value / 40, 1 + sign * value / 200]
+    const x = mousePos.x - margin.left
+    const y = mousePos.y + margin.top
+    const gen = clamp(Math.round(xScale.invert(x)), 0, maxGens)
+    const fitness = clamp(yScale.invert(y), 0, 1)
 
-    if (result !== domainY) {
-      setDomainY(result)
+    const max = findMaxGeneration(checkedSimulations)
+    const x0 = clamp(xScale.invert(x - x * zoomFactor[0]), 0, Math.max(gen - buffer[0], 0))
+    const x1 = clamp(xScale.invert(x + (graphWidth - x) * zoomFactor[0]), Math.min(gen + buffer[0], max), max)
+    const y0 = clamp(yScale.invert(y + (graphHeight - y) * zoomFactor[1]), 0, Math.max(fitness - buffer[1], 0))
+    const y1 = clamp(yScale.invert(y - y * zoomFactor[1]), Math.min(fitness + buffer[1], 1), 1)
+    setDomainX([x0, x1])
+    setDomainY([y0, y1])
+  }
+
+  const onMouseDown = (event: React.MouseEvent): void => {
+    const mousePos = localPoint(event)
+    if (mousePos !== null) {
+      setLastMousePos({ y: mousePos.y - margin.top, x: mousePos.x - margin.left })
     }
   }
 
-  // Update X Domain when simulations are checked / unchecked
-  useEffect(() => {
-    const numGenerations = findMaxGeneration(checkedSimulations)
-    if (numGenerations !== domainX[1]) {
-      setDomainX([domainX[0], numGenerations])
-    }
-  }, [graphEntries])
+  const onMouseUp = (event: React.MouseEvent): void => {
+    setLastMousePos(null)
+  }
 
-  // Update Y Domain when basically anything about the chart changes
-  useEffect(() => {
-    updateDomainY()
-  }, [graphEntries, showMean, showMin, showDeviation, domainX])
+  const onMouseMove = (event: React.MouseEvent): void => {
+    // Use the mouse position to pan the graph
+    const mousePos = localPoint(event)
+    if (lastMousePos == null || mousePos == null) return
+
+    const x = mousePos.x - margin.left
+    const y = mousePos.y - margin.top
+    const maxGens = findMaxGeneration(checkedSimulations)
+    const deltaX = clamp(xScale.invert(lastMousePos.x) - xScale.invert(x), -domainX[0], maxGens - domainX[1])
+    const deltaY = clamp(yScale.invert(lastMousePos.y) - yScale.invert(y), -domainY[0], 1 - domainY[1])
+    const x0 = clamp(deltaX + domainX[0], 0, maxGens - buffer[0])
+    const x1 = clamp(deltaX + domainX[1], buffer[0], maxGens)
+    const y0 = clamp(deltaY + domainY[0], 0, 1 - buffer[1])
+    const y1 = clamp(deltaY + domainY[1], buffer[1], 1)
+    setLastMousePos({ y, x })
+    setDomainX([x0, x1])
+    setDomainY([y0, y1])
+  }
 
   useEffect(() => {
-    if (isCurrentSimGraphed) {
-      updateDomainY()
+    if (graphRef.current == null) return
+
+    const onWheelCapture = (event: WheelEvent): void => {
+      // This is a hack to prevent the page from scrolling when the user is zooming in/out
+      event.preventDefault()
+      event.stopPropagation()
     }
-  }, [currentSim])
+    graphRef.current.addEventListener('wheel', onWheelCapture, { passive: false })
+
+    return () => {
+      if (graphRef.current == null) return
+      graphRef.current.removeEventListener('wheel', onWheelCapture)
+    }
+  }, [])
 
   return (
     <Stack ref={containerRef}>
@@ -215,7 +180,16 @@ function SimulationChart (): JSX.Element {
         </Box>
       </Stack>
       <svg width={fullWidth} height={fullHeight}>
-        <Group top={margin.top} left={margin.left}>
+        <Group
+          top={margin.top}
+          left={margin.left}
+          innerRef={graphRef}
+          onWheelCapture={handleWheel}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseUp}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+        >
           <rect
             x={0}
             y={0}
