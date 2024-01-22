@@ -47,33 +47,28 @@ function NumberInput<
   const error = _.get(errors, name)
 
   return (
-    <Controller
-      control={control}
-      name={name}
-      rules={{ validate }}
-      render={({ field: { onChange, value } }) => (
-        <Stack direction="row">
+    <Stack direction='row' sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+      <Tooltip title={tooltip}>
+        <Typography pr={1} sx={{ flexGrow: 1, flexBasis: 150 }}>{text}</Typography>
+      </Tooltip>
+      <Controller
+        control={control}
+        name={name}
+        rules={{ validate }}
+        render={({ field: { onChange, value } }) => (
           <ErrorTooltip error={error?.message?.toString()} show={error != null}>
-            <Stack
-              direction="row"
-              sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
-            >
-              <Tooltip title={tooltip}>
-                <Typography pr={1}>{text}</Typography>
-              </Tooltip>
-              <Input
-                {...props}
-                value={value}
-                onChange={(event) => { onChange(+event.target.value) }}
-                readOnly={readOnly}
-                inputProps={{ min, max, step, type: 'number' }}
-                type='number'
-              />
-            </Stack>
+            <Input
+              {...props}
+              value={value}
+              onChange={(event) => { onChange(+event.target.value) }}
+              readOnly={readOnly}
+              inputProps={{ min, max, step, type: 'number' }}
+              type='number'
+            />
           </ErrorTooltip>
-        </Stack>
-      )}
-    />
+        )}
+      />
+    </Stack>
   )
 }
 
