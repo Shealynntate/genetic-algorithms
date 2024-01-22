@@ -19,7 +19,6 @@ class MockMutationModel extends MutationModel {
         permuteSigma: 0
       },
       probabilities: {
-        tweak: PlaceholderProbability,
         tweakColor: PlaceholderProbability,
         tweakPoint: PlaceholderProbability,
         addPoint: PlaceholderProbability,
@@ -29,8 +28,7 @@ class MockMutationModel extends MutationModel {
         resetChromosome: PlaceholderProbability,
         permuteChromosomes: PlaceholderProbability
       },
-      genomeSize: 0,
-      isSinglePoint: false
+      genomeSize: 0
     })
   }
 }

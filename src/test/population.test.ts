@@ -20,14 +20,12 @@ const populationParameters: PopulationParameters = {
   },
   mutation: {
     genomeSize: 40,
-    isSinglePoint: true,
     distributions: {
       colorSigma: 0.06,
       pointSigma: 0.06,
       permuteSigma: 0.05
     },
     probabilities: {
-      tweak: 0.04,
       tweakColor: 0.003,
       tweakPoint: 0.003,
       addPoint: 0.0015,

@@ -14,7 +14,6 @@ import {
 import { useForm } from 'react-hook-form'
 import { canvasParameters } from '../constants/constants'
 import { CrossoverTypeLabels, MutationProbabilityFormFields, SelectionTypeLabels } from '../constants/websiteCopy'
-import Checkbox from './Checkbox'
 import SigmaInput from './SigmaInput'
 import { defaultParameters } from '../parameters/config'
 import ImageInput from './ImageInput'
@@ -68,16 +67,7 @@ function SimulationForm ({
           <Typography color='primary' variant='h5'>Population</Typography>
         </Grid2>
         <Grid2 xs={12} md={5}>
-          <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
-            <Typography color='primary' variant='h5'>Mutation</Typography>
-            <Checkbox
-              name='population.mutation.isSinglePoint'
-              readOnly={readOnly}
-              control={control}
-              text='Single Point'
-              tooltip='Should tweak mutations apply\nonce per gene or should each\npoint and color have a uniform\nchance of being tweaked'
-            />
-          </Stack>
+          <Typography color='primary' variant='h5'>Mutation</Typography>
         </Grid2>
         <Grid2 xs={12} md={7}>
           <Stack direction='row' spacing={1}>

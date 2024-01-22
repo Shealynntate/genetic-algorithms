@@ -7,7 +7,7 @@ export type DistributionMap = {
 }
 
 export const mutationProbabilityTypes = [
-  'tweak', 'tweakPoint', 'tweakColor', 'addPoint', 'removePoint', 'addChromosome',
+  'tweakPoint', 'tweakColor', 'addPoint', 'removePoint', 'addChromosome',
   'removeChromosome', 'resetChromosome', 'permuteChromosomes'
 ] as const
 
@@ -19,7 +19,6 @@ export type MutationProbabilities = {
 
 export interface Mutation {
   genomeSize: number
-  isSinglePoint: boolean
   distributions: DistributionMap
   probabilities: MutationProbabilities
 }

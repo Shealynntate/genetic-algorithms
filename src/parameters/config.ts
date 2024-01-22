@@ -26,7 +26,6 @@ export const defaultParameters: ParametersState = {
       }
     },
     mutation: {
-      isSinglePoint: true,
       genomeSize: 50,
       distributions: {
         colorSigma: 0.06,
@@ -34,7 +33,6 @@ export const defaultParameters: ParametersState = {
         permuteSigma: 0.05
       },
       probabilities: {
-        tweak: 0.04,
         tweakColor: 0.003,
         tweakPoint: 0.003,
         addPoint: 0.0015,

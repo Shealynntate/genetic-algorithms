@@ -12,7 +12,6 @@ class MutationModel {
   probabilities: MutationProbabilities
   distributions: DistributionMap
   genomeSize: number
-  isSinglePoint: boolean
 
   constructor (parameters: Mutation) {
     const { distributions } = parameters
@@ -21,17 +20,7 @@ class MutationModel {
     this.pointDist = new GaussianNoise(distributions.pointSigma)
     this.permuteDist = new GaussianNoise(distributions.permuteSigma)
     this.genomeSize = parameters.genomeSize
-    this.isSinglePoint = parameters.isSinglePoint
     this.probabilities = parameters.probabilities
-  }
-
-  /**
-   * Called when using Single Point mutation to determine
-   * if a chromosome should mutate one of its fields
-   * @returns true if the mutation should occur, false otherwise
-   */
-  doTweak (): boolean {
-    return flipCoin(this.probabilities.tweak)
   }
 
   doTweakPoint (): boolean {
@@ -85,7 +74,6 @@ class MutationModel {
   serialize (): Mutation {
     return {
       genomeSize: this.genomeSize,
-      isSinglePoint: this.isSinglePoint,
       distributions: this.distributions,
       probabilities: this.probabilities
     }

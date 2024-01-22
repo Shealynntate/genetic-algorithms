@@ -34,7 +34,6 @@ export interface ParameterLabelsType {
       }
     }
     mutation: {
-      isSinglePoint: FormField
       colorSigma: FormField
       pointSigma: FormField
       permuteSigma: FormField
@@ -105,10 +104,6 @@ export const ParameterLabels: ParameterLabelsType = {
       }
     },
     mutation: {
-      isSinglePoint: {
-        text: 'Single Point',
-        tooltip: 'Should tweak mutations apply\nonce per gene or should each\npoint and color have a uniform\nchance of being tweaked'
-      },
       colorSigma: {
         text: 'Color',
         tooltip: 'How far a color channel (rgba) can get nudged'
@@ -176,10 +171,6 @@ export const ParameterLabels: ParameterLabelsType = {
 }
 
 export const MutationProbabilityFormFields: Record<MutationProbabilityType, FormField> = {
-  tweak: {
-    text: 'Tweak',
-    tooltip: 'Chance of tweaking a single property (color or point) of a polygon'
-  },
   tweakColor: {
     text: 'Color',
     tooltip: 'Chance of nudging the rgba channels of a polygon'
@@ -246,7 +237,6 @@ export const DistSigmaLabels: Record<DistributionTypes, string> = {
 }
 
 export const MutationProbabilityLabels: Record<MutationProbabilityType, string> = {
-  tweak: 'Tweak',
   tweakColor: 'Tweak Color',
   tweakPoint: 'Tweak Point',
   addPoint: 'Add Point',

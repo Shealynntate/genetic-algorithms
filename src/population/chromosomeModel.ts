@@ -1,10 +1,8 @@
 import { type Chromosome, type ChromosomeParameters } from './types'
 import type MutationModel from './mutationModel'
-import { randomIndex, flipCoin } from '../utils/statsUtils'
+import { randomIndex } from '../utils/statsUtils'
 import {
   randomPoints,
-  mutateColor,
-  mutatePoint,
   transparent,
   tweakAlpha,
   tweakColor,
@@ -25,7 +23,7 @@ const ChromosomeModel = {
     color: chromosome.color.slice()
   }),
 
-  tweakMutationUniform: (chromosome: Chromosome, mutation: MutationModel) => {
+  tweakMutation: (chromosome: Chromosome, mutation: MutationModel) => {
     for (let i = 0; i < chromosome.color.length; ++i) {
       if (mutation.doTweakColor()) {
         if (i === 3) {
@@ -40,22 +38,6 @@ const ChromosomeModel = {
         chromosome.points[i] = tweakPoint(mutation, chromosome.points[i][0], chromosome.points[i][1])
       }
     }
-    return chromosome
-  },
-
-  // Exacly 1 mutation per Chromosome
-  tweakMutationSinglePoint: (chromosome: Chromosome, mutation: MutationModel) => {
-    const { color, points } = chromosome
-    // Flip a coin to decide between mutating a color or point,
-    // there can be far more points than colors so this ensures colors get a chance to mutate
-    if (flipCoin(0.25)) {
-      const index = randomIndex(color.length)
-      chromosome.color = mutateColor(color, index, mutation)
-    } else {
-      const index = randomIndex(points.length)
-      chromosome.points = mutatePoint(points, index, mutation)
-    }
-
     return chromosome
   },
 
