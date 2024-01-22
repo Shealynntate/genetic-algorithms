@@ -22,9 +22,9 @@ function SimulationFormDialog ({
   }
 
   return (
-    <Dialog open={open} onClose={() => { onClose() }} maxWidth="xl">
-      <DialogTitle sx={{ py: 0.5 }}>Simulation Setup</DialogTitle>
-      <DialogContent>
+    <Dialog open={open} onClose={() => { onClose() }} maxWidth="xl" sx={{ p: 0 }}>
+      <DialogTitle sx={{ p: 0.5 }}>Simulation Setup</DialogTitle>
+      <DialogContent sx={{ py: 0, px: 0.5 }}>
         <SimulationForm
           defaultValues={defaultValues}
           onSubmit={handleSubmit}

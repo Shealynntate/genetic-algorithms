@@ -189,20 +189,20 @@ export const MutationProbabilityFormFields: Record<MutationProbabilityType, Form
     tooltip: 'Chance of nudging the (x,y) values of a point'
   },
   addPoint: {
-    text: 'Point +',
+    text: '+ Point',
     tooltip: 'Chance of adding a (x,y) point to a polygon'
   },
   removePoint: {
-    text: 'Point -',
+    text: '- Point',
     tooltip: 'Chance of removing a (x,y) point from a polygon'
   },
   addChromosome: {
-    text: 'Add',
+    text: '+ 🧬',
     Icon: ChromosomeIcon,
     tooltip: 'Chance of adding a new chromosome'
   },
   removeChromosome: {
-    text: 'Remove',
+    text: '- 🧬',
     Icon: ChromosomeIcon,
     tooltip: 'Chance of removing an existing chromosome'
   },
