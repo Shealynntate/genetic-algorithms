@@ -1,7 +1,6 @@
 import { testDistrubution, testDistrubutionAverage } from './utils'
 import { genRange } from '../utils/utils'
 import {
-  computeProb,
   flipCoin,
   rand,
   randomFloat,
@@ -91,60 +90,5 @@ describe('Probability Functions', () => {
       results2[key] = (key in results2) ? results2[key] + 1 : 1
     })
     testDistrubution(results2, 0, 2, [1e5 * 0.2, 1e5 * 0.8])
-  })
-
-  test('Verify computeProb functionality', () => {
-    const v1 = {
-      startValue: 0,
-      endValue: 1,
-      startFitness: 0,
-      endFitness: 1
-    }
-    // Check for the expected results
-    const p1 = computeProb(v1, 0)
-    const p2 = computeProb(v1, 1)
-    const p3 = computeProb(v1, 0.5)
-    expect(p1).toEqual(0)
-    expect(p2).toEqual(1)
-    expect(p3).toEqual(0.5)
-    // Check a line with negative slope
-    const v2 = {
-      startValue: 1,
-      endValue: 0,
-      startFitness: 0,
-      endFitness: 1
-    }
-    const p4 = computeProb(v2, 0)
-    const p5 = computeProb(v2, 1)
-    const p6 = computeProb(v2, 0.5)
-    expect(p4).toEqual(1)
-    expect(p5).toEqual(0)
-    expect(p6).toEqual(0.5)
-    // Check that clamping works
-    const v3 = {
-      startValue: 0,
-      endValue: 1,
-      startFitness: 0.25,
-      endFitness: 0.75
-    }
-    const p7 = computeProb(v3, 0)
-    const p8 = computeProb(v3, 1)
-    const p9 = computeProb(v3, 0.5)
-    expect(p7).toEqual(0)
-    expect(p8).toEqual(1)
-    expect(p9).toEqual(0.5)
-    // Check that a flat line works
-    const v4 = {
-      startValue: 0.01,
-      endValue: 0.01,
-      startFitness: 0,
-      endFitness: 1
-    }
-    const p10 = computeProb(v4, 0)
-    const p11 = computeProb(v4, 0.9)
-    const p12 = computeProb(v4, 1)
-    expect(p10).toEqual(0.01)
-    expect(p11).toEqual(0.01)
-    expect(p12).toEqual(0.01)
   })
 })

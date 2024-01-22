@@ -1,4 +1,3 @@
-import { type ProbabilityParameters } from '../population/types'
 import { expectRange, mockRandom } from './utils'
 import { maxColorValue } from '../constants/constants'
 import { genRange } from '../utils/utils'
@@ -9,12 +8,7 @@ import MutationModel from '../population/mutationModel'
 
 // Test Helper Functions
 // --------------------------------------------------
-const PlacholderProbabilityParameters: ProbabilityParameters = {
-  startFitness: 0,
-  endFitness: 0,
-  startValue: 0,
-  endValue: 0
-}
+const PlaceholderProbability = 0
 
 class MockMutationModel extends MutationModel {
   constructor () {
@@ -24,16 +18,16 @@ class MockMutationModel extends MutationModel {
         pointSigma: 0,
         permuteSigma: 0
       },
-      probabilityParameters: {
-        tweak: PlacholderProbabilityParameters,
-        tweakColor: PlacholderProbabilityParameters,
-        tweakPoint: PlacholderProbabilityParameters,
-        addPoint: PlacholderProbabilityParameters,
-        removePoint: PlacholderProbabilityParameters,
-        addChromosome: PlacholderProbabilityParameters,
-        removeChromosome: PlacholderProbabilityParameters,
-        resetChromosome: PlacholderProbabilityParameters,
-        permuteChromosomes: PlacholderProbabilityParameters
+      probabilities: {
+        tweak: PlaceholderProbability,
+        tweakColor: PlaceholderProbability,
+        tweakPoint: PlaceholderProbability,
+        addPoint: PlaceholderProbability,
+        removePoint: PlaceholderProbability,
+        addChromosome: PlaceholderProbability,
+        removeChromosome: PlaceholderProbability,
+        resetChromosome: PlaceholderProbability,
+        permuteChromosomes: PlaceholderProbability
       },
       genomeSize: 0,
       isSinglePoint: false

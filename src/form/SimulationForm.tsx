@@ -1,3 +1,4 @@
+import React, { type SyntheticEvent, useEffect } from 'react'
 import {
   Box,
   Button,
@@ -9,22 +10,17 @@ import {
   Tooltip,
   Typography
 } from '@mui/material'
-import React, { type SyntheticEvent, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { canvasParameters } from '../constants/constants'
 import { CrossoverTypeLabels, MutationProbabilityFormFields, SelectionTypeLabels } from '../constants/websiteCopy'
 import Checkbox from './Checkbox'
 import SigmaInput from './SigmaInput'
-import ProbabilityInput from './ProbabilityInput'
 import { defaultParameters } from '../parameters/config'
 import ImageInput from './ImageInput'
 import Panel from '../common/Panel'
 import NumberInput from './NumberInput'
 import { type ParametersState } from '../parameters/types'
-import { type MutationProbabilityType, mutationProbabilityTypes } from '../population/types'
-
-const singlePointFields: MutationProbabilityType[] = ['tweak']
-const nonSinglePointFields: MutationProbabilityType[] = ['tweakColor', 'tweakPoint']
+import { mutationProbabilityTypes } from '../population/types'
 
 interface SimulationFormProps {
   imageHeight?: number
@@ -47,8 +43,7 @@ function SimulationForm ({
     handleSubmit,
     setValue,
     register,
-    reset,
-    watch
+    reset
   } = useForm<ParametersState>({ defaultValues })
   const { population } = defaultValues
 
@@ -59,9 +54,6 @@ function SimulationForm ({
   useEffect(() => {
     reset(defaultValues)
   }, [defaultValues])
-
-  const watchSinglePoint = watch('population.mutation.isSinglePoint')
-  const hiddenFields: MutationProbabilityType[] = watchSinglePoint ? nonSinglePointFields : singlePointFields
 
   const localOnSubmit = (event: SyntheticEvent): void => {
     event.preventDefault()
@@ -214,10 +206,11 @@ function SimulationForm ({
                   ))}
                 </Select>
               </Stack>
-              <ProbabilityInput
+              <NumberInput
                 control={control}
+                name={'population.crossover.probabilities.swap'}
+                errors={errors}
                 readOnly={readOnly}
-                name={'population.crossover.probabilityParameters.swap'}
                 text={'Swap'}
               />
             </Stack>
@@ -275,15 +268,15 @@ function SimulationForm ({
             <Stack direction='row' sx={{ justifyContent: 'space-between', pt: 1 }}>
               <Stack direction='column' sx={{ alignItems: 'end' }}>
                 {mutationProbabilityTypes.map((key) => (
-                  <ProbabilityInput
+                  <NumberInput
                     key={key}
-                    control={control}
-                    name={`population.mutation.probabilityParameters.${key}`}
+                    errors={errors}
+                    control={control as any}
+                    name={`population.mutation.probabilities.${key}`}
                     readOnly={readOnly}
-                    hide={hiddenFields.includes(key)}
                     text={MutationProbabilityFormFields[key].text}
                     tooltip={MutationProbabilityFormFields[key].tooltip}
-                    Icon={MutationProbabilityFormFields[key].Icon}
+                    // Icon={MutationProbabilityFormFields[key].Icon}
                   />
                 ))}
               </Stack>

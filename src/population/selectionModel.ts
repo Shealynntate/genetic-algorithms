@@ -1,4 +1,4 @@
-import { type SelectionParameters, type Selection, type SelectionType } from './types'
+import { type Selection, type SelectionType } from './types'
 
 //
 class SelectionModel {
@@ -6,13 +6,13 @@ class SelectionModel {
   eliteCount: number
   tournamentSize: number
 
-  constructor (parameters: SelectionParameters) {
+  constructor (parameters: Selection) {
     this.type = parameters.type
     this.eliteCount = parameters.eliteCount
     this.tournamentSize = parameters.tournamentSize
   }
 
-  initialize (parameters: SelectionParameters): void {
+  initialize (parameters: Selection): void {
     this.type = parameters.type
     this.eliteCount = parameters.eliteCount
     this.tournamentSize = parameters.tournamentSize

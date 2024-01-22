@@ -1,4 +1,3 @@
-import { type ProbabilityParameters } from '../population/types.js'
 import { setSigFigs } from './utils'
 
 // A Collection of math and probability based functions
@@ -48,26 +47,3 @@ export const randomIndex = (length: number): number => (Math.trunc(Math.random()
  * @returns the result of flipping the coin - true or false
  */
 export const flipCoin = (bias: number = 0.5): boolean => (Math.random() <= bias)
-
-/**
- * Computes the probability to use given the current fitness level.
- * Probability values for Crossover and Mutation are treated as parametric lines,
- * with fitness on the x-axis and probability on the y-axis.
- * This function solves that equation and returns the result.
- * @param {*} probabilityValues - the object of { startValue, endValue, startFitness, endFitness }
- * that defines a probability
- * @param {*} fitness - the current fitness of the organism
- * @returns - the current probability that should be used for the organism with the given fitness
- */
-export const computeProb = ({
-  startValue,
-  endValue,
-  startFitness,
-  endFitness
-}: ProbabilityParameters, fitness: number): number => {
-  if (fitness <= startFitness) return startValue
-  if (fitness >= endFitness) return endValue
-  const slope = (endValue - startValue) / (endFitness - startFitness)
-  const intercept = startValue - slope * startFitness
-  return fitness * slope + intercept
-}

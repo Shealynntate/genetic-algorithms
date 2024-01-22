@@ -182,7 +182,9 @@ function * runSimulationSaga (population: PopulationModel): any {
       yield delay(10)
     }
     // First run the next generation of the simulation
+    console.time('runGeneration')
     const runGenResult: GenerationStats = yield population.runGeneration()
+    console.timeEnd('runGeneration')
     const organism = runGenResult.maxFitOrganism
     // Should we store a copy of the maxFitOrganism for Image History?
     if (shouldSaveGenImage(population.genId)) {

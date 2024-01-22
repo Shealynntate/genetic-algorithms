@@ -1,13 +1,3 @@
-/**
- * The boundaries used to compute the probability of an event
- */
-export interface ProbabilityParameters {
-  startValue: number
-  endValue: number
-  startFitness: number
-  endFitness: number
-}
-
 // Mutation
 // ------------------------------------------------------------
 export type DistributionTypes = 'colorSigma' | 'pointSigma' | 'permuteSigma'
@@ -23,23 +13,14 @@ export const mutationProbabilityTypes = [
 
 export type MutationProbabilityType = typeof mutationProbabilityTypes[number]
 
-export type MutationProbabilityParameters = {
-  [key in MutationProbabilityType]: ProbabilityParameters
-}
-
 export type MutationProbabilities = {
   [key in MutationProbabilityType]: number
 }
 
-export interface MutationParameters {
+export interface Mutation {
   genomeSize: number
   isSinglePoint: boolean
   distributions: DistributionMap
-  probabilityParameters: MutationProbabilityParameters
-}
-
-export interface Mutation extends MutationParameters {
-  // Probability values computed when the population is initialized
   probabilities: MutationProbabilities
 }
 
@@ -48,10 +29,6 @@ export interface Mutation extends MutationParameters {
 export type CrossoverType = 'onePoint' | 'twoPoint' | 'uniform'
 
 export type CrossoverProbabilityTypes = 'swap'
-
-export type CrossoverProbabilityParameters = {
-  [key in CrossoverProbabilityTypes]: ProbabilityParameters
-}
 
 /**
  * Map of CrossoverTypes to probability values
@@ -63,26 +40,14 @@ export type CrossoverProbabilities = {
 /**
  * The input parameters for creating a new Crossover model
  */
-export interface CrossoverParameters {
-  type: CrossoverType
-  probabilityParameters: CrossoverProbabilityParameters
-}
-
 export interface Crossover {
   type: CrossoverType
-  probabilityParameters: CrossoverProbabilityParameters
   probabilities: CrossoverProbabilities
 }
 
 // Selection
 // ------------------------------------------------------------
 export type SelectionType = 'roulette' | 'tournament' | 'sus'
-
-export interface SelectionParameters {
-  type: SelectionType
-  eliteCount: number
-  tournamentSize: number
-}
 
 export interface Selection {
   type: SelectionType
@@ -155,9 +120,9 @@ export interface PopulationParameters {
   minPoints: number
   maxPoints: number
   target: string
-  mutation: MutationParameters
-  crossover: CrossoverParameters
-  selection: SelectionParameters
+  mutation: Mutation
+  crossover: Crossover
+  selection: Selection
 }
 
 export interface RestorePopulationParameters {

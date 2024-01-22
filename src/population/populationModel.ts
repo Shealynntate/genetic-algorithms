@@ -134,9 +134,6 @@ class PopulationModel {
 
     this.genId = PopulationModel.nextGenId
     const stats = this.createStats()
-    // Let Mutation and Crossover strategies update if needed
-    this.mutation.markNextGen(stats.maxFitness)
-    this.crossover.markNextGen(stats.maxFitness)
 
     return stats
   }

@@ -1,13 +1,6 @@
-import {
-  type MutationProbabilityParameters,
-  type MutationParameters,
-  type Mutation,
-  type DistributionMap,
-  type MutationProbabilities
-} from './types'
+import { type MutationProbabilities, type Mutation, type DistributionMap } from './types'
 import GaussianNoise from '../utils/gaussianNoise'
-import { computeProb, flipCoin } from '../utils/statsUtils'
-import { objectKeys } from '../utils/utils'
+import { flipCoin } from '../utils/statsUtils'
 
 /**
  * Mutation
@@ -16,36 +9,20 @@ class MutationModel {
   colorDist: GaussianNoise
   pointDist: GaussianNoise
   permuteDist: GaussianNoise
-  probabilityParameters: MutationProbabilityParameters
   probabilities: MutationProbabilities
   distributions: DistributionMap
   genomeSize: number
   isSinglePoint: boolean
 
-  constructor (parameters: MutationParameters) {
+  constructor (parameters: Mutation) {
     const { distributions } = parameters
-    this.probabilityParameters = parameters.probabilityParameters
     this.distributions = distributions
     this.colorDist = new GaussianNoise(distributions.colorSigma)
     this.pointDist = new GaussianNoise(distributions.pointSigma)
     this.permuteDist = new GaussianNoise(distributions.permuteSigma)
     this.genomeSize = parameters.genomeSize
     this.isSinglePoint = parameters.isSinglePoint
-    this.probabilities = this.computeProbabilities(0)
-  }
-
-  computeProbabilities (maxFitness: number): MutationProbabilities {
-    const probabilities: any = {}
-    objectKeys(this.probabilityParameters).forEach((type) => {
-      probabilities[type] = computeProb(this.probabilityParameters[type], maxFitness)
-    })
-
-    return probabilities as MutationProbabilities
-  }
-
-  markNextGen (maxFitness: number): void {
-    // Recompute probabilities
-    this.probabilities = this.computeProbabilities(maxFitness)
+    this.probabilities = parameters.probabilities
   }
 
   /**
@@ -110,7 +87,6 @@ class MutationModel {
       genomeSize: this.genomeSize,
       isSinglePoint: this.isSinglePoint,
       distributions: this.distributions,
-      probabilityParameters: this.probabilityParameters,
       probabilities: this.probabilities
     }
   }

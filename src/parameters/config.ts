@@ -3,7 +3,7 @@ import defaultTarget from '../assets/mona_lisa.jpeg'
 // import defaultTarget from '../assets/son_of_man.jpeg';
 // import defaultTarget from '../assets/composition_II.jpeg';
 import { type ParametersState } from './types'
-import { targetFitness, maxPopulation, maxGenerations } from '../constants/constants'
+import { maxPopulation, maxGenerations } from '../constants/constants'
 
 // The Default Parameters for a Simulation
 export const defaultParameters: ParametersState = {
@@ -21,13 +21,8 @@ export const defaultParameters: ParametersState = {
     },
     crossover: {
       type: 'twoPoint',
-      probabilityParameters: {
-        swap: {
-          startValue: 0.9,
-          endValue: 0.9,
-          startFitness: 0,
-          endFitness: targetFitness
-        }
+      probabilities: {
+        swap: 0.9
       }
     },
     mutation: {
@@ -38,61 +33,16 @@ export const defaultParameters: ParametersState = {
         pointSigma: 0.06,
         permuteSigma: 0.05
       },
-      probabilityParameters: {
-        tweak: {
-          startValue: 0.04,
-          endValue: 0.04,
-          startFitness: 0,
-          endFitness: targetFitness
-        },
-        tweakColor: {
-          startValue: 0.01,
-          endValue: 0.003,
-          startFitness: 0,
-          endFitness: targetFitness
-        },
-        tweakPoint: {
-          startValue: 0.01,
-          endValue: 0.003,
-          startFitness: 0,
-          endFitness: targetFitness
-        },
-        addPoint: {
-          startValue: 0.0015,
-          endValue: 0.0015,
-          startFitness: 0,
-          endFitness: targetFitness
-        },
-        removePoint: {
-          startValue: 0.0015,
-          endValue: 0.0015,
-          startFitness: 0,
-          endFitness: targetFitness
-        },
-        addChromosome: {
-          startValue: 0,
-          endValue: 0,
-          startFitness: 0,
-          endFitness: targetFitness
-        },
-        removeChromosome: {
-          startValue: 0,
-          endValue: 0,
-          startFitness: 0,
-          endFitness: targetFitness
-        },
-        resetChromosome: {
-          startValue: 0.0006,
-          endValue: 0.0006,
-          startFitness: 0,
-          endFitness: targetFitness
-        },
-        permuteChromosomes: {
-          startValue: 0.0015,
-          endValue: 0.0015,
-          startFitness: 0,
-          endFitness: targetFitness
-        }
+      probabilities: {
+        tweak: 0.04,
+        tweakColor: 0.003,
+        tweakPoint: 0.003,
+        addPoint: 0.0015,
+        removePoint: 0.0015,
+        addChromosome: 0,
+        removeChromosome: 0,
+        resetChromosome: 0.0006,
+        permuteChromosomes: 0.0015
       }
     }
   },
