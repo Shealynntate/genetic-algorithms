@@ -258,20 +258,13 @@ function SimulationForm ({
             text='Point'
             tooltip='How far a point (x,y) can get nudged'
           />
-          <SigmaInput
-            name={'population.mutation.distributions.permuteSigma'}
-            readOnly={readOnly}
-            control={control}
-            text='Permute'
-            tooltip='How many chromosomes can swap their order at a time'
-          />
           <Typography variant='h6'>Probabilities</Typography>
           <Stack>
             {mutationProbabilityTypes.map((key) => (
               <NumberInput
                 key={key}
                 errors={errors}
-                control={control as any}
+                control={control}
                 name={`population.mutation.probabilities.${key}`}
                 readOnly={readOnly}
                 text={MutationProbabilityFormFields[key].text}

@@ -36,16 +36,13 @@ export interface ParameterLabelsType {
     mutation: {
       colorSigma: FormField
       pointSigma: FormField
-      permuteSigma: FormField
       probabilities: {
-        tweak: FormField
         tweakColor: FormField
         tweakPoint: FormField
         addPoint: FormField
         removePoint: FormField
         addChromosome: FormField
         removeChromosome: FormField
-        resetChromosome: FormField
         permuteChromosomes: FormField
       }
     }
@@ -112,15 +109,7 @@ export const ParameterLabels: ParameterLabelsType = {
         text: 'Point',
         tooltip: 'How far a point (x,y) can get nudged'
       },
-      permuteSigma: {
-        text: 'Permute',
-        tooltip: 'How many chromosomes can swap their order at a time'
-      },
       probabilities: {
-        tweak: {
-          text: 'Tweak',
-          tooltip: 'Chance of tweaking a single property (color or point) of a polygon'
-        },
         tweakColor: {
           text: 'Color',
           tooltip: 'Chance of nudging the rgba channels of a polygon'
@@ -147,11 +136,6 @@ export const ParameterLabels: ParameterLabelsType = {
           Icon: ChromosomeIcon,
           tooltip: 'Chance of removing an existing chromosome'
         },
-        resetChromosome: {
-          text: 'Reset',
-          Icon: ChromosomeIcon,
-          tooltip: 'Chance of resetting a chromosome \n with a new random color and points'
-        },
         permuteChromosomes: {
           text: 'Permute',
           Icon: ChromosomeIcon,
@@ -172,11 +156,11 @@ export const ParameterLabels: ParameterLabelsType = {
 
 export const MutationProbabilityFormFields: Record<MutationProbabilityType, FormField> = {
   tweakColor: {
-    text: 'Color',
+    text: 'Tweak Color',
     tooltip: 'Chance of nudging the rgba channels of a polygon'
   },
   tweakPoint: {
-    text: 'Point',
+    text: 'Tweak Point',
     tooltip: 'Chance of nudging the (x,y) values of a point'
   },
   addPoint: {
@@ -196,11 +180,6 @@ export const MutationProbabilityFormFields: Record<MutationProbabilityType, Form
     text: '- 🧬',
     Icon: ChromosomeIcon,
     tooltip: 'Chance of removing an existing chromosome'
-  },
-  resetChromosome: {
-    text: 'Reset',
-    Icon: ChromosomeIcon,
-    tooltip: 'Chance of resetting a chromosome \n with a new random color and points'
   },
   permuteChromosomes: {
     text: 'Permute',
@@ -232,8 +211,7 @@ export const CrossoverTypeLabels: Record<CrossoverType, string> = {
 
 export const DistSigmaLabels: Record<DistributionTypes, string> = {
   colorSigma: 'Color',
-  pointSigma: 'Points',
-  permuteSigma: 'Permute'
+  pointSigma: 'Points'
 }
 
 export const MutationProbabilityLabels: Record<MutationProbabilityType, string> = {
@@ -243,7 +221,6 @@ export const MutationProbabilityLabels: Record<MutationProbabilityType, string> 
   removePoint: 'Remove Point',
   addChromosome: 'Add Chromosome',
   removeChromosome: 'Remove Chromosome',
-  resetChromosome: 'Reset Chromosome',
   permuteChromosomes: 'Permute Chromosomes'
 }
 

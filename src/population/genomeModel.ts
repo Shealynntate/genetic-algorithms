@@ -139,15 +139,6 @@ const GenomeModel = {
       chromosomes.splice(index, 1)
     }
 
-    // Check full reset mutation
-    if (mutation.doResetChromosome()) {
-      const index = randomIndex(chromosomes.length)
-      ChromosomeModel.resetMutation(chromosomes[index], minPoints)
-      const c = chromosomes.splice(index, 1)
-      // Reset it to the top of the array
-      chromosomes.push(...c)
-    }
-
     // Mutate Genome
     if (mutation.doPermute()) {
       GenomeModel.mutateOrder(genome, mutation)
@@ -164,22 +155,17 @@ const GenomeModel = {
         ChromosomeModel.removePointMutation(chromosomes[i], minPoints)
       }
       // Check tweak values mutation
-      if (mutation.isSinglePoint) {
-        if (mutation.doTweak()) {
-          chromosomes[i] = ChromosomeModel.tweakMutationSinglePoint(chromosomes[i], mutation)
-        }
-      } else {
-        chromosomes[i] = ChromosomeModel.tweakMutationUniform(chromosomes[i], mutation)
-      }
+      chromosomes[i] = ChromosomeModel.tweakMutation(chromosomes[i], mutation)
     }
   },
 
   // Swap a random range of adjacent Chromosome objects in the array
   mutateOrder: (genome: Genome, mutation: MutationModel) => {
     const index = randomIndex(genome.chromosomes.length - 1)
-    const [start, end] = mutation.permutationNudge(index)
-    const patch = genome.chromosomes.splice(start, end - start).reverse()
-    genome.chromosomes.splice(start, 0, ...patch)
+    const chromosome = genome.chromosomes.splice(index, 1)[0]
+    // Insert it in a new location
+    const newIndex = randomIndex(genome.chromosomes.length)
+    genome.chromosomes.splice(newIndex, 0, chromosome)
   }
 }
 

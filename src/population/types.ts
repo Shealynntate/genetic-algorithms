@@ -1,6 +1,6 @@
 // Mutation
 // ------------------------------------------------------------
-export type DistributionTypes = 'colorSigma' | 'pointSigma' | 'permuteSigma'
+export type DistributionTypes = 'colorSigma' | 'pointSigma'
 
 export type DistributionMap = {
   [key in DistributionTypes]: number
@@ -8,7 +8,7 @@ export type DistributionMap = {
 
 export const mutationProbabilityTypes = [
   'tweakPoint', 'tweakColor', 'addPoint', 'removePoint', 'addChromosome',
-  'removeChromosome', 'resetChromosome', 'permuteChromosomes'
+  'removeChromosome', 'permuteChromosomes'
 ] as const
 
 export type MutationProbabilityType = typeof mutationProbabilityTypes[number]

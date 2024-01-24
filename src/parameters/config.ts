@@ -9,7 +9,7 @@ import { maxPopulation, maxGenerations } from '../constants/constants'
 export const defaultParameters: ParametersState = {
   population: {
     size: 200,
-    minGenomeSize: 50,
+    minGenomeSize: 1,
     maxGenomeSize: 50,
     minPoints: 3,
     maxPoints: 10,
@@ -22,25 +22,23 @@ export const defaultParameters: ParametersState = {
     crossover: {
       type: 'twoPoint',
       probabilities: {
-        swap: 0.9
+        swap: 0.05
       }
     },
     mutation: {
       genomeSize: 50,
       distributions: {
-        colorSigma: 0.06,
-        pointSigma: 0.06,
-        permuteSigma: 0.05
+        colorSigma: 0.1, // 0.06,
+        pointSigma: 0.1 // 0.06,
       },
       probabilities: {
-        tweakColor: 0.003,
-        tweakPoint: 0.003,
-        addPoint: 0.0015,
-        removePoint: 0.0015,
-        addChromosome: 0,
-        removeChromosome: 0,
-        resetChromosome: 0.0006,
-        permuteChromosomes: 0.0015
+        tweakColor: 0.00067,
+        tweakPoint: 0.002,
+        addPoint: 0.00067,
+        removePoint: 0.00067,
+        addChromosome: 0.0014,
+        removeChromosome: 0.00067,
+        permuteChromosomes: 0.00067
       }
     }
   },
@@ -110,11 +108,6 @@ export const ParameterBounds = {
       max: 1,
       step: 0.0001
     },
-    permuteSigma: {
-      min: 0,
-      max: 1,
-      step: 0.0001
-    },
     probabilities: {
       tweak: {
         min: 0,
@@ -147,11 +140,6 @@ export const ParameterBounds = {
         step: 0.0001
       },
       removeChromosomes: {
-        min: 0,
-        max: 1,
-        step: 0.0001
-      },
-      resetChromosomes: {
         min: 0,
         max: 1,
         step: 0.0001

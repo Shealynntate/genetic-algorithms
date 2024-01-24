@@ -22,8 +22,7 @@ const populationParameters: PopulationParameters = {
     genomeSize: 40,
     distributions: {
       colorSigma: 0.06,
-      pointSigma: 0.06,
-      permuteSigma: 0.05
+      pointSigma: 0.06
     },
     probabilities: {
       tweakColor: 0.003,
@@ -32,7 +31,6 @@ const populationParameters: PopulationParameters = {
       removePoint: 0.0015,
       addChromosome: 0,
       removeChromosome: 0,
-      resetChromosome: 0.0006,
       permuteChromosomes: 0.0015
     }
   },

@@ -15,8 +15,7 @@ class MockMutationModel extends MutationModel {
     super({
       distributions: {
         colorSigma: 0,
-        pointSigma: 0,
-        permuteSigma: 0
+        pointSigma: 0
       },
       probabilities: {
         tweakColor: PlaceholderProbability,
@@ -25,7 +24,6 @@ class MockMutationModel extends MutationModel {
         removePoint: PlaceholderProbability,
         addChromosome: PlaceholderProbability,
         removeChromosome: PlaceholderProbability,
-        resetChromosome: PlaceholderProbability,
         permuteChromosomes: PlaceholderProbability
       },
       genomeSize: 0

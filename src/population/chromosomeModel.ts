@@ -1,22 +1,32 @@
 import { type Chromosome, type ChromosomeParameters } from './types'
 import type MutationModel from './mutationModel'
-import { randomIndex } from '../utils/statsUtils'
+import { randomFloat, randomIndex } from '../utils/statsUtils'
 import {
-  randomPoints,
+  randomPoint,
   transparent,
   tweakAlpha,
   tweakColor,
   tweakPoint
 } from './chromosomeUtils'
+import { genRange } from '../utils/utils'
 
 /**
  * Chromosome
  */
 const ChromosomeModel = {
-  create: ({ numSides }: ChromosomeParameters): Chromosome => ({
-    points: randomPoints(numSides),
-    color: transparent()
-  }),
+  create: ({ numSides }: ChromosomeParameters): Chromosome => {
+    const origin = randomPoint()
+    const points: number[][] = []
+    // Generate points around the origin to form our polygon
+    genRange(numSides).forEach(() => {
+      const p = [origin[0] + randomFloat(-0.1, 0.1), origin[1] + randomFloat(-0.1, 0.1)]
+      points.push(p)
+    })
+    return {
+      points,
+      color: transparent()
+    }
+  },
 
   clone: (chromosome: Chromosome): Chromosome => ({
     points: chromosome.points.slice(),
@@ -70,11 +80,6 @@ const ChromosomeModel = {
     chromosome.points.splice(index, 1)
 
     return true
-  },
-
-  resetMutation: (chromosome: Chromosome, numPoints: number) => {
-    chromosome.points = randomPoints(numPoints)
-    chromosome.color = transparent()
   }
 }
 

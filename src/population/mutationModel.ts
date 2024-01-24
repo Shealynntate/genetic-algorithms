@@ -8,7 +8,6 @@ import { flipCoin } from '../utils/statsUtils'
 class MutationModel {
   colorDist: GaussianNoise
   pointDist: GaussianNoise
-  permuteDist: GaussianNoise
   probabilities: MutationProbabilities
   distributions: DistributionMap
   genomeSize: number
@@ -18,7 +17,6 @@ class MutationModel {
     this.distributions = distributions
     this.colorDist = new GaussianNoise(distributions.colorSigma)
     this.pointDist = new GaussianNoise(distributions.pointSigma)
-    this.permuteDist = new GaussianNoise(distributions.permuteSigma)
     this.genomeSize = parameters.genomeSize
     this.probabilities = parameters.probabilities
   }
@@ -47,10 +45,6 @@ class MutationModel {
     return flipCoin(this.probabilities.removeChromosome)
   }
 
-  doResetChromosome (): boolean {
-    return flipCoin(this.probabilities.resetChromosome)
-  }
-
   doPermute (): boolean {
     return flipCoin(this.probabilities.permuteChromosomes)
   }
@@ -61,14 +55,6 @@ class MutationModel {
 
   pointNudge (): number {
     return this.pointDist.next()
-  }
-
-  permutationNudge (index: number): number[] {
-    const dist = Math.round(this.permuteDist.next() * this.genomeSize)
-    const start = dist > 0 ? index : Math.max(0, index + dist)
-    const end = dist > 0 ? Math.min(this.genomeSize - 1, index + dist) : index
-
-    return [start, end]
   }
 
   serialize (): Mutation {
