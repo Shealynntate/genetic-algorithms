@@ -33,7 +33,7 @@ export const defaultParameters: ParametersState = {
       },
       probabilities: {
         tweakColor: 0.00067,
-        tweakPoint: 0.002,
+        tweakPoint: 0.00067,
         addPoint: 0.00067,
         removePoint: 0.00067,
         addChromosome: 0.0014,

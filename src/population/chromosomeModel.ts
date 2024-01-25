@@ -1,21 +1,16 @@
 import { type Chromosome, type ChromosomeParameters } from './types'
 import type MutationModel from './mutationModel'
-import { randomFloat, randomIndex } from '../utils/statsUtils'
-import {
-  randomPoint,
-  transparent,
-  tweakAlpha,
-  tweakColor,
-  tweakPoint
-} from './chromosomeUtils'
+import { rand, randomFloat, randomIndex, randomInt } from '../utils/statsUtils'
 import { genRange } from '../utils/utils'
+import { maxColorValue } from '../constants/constants'
+import { clamp } from 'lodash'
 
 /**
- * Chromosome
+ * Chromosome Model
  */
-const ChromosomeModel = {
+const Model = {
   create: ({ numSides }: ChromosomeParameters): Chromosome => {
-    const origin = randomPoint()
+    const origin = Model.randomPoint()
     const points: number[][] = []
     // Generate points around the origin to form our polygon
     genRange(numSides).forEach(() => {
@@ -24,7 +19,7 @@ const ChromosomeModel = {
     })
     return {
       points,
-      color: transparent()
+      color: Model.randomColor()
     }
   },
 
@@ -37,15 +32,15 @@ const ChromosomeModel = {
     for (let i = 0; i < chromosome.color.length; ++i) {
       if (mutation.doTweakColor()) {
         if (i === 3) {
-          chromosome.color[i] = tweakAlpha(mutation, chromosome.color[i])
+          chromosome.color[i] = Model.tweakAlpha(mutation, chromosome.color[i])
         } else {
-          chromosome.color[i] = tweakColor(mutation, chromosome.color[i])
+          chromosome.color[i] = Model.tweakColor(mutation, chromosome.color[i])
         }
       }
     }
     for (let i = 0; i < chromosome.points.length; ++i) {
       if (mutation.doTweakPoint()) {
-        chromosome.points[i] = tweakPoint(mutation, chromosome.points[i][0], chromosome.points[i][1])
+        chromosome.points[i] = Model.tweakPoint(mutation, chromosome.points[i][0], chromosome.points[i][1])
       }
     }
     return chromosome
@@ -80,7 +75,32 @@ const ChromosomeModel = {
     chromosome.points.splice(index, 1)
 
     return true
-  }
+  },
+
+  // Mutation Methods
+  // ------------------------------------------------------------
+  tweakPoint: (m: MutationModel, x: number, y: number): number[] => (
+    [clamp(x + m.pointNudge(), 0, 1), clamp(y + m.pointNudge(), 0, 1)]
+  ),
+
+  tweakColor: (m: MutationModel, value: number): number => (
+    clamp(value + m.colorNudge() * maxColorValue, 0, maxColorValue)
+  ),
+
+  tweakAlpha: (m: MutationModel, value: number): number => clamp(value + m.colorNudge(), 0, 1),
+
+  // Initialization Methods
+  // ------------------------------------------------------------
+  randCV: (): number => randomInt(0, maxColorValue),
+
+  randomPoint: (): number[] => [rand(), rand()],
+
+  randomColor: (): number[] => [
+    Model.randCV(),
+    Model.randCV(),
+    Model.randCV(),
+    0
+  ]
 }
 
-export default ChromosomeModel
+export default Model
