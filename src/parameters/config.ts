@@ -20,16 +20,16 @@ export const defaultParameters: ParametersState = {
       tournamentSize: 2
     },
     crossover: {
-      type: 'twoPoint',
+      type: 'onePoint',
       probabilities: {
-        swap: 0.05
+        swap: 0.9
       }
     },
     mutation: {
       genomeSize: 50,
       distributions: {
-        colorSigma: 0.1, // 0.06,
-        pointSigma: 0.1 // 0.06,
+        colorSigma: 0.06,
+        pointSigma: 0.06
       },
       probabilities: {
         tweakColor: 0.00067,

@@ -13,13 +13,12 @@ export const rand = (num: number = 5): number => setSigFigs(Math.random(), num)
 /**
  * Generates a random floating point number shifted to be in the specified range
  * @param {*} start - the value the number must be greater than or equal to
- * @param {*} end - the value the number must be less than or equal to
- * @returns a random float between [start, end] inclusive
+ * @param {*} end - the value the number must be less than
+ * @returns a random float between [start, end)
  */
 export const randomFloat = (start: number, end: number): number => {
-  const range = Math.random() * (end - start + 1)
-  const result = range + start - 0.5
-  return Math.min(Math.max(start, result), end)
+  const range = end - start
+  return Math.random() * range + start
 }
 
 /**
