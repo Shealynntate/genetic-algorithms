@@ -127,16 +127,16 @@ const GenomeModel = {
     const { chromosomes } = genome
     // Mutate at the genome level
 
-    // Check add chromosome mutation
-    if (chromosomes.length < maxGenomeSize && mutation.doAddChromosome()) {
-      chromosomes.push(ChromosomeModel.create({ numSides: minPoints }))
-    }
-
     // Check remove chromosome mutation
     if (chromosomes.length > 1 && mutation.doRemoveChromosome()) {
       // Delete the chromosome
       const index = randomIndex(chromosomes.length)
       chromosomes.splice(index, 1)
+    }
+
+    // Check add chromosome mutation
+    if (chromosomes.length < maxGenomeSize && mutation.doAddChromosome()) {
+      chromosomes.push(ChromosomeModel.create({ numSides: minPoints }))
     }
 
     // Mutate Genome
@@ -146,13 +146,13 @@ const GenomeModel = {
 
     // Mutate at the chromosome level
     for (let i = 0; i < chromosomes.length; ++i) {
-      // Check add point mutation
-      if (mutation.doAddPoint()) {
-        ChromosomeModel.addPointMutation(chromosomes[i], maxPoints)
-      }
       // Check remove point mutation
       if (mutation.doRemovePoint()) {
         ChromosomeModel.removePointMutation(chromosomes[i], minPoints)
+      }
+      // Check add point mutation
+      if (mutation.doAddPoint()) {
+        ChromosomeModel.addPointMutation(chromosomes[i], maxPoints)
       }
       // Check tweak values mutation
       chromosomes[i] = ChromosomeModel.tweakMutation(chromosomes[i], mutation)
