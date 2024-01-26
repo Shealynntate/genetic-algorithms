@@ -46,7 +46,6 @@ function SimulationEntry ({
   const color = useGraphColor(id as number)
   const isCheckable = status !== 'pending'
   const isRunning = status === 'running'
-  const isEditable = status !== 'running'
   const date = new Date(createdOn)
   const openMenu = Boolean(anchorEl)
 
@@ -118,7 +117,6 @@ function SimulationEntry ({
             onChange={onChangeName}
             variant="standard"
             size="small"
-            disabled={!isEditable}
           />
           <StatusIcon status={status} sx={{ position: 'absolute', top: 0, right: 0 }} />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: '0.25rem' }}>

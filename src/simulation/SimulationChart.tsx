@@ -94,7 +94,7 @@ function SimulationChart (): JSX.Element {
     // Negative deltaY means zoom in
     const sign = Math.sign(event.deltaY)
     const value = Math.log(Math.abs(event.deltaY))
-    const zoomFactor = [1 + sign * value / 40, 1 + sign * value / 200]
+    const zoomFactor = [1 + sign * value / 40, 1 + sign * value / 100]
     const x = mousePos.x - margin.left
     const y = mousePos.y + margin.top
     const gen = clamp(Math.round(xScale.invert(x)), 0, maxGens)
