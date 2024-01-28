@@ -98,7 +98,9 @@ function Simulations (): JSX.Element {
 
   return (
     <Stack>
-      <Typography variant="h4" sx={{ textAlign: 'center' }}>Experiment</Typography>
+      <Typography variant='h4' color='GrayText' sx={{ textAlign: 'center' }}>
+        Experiment
+      </Typography>
       <SimulationChart />
       <Grid2 container mt={1}>
         <Grid2 xs={12} md={6}>

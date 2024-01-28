@@ -28,8 +28,8 @@ export const defaultParameters: ParametersState = {
     mutation: {
       genomeSize: 50,
       distributions: {
-        colorSigma: 0.06,
-        pointSigma: 0.06
+        colorSigma: 0.1,
+        pointSigma: 0.1
       },
       probabilities: {
         tweakColor: 0.00067,

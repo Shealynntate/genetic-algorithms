@@ -11,7 +11,9 @@ import greatWave from '../assets/gallery-entries/the_great_wave.json'
 function Gallery (): JSX.Element {
   return (
     <Box>
-      <Typography variant='h4' sx={{ textAlign: 'center' }}>Gallery</Typography>
+      <Typography variant='h4' color='GrayText' sx={{ textAlign: 'center' }}>
+        Gallery
+      </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
         <GalleryEntry data={monaLisa} readOnly />
         <GalleryEntry data={drawingHands} readOnly />
