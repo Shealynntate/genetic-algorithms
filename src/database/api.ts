@@ -1,5 +1,5 @@
 import GeneticAlgorithmsDatabase from './GeneticAlgorithmsDatabase'
-import { type Image, type MutableSimulation, type Simulation } from './types'
+import { type Gif, type Image, type MutableSimulation, type Simulation } from './types'
 import { type Organism, type GenerationStatsRecord } from '../population/types'
 import { genomeToPhenotype } from '../utils/imageUtils'
 
@@ -255,21 +255,20 @@ export const getCurrentImages = async (): Promise<Image[]> => {
 
 // Gallery Table
 // --------------------------------------------------
-export const addGalleryEntry = async (simulationId: number, json: string): Promise<number> => {
-  return await db.gallery.add({
+export const addGifEntry = async (simulationId: number, gif: string): Promise<number> => {
+  return await db.gifs.add({
     createdOn: Date.now(),
     simulationId,
-    name: `Entry ${simulationId}`,
-    json
+    gif
   })
 }
 
-export const renameGalleryEntry = async (id: number, name: string): Promise<number> => {
-  return await db.gallery.update(id, { name })
+export const deleteGifEntry = async (id: number): Promise<void> => {
+  await db.gifs.delete(id)
 }
 
-export const deleteGalleryEntry = async (id: number): Promise<void> => {
-  await db.gallery.delete(id)
+export const getGifEntryBySimulation = async (simulationId: number): Promise<Gif | undefined> => {
+  return await db.gifs.where('simulationId').equals(simulationId).first()
 }
 
 // All Tables

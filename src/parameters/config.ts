@@ -20,7 +20,7 @@ export const defaultParameters: ParametersState = {
       tournamentSize: 2
     },
     crossover: {
-      type: 'onePoint',
+      type: 'twoPoint',
       probabilities: {
         swap: 0.9
       }
@@ -38,7 +38,7 @@ export const defaultParameters: ParametersState = {
         removePoint: 0.00067,
         addChromosome: 0.0014,
         removeChromosome: 0.00067,
-        permuteChromosomes: 0.00067
+        permuteChromosomes: 0.0014
       }
     }
   },

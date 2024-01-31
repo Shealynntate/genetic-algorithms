@@ -99,7 +99,7 @@ const Model = {
     Model.randCV(),
     Model.randCV(),
     Model.randCV(),
-    0
+    randomFloat(0, 1)
   ]
 }
 

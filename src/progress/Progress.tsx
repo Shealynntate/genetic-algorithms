@@ -10,17 +10,16 @@ import { type RootState } from '../store'
 import OrganismCanvas from '../canvas/OrganismCanvas'
 import HistoryDisplay from './HistoryDisplay'
 import StatusText from '../common/StatusText'
-import Panel from '../common/Panel'
 import GalleryEntry from '../gallery/GalleryEntry'
-import { useGetGalleryEntries } from '../database/hooks'
 import { canvasParameters } from '../constants/constants'
+import { useGetCompletedSimulationReports } from '../database/hooks'
 
 function SimulationStatusPanel (): JSX.Element {
   const organismRecord = useSelector((state: RootState) => state.simulation.currentBest)
   const record = useSelector((state: RootState) => state.simulation.currentGenStats)
-  const entriesJSON = useGetGalleryEntries() ?? []
+  const completedEntries = useGetCompletedSimulationReports() ?? []
   const showContent = organismRecord?.organism != null
-  const hasEntries = entriesJSON.length > 0
+  const hasEntries = completedEntries.length > 0
 
   return (
     <Paper>
@@ -73,14 +72,14 @@ function SimulationStatusPanel (): JSX.Element {
         </Box>
           )}
       {hasEntries && (
-        <Panel label="Your Work">
-          {entriesJSON.map((data) => (
+        <Box>
+          {completedEntries.map((simulationReport) => (
             <GalleryEntry
-              key={data.id}
-              data={data}
+              key={simulationReport.simulation.id}
+              simulationReport={simulationReport}
             />
           ))}
-        </Panel>
+        </Box>
       )}
     </Paper>
   )

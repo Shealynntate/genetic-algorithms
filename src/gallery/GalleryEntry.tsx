@@ -4,23 +4,28 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import DownloadIcon from '@mui/icons-material/Download'
-import { type GalleryEntryData } from './types'
-import { deleteGalleryEntry, renameGalleryEntry } from '../database/api'
-import { download, downloadJSON } from '../utils/fileUtils'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import { deleteGifEntry, renameSimulation } from '../database/api'
+import { download } from '../utils/fileUtils'
 import { canvasParameters } from '../constants/constants'
 import OrganismCanvas from '../canvas/OrganismCanvas'
 import TargetCanvas from '../canvas/TargetCanvas'
+import { type SimulationReport } from '../database/types'
+import { useUploadExperimentReportMutation } from '../navigation/navigationSlice'
 
 interface GallerEntryProps {
-  data: GalleryEntryData
+  simulationReport: SimulationReport
   readOnly?: boolean
 }
 
-function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Element {
+function GalleryEntry ({ simulationReport, readOnly = false }: GallerEntryProps): JSX.Element {
   const width = canvasParameters.width / 2
   const height = canvasParameters.height / 2
-  const { json, id, name, simulationId } = data
-  const { gif, globalBest, totalGen, parameters } = JSON.parse(json)
+  const [uploadSimulation] = useUploadExperimentReportMutation()
+  const { results, simulation, gif } = simulationReport
+  const { id, parameters, name } = simulation
+  const bestOrganism = results[results.length - 1].stats.maxFitOrganism
+  const totalGen = results[results.length - 1].stats.gen
 
   const [entryName, setEntryName] = useState(name)
   const isDevelopment = process.env.NODE_ENV === 'development'
@@ -30,14 +35,25 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
       console.error('Cannot delete gallery entry with no id')
       return
     }
-    deleteGalleryEntry(id).catch(console.error)
+    deleteGifEntry(id).catch(console.error)
+  }
+
+  const onUpload = (): void => {
+    if (!isDevelopment) {
+      console.warn('[onUpload] Cannot upload in production')
+      return
+    }
+
+    uploadSimulation(simulationReport).catch(console.error)
   }
 
   const onDownload = (): void => {
-    download(name, gif)
-    if (isDevelopment) {
-      downloadJSON(name, data)
+    if (gif == null) {
+      // TODO: Turn into snackbar warning
+      console.warn('[onDownload] Cannot download null gif')
+      return
     }
+    download(name, gif)
   }
 
   const onChangeName = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -49,7 +65,7 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
       console.error('Cannot rename gallery entry with no id')
       return
     }
-    renameGalleryEntry(id, value).catch(console.error)
+    renameSimulation(id, value).catch(console.error)
   }
 
   return (
@@ -58,7 +74,7 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
         <Stack spacing={1}>
           <Tooltip title='final result'>
             <Box sx={{ m: 0, p: 0, lineHeight: 0 }}>
-              <OrganismCanvas organism={globalBest.organism} width={width} height={height} />
+              <OrganismCanvas organism={bestOrganism} width={width} height={height} />
             </Box>
           </Tooltip>
           <Tooltip title='The target image'>
@@ -80,7 +96,7 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
                 fontSize='small'
                 sx={{ position: 'absolute', top: '0.25rem', right: '0.5rem' }}
               >
-                {simulationId}
+                {id}
               </Typography>
             )}
             <TextField
@@ -90,8 +106,8 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
               sx={{ pb: 1 }}
               disabled={readOnly}
             />
-            <Typography variant='body2'>{`Top score: ${globalBest.organism.fitness.toFixed(3)}`}</Typography>
-            <Typography variant='body2'>{`Number of △: ${globalBest.organism.genome.chromosomes.length}`}</Typography>
+            <Typography variant='body2'>{`Top score: ${bestOrganism.fitness.toFixed(3)}`}</Typography>
+            <Typography variant='body2'>{`Number of △: ${bestOrganism.genome.chromosomes.length}`}</Typography>
             <Typography variant='body2'>{`Generations: ${totalGen.toLocaleString()}`}</Typography>
           </Stack>
           <Stack direction='row' sx={{ alignItems: 'end' }}>
@@ -99,9 +115,14 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
               <DownloadIcon />
             </IconButton>
             {!readOnly && (
-              <IconButton color='error' onClick={onDelete}>
-                <DeleteIcon />
-              </IconButton>
+              <Box>
+                <IconButton onClick={onUpload}>
+                  <CloudUploadIcon />
+                </IconButton>
+                <IconButton color='error' onClick={onDelete}>
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
             )}
           </Stack>
         </Stack>

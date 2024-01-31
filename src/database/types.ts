@@ -2,6 +2,9 @@ import { type SimulationStatus } from '../simulation/types'
 import { type GenerationStatsRecord, type Genome, type Population } from '../population/types'
 import { type ParametersState } from '../parameters/types'
 
+/**
+ * Data stored in the images IndexedDB table
+ */
 export interface Image {
   id?: number
   gen: number
@@ -11,6 +14,9 @@ export interface Image {
   fitness: number
 }
 
+/**
+ * Data stored in the simulations IndexedDB table
+ */
 export interface Simulation {
   id?: number
   createdOn: number
@@ -21,8 +27,9 @@ export interface Simulation {
   population?: Population
 }
 
-export type MutableSimulation = Pick<Simulation, 'population' | 'parameters' | 'status' | 'name'>
-
+/**
+ * Data stored in the results IndexedDB table
+ */
 export interface Results {
   id?: number
   simulationId: number
@@ -30,7 +37,23 @@ export interface Results {
   stats: GenerationStatsRecord
 }
 
+/**
+ * Data stored in the gifs IndexedDB table
+ */
+export interface Gif {
+  id?: number
+  simulationId: number
+  createdOn: number
+  gif: string // base64 encoded gif
+}
+
+/**
+ * The full report of a simulation
+ */
 export interface SimulationReport {
   simulation: Simulation
   results: GenerationStatsRecord[] // The combined records from all generations
+  gif?: string // The base64 encoded gif
 }
+
+export type MutableSimulation = Pick<Simulation, 'population' | 'parameters' | 'status' | 'name'>

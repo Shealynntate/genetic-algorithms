@@ -1,11 +1,11 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
-  type Simulation,
+  type Gif,
   type Image,
+  type Simulation,
   type Results,
   type SimulationReport
 } from './types'
-import { type GalleryEntryData } from '../gallery/types'
 import { type GenerationStatsRecord } from '../population/types'
 import db, {
   currentSimulationId,
@@ -13,6 +13,7 @@ import db, {
   getCompletedSimulations,
   getCurrentImages,
   getCurrentSimulation,
+  getGifEntryBySimulation,
   getPendingSimulations,
   getSimulationRecords,
   getSimulations
@@ -54,8 +55,8 @@ export const useGetPendingSimulations = (): Simulation[] | undefined => useLiveQ
 
 // Gallery Hooks
 // --------------------------------------------------
-export const useGetGalleryEntries = (): GalleryEntryData[] | undefined => useLiveQuery(
-  async () => await db.gallery.toArray()
+export const useGetGalleryEntries = (): Gif[] | undefined => useLiveQuery(
+  async () => await db.gifs.toArray()
 )
 
 // Results Hooks
@@ -64,26 +65,39 @@ export const useGetAllResults = (): Results[] | undefined => useLiveQuery(
   async () => await db.results.toArray()
 )
 
+// TODO: Turn into transation with both tables used?
 export const useGetCompletedSimulationReports = (): SimulationReport[] | undefined => useLiveQuery(
   async () => {
-    const completedSimulations = await getCompletedSimulations()
+    return await db.transaction('r', db.simulations, db.results, db.gifs, async () => {
+      const completedSimulations = await getCompletedSimulations()
 
-    const findResults = async (simId: number | undefined): Promise<GenerationStatsRecord[] | undefined> => {
-      if (simId == null) {
-        throw new Error('[useGetCompletedSimulationReports] Simulation ID is null')
-      }
-      return await getSimulationRecords(simId)
-    }
-
-    return await Promise.all(
-      completedSimulations.map(async (simulation) => {
-        const results = await findResults(simulation.id)
-        if (results == null) {
-          throw new Error(`[useGetCompletedSimulationReports] Results are null: ${simulation.id}`)
+      const findResults = async (simId: number | undefined): Promise<GenerationStatsRecord[] | undefined> => {
+        if (simId == null) {
+          throw new Error('[useGetCompletedSimulationReports] Simulation ID is null')
         }
-        return { simulation, results }
-      })
-    )
+        return await getSimulationRecords(simId)
+      }
+
+      return await Promise.all(
+        completedSimulations.map(async (simulation) => {
+          if (simulation.id == null) {
+            throw new Error(`[useGetCompletedSimulationReports] Simulation ID is null: ${simulation.id}`)
+          }
+          const results = await findResults(simulation.id)
+          if (results == null) {
+            throw new Error(`[useGetCompletedSimulationReports] Results are null: ${simulation.id}`)
+          }
+          const gifEntry = await getGifEntryBySimulation(simulation.id)
+          if (gifEntry == null) {
+            throw new Error(`[useGetCompletedSimulationReports] Gif Entry is null: ${simulation.id}`)
+          }
+          return { simulation, results, gif: gifEntry.gif }
+        })
+      )
+    }).catch((e) => {
+      console.error(`[useGetCompletedSimulationReports] ${e}`)
+      return undefined
+    })
   }
 )
 

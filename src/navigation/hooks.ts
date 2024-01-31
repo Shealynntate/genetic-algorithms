@@ -1,8 +1,8 @@
+import { useLayoutEffect, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { type RootState } from '../store'
 import { type MousePosition, type AppState } from './types'
-import { RunningStates } from '../constants/constants'
-import { useEffect, useState } from 'react'
+import { MIN_BROWSER_WIDTH, MIN_BROWSER_HEIGHT, RunningStates } from '../constants/constants'
 
 const currentStateSelector = ({ navigation }: RootState): AppState => (navigation.simulationState)
 
@@ -41,4 +41,22 @@ export const useMousePosition = (): MousePosition => {
   return mousePosition
 }
 
-export default useMousePosition
+/**
+ * A custom hook that returns the dimensions of the window and updates when the window is resized.
+ * @returns {Array} An array of the form [width, height]
+ */
+export const useWindowSize = (): number[] => {
+  const [size, setSize] = useState([MIN_BROWSER_WIDTH, MIN_BROWSER_HEIGHT])
+
+  useLayoutEffect(() => {
+    const updateSize = (): void => {
+      setSize([window.innerWidth, window.innerHeight])
+    }
+    window.addEventListener('resize', updateSize)
+    updateSize()
+
+    return () => { window.removeEventListener('resize', updateSize) }
+  }, [])
+
+  return size
+}

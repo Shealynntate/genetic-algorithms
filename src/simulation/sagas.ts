@@ -17,7 +17,7 @@ import {
 import { type SimulationState, type OrganismRecord, type SetSimulationParametersAction, type EndSimulationsAction, type RestoreSimulationAction, type ClearCurrentSimulationAction } from './types'
 import { minResultsThreshold, saveThresholds } from '../constants/constants'
 import {
-  addGalleryEntry,
+  addGifEntry,
   addImageToDatabase,
   deleteCurrentSimulation,
   getCurrentImages,
@@ -89,25 +89,17 @@ const createGalleryEntry = async (totalGen: number, globalBest: OrganismRecord):
     console.error('[createGalleryEntry] No current simulation found')
     return
   }
-  const { id, name, parameters } = simulation
+  const { id } = simulation
   const history = await getCurrentImages()
   const imageData = history.map((entry) => entry.imageData)
   const phenotype = genomeToPhenotype(globalBest.organism.genome)
   // Show the last image 4 times as long in the gif
   const result = [...imageData, phenotype, phenotype, phenotype, phenotype]
   const gif = await createGif(result as ImageData[])
-  const galleryData = {
-    name,
-    gif,
-    globalBest,
-    parameters,
-    totalGen
-  }
-  const json = JSON.stringify(galleryData)
   if (id == null) {
     throw new Error('[createGalleryEntry] No simulation id found')
   }
-  await addGalleryEntry(id, json)
+  await addGifEntry(id, gif)
 }
 
 // Saga Functions

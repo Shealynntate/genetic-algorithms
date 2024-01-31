@@ -1,9 +1,13 @@
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
-import { useLayoutEffect, useState } from 'react'
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { type NavigationState } from './types'
-import { lineColors, MIN_BROWSER_WIDTH, MIN_BROWSER_HEIGHT } from '../constants/constants'
+import firestoreApi from '../firebase/firestoreApi'
+import { type ExperimentRecord, firestore, experimentRecordConverter } from '../firebase/firebase'
+import { type SimulationReport } from '../database/types'
+import { lineColors } from '../constants/constants'
 import { clearCurrentSimulation } from '../simulation/simulationSlice'
+import { addDoc, collection, doc, getDoc } from 'firebase/firestore'
+import { NavTag } from '../common/types'
 
 const initialState: NavigationState = {
   simulationState: 'none',
@@ -77,6 +81,40 @@ export const navigationSlice = createSlice({
   }
 })
 
+// Async Api
+// ------------------------------------------------------------
+export const navigationApi = firestoreApi.injectEndpoints({
+  endpoints: (builder) => ({
+    uploadExperimentReport: builder.mutation<ExperimentRecord, SimulationReport>({
+      async queryFn (record: SimulationReport) {
+        try {
+          const ref = collection(firestore, 'experiments').withConverter(experimentRecordConverter)
+          if (ref == null) {
+            throw new Error('[uploadSimulationReport] ref is null')
+          }
+          const experimentRecord: ExperimentRecord = {
+            createdOn: Date.now(),
+            lastModified: Date.now(),
+            simulationReport: record
+          }
+          const result = await addDoc(ref, experimentRecord)
+          // Now that the simulation is uploaded, fetch it from firestore
+          const docRef = doc(firestore, 'simulations', result.id)
+          const docSnapshot = await getDoc(docRef)
+          const data = docSnapshot.data() as ExperimentRecord
+          console.log({ data })
+          return { data }
+        } catch (error: any) {
+          console.error(error)
+
+          return { error: error.message }
+        }
+      },
+      invalidatesTags: [NavTag.SIMULATION_REPORTS]
+    })
+  })
+})
+
 export const {
   setAppState,
   runSimulations,
@@ -90,24 +128,8 @@ export const {
   setShowCreateSimulationModal
 } = navigationSlice.actions
 
-/**
- * A custom hook that returns the dimensions of the window and updates when the window is resized.
- * @returns {Array} An array of the form [width, height]
- */
-export const useWindowSize = (): number[] => {
-  const [size, setSize] = useState([MIN_BROWSER_WIDTH, MIN_BROWSER_HEIGHT])
-
-  useLayoutEffect(() => {
-    const updateSize = (): void => {
-      setSize([window.innerWidth, window.innerHeight])
-    }
-    window.addEventListener('resize', updateSize)
-    updateSize()
-
-    return () => { window.removeEventListener('resize', updateSize) }
-  }, [])
-
-  return size
-}
+export const {
+  useUploadExperimentReportMutation
+} = navigationApi
 
 export default navigationSlice.reducer

@@ -1,6 +1,5 @@
 import Dexie from 'dexie'
-import { type Simulation, type Image, type Results } from './types'
-import { type GalleryEntryData } from '../gallery/types'
+import { type Gif, type Image, type Results, type Simulation } from './types'
 
 const databaseName = 'GeneticAlgorithmsDB'
 
@@ -9,15 +8,15 @@ class GeneticAlgorithms extends Dexie {
   images!: Dexie.Table<Image, number>
   simulations!: Dexie.Table<Simulation, number>
   results!: Dexie.Table<Results, number>
-  gallery!: Dexie.Table<GalleryEntryData, number>
+  gifs!: Dexie.Table<Gif, number>
 
   constructor () {
     super(databaseName)
     this.version(2).stores({
+      gifs: '++id,createdOn,simulationId',
       images: '++id,simulationId,gen',
-      simulations: '++id,createdOn,status,name,lastUpdated',
       results: '++id,simulationId,createdOn',
-      gallery: '++id,createdOn,simulationId,name'
+      simulations: '++id,createdOn,status,name,lastUpdated'
     })
   }
 }
