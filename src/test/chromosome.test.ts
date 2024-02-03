@@ -2,6 +2,7 @@ import { expectRange, mockRandom } from './utils'
 import { maxColorValue } from '../constants/constants'
 import { genRange } from '../utils/utils'
 import * as statsUtils from '../utils/statsUtils'
+import { type Color, type Point } from '../population/types'
 import ChromosomeModel from '../population/chromosomeModel'
 import MutationModel from '../population/mutationModel'
 
@@ -63,11 +64,10 @@ describe('Chromosome Initialization Helpers', () => {
     // Test it 3 times
     genRange(3).forEach(() => {
       const result = ChromosomeModel.randomColor()
-      expect(result.length).toEqual(4)
-      expectRange(result[0], 0, maxColorValue) // red
-      expectRange(result[1], 0, maxColorValue) // green
-      expectRange(result[2], 0, maxColorValue) // blue
-      expectRange(result[3], 0, 1) // alpha
+      expectRange(result.r, 0, maxColorValue) // red
+      expectRange(result.g, 0, maxColorValue) // green
+      expectRange(result.b, 0, maxColorValue) // blue
+      expectRange(result.a, 0, 1) // alpha
     })
   })
 
@@ -75,11 +75,10 @@ describe('Chromosome Initialization Helpers', () => {
     // Test it 3 times
     genRange(3).forEach(() => {
       const result = ChromosomeModel.randomColor()
-      expect(result.length).toEqual(4)
-      expectRange(result[0], 0, maxColorValue) // red
-      expectRange(result[1], 0, maxColorValue) // green
-      expectRange(result[2], 0, maxColorValue) // blue
-      expect(result[3]).toBe(0) // alpha
+      expectRange(result.r, 0, maxColorValue) // red
+      expectRange(result.g, 0, maxColorValue) // green
+      expectRange(result.b, 0, maxColorValue) // blue
+      expectRange(result.a, 0, 1) // alpha
     })
   })
 
@@ -87,9 +86,8 @@ describe('Chromosome Initialization Helpers', () => {
     const spy = jest.spyOn(statsUtils, 'rand')
     spy.mockImplementation(mockRandom([-1, -1]))
     const result = ChromosomeModel.randomPoint()
-    expect(result.length).toEqual(2)
-    expect(result[0]).toEqual(-1)
-    expect(result[1]).toEqual(-1)
+    expect(result.x).toEqual(-1)
+    expect(result.y).toEqual(-1)
     expect(statsUtils.rand).toHaveBeenCalledTimes(2)
     spy.mockRestore()
   })
@@ -99,9 +97,8 @@ describe('Chromosome Initialization Helpers', () => {
     genRange(3).forEach(() => {
       const spy = jest.spyOn(statsUtils, 'rand')
       const result = ChromosomeModel.randomPoint()
-      expect(result.length).toBe(2)
-      expectRange(result[0], 0, 1)
-      expectRange(result[1], 0, 1)
+      expectRange(result.x, 0, 1)
+      expectRange(result.y, 0, 1)
       expect(statsUtils.rand).toHaveBeenCalledTimes(2)
       spy.mockRestore()
     })
@@ -114,40 +111,36 @@ describe('Chromosome Mutation Utils', () => {
     const mockMutation = new MockMutationModel()
     mockMutation.pointNudge = () => 0
 
-    const result = ChromosomeModel.tweakPoint(mockMutation, 1, 1)
-    expect(result.length).toEqual(2)
-    expect(result[0]).toEqual(1)
-    expect(result[1]).toEqual(1)
+    const result = ChromosomeModel.tweakPoint(mockMutation, { x: 1, y: 1 })
+    expect(result.x).toEqual(1)
+    expect(result.y).toEqual(1)
   })
 
   test('Tweak Point Small Amount', () => {
     const mockMutation = new MockMutationModel()
     mockMutation.pointNudge = () => 0.1
 
-    const result = ChromosomeModel.tweakPoint(mockMutation, 0.5, 0.5)
-    expect(result.length).toEqual(2)
-    expect(result[0]).toEqual(0.6)
-    expect(result[1]).toEqual(0.6)
+    const result = ChromosomeModel.tweakPoint(mockMutation, { x: 0.5, y: 0.5 })
+    expect(result.x).toEqual(0.6)
+    expect(result.y).toEqual(0.6)
   })
 
   test('Tweak Point Max Value Clamping', () => {
     const mockMutation = new MockMutationModel()
     mockMutation.pointNudge = () => 0.2
 
-    const result = ChromosomeModel.tweakPoint(mockMutation, 1, 0.9)
-    expect(result.length).toEqual(2)
-    expect(result[0]).toEqual(1)
-    expect(result[1]).toEqual(1)
+    const result = ChromosomeModel.tweakPoint(mockMutation, { x: 1, y: 0.9 })
+    expect(result.x).toEqual(1)
+    expect(result.y).toEqual(1)
   })
 
   test('Tweak Point Min Value Clamping', () => {
     const mockMutation = new MockMutationModel()
     mockMutation.pointNudge = () => -0.2
 
-    const result = ChromosomeModel.tweakPoint(mockMutation, 0, 0.1)
-    expect(result.length).toEqual(2)
-    expect(result[0]).toEqual(0)
-    expect(result[1]).toEqual(0)
+    const result = ChromosomeModel.tweakPoint(mockMutation, { x: 0, y: 0.1 })
+    expect(result.x).toEqual(0)
+    expect(result.y).toEqual(0)
   })
 
   test('Tweak Color Zero Amount', () => {
@@ -222,8 +215,8 @@ describe('Chromosome Mutation Utils', () => {
 describe('Chromosome Initialization', () => {
   test('Create A Random Chromosome', () => {
     // Create one with just 1 side
-    const mockColor = [50, 100, 200, 0]
-    const mockPoint = [0.5, 0.5]
+    const mockColor: Color = { r: 50, g: 100, b: 200, a: 0 }
+    const mockPoint: Point = { x: 0.5, y: 0.5 }
     const mockPoints = [mockPoint, mockPoint, mockPoint]
     jest.spyOn(ChromosomeModel, 'randomColor').mockReturnValue(mockColor)
     // jest.spyOn(ChromosomeModel, 'randomPoints').mockReturnValue(mockPoints)
@@ -245,8 +238,8 @@ describe('Chromosome Initialization', () => {
   })
 
   test('Create A Chromosome With Fixed Points and Color', () => {
-    const points = [[1, 2], [3, 4], [5, 6]]
-    const color = [1, 2, 3, 0]
+    const points: Point[] = [{ x: 1, y: 2 }, { x: 3, y: 4 }, { x: 5, y: 6 }]
+    const color: Color = { r: 1, g: 2, b: 3, a: 0 }
     jest.spyOn(ChromosomeModel, 'randomColor')
     // jest.spyOn(ChromosomeModel, 'randomPoints')
     const chrom = ChromosomeModel.clone({ color, points })

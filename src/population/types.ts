@@ -73,13 +73,25 @@ export interface OrganismParameters {
 
 // Chromosome
 // ------------------------------------------------------------
+export interface Point {
+  x: number
+  y: number
+}
+
+export interface Color {
+  r: number
+  g: number
+  b: number
+  a: number
+}
+
 export interface ChromosomeParameters {
   numSides: number
 }
 
 export interface Chromosome {
-  points: number[][]
-  color: number[]
+  points: Point[]
+  color: Color
 }
 
 // Genome

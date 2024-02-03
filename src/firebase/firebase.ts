@@ -1,9 +1,11 @@
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
-import { type QueryDocumentSnapshot, type SnapshotOptions, getFirestore } from 'firebase/firestore'
+import { type QueryDocumentSnapshot, type SnapshotOptions, getFirestore, type Timestamp } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
-import { firebaseConfig } from './config'
-import { type SimulationReport } from '../database/types'
+import { type User, getAuth, onAuthStateChanged } from 'firebase/auth'
+import store from '../store'
+import { type ExperimentRecord, type ExperimentRecordDbEntry } from './types'
+import { GIF_FILE, TARGET_IMAGE_FILE, firebaseConfig } from './config'
 
 // Initialize Firebase and its services
 // ------------------------------------------------------------
@@ -11,54 +13,51 @@ export const firebase = initializeApp(firebaseConfig)
 export const firebaseAnalytics = getAnalytics(firebase)
 export const firestore = getFirestore(firebase)
 export const storage = getStorage(firebase)
-
-/**
- *  The data stored in firebase firestore
- */
-export interface ExperimentRecord {
-  id?: string
-  createdOn: number
-  lastModified: number
-  /** Where the gif and target are relative paths instead of base64 strings */
-  simulationReport: SimulationReport
-}
-
-export interface ExperimentRecordDbEntry {
-  createdOn: number
-  lastModified: number
-  simulationReport: SimulationReport
-}
+export const auth = getAuth(firebase)
 
 // Conversion Functionality
 // ------------------------------------------------------------
 export const experimentRecordConverter = {
   toFirestore: (record: ExperimentRecord): ExperimentRecordDbEntry => {
-    const { createdOn, lastModified, simulationReport } = record
-    simulationReport.gif = ''
-    simulationReport.simulation.parameters.population.target = ''
+    const { createdOn, id, lastModified, parameters, gif, ...rest } = record
 
     return {
       createdOn,
       lastModified,
-      simulationReport
+      parameters: {
+        ...parameters,
+        population: {
+          ...parameters.population,
+          target: `experiments/${id}/${TARGET_IMAGE_FILE}`
+        }
+      },
+      gif: gif != null ? `experiments/${id}/${GIF_FILE}` : '',
+      ...rest
     }
   },
   fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): ExperimentRecord => {
     const data = snapshot.data(options) as ExperimentRecordDbEntry
-    const { createdOn, lastModified, simulationReport } = data
-    // TODO: Get gif and target from relative paths
-    simulationReport.gif = ''
-    simulationReport.simulation.parameters.population.target = ''
+    const { createdOn, lastModified, ...rest } = data
 
     return {
       id: snapshot.id,
-      createdOn,
-      lastModified,
-      simulationReport
+      createdOn: (createdOn as Timestamp).toMillis(),
+      lastModified: (lastModified as Timestamp).toMillis(),
+      ...rest
     }
   }
 }
-// To Firebase
-// (results: Results, simulation: Simulation, galleryEntry: GalleryEntry) {
-//  Combine these into one SimulationReport object
-// }
+
+// Authentication Functionality
+// ------------------------------------------------------------
+const monitorAuthState = (): void => {
+  onAuthStateChanged(auth, (user: User | null) => {
+    if (user != null) {
+      store.dispatch({ type: 'navigation/setIsAuthenticated', payload: true })
+    } else {
+      store.dispatch({ type: 'navigation/setIsAuthenticated', payload: false })
+    }
+  })
+}
+
+monitorAuthState()

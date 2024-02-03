@@ -34,11 +34,11 @@ export default (): void => {
       this.ctx.clearRect(0, 0, this.width, this.height)
 
       chromosomes.forEach(({ color, points }) => {
-        this.ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`
+        this.ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`
         this.ctx.beginPath()
-        this.ctx.moveTo(points[0][0] * this.width, points[0][1] * this.height)
+        this.ctx.moveTo(points[0].x * this.width, points[0].y * this.height)
         for (let i = 1; i < points.length; ++i) {
-          this.ctx.lineTo(points[i][0] * this.width, points[i][1] * this.height)
+          this.ctx.lineTo(points[i].x * this.width, points[i].y * this.height)
         }
         this.ctx.closePath()
         this.ctx.fill()

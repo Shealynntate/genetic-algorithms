@@ -1,51 +1,25 @@
-import React, { type ChangeEvent, useState } from 'react'
-import {
-  Box, IconButton, Paper, Stack, TextField, Typography, Tooltip
-} from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
+import React, { useState } from 'react'
+import { Box, IconButton, Paper, Stack, TextField, Typography, Tooltip, Skeleton } from '@mui/material'
 import DownloadIcon from '@mui/icons-material/Download'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { deleteGifEntry, renameSimulation } from '../database/api'
 import { download } from '../utils/fileUtils'
 import { canvasParameters } from '../constants/constants'
 import OrganismCanvas from '../canvas/OrganismCanvas'
-import TargetCanvas from '../canvas/TargetCanvas'
-import { type SimulationReport } from '../database/types'
-import { useUploadExperimentReportMutation } from '../navigation/navigationSlice'
+import { type ExperimentRecord } from '../firebase/types'
 
 interface GallerEntryProps {
-  simulationReport: SimulationReport
+  data: ExperimentRecord
   readOnly?: boolean
 }
 
-function GalleryEntry ({ simulationReport, readOnly = false }: GallerEntryProps): JSX.Element {
+function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Element {
+  const [targetLoaded, setTargetLoaded] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [gifLoaded, setGifLoaded] = useState(false)
   const width = canvasParameters.width / 2
   const height = canvasParameters.height / 2
-  const [uploadSimulation] = useUploadExperimentReportMutation()
-  const { results, simulation, gif } = simulationReport
-  const { id, parameters, name } = simulation
-  const bestOrganism = results[results.length - 1].stats.maxFitOrganism
+  const { results, gif, simulationId, parameters, simulationName } = data
+  const bestOrganism = data.maxFitOrganism
   const totalGen = results[results.length - 1].stats.gen
-
-  const [entryName, setEntryName] = useState(name)
-  const isDevelopment = process.env.NODE_ENV === 'development'
-
-  const onDelete = (): void => {
-    if (id == null) {
-      console.error('Cannot delete gallery entry with no id')
-      return
-    }
-    deleteGifEntry(id).catch(console.error)
-  }
-
-  const onUpload = (): void => {
-    if (!isDevelopment) {
-      console.warn('[onUpload] Cannot upload in production')
-      return
-    }
-
-    uploadSimulation(simulationReport).catch(console.error)
-  }
 
   const onDownload = (): void => {
     if (gif == null) {
@@ -53,39 +27,58 @@ function GalleryEntry ({ simulationReport, readOnly = false }: GallerEntryProps)
       console.warn('[onDownload] Cannot download null gif')
       return
     }
-    download(name, gif)
-  }
-
-  const onChangeName = (event: ChangeEvent<HTMLInputElement>): void => {
-    const { value } = event.target
-    setEntryName(value)
-
-    // TODO: Snackbar for success/failure
-    if (id == null) {
-      console.error('Cannot rename gallery entry with no id')
-      return
-    }
-    renameSimulation(id, value).catch(console.error)
+    download(simulationName, gif)
   }
 
   return (
     <Box sx={{ display: 'inline-block', m: 1 }}>
-      <Stack direction='row' spacing={1}>
-        <Stack spacing={1}>
+      <Stack direction='row' spacing={0}>
+        <Stack spacing={0}>
           <Tooltip title='final result'>
             <Box sx={{ m: 0, p: 0, lineHeight: 0 }}>
               <OrganismCanvas organism={bestOrganism} width={width} height={height} />
             </Box>
           </Tooltip>
           <Tooltip title='The target image'>
-            <Box sx={{ m: 0, p: 0, lineHeight: 0 }}>
-              <TargetCanvas width={width} height={height} target={parameters.population.target} />
+            <Box sx={{ m: 0, p: 0, lineHeight: 0, position: 'relative' }}>
+              <img
+                src={parameters.population.target}
+                alt='target image'
+                width={width}
+                height={height}
+                onLoad={(): void => { setTargetLoaded(true) }}
+              />
+              {!targetLoaded && (
+                <Skeleton
+                  variant='rectangular'
+                  width={width}
+                  height={height}
+                  sx={{ position: 'absolute', bottom: 0, left: 0 }}
+                />
+              )}
             </Box>
           </Tooltip>
         </Stack>
-        <Tooltip title='A timelapse of the evolution of the best solution'>
-          <img src={gif} alt={`${name} gif`} />
-        </Tooltip>
+        <Stack sx={{ position: 'relative', minWidth: width * 2 }}>
+          <Tooltip title='A timelapse of the evolution of the best solution'>
+            <img
+              src={gif}
+              alt={`${simulationName} timelapse gif`}
+              onLoad={(): void => { setGifLoaded(true) }}
+            />
+          </Tooltip>
+          <Skeleton
+            variant='rectangular'
+            width={width * 2}
+            height={height * 2}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              visibility: gifLoaded ? 'hidden' : 'visible'
+            }}
+          />
+        </Stack>
       </Stack>
       <Paper elevation={0} sx={{ position: 'relative', pt: 0, px: 0 }}>
         <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
@@ -96,15 +89,14 @@ function GalleryEntry ({ simulationReport, readOnly = false }: GallerEntryProps)
                 fontSize='small'
                 sx={{ position: 'absolute', top: '0.25rem', right: '0.5rem' }}
               >
-                {id}
+                {simulationId}
               </Typography>
             )}
             <TextField
-              value={entryName}
-              onChange={onChangeName}
+              value={simulationName}
               variant='standard'
               sx={{ pb: 1 }}
-              disabled={readOnly}
+              disabled={true}
             />
             <Typography variant='body2'>{`Top score: ${bestOrganism.fitness.toFixed(3)}`}</Typography>
             <Typography variant='body2'>{`Number of △: ${bestOrganism.genome.chromosomes.length}`}</Typography>
@@ -114,16 +106,6 @@ function GalleryEntry ({ simulationReport, readOnly = false }: GallerEntryProps)
             <IconButton onClick={onDownload}>
               <DownloadIcon />
             </IconButton>
-            {!readOnly && (
-              <Box>
-                <IconButton onClick={onUpload}>
-                  <CloudUploadIcon />
-                </IconButton>
-                <IconButton color='error' onClick={onDelete}>
-                  <DeleteIcon />
-                </IconButton>
-              </Box>
-            )}
           </Stack>
         </Stack>
       </Paper>

@@ -12,3 +12,7 @@ export const firebaseConfig = {
   appId: process.env.REACT_APP_FIREBASE_APP_ID,
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 }
+
+export const TARGET_IMAGE_FILE = 'target.png'
+
+export const GIF_FILE = 'timelapse.gif'

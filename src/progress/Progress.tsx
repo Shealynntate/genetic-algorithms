@@ -10,9 +10,9 @@ import { type RootState } from '../store'
 import OrganismCanvas from '../canvas/OrganismCanvas'
 import HistoryDisplay from './HistoryDisplay'
 import StatusText from '../common/StatusText'
-import GalleryEntry from '../gallery/GalleryEntry'
 import { canvasParameters } from '../constants/constants'
 import { useGetCompletedSimulationReports } from '../database/hooks'
+import LocalGalleryEntry from '../gallery/LocalGalleryEntry'
 
 function SimulationStatusPanel (): JSX.Element {
   const organismRecord = useSelector((state: RootState) => state.simulation.currentBest)
@@ -74,9 +74,9 @@ function SimulationStatusPanel (): JSX.Element {
       {hasEntries && (
         <Box>
           {completedEntries.map((simulationReport) => (
-            <GalleryEntry
+            <LocalGalleryEntry
               key={simulationReport.simulation.id}
-              simulationReport={simulationReport}
+              data={simulationReport}
             />
           ))}
         </Box>

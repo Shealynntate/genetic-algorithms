@@ -1,7 +1,7 @@
 import gifshot from 'gifshot'
 import { type Dim } from './types'
 import { canvasParameters } from '../constants/constants'
-import { type Phenotype, type Genome } from '../population/types'
+import { type Phenotype, type Genome, type Point } from '../population/types'
 
 // Internal Helper Functions
 // --------------------------------------------------
@@ -10,7 +10,7 @@ import { type Phenotype, type Genome } from '../population/types'
  * @param {*} src - the src parameter for an HTML image element to load
  * @returns a Promise that resolves into the created Image object or an error
  */
-const createImage = async (
+export const createImage = async (
   src: string
 ): Promise<HTMLImageElement> => await new Promise((resolve, reject) => {
   const image = new Image()
@@ -33,8 +33,8 @@ const imageDataToImage = async (imageData: ImageData): Promise<HTMLImageElement>
   return await createImage(canvas.toDataURL())
 }
 
-const scalePoint = (point: number[], { w, h }: Dim): number[] => (
-  [point[0] * w, point[1] * h]
+const scalePoint = (point: Point, { w, h }: Dim): number[] => (
+  [point.x * w, point.y * h]
 )
 
 // Canvas, ImageData and Phenotype Functions
@@ -57,6 +57,12 @@ export const createImageData = async (
   return ctx.getImageData(0, 0, width, height)
 }
 
+export const convertBase64ToFile = async (base64: string, fileName: string): Promise<File> => {
+  const response = await fetch(base64)
+  const blob = await response.blob()
+  return new File([blob], fileName, { type: blob.type })
+}
+
 export const renderGenomeToCanvas = (
   genome: Genome,
   ctx: CanvasRenderingContext2D,
@@ -64,7 +70,7 @@ export const renderGenomeToCanvas = (
 ): void => {
   genome.chromosomes.forEach(({ color, points }) => {
     const p0 = scalePoint(points[0], { w, h })
-    ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`
+    ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`
     ctx.beginPath()
     ctx.moveTo(p0[0], p0[1])
     for (let i = 1; i < points.length; ++i) {

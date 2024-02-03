@@ -7,6 +7,11 @@ export interface NavigationState {
   showCreateSimulationModal: boolean
   simulationGraphColors: Record<number, string>
   simulationGraphIndices: Record<number, number>
+  isAuthenticated: boolean
+  errorSnackbarOpen: boolean
+  successSnackbarOpen: boolean
+  errorSnackbarMessage: string
+  successSnackbarMessage: string
 }
 
 export interface MousePosition {
