@@ -9,7 +9,7 @@
 </p>
 
 # Resources
-Full credit to Robert Johansson for this project idea. Check it out at [Genetic Programming: Evolution of the Mona Lisa](https://rogerjohansson.blog/2008/12/07/genetic-programming-evolution-of-mona-lisa/)
+Full credit to Robert Johansson for this project idea. [Genetic Programming: Evolution of the Mona Lisa](https://rogerjohansson.blog/2008/12/07/genetic-programming-evolution-of-mona-lisa/)
 
 Here&apos;s a list of other resources I used while working on this project:
 
