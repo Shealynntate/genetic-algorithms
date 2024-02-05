@@ -1,9 +1,10 @@
 import React, { type SyntheticEvent, useState, type ChangeEvent } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Box,
   Button,
   Checkbox,
+  Fab,
   IconButton,
   Paper,
   Stack,
@@ -14,27 +15,35 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import DeleteIcon from '@mui/icons-material/Delete'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined'
 import { type Simulation } from '../database/types'
 import { addGraphEntry, deleteRunningSimulation, removeGraphEntry } from '../navigation/navigationSlice'
 import { deleteSimulation, renameSimulation } from '../database/api'
-import { useGraphColor, useIsGraphEntry } from '../navigation/hooks'
+import { isRunningSelector, useGraphColor, useIsGraphEntry } from '../navigation/hooks'
 import StatusIcon from './StatusIcon'
 import HoverPopover from '../common/HoverPopover'
 import MaxFitnessDisplay from './MaxFitnessDisplay'
+import RunningSimulationDisplay from './RunningSimulationDisplay'
 
 interface SimulationEntryProps {
   simulation: Simulation
   isSelected?: boolean
   onDuplicate?: (event: SyntheticEvent, id: number) => void
   onSelect?: (id: number | null) => void
+  onRunSimulation?: (id: number) => void
+  onPauseSimulation?: (id: number) => void
 }
 
 function SimulationEntry ({
   simulation,
   onDuplicate = (event: SyntheticEvent, id: number) => {},
   onSelect = (id: number | null) => {},
+  onRunSimulation,
+  onPauseSimulation,
   isSelected = false
 }: SimulationEntryProps): JSX.Element {
+  const isAppRunning = useSelector(isRunningSelector)
   const { id, createdOn, name, status, population } = simulation
   const maxFitness = population?.best?.organism?.fitness ?? 0
   const gen = population?.genId ?? 0
@@ -44,7 +53,7 @@ function SimulationEntry ({
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
   const isChecked = useIsGraphEntry(id as number)
   const color = useGraphColor(id as number)
-  const isCheckable = status !== 'pending'
+  const isPending = status === 'pending'
   const isRunning = status === 'running'
   const date = new Date(createdOn)
   const openMenu = Boolean(anchorEl)
@@ -89,7 +98,7 @@ function SimulationEntry ({
 
   return (
     <Paper
-      elevation={0}
+      elevation={1}
       sx={{
         py: 1,
         px: 0,
@@ -101,7 +110,8 @@ function SimulationEntry ({
         <Box>
           <Checkbox
             checked={isChecked}
-            disabled={!isCheckable}
+            disabled={isPending}
+            size='small'
             onClick={(event) => { onCheck(event) }}
             sx={{
               color: color ?? 'inherit',
@@ -130,11 +140,33 @@ function SimulationEntry ({
               color="GrayText"
               sx={{ fontSize: '0.7rem' }}
             >
-              {`${gen.toLocaleString()} generations`}
+              {`${gen.toLocaleString()} gen`}
             </Typography>
           </Box>
+          {isRunning && <RunningSimulationDisplay simulation={simulation} />}
         </Stack>
-        <MaxFitnessDisplay maxFitness={maxFitness} />
+        {!isPending && <MaxFitnessDisplay maxFitness={maxFitness} />}
+        {isPending && (
+            <Fab
+              size='extrasmall'
+              color='primary'
+              onClick={() => { onRunSimulation?.(id) }}
+              sx={{ boxShadow: 'none' }}
+              disabled={isAppRunning}
+            >
+              <PlayArrowIcon fontSize='small' />
+            </Fab>
+        )}
+        {isRunning && (
+          <Fab
+            onClick={() => { onPauseSimulation?.(id) }}
+            size='extrasmall'
+            color='primary'
+            sx={{ boxShadow: 'none' }}
+          >
+            <PauseOutlinedIcon fontSize='small' />
+          </Fab>
+        )}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
             size="small"

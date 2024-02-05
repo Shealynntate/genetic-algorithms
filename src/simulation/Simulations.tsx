@@ -1,5 +1,5 @@
 import React, { type SyntheticEvent, useRef, useState } from 'react'
-import { Box, Fab, Stack, Tooltip, Typography, useTheme } from '@mui/material'
+import { Box, Button, Paper, Stack, Tooltip, Typography, useTheme } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import _ from 'lodash'
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
@@ -14,7 +14,6 @@ import SimulationButtons from './SimulationButtons'
 import SimulationEntry from './SimulationEntry'
 import SimulationDetails from './SimulationDetails'
 import SimulationFormDialog from './SimulationFormDialog'
-import RunningSimulationDisplay from './RunningSimulationDisplay'
 import { defaultParameters } from '../parameters/config'
 import { useCreateRunningSimulation } from './hooks'
 import CreatePopover from './CreatePopover'
@@ -98,43 +97,36 @@ function Simulations (): JSX.Element {
 
   return (
     <Stack>
-      <Typography variant='h4' color='GrayText' sx={{ textAlign: 'center' }}>
-        Experiment
-      </Typography>
-      <SimulationChart />
-      <Grid2 container mt={1}>
+      <Grid2 container mt={1} spacing={1}>
         <Grid2 xs={12} md={6}>
-          <Stack
+          <Box
             sx={{
-              backgroundColor: theme.palette.grey[100],
-              borderRadius: theme.shape.borderRadius,
-              p: 1
+              display: 'flex',
+              justifyContent: 'space-between',
+              mb: 1,
+              alignItems: 'center'
             }}
           >
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                mb: 1,
-                alignItems: 'center'
-              }}
-            >
-              <Stack direction="row" spacing={1}>
-                <Typography variant="h6">Experiment Runs</Typography>
-                <SimulationButtons runsDisabled={!hasQueuedSimulations} />
-              </Stack>
-              <Tooltip title="Add a new run">
-                <Fab
-                  onClick={onAddSimulation}
-                  color="secondary"
-                  size="extrasmall"
-                  ref={addButtonRef}
-                  sx={{ boxShadow: 'none' }}
-                >
-                  <AddIcon fontSize="small" />
-                </Fab>
-              </Tooltip>
-            </Box>
+            <Stack direction="row" spacing={1}>
+              <Typography variant="h6">Experiment Runs</Typography>
+              <SimulationButtons runsDisabled={!hasQueuedSimulations} />
+            </Stack>
+            <Tooltip title="Add a new run">
+              <Button
+                onClick={onAddSimulation}
+                color="secondary"
+                // size="extrasmall"
+                ref={addButtonRef}
+                sx={{ boxShadow: 'none' }}
+                variant='outlined'
+                size='small'
+                startIcon={<AddIcon />}
+              >
+                Run
+              </Button>
+            </Tooltip>
+          </Box>
+          <Stack sx={{ borderRadius: theme.shape.borderRadius }}>
             <CreatePopover
               anchorEl={addButtonRef.current}
               open={showCreateModal}
@@ -154,9 +146,9 @@ function Simulations (): JSX.Element {
           </Stack>
         </Grid2>
         <Grid2 xs={12} md={6} spacing={1}>
-          <RunningSimulationDisplay
-            simulation={runningSimulation}
-          />
+          <Paper sx={{ mt: 5 }}>
+            <SimulationChart />
+          </Paper>
           <SimulationDetails simulation={idToSimulation(selectedSimulation)} />
         </Grid2>
       </Grid2>

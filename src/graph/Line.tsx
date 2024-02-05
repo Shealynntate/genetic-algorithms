@@ -1,8 +1,8 @@
 import React from 'react'
 import { LinePath } from '@visx/shape'
-import { curveMonotoneX } from '@visx/curve'
 import theme from '../theme'
 import { type GenerationStatsRecord } from '../population/types'
+import { curveMonotoneY } from '@visx/curve'
 
 interface LineProps {
   data: GenerationStatsRecord[]
@@ -33,7 +33,7 @@ function Line ({
       data={data}
       x={x}
       y={y}
-      curve={curveMonotoneX}
+      curve={curveMonotoneY}
       shapeRendering="geometricPrecision"
       stroke={color}
       strokeWidth={width}

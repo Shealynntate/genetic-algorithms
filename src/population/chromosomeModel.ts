@@ -1,14 +1,17 @@
 import { type Chromosome, type ChromosomeParameters, type Color, type Point } from './types'
 import type MutationModel from './mutationModel'
-import { rand, randomFloat, randomIndex, randomInt } from '../utils/statsUtils'
+import { randomFloat, randomIndex, randomInt } from '../utils/statsUtils'
 import { genRange, setSigFigs } from '../utils/utils'
 import { maxColorValue, statsSigFigs } from '../constants/constants'
 import { clamp } from 'lodash'
+import GaussianNoise from '../utils/gaussianNoise'
 
 /**
  * Chromosome Model
  */
 const Model = {
+  normalDist: new GaussianNoise(0.5, 0.25),
+
   create: ({ numSides }: ChromosomeParameters): Chromosome => {
     const origin = Model.randomPoint()
     const points: Point[] = []
@@ -107,7 +110,10 @@ const Model = {
   // ------------------------------------------------------------
   randCV: (): number => randomInt(0, maxColorValue),
 
-  randomPoint: (): Point => ({ x: rand(), y: rand() }),
+  randomPoint: (): Point => ({
+    x: Model.normalDist.next(),
+    y: Model.normalDist.next()
+  }),
 
   randomColor: (): Color => ({
     r: Model.randCV(),

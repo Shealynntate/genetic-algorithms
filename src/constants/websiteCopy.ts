@@ -192,7 +192,7 @@ export const SimulationGraph = {
   title: 'Fitness vs Generations',
   minCheckbox: 'Min',
   meanCheckbox: 'Mean',
-  deviationCheckbox: 'Deviation'
+  deviationCheckbox: 'σ'
 }
 
 // Type Labels

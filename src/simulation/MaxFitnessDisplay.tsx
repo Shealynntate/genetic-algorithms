@@ -18,9 +18,9 @@ function MaxFitnessDisplay ({ maxFitness }: MaxFitnessDisplayProps): JSX.Element
           position: 'relative'
         }}
       >
-        <CircularProgress variant="determinate" value={fitnessPercent} />
-        <Box sx={{ position: 'absolute', top: 10, left: 5 }}>
-          <Typography variant="caption" sx={{ fontSize: '0.65rem' }}>
+        <CircularProgress variant='determinate' value={fitnessPercent} color='primary' />
+        <Box sx={{ position: 'absolute', top: 'calc(50% - 15px)', left: 5 }}>
+          <Typography variant='caption' sx={{ fontSize: '0.65rem' }}>
             {`${fitnessPercent.toFixed(1)}%`}
           </Typography>
         </Box>

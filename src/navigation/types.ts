@@ -1,3 +1,5 @@
+export type Page = 'gallery' | 'experiment' | 'yourArt'
+
 export type AppState = 'none' | 'running' | 'paused' | 'complete'
 
 export type AlertState = 'error' | 'info' | 'success' | 'warning'

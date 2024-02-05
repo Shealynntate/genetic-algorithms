@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material'
-import { amber, cyan } from '@mui/material/colors'
+import { cyan, purple } from '@mui/material/colors'
 
 // Augment the Theme interface for custom fields
 declare module '@mui/material/Fab' {
@@ -14,7 +14,7 @@ const theme = createTheme({
       main: cyan[500]
     },
     secondary: {
-      main: amber[500]
+      main: purple[500]
     }
   },
   components: {

@@ -11,10 +11,10 @@ class GaussianNoise {
   sigma: number
   noise: () => number
 
-  constructor (sigma: number) {
+  constructor (mean: number, sigma: number) {
     this.baseSigma = sigma
     this.sigma = sigma
-    this.noise = randomNormal(0, sigma)
+    this.noise = randomNormal(mean, sigma)
   }
 
   next (): number {

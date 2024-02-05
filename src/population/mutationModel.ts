@@ -15,8 +15,8 @@ class MutationModel {
   constructor (parameters: Mutation) {
     const { distributions } = parameters
     this.distributions = distributions
-    this.colorDist = new GaussianNoise(distributions.colorSigma)
-    this.pointDist = new GaussianNoise(distributions.pointSigma)
+    this.colorDist = new GaussianNoise(0, distributions.colorSigma)
+    this.pointDist = new GaussianNoise(0, distributions.pointSigma)
     this.genomeSize = parameters.genomeSize
     this.probabilities = parameters.probabilities
   }

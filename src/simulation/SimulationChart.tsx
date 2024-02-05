@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Box, Stack, Typography, useTheme } from '@mui/material'
 import { clamp } from 'lodash'
 import { useSelector } from 'react-redux'
-import { scaleLinear } from '@visx/scale'
+import { scaleLinear, scaleLog } from '@visx/scale'
 import { Grid } from '@visx/grid'
 import { AxisBottom, AxisLeft } from '@visx/axis'
 import { Group } from '@visx/group'
@@ -19,7 +19,7 @@ import { defaultParameters } from '../parameters/config'
 import { localPoint } from '@visx/event'
 
 const { maxGenerations: maxGens } = defaultParameters.stopCriteria
-const graphHeight = 450
+const graphHeight = 350
 const margin = {
   left: 30,
   top: 4,
@@ -49,8 +49,8 @@ function SimulationChart (): JSX.Element {
   const completedSims: SimulationReport[] = useGetCompletedSimulationReports() ?? []
   const currentSim = useGetCurrentSimulationReport()
   // Local state
-  const [domainY, setDomainY] = useState([0, 1])
-  const [domainX, setDomainX] = useState([0, maxGens])
+  const [domainY, setDomainY] = useState([0.5, 1])
+  const [domainX, setDomainX] = useState([1, maxGens])
   const [showMean, setShowMean] = useState(true)
   const [showDeviation, setShowDeviation] = useState(false)
   const [showMin, setShowMin] = useState(false)
@@ -79,7 +79,7 @@ function SimulationChart (): JSX.Element {
   )
 
   const xScale = useMemo(
-    () => scaleLinear({
+    () => scaleLog({
       range: [0, graphWidth],
       domain: domainX
     }),
