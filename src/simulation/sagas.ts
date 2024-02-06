@@ -8,13 +8,12 @@ import {
   take,
   takeEvery,
   type SelectEffect,
-  type SagaReturnType,
   type CallEffect,
   type GetContextEffect,
   type PutEffect,
   type ForkEffect
 } from 'redux-saga/effects'
-import { type SimulationState, type OrganismRecord, type SetSimulationParametersAction, type EndSimulationsAction, type RestoreSimulationAction, type ClearCurrentSimulationAction } from './types'
+import { type SimulationState, type OrganismRecord, type ClearCurrentSimulationAction, type StartSimulationAction } from './types'
 import { minResultsThreshold, saveThresholds } from '../constants/constants'
 import {
   addGifEntry,
@@ -22,28 +21,23 @@ import {
   deleteCurrentSimulation,
   getCurrentImages,
   getCurrentSimulation,
-  setCurrentSimulation,
   updateCurrentSimulation,
-  getNextSimulationToRun,
-  addResultsForCurrentSimulation
+  addResultsForCurrentSimulation,
+  setCurrentSimulation
 } from '../database/api'
 import { approxEqual, setSigFigs } from '../utils/utils'
 import { genomeToPhenotype, createGif } from '../utils/imageUtils'
 import { isRunningSelector } from '../navigation/hooks'
 import { setSimulationParameters } from '../parameters/parametersSlice'
-import { setGlobalBest, updateCurrentGen, clearCurrentSimulation, restorePopulation, setLastThreshold } from './simulationSlice'
+import { setGlobalBest, updateCurrentGen, clearCurrentSimulation, setLastThreshold } from './simulationSlice'
 import {
   deleteRunningSimulation,
   endSimulationEarly,
-  endSimulations,
   removeGraphEntry,
-  resumeSimulations,
-  runSimulations
+  resumeSimulations
 } from '../navigation/navigationSlice'
 import { type RootState } from '../store'
-import { type AppState } from '../navigation/types'
 import populationService, { type PopulationServiceType } from '../population/population-context'
-import { type Simulation } from '../database/types'
 import type PopulationModel from '../population/populationModel'
 import { type GenerationStatsRecord, type GenerationStats } from '../population/types'
 
@@ -53,14 +47,14 @@ function * typedSelect<T> (selector: (state: RootState) => T): Generator<SelectE
   return slice
 }
 
-function * typedCall<Fn extends (...args: any[]) => any> (
-  fn: Fn,
-  ...args: Parameters<Fn>
-): Generator<CallEffect<SagaReturnType<Fn>>, SagaReturnType<Fn>, SagaReturnType<Fn>> {
-  const value: SagaReturnType<typeof fn> = yield call(fn, ...args)
+// function * typedCall<Fn extends (...args: any[]) => any> (
+//   fn: Fn,
+//   ...args: Parameters<Fn>
+// ): Generator<CallEffect<SagaReturnType<Fn>>, SagaReturnType<Fn>, SagaReturnType<Fn>> {
+//   const value: SagaReturnType<typeof fn> = yield call(fn, ...args)
 
-  return value
-}
+//   return value
+// }
 
 function * typedGetContext<T> (key: string): Generator<GetContextEffect, T, T> {
   const value: T = yield getContext(key)
@@ -74,14 +68,14 @@ function * typedGetContext<T> (key: string): Generator<GetContextEffect, T, T> {
 //   return action
 // }
 
-type RunSimulationsSagaReturnType =
-  Generator<SelectEffect
-  | Promise<PopulationModel>
-  | Promise<Simulation | undefined>
-  | Promise<number>
-  | PutEffect<SetSimulationParametersAction>
-  | CallEffect<any>
-  | PutEffect<EndSimulationsAction>, void, any>
+// type RunSimulationsSagaReturnType =
+//   Generator<SelectEffect
+//   | Promise<PopulationModel>
+//   | Promise<Simulation | undefined>
+//   | Promise<number>
+//   | PutEffect<SetSimulationParametersAction>
+//   | CallEffect<any>
+//   | PutEffect<EndSimulationsAction>, void, any>
 
 const createGalleryEntry = async (totalGen: number, globalBest: OrganismRecord): Promise<void> => {
   const simulation = await getCurrentSimulation()
@@ -104,19 +98,6 @@ const createGalleryEntry = async (totalGen: number, globalBest: OrganismRecord):
 
 // Saga Functions
 // --------------------------------------------------
-function * restorePopulationSaga (action: RestoreSimulationAction): Generator<Promise<PopulationModel>, void, unknown> {
-  const simulation = action.payload
-  const { population, parameters } = simulation
-  if (population == null) {
-    throw new Error('[restorePopulationSaga] No population found')
-  }
-  yield populationService.restore(
-    population,
-    parameters.population.minGenomeSize,
-    parameters.population.maxGenomeSize
-  )
-}
-
 function * resetSimulationsSaga (): Generator<GetContextEffect | PutEffect<ClearCurrentSimulationAction>, void, PopulationServiceType> {
   const populationService = yield * typedGetContext<PopulationServiceType>('population')
   yield put(clearCurrentSimulation())
@@ -141,7 +122,24 @@ function * completeSimulationRunSaga (): Generator<SelectEffect | GetContextEffe
   yield call(resetSimulationsSaga)
 }
 
-function * runSimulationSaga (population: PopulationModel): any {
+function * runSimulationSaga (action: StartSimulationAction): any {
+  const { id, parameters } = action.payload
+  populationService.reset()
+  const population: PopulationModel = yield populationService.create({
+    size: parameters.population.size,
+    minGenomeSize: parameters.population.minGenomeSize,
+    maxGenomeSize: parameters.population.maxGenomeSize,
+    minPoints: parameters.population.minPoints,
+    maxPoints: parameters.population.maxPoints,
+    target: parameters.population.target,
+    mutation: parameters.population.mutation,
+    crossover: parameters.population.crossover,
+    selection: parameters.population.selection
+  })
+  yield setCurrentSimulation(id)
+  yield updateCurrentSimulation({ status: 'running', population: population.serialize() })
+  yield put(setSimulationParameters(parameters))
+
   const { stopCriteria } = yield * typedSelect((state) => state.parameters)
   // Run the experiment in a loop until one of the stop criteria is met
   while (true) {
@@ -156,6 +154,8 @@ function * runSimulationSaga (population: PopulationModel): any {
       if (endSim != null) {
         // End the simulation early, saving the run as if it completed normally
         yield call(completeSimulationRunSaga)
+        // yield setCurrentSimulation()
+        // yield put(endSimulations())
         return true
       }
       if (deleteSim != null) {
@@ -213,39 +213,8 @@ function * runSimulationSaga (population: PopulationModel): any {
   }
 }
 
-function * runSimulationsSaga (): RunSimulationsSagaReturnType {
-  while (true) {
-    const next: Simulation | undefined = yield getNextSimulationToRun()
-    if (next == null) break
-
-    populationService.reset()
-    const population: PopulationModel = yield populationService.create({
-      size: next.parameters.population.size,
-      minGenomeSize: next.parameters.population.minGenomeSize,
-      maxGenomeSize: next.parameters.population.maxGenomeSize,
-      minPoints: next.parameters.population.minPoints,
-      maxPoints: next.parameters.population.maxPoints,
-      target: next.parameters.population.target,
-      mutation: next.parameters.population.mutation,
-      crossover: next.parameters.population.crossover,
-      selection: next.parameters.population.selection
-    })
-    yield updateCurrentSimulation({ status: 'running', population: population.serialize() })
-    yield put(setSimulationParameters(next.parameters))
-    // Run the simulation until a stopping condition is met
-    yield * typedCall(runSimulationSaga, population)
-    // Now that the simulation has stopped, check what state we're in
-    const currentState: AppState = yield * typedSelect((state) => state.navigation.simulationState)
-    if (currentState !== 'running') break
-  }
-  // All simulations have completed, signal that the run is over
-  yield setCurrentSimulation()
-  yield put(endSimulations())
-}
-
 function * simulationSaga (): Generator<ForkEffect<never>, void, unknown> {
-  yield takeEvery(runSimulations, runSimulationsSaga)
-  yield takeEvery(restorePopulation, restorePopulationSaga)
+  yield takeEvery('navigation/runSimulation', runSimulationSaga)
 }
 
 // Private Helper Functions

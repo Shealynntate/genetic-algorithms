@@ -6,7 +6,7 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { type NavigationState } from './types'
 import firestoreApi from '../firebase/firestoreApi'
 import { firestore, experimentRecordConverter, storage } from '../firebase/firebase'
-import { type SimulationReport } from '../database/types'
+import { type Simulation, type SimulationReport } from '../database/types'
 import { lineColors } from '../constants/constants'
 import { clearCurrentSimulation } from '../simulation/simulationSlice'
 import { addDoc, collection, doc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
@@ -41,7 +41,7 @@ export const navigationSlice = createSlice({
     setShowCreateSimulationModal: (state, action) => {
       state.showCreateSimulationModal = action.payload
     },
-    runSimulations: (state) => {
+    runSimulation: (state, action: PayloadAction<Simulation>) => {
       state.simulationState = 'running'
     },
     pauseSimulations: (state) => {
@@ -231,7 +231,7 @@ export const {
   openSuccessSnackbar,
   closeErrorSnackbar,
   closeSuccessSnackbar,
-  runSimulations,
+  runSimulation,
   pauseSimulations,
   resumeSimulations,
   endSimulations,

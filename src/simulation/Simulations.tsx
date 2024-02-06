@@ -10,7 +10,6 @@ import { type SimulationStatus } from './types'
 import { insertSimulation } from '../database/api'
 import { useGetAllButCurrentSimulation } from '../database/hooks'
 import SimulationChart from './SimulationChart'
-import SimulationButtons from './SimulationButtons'
 import SimulationEntry from './SimulationEntry'
 import SimulationDetails from './SimulationDetails'
 import SimulationFormDialog from './SimulationFormDialog'
@@ -49,7 +48,6 @@ function Simulations (): JSX.Element {
   const allSimulations = sortSimulations(
     runningSimulation == null ? simulations : [...simulations, runningSimulation]
   )
-  const hasQueuedSimulations = allSimulations.some((s) => s.status === 'pending' || s.status === 'paused' || s.status === 'running')
 
   const idToSimulation = (id: number | null): Simulation | undefined => {
     if (id == null) {
@@ -97,7 +95,7 @@ function Simulations (): JSX.Element {
 
   return (
     <Stack>
-      <Grid2 container mt={1} spacing={1}>
+      <Grid2 container spacing={1}>
         <Grid2 xs={12} md={6}>
           <Box
             sx={{
@@ -107,22 +105,18 @@ function Simulations (): JSX.Element {
               alignItems: 'center'
             }}
           >
-            <Stack direction="row" spacing={1}>
-              <Typography variant="h6">Experiment Runs</Typography>
-              <SimulationButtons runsDisabled={!hasQueuedSimulations} />
-            </Stack>
-            <Tooltip title="Add a new run">
+            <Typography variant='h5' color='GrayText'>Experiments</Typography>
+            <Tooltip title='Add a new run'>
               <Button
                 onClick={onAddSimulation}
-                color="secondary"
-                // size="extrasmall"
+                color='secondary'
                 ref={addButtonRef}
                 sx={{ boxShadow: 'none' }}
                 variant='outlined'
                 size='small'
                 startIcon={<AddIcon />}
               >
-                Run
+                Add
               </Button>
             </Tooltip>
           </Box>
@@ -137,6 +131,7 @@ function Simulations (): JSX.Element {
                 <SimulationEntry
                   key={simulation.id}
                   simulation={simulation}
+                  isActive={runningSimulation?.id === simulation.id}
                   isSelected={selectedSimulation === simulation.id}
                   onDuplicate={onDuplicate}
                   onSelect={onSelect}

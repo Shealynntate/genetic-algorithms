@@ -40,3 +40,8 @@ export interface RestoreSimulationAction {
   payload: Simulation
   type: 'simulation/restorePopulation'
 }
+
+export interface StartSimulationAction {
+  payload: Simulation
+  type: 'simulation/startSimulation'
+}

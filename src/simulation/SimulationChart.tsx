@@ -203,6 +203,7 @@ function SimulationChart (): JSX.Element {
             yScale={yScale}
             width={graphWidth}
             height={graphHeight}
+            numTicksColumns={0}
           />
           {checkedSimulations.map(({ simulation, results }) => (
             <React.Fragment key={`graph-line-${simulation.id}`}>

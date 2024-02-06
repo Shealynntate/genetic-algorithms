@@ -1,10 +1,9 @@
 import React, { type SyntheticEvent, useState, type ChangeEvent } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import {
   Box,
   Button,
   Checkbox,
-  Fab,
   IconButton,
   Paper,
   Stack,
@@ -15,35 +14,32 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import DeleteIcon from '@mui/icons-material/Delete'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
-import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined'
 import { type Simulation } from '../database/types'
 import { addGraphEntry, deleteRunningSimulation, removeGraphEntry } from '../navigation/navigationSlice'
 import { deleteSimulation, renameSimulation } from '../database/api'
-import { isRunningSelector, useGraphColor, useIsGraphEntry } from '../navigation/hooks'
+import { useGraphColor, useIsGraphEntry } from '../navigation/hooks'
 import StatusIcon from './StatusIcon'
 import HoverPopover from '../common/HoverPopover'
 import MaxFitnessDisplay from './MaxFitnessDisplay'
 import RunningSimulationDisplay from './RunningSimulationDisplay'
+import ActionButtons from './ActionButtons'
 
 interface SimulationEntryProps {
   simulation: Simulation
+  isActive?: boolean
   isSelected?: boolean
   onDuplicate?: (event: SyntheticEvent, id: number) => void
   onSelect?: (id: number | null) => void
-  onRunSimulation?: (id: number) => void
-  onPauseSimulation?: (id: number) => void
 }
 
 function SimulationEntry ({
   simulation,
   onDuplicate = (event: SyntheticEvent, id: number) => {},
   onSelect = (id: number | null) => {},
-  onRunSimulation,
-  onPauseSimulation,
+  isActive = false,
   isSelected = false
 }: SimulationEntryProps): JSX.Element {
-  const isAppRunning = useSelector(isRunningSelector)
+  // const isAppRunning = useSelector(isRunningSelector)
   const { id, createdOn, name, status, population } = simulation
   const maxFitness = population?.best?.organism?.fitness ?? 0
   const gen = population?.genId ?? 0
@@ -106,7 +102,7 @@ function SimulationEntry ({
       }}
       onClick={() => { onSelect(id) }}
     >
-      <Stack direction="row" sx={{ position: 'relative' }} spacing={1}>
+      <Stack direction="row" sx={{ position: 'relative', py: isPending ? 2 : 0 }} spacing={1}>
         <Box>
           <Checkbox
             checked={isChecked}
@@ -145,28 +141,12 @@ function SimulationEntry ({
           </Box>
           {isRunning && <RunningSimulationDisplay simulation={simulation} />}
         </Stack>
-        {!isPending && <MaxFitnessDisplay maxFitness={maxFitness} />}
-        {isPending && (
-            <Fab
-              size='extrasmall'
-              color='primary'
-              onClick={() => { onRunSimulation?.(id) }}
-              sx={{ boxShadow: 'none' }}
-              disabled={isAppRunning}
-            >
-              <PlayArrowIcon fontSize='small' />
-            </Fab>
-        )}
-        {isRunning && (
-          <Fab
-            onClick={() => { onPauseSimulation?.(id) }}
-            size='extrasmall'
-            color='primary'
-            sx={{ boxShadow: 'none' }}
-          >
-            <PauseOutlinedIcon fontSize='small' />
-          </Fab>
-        )}
+        <ActionButtons
+          isActive={isActive}
+          simulation={simulation}
+          sx={{ position: 'absolute', top: 1, right: 10 }}
+        />
+        <MaxFitnessDisplay maxFitness={maxFitness} />
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
             size="small"
