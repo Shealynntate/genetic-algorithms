@@ -1,5 +1,5 @@
 import React, { type SyntheticEvent, useState, type ChangeEvent } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   Box,
   Button,
@@ -24,6 +24,7 @@ import MaxFitnessDisplay from './MaxFitnessDisplay'
 import RunningSimulationDisplay from './RunningSimulationDisplay'
 import ActionButtons from './ActionButtons'
 import SimulationSummary from './SimulationSummary'
+import { type RootState } from '../store'
 
 interface SimulationEntryProps {
   simulation: Simulation
@@ -38,12 +39,12 @@ function SimulationEntry ({
   onSelect = (id: number | null) => {},
   isActive = false
 }: SimulationEntryProps): JSX.Element {
-  // const isAppRunning = useSelector(isRunningSelector)
   const { id, createdOn, name, status, population } = simulation
   const maxFitness = population?.best?.organism?.fitness ?? 0
   const gen = population?.genId ?? 0
   const theme = useTheme()
   const dispatch = useDispatch()
+  const currentGenStats = useSelector((state: RootState) => state.simulation.currentGenStats)
   const [nameValue, setNameValue] = useState(name)
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
   const isChecked = useIsGraphEntry(id as number)
@@ -131,6 +132,28 @@ function SimulationEntry ({
             >
               {id}
             </Typography>
+            {isActive && (
+              <Stack direction='row' spacing={1.5}>
+                <Typography
+                  color='GrayText'
+                  sx={{ fontSize: '0.7rem' }}
+                  >
+                    {`Max ${currentGenStats?.stats.maxFitness.toFixed(3) ?? 0}`}
+                </Typography>
+                <Typography
+                  color='GrayText'
+                  sx={{ fontSize: '0.7rem' }}
+                >
+                  {`Mean ${currentGenStats?.stats.meanFitness.toFixed(3) ?? 0}`}
+                </Typography>
+                <Typography
+                  color='GrayText'
+                  sx={{ fontSize: '0.7rem' }}
+                >
+                  {`Min ${currentGenStats?.stats.minFitness.toFixed(3) ?? 0}`}
+                </Typography>
+              </Stack>
+            )}
             <Typography
               color='GrayText'
               sx={{ fontSize: '0.7rem' }}
