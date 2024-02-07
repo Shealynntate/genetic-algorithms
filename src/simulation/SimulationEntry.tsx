@@ -23,11 +23,11 @@ import HoverPopover from '../common/HoverPopover'
 import MaxFitnessDisplay from './MaxFitnessDisplay'
 import RunningSimulationDisplay from './RunningSimulationDisplay'
 import ActionButtons from './ActionButtons'
+import SimulationSummary from './SimulationSummary'
 
 interface SimulationEntryProps {
   simulation: Simulation
   isActive?: boolean
-  isSelected?: boolean
   onDuplicate?: (event: SyntheticEvent, id: number) => void
   onSelect?: (id: number | null) => void
 }
@@ -36,8 +36,7 @@ function SimulationEntry ({
   simulation,
   onDuplicate = (event: SyntheticEvent, id: number) => {},
   onSelect = (id: number | null) => {},
-  isActive = false,
-  isSelected = false
+  isActive = false
 }: SimulationEntryProps): JSX.Element {
   // const isAppRunning = useSelector(isRunningSelector)
   const { id, createdOn, name, status, population } = simulation
@@ -98,11 +97,11 @@ function SimulationEntry ({
       sx={{
         py: 1,
         px: 0,
-        border: isSelected ? `1px solid ${theme.palette.primary.main}` : null
+        border: isActive ? `1px solid ${theme.palette.primary.main}` : null
       }}
       onClick={() => { onSelect(id) }}
     >
-      <Stack direction="row" sx={{ position: 'relative', py: isPending ? 2 : 0 }} spacing={1}>
+      <Stack direction='row' sx={{ position: 'relative', py: isPending ? 2 : 0 }} spacing={1}>
         <Box>
           <Checkbox
             checked={isChecked}
@@ -121,19 +120,19 @@ function SimulationEntry ({
           <TextField
             value={nameValue}
             onChange={onChangeName}
-            variant="standard"
-            size="small"
+            variant='standard'
+            size='small'
           />
           <StatusIcon status={status} sx={{ position: 'absolute', top: 0, right: 0 }} />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: '0.25rem' }}>
             <Typography
-              color="GrayText"
+              color='GrayText'
               sx={{ fontSize: '0.7rem' }}
             >
               {id}
             </Typography>
             <Typography
-              color="GrayText"
+              color='GrayText'
               sx={{ fontSize: '0.7rem' }}
             >
               {`${gen.toLocaleString()} gen`}
@@ -149,10 +148,10 @@ function SimulationEntry ({
         <MaxFitnessDisplay maxFitness={maxFitness} />
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
-            size="small"
+            size='small'
             onMouseEnter={onMenuOpen}
           >
-            <MoreVertIcon fontSize="inherit" />
+            <MoreVertIcon fontSize='inherit' />
           </IconButton>
         </Box>
         <HoverPopover
@@ -170,29 +169,34 @@ function SimulationEntry ({
         >
           <Stack p={0}>
             <Typography
-              color="GrayText"
-              sx={{ fontSize: '0.7rem' }}
+              color='GrayText'
+              sx={{ fontSize: '0.7rem', textAlign: 'right' }}
             >
               {date.toLocaleString()}
             </Typography>
-            <Button
-              onClick={(event) => { onDuplicate(event, id) }}
-              startIcon={<ContentCopyIcon />}
-              size="small"
-              color="inherit"
-              sx={{ justifyContent: 'flex-start' }}
-            >
-              Duplicate
-            </Button>
-            <Button
-              onClick={onDelete}
-              startIcon={<DeleteIcon />}
-              size="small"
-              color="error"
-              sx={{ justifyContent: 'flex-start' }}
-            >
-              Delete
-            </Button>
+            <Stack direction='row' spacing={2} mb={1}>
+              <Button
+                onClick={(event) => { onDuplicate(event, id) }}
+                startIcon={<ContentCopyIcon fontSize='small' />}
+                size='small'
+                color='inherit'
+                variant='outlined'
+                sx={{ justifyContent: 'flex-start' }}
+              >
+                Copy
+              </Button>
+              <Button
+                onClick={onDelete}
+                startIcon={<DeleteIcon fontSize='small' />}
+                size='small'
+                color='error'
+                variant='outlined'
+                sx={{ justifyContent: 'flex-start' }}
+              >
+                Delete
+              </Button>
+            </Stack>
+            <SimulationSummary simulation={simulation} />
           </Stack>
         </HoverPopover>
       </Stack>

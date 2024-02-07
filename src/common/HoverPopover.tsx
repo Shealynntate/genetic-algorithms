@@ -53,7 +53,7 @@ function HoverPopover ({
       anchorOrigin={anchorOrigin}
       transformOrigin={transformOrigin}
     >
-      <Box sx={{ p: 1 }} ref={ref}>
+      <Box sx={{ p: 0 }} ref={ref}>
         {children}
       </Box>
     </Popover>

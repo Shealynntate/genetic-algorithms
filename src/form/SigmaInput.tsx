@@ -4,7 +4,7 @@ import { type Control, Controller, type Path, type FieldValues } from 'react-hoo
 
 interface SigmaInputProps<T extends FieldValues> extends InputProps {
   name: Path<T>
-  control: Control<T>
+  control?: Control<T>
   text: string
   tooltip?: string
   Icon?: React.ComponentType

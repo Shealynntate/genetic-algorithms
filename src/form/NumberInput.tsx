@@ -17,15 +17,15 @@ interface NumberInputProps<
   TPath extends FieldPathByValue<TFieldValues, number>
 > extends InputProps {
   name: TPath
-  control: Control<TFieldValues, number>
-  readOnly: boolean
+  control?: Control<TFieldValues, number>
+  readOnly?: boolean
   text: string
   tooltip?: string
   min?: number
   max?: number
   step?: number
   validate?: Validate<PathValue<TFieldValues, TPath>, TFieldValues>
-  errors: FieldErrors<TFieldValues>
+  errors?: FieldErrors<TFieldValues>
 }
 
 function NumberInput<

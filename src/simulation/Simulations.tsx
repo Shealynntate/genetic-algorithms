@@ -11,7 +11,6 @@ import { insertSimulation } from '../database/api'
 import { useGetAllButCurrentSimulation } from '../database/hooks'
 import SimulationChart from './SimulationChart'
 import SimulationEntry from './SimulationEntry'
-import SimulationDetails from './SimulationDetails'
 import SimulationFormDialog from './SimulationFormDialog'
 import { defaultParameters } from '../parameters/config'
 import { useCreateRunningSimulation } from './hooks'
@@ -42,7 +41,6 @@ function Simulations (): JSX.Element {
   const runningSimulation = useCreateRunningSimulation()
   const simulations = useGetAllButCurrentSimulation() ?? []
   const showCreateModal = useSelector((state: RootState) => state.navigation.showCreateSimulationModal)
-  const [selectedSimulation, setSelectedSimulation] = useState<number | null>(null)
   const [openForm, setOpenForm] = useState(false)
 
   const allSimulations = sortSimulations(
@@ -75,10 +73,6 @@ function Simulations (): JSX.Element {
     }
     // Reset the form data for the next time the form is opened
     formData.current = defaultParameters
-  }
-
-  const onSelect = (id: number | null): void => {
-    setSelectedSimulation(id)
   }
 
   const onDuplicate = (event: SyntheticEvent, id: number): void => {
@@ -132,9 +126,7 @@ function Simulations (): JSX.Element {
                   key={simulation.id}
                   simulation={simulation}
                   isActive={runningSimulation?.id === simulation.id}
-                  isSelected={selectedSimulation === simulation.id}
                   onDuplicate={onDuplicate}
-                  onSelect={onSelect}
                 />
               ))}
             </Stack>
@@ -144,7 +136,6 @@ function Simulations (): JSX.Element {
           <Paper sx={{ mt: 5 }}>
             <SimulationChart />
           </Paper>
-          <SimulationDetails simulation={idToSimulation(selectedSimulation)} />
         </Grid2>
       </Grid2>
       <SimulationFormDialog
