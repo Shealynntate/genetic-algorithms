@@ -9,6 +9,7 @@ import { GIF_FILE, TARGET_IMAGE_FILE, firebaseConfig } from './config'
 
 // Initialize Firebase and its services
 // ------------------------------------------------------------
+console.log(firebaseConfig)
 export const firebase = initializeApp(firebaseConfig)
 export const firebaseAnalytics = getAnalytics(firebase)
 export const firestore = getFirestore(firebase)
