@@ -63,7 +63,6 @@ function SimulationForm ({
   return (
     <form onSubmit={localOnSubmit}>
       <Grid2 container>
-
         <Grid2 xs={6} md={4} pr={5}>
           <Typography color='primary' variant='h5' mb={1}>Population</Typography>
           <Tooltip title='Drag n drop a new target image here'>
@@ -139,7 +138,6 @@ function SimulationForm ({
             />
           </Box>
         </Grid2>
-
         <Grid2 xs={12} md={4}>
           <Typography color='primary' variant='h5' mb={1}>Mutation</Typography>
           <Typography variant='h6' color='GrayText'>Probabilities</Typography>
@@ -175,7 +173,6 @@ function SimulationForm ({
             tooltip='How far a point (x,y) can get nudged'
           />
         </Grid2>
-
         <Grid2 xs={6} md={4} pl={5}>
             <Typography color='primary' variant='h5' mb={2}>Selection</Typography>
             <FormControl fullWidth size='small'>
@@ -261,7 +258,6 @@ function SimulationForm ({
             text='Max Gens'
           />
         </Grid2>
-
       </Grid2>
       {!readOnly && (
         <Box sx={{ mt: 1, textAlign: 'right' }}>

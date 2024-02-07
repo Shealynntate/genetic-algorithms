@@ -6,6 +6,7 @@ import {
   Checkbox,
   IconButton,
   Paper,
+  Popover,
   Stack,
   TextField,
   Typography,
@@ -19,7 +20,6 @@ import { addGraphEntry, deleteRunningSimulation, removeGraphEntry } from '../nav
 import { deleteSimulation, renameSimulation } from '../database/api'
 import { useGraphColor, useIsGraphEntry } from '../navigation/hooks'
 import StatusIcon from './StatusIcon'
-import HoverPopover from '../common/HoverPopover'
 import MaxFitnessDisplay from './MaxFitnessDisplay'
 import RunningSimulationDisplay from './RunningSimulationDisplay'
 import ActionButtons from './ActionButtons'
@@ -149,12 +149,12 @@ function SimulationEntry ({
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton
             size='small'
-            onMouseEnter={onMenuOpen}
+            onClick={onMenuOpen}
           >
             <MoreVertIcon fontSize='inherit' />
           </IconButton>
         </Box>
-        <HoverPopover
+        <Popover
           open={openMenu}
           anchorEl={anchorEl}
           onClose={onMenuClose}
@@ -198,7 +198,7 @@ function SimulationEntry ({
             </Stack>
             <SimulationSummary simulation={simulation} />
           </Stack>
-        </HoverPopover>
+        </Popover>
       </Stack>
     </Paper>
   )

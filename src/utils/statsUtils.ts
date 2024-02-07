@@ -46,3 +46,11 @@ export const randomIndex = (length: number): number => (Math.trunc(Math.random()
  * @returns the result of flipping the coin - true or false
  */
 export const flipCoin = (bias: number = 0.5): boolean => (Math.random() <= bias)
+
+/**
+ * Converts a fractional number to a percentage string
+ * @param value the value to convert to a percentage, should be between 0 and 1
+ * @param sigFigs the number of significant figures to display
+ * @returns a string representation of the percentage
+ */
+export const toPercent = (value: number, sigFigs: number = 1): string => `${setSigFigs(value * 100, sigFigs)}%`
