@@ -37,7 +37,6 @@
     "dexie": "^3.2.2",
     "dexie-react-hooks": "^1.1.1",
     "firebase": "^10.7.2",
-    "firebase-tools": "^13.2.1",
     "gifshot": "^0.4.5",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
