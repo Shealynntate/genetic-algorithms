@@ -9,7 +9,7 @@ import { firestore, experimentRecordConverter, storage } from '../firebase/fireb
 import { type Simulation, type SimulationReport } from '../database/types'
 import { lineColors } from '../constants/constants'
 import { clearCurrentSimulation } from '../simulation/simulationSlice'
-import { addDoc, collection, doc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { NavTag } from '../common/types'
 import { type GenerationStatsRecord } from '../population/types'
 import { type ExperimentRecord } from '../firebase/types'
@@ -218,6 +218,23 @@ export const navigationApi = firestoreApi.injectEndpoints({
       providesTags: (result) => (result != null)
         ? [{ type: NavTag.SIMULATION_REPORTS, id: 'LIST' }]
         : [{ type: NavTag.SIMULATION_REPORTS, id: 'LIST' }]
+    }),
+    deleteExperiment: builder.mutation<void, string>({
+      async queryFn (id: string) {
+        try {
+          const ref = doc(firestore, 'experiments', id)
+          if (ref == null) {
+            throw new Error('[deleteExperiment] ref is null')
+          }
+          await deleteDoc(ref)
+          return { data: undefined }
+        } catch (error: any) {
+          console.error(error)
+
+          return { error: error.message }
+        }
+      },
+      invalidatesTags: [NavTag.SIMULATION_REPORTS]
     })
   })
 })
@@ -261,7 +278,8 @@ export const selectSuccessSnackbarMessage =
 
 export const {
   useUploadExperimentReportMutation,
-  useFetchAllExperimentsQuery
+  useFetchAllExperimentsQuery,
+  useDeleteExperimentMutation
 } = navigationApi
 
 export default navigationSlice.reducer

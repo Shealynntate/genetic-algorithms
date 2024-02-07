@@ -19,7 +19,7 @@ function Gallery (): JSX.Element {
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
         {entries.map((entry) => (
-          <GalleryEntry key={entry.id} data={entry} readOnly />
+          <GalleryEntry key={entry.id} data={entry} />
         ))}
         {/* <GalleryEntry data={monaLisa} readOnly />
         <GalleryEntry data={drawingHands} readOnly />

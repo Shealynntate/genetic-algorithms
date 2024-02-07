@@ -1,21 +1,26 @@
 import React, { useState } from 'react'
 import { Box, IconButton, Paper, Stack, Typography, Tooltip, Skeleton, Fade } from '@mui/material'
 import DownloadIcon from '@mui/icons-material/Download'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { download } from '../utils/fileUtils'
 import { canvasParameters } from '../constants/constants'
 import OrganismCanvas from '../canvas/OrganismCanvas'
 import { type ExperimentRecord } from '../firebase/types'
 import { toPercent } from '../utils/statsUtils'
+import { useDispatch, useSelector } from 'react-redux'
+import { openErrorSnackbar, openSuccessSnackbar, selectIsAuthenticated, useDeleteExperimentMutation } from '../navigation/navigationSlice'
 
 interface GallerEntryProps {
   data: ExperimentRecord
-  readOnly?: boolean
 }
 
-function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Element {
+function GalleryEntry ({ data }: GallerEntryProps): JSX.Element {
   const [targetLoaded, setTargetLoaded] = useState(false)
   const [gifLoaded, setGifLoaded] = useState(false)
   const [hover, setHover] = useState(false)
+  const isAdmin = useSelector(selectIsAuthenticated)
+  const [deleteExperiment] = useDeleteExperimentMutation()
+  const dispatch = useDispatch()
   const width = canvasParameters.width / 2
   const height = canvasParameters.height / 2
   const { results, gif, parameters, simulationName } = data
@@ -29,6 +34,21 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
       return
     }
     download(simulationName, gif)
+  }
+
+  const onDelete = (): void => {
+    if (data.id == null) {
+      console.error('[onDelete] Cannot delete experiment with null id')
+      return
+    }
+    deleteExperiment(data.id)
+      .then(() => {
+        dispatch(openSuccessSnackbar('Experiment deleted'))
+      })
+      .catch((e) => {
+        dispatch(openErrorSnackbar(`Error encountered while deleting experiment ${e}`))
+        console.error('[onDelete] Failed to delete experiment')
+      })
   }
 
   return (
@@ -101,6 +121,11 @@ function GalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Elemen
                   <DownloadIcon />
                 </IconButton>
               </Tooltip>
+              {isAdmin && (
+                <IconButton onClick={onDelete} color='error'>
+                  <DeleteIcon />
+                </IconButton>
+              )}
             </Box>
           </Fade>
         </Stack>
