@@ -11,7 +11,8 @@ import { canvasParameters } from '../constants/constants'
 import OrganismCanvas from '../canvas/OrganismCanvas'
 import TargetCanvas from '../canvas/TargetCanvas'
 import { type SimulationReport } from '../database/types'
-import { useUploadExperimentReportMutation } from '../navigation/navigationSlice'
+import { selectIsAuthenticated, useUploadExperimentReportMutation } from '../navigation/navigationSlice'
+import { useSelector } from 'react-redux'
 
 interface GallerEntryProps {
   data: SimulationReport
@@ -19,16 +20,15 @@ interface GallerEntryProps {
 }
 
 function LocalGalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Element {
-  const width = canvasParameters.width / 2
-  const height = canvasParameters.height / 2
-  const [uploadSimulation] = useUploadExperimentReportMutation()
   const { results, simulation, gif } = data
   const { id, parameters, name } = simulation
+  const [uploadSimulation] = useUploadExperimentReportMutation()
+  const isAdmin = useSelector(selectIsAuthenticated)
+  const width = canvasParameters.width / 2
+  const height = canvasParameters.height / 2
+  const [entryName, setEntryName] = useState(name)
   const bestOrganism = results[results.length - 1].stats.maxFitOrganism
   const totalGen = results[results.length - 1].stats.gen
-
-  const [entryName, setEntryName] = useState(name)
-  const isDevelopment = process.env.NODE_ENV === 'development'
 
   const onDelete = (): void => {
     if (id == null) {
@@ -39,7 +39,7 @@ function LocalGalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.E
   }
 
   const onUpload = (): void => {
-    if (!isDevelopment) {
+    if (!isAdmin) {
       console.warn('[onUpload] Cannot upload in production')
       return
     }
