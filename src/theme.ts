@@ -8,6 +8,12 @@ declare module '@mui/material/Fab' {
   }
 }
 
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    lightCaption: true
+  }
+}
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -64,7 +70,14 @@ const theme = createTheme({
         root: {
           fontFamily: '"Montserrat", Helvetica, Arial, sans-serif'
         }
-      }
+      },
+      variants: [{
+        props: { variant: 'lightCaption' },
+        style: {
+          fontSize: '0.7rem',
+          color: 'GrayText'
+        }
+      }]
     }
   }
 })

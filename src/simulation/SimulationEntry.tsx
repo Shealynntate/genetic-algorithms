@@ -25,6 +25,7 @@ import RunningSimulationDisplay from './RunningSimulationDisplay'
 import ActionButtons from './ActionButtons'
 import SimulationSummary from './SimulationSummary'
 import { type RootState } from '../store'
+import StatText from './StatText'
 
 interface SimulationEntryProps {
   simulation: Simulation
@@ -134,29 +135,14 @@ function SimulationEntry ({
             </Typography>
             {isActive && (
               <Stack direction='row' spacing={1.5}>
-                <Typography
-                  color='GrayText'
-                  sx={{ fontSize: '0.7rem' }}
-                  >
-                    {`Max ${currentGenStats?.stats.maxFitness.toFixed(3) ?? 0}`}
-                </Typography>
-                <Typography
-                  color='GrayText'
-                  sx={{ fontSize: '0.7rem' }}
-                >
-                  {`Mean ${currentGenStats?.stats.meanFitness.toFixed(3) ?? 0}`}
-                </Typography>
-                <Typography
-                  color='GrayText'
-                  sx={{ fontSize: '0.7rem' }}
-                >
-                  {`Min ${currentGenStats?.stats.minFitness.toFixed(3) ?? 0}`}
-                </Typography>
+                <StatText text='Max' value={currentGenStats?.stats.maxFitness ?? 0} />
+                <StatText text='Mean' value={currentGenStats?.stats.meanFitness ?? 0} />
+                <StatText text='Min' value={currentGenStats?.stats.minFitness ?? 0} />
               </Stack>
             )}
             <Typography
-              color='GrayText'
-              sx={{ fontSize: '0.7rem' }}
+              variant='lightCaption'
+              fontFamily='Oxygen Mono, monospace'
             >
               {`${gen.toLocaleString()} gen`}
             </Typography>

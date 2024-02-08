@@ -1,6 +1,6 @@
 import React, { type ChangeEvent, useState } from 'react'
 import {
-  Box, IconButton, Paper, Stack, TextField, Typography, Tooltip
+  Box, IconButton, Paper, Stack, TextField, Typography, Tooltip, Fade
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -11,8 +11,8 @@ import { canvasParameters } from '../constants/constants'
 import OrganismCanvas from '../canvas/OrganismCanvas'
 import TargetCanvas from '../canvas/TargetCanvas'
 import { type SimulationReport } from '../database/types'
-import { selectIsAuthenticated, useUploadExperimentReportMutation } from '../navigation/navigationSlice'
-import { useSelector } from 'react-redux'
+import { openErrorSnackbar, openSuccessSnackbar, selectIsAuthenticated, useUploadExperimentReportMutation } from '../navigation/navigationSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
 interface GallerEntryProps {
   data: SimulationReport
@@ -22,8 +22,10 @@ interface GallerEntryProps {
 function LocalGalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Element {
   const { results, simulation, gif } = data
   const { id, parameters, name } = simulation
-  const [uploadSimulation] = useUploadExperimentReportMutation()
+  const [uploadExperiment] = useUploadExperimentReportMutation()
   const isAdmin = useSelector(selectIsAuthenticated)
+  const [hover, setHover] = useState(false)
+  const dispatch = useDispatch()
   const width = canvasParameters.width / 2
   const height = canvasParameters.height / 2
   const [entryName, setEntryName] = useState(name)
@@ -44,7 +46,17 @@ function LocalGalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.E
       return
     }
 
-    uploadSimulation(data).catch(console.error)
+    uploadExperiment(data)
+      .then((result: { data: string } | { error: unknown }): void => {
+        if ('data' in result) {
+          dispatch(openSuccessSnackbar(`Experiment uploaded with id: ${result.data}`))
+        } else if ('error' in result) {
+          dispatch(openErrorSnackbar(`Failed to upload experiment ${result.error as string}`))
+        }
+      })
+      .catch((e) => {
+        dispatch(openErrorSnackbar(`Failed to upload experiment ${e}`))
+      })
   }
 
   const onDownload = (): void => {
@@ -69,7 +81,11 @@ function LocalGalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.E
   }
 
   return (
-    <Box sx={{ display: 'inline-block', m: 1 }}>
+    <Box
+      onMouseEnter={(): void => { setHover(true) }}
+      onMouseLeave={(): void => { setHover(false) }}
+      sx={{ display: 'inline-block', m: 1 }}
+    >
       <Stack direction='row' spacing={1}>
         <Stack spacing={1}>
           <Tooltip title='final result'>
@@ -104,27 +120,26 @@ function LocalGalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.E
               onChange={onChangeName}
               variant='standard'
               sx={{ pb: 1 }}
-              disabled={readOnly}
             />
             <Typography variant='body2'>{`Top score: ${bestOrganism.fitness.toFixed(3)}`}</Typography>
             <Typography variant='body2'>{`Number of △: ${bestOrganism.genome.chromosomes.length}`}</Typography>
             <Typography variant='body2'>{`Generations: ${totalGen.toLocaleString()}`}</Typography>
           </Stack>
-          <Stack direction='row' sx={{ alignItems: 'end' }}>
-            <IconButton onClick={onDownload}>
-              <DownloadIcon />
-            </IconButton>
-            {!readOnly && (
-              <Box>
+          <Fade in={hover}>
+            <Stack direction='row' sx={{ alignItems: 'end' }}>
+              <IconButton onClick={onDownload} color='primary'>
+                <DownloadIcon />
+              </IconButton>
+              <IconButton color='error' onClick={onDelete}>
+                <DeleteIcon />
+              </IconButton>
+              {isAdmin && (
                 <IconButton onClick={onUpload}>
                   <CloudUploadIcon />
                 </IconButton>
-                <IconButton color='error' onClick={onDelete}>
-                  <DeleteIcon />
-                </IconButton>
-              </Box>
-            )}
-          </Stack>
+              )}
+            </Stack>
+          </Fade>
         </Stack>
       </Paper>
     </Box>
