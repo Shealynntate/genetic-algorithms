@@ -16,10 +16,9 @@ import { useDispatch, useSelector } from 'react-redux'
 
 interface GallerEntryProps {
   data: SimulationReport
-  readOnly?: boolean
 }
 
-function LocalGalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.Element {
+function LocalGalleryEntry ({ data }: GallerEntryProps): JSX.Element {
   const { results, simulation, gif } = data
   const { id, parameters, name } = simulation
   const [uploadExperiment] = useUploadExperimentReportMutation()
@@ -81,13 +80,14 @@ function LocalGalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.E
   }
 
   return (
-    <Box
+    <Paper
+      elevation={1}
       onMouseEnter={(): void => { setHover(true) }}
       onMouseLeave={(): void => { setHover(false) }}
-      sx={{ display: 'inline-block', m: 1 }}
+      sx={{ display: 'inline-block', m: 1, p: 0 }}
     >
-      <Stack direction='row' spacing={1}>
-        <Stack spacing={1}>
+      <Stack direction='row'>
+        <Stack>
           <Tooltip title='final result'>
             <Box sx={{ m: 0, p: 0, lineHeight: 0 }}>
               <OrganismCanvas organism={bestOrganism} width={width} height={height} />
@@ -103,10 +103,9 @@ function LocalGalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.E
           <img src={gif} alt={`${name} gif`} />
         </Tooltip>
       </Stack>
-      <Paper elevation={0} sx={{ position: 'relative', pt: 0, px: 0 }}>
+      <Paper elevation={0} sx={{ position: 'relative', pt: 0, px: 1 }}>
         <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
           <Stack>
-            {!readOnly && (
               <Typography
                 color='GrayText'
                 fontSize='small'
@@ -114,7 +113,6 @@ function LocalGalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.E
               >
                 {id}
               </Typography>
-            )}
             <TextField
               value={entryName}
               onChange={onChangeName}
@@ -142,7 +140,7 @@ function LocalGalleryEntry ({ data, readOnly = false }: GallerEntryProps): JSX.E
           </Fade>
         </Stack>
       </Paper>
-    </Box>
+    </Paper>
   )
 }
 

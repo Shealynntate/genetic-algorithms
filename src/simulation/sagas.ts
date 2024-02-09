@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   call,
   delay,
@@ -8,12 +9,11 @@ import {
   take,
   takeEvery,
   type SelectEffect,
-  type CallEffect,
+  // type CallEffect,
   type GetContextEffect,
-  type PutEffect,
   type ForkEffect
 } from 'redux-saga/effects'
-import { type SimulationState, type OrganismRecord, type ClearCurrentSimulationAction, type StartSimulationAction } from './types'
+import { type SimulationState, type OrganismRecord, type StartSimulationAction } from './types'
 import { minResultsThreshold, saveThresholds } from '../constants/constants'
 import {
   addGifEntry,
@@ -33,6 +33,7 @@ import { setGlobalBest, updateCurrentGen, clearCurrentSimulation, setLastThresho
 import {
   deleteRunningSimulation,
   endSimulationEarly,
+  endSimulations,
   removeGraphEntry,
   resumeSimulations
 } from '../navigation/navigationSlice'
@@ -40,6 +41,7 @@ import { type RootState } from '../store'
 import populationService, { type PopulationServiceType } from '../population/population-context'
 import type PopulationModel from '../population/populationModel'
 import { type GenerationStatsRecord, type GenerationStats } from '../population/types'
+// import { type Simulation } from '../database/types'
 
 function * typedSelect<T> (selector: (state: RootState) => T): Generator<SelectEffect, T, T> {
   const slice: T = yield select(selector)
@@ -96,15 +98,18 @@ const createGalleryEntry = async (totalGen: number, globalBest: OrganismRecord):
   await addGifEntry(id, gif)
 }
 
+// Generator<GetContextEffect | PutEffect<ClearCurrentSimulationAction>, void, PopulationServiceType> | Promise<Simulation | undefined>
 // Saga Functions
 // --------------------------------------------------
-function * resetSimulationsSaga (): Generator<GetContextEffect | PutEffect<ClearCurrentSimulationAction>, void, PopulationServiceType> {
+function * resetSimulationsSaga (): any {
   const populationService = yield * typedGetContext<PopulationServiceType>('population')
   yield put(clearCurrentSimulation())
+  yield setCurrentSimulation()
+  yield put(endSimulations())
   populationService.reset()
 }
 
-function * completeSimulationRunSaga (): Generator<SelectEffect | GetContextEffect | Promise<number> | Promise<void> | CallEffect<void>, void, SimulationState & PopulationServiceType> {
+function * completeSimulationRunSaga (): any { // } Generator<SelectEffect | GetContextEffect | Promise<number> | Promise<void> | CallEffect<void>, void, SimulationState & PopulationServiceType> {
   const { globalBest, currentBest } = yield * typedSelect((state) => state.simulation)
   const populationService = yield * typedGetContext<PopulationServiceType>('population')
   const population = populationService.getPopulation()
@@ -154,8 +159,6 @@ function * runSimulationSaga (action: StartSimulationAction): any {
       if (endSim != null) {
         // End the simulation early, saving the run as if it completed normally
         yield call(completeSimulationRunSaga)
-        // yield setCurrentSimulation()
-        // yield put(endSimulations())
         return true
       }
       if (deleteSim != null) {
