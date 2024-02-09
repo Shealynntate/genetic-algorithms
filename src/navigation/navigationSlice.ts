@@ -18,8 +18,6 @@ import { GIF_FILE, TARGET_IMAGE_FILE } from '../firebase/config'
 
 const initialState: NavigationState = {
   simulationState: 'none',
-  // Show the create simulation tooltip when the app is first loaded
-  showCreateSimulationModal: true,
   // Map of simulation id to color value for the graph
   simulationGraphColors: {},
   // Map of simulation id to color index, for internal bookkeeping
@@ -37,9 +35,6 @@ export const navigationSlice = createSlice({
   reducers: {
     setAppState: (state, action) => {
       state.simulationState = action.payload
-    },
-    setShowCreateSimulationModal: (state, action) => {
-      state.showCreateSimulationModal = action.payload
     },
     runSimulation: (state, action: PayloadAction<Simulation>) => {
       state.simulationState = 'running'
@@ -255,8 +250,7 @@ export const {
   endSimulationEarly,
   deleteRunningSimulation,
   addGraphEntry,
-  removeGraphEntry,
-  setShowCreateSimulationModal
+  removeGraphEntry
 } = navigationSlice.actions
 
 // Selectors

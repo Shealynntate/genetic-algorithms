@@ -3,7 +3,6 @@ import { Box, Button, Paper, Stack, Tooltip, Typography, useTheme } from '@mui/m
 import AddIcon from '@mui/icons-material/Add'
 import _ from 'lodash'
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
-import { type RootState } from '../store'
 import { type Simulation } from '../database/types'
 import { type ParametersState } from '../parameters/types'
 import { type SimulationStatus } from './types'
@@ -14,9 +13,6 @@ import SimulationEntry from './SimulationEntry'
 import SimulationFormDialog from './SimulationFormDialog'
 import { defaultParameters } from '../parameters/config'
 import { useCreateRunningSimulation } from './hooks'
-import CreatePopover from './CreatePopover'
-import { useDispatch, useSelector } from 'react-redux'
-import { setShowCreateSimulationModal } from '../navigation/navigationSlice'
 
 const statusToOrder: Record<SimulationStatus, number> = {
   running: 0,
@@ -35,12 +31,10 @@ const sortSimulations = (simulations: Simulation[]): Simulation[] => {
 
 function Simulations (): JSX.Element {
   const theme = useTheme()
-  const dispatch = useDispatch()
   const formData = useRef<ParametersState>(defaultParameters)
   const addButtonRef = useRef<HTMLButtonElement | null>(null)
   const runningSimulation = useCreateRunningSimulation()
   const simulations = useGetAllButCurrentSimulation() ?? []
-  const showCreateModal = useSelector((state: RootState) => state.navigation.showCreateSimulationModal)
   const [openForm, setOpenForm] = useState(false)
 
   const allSimulations = sortSimulations(
@@ -60,10 +54,6 @@ function Simulations (): JSX.Element {
 
   const onCloseForm = (): void => {
     setOpenForm(false)
-  }
-
-  const onClosePopover = (): void => {
-    dispatch(setShowCreateSimulationModal(false))
   }
 
   const onSubmitForm = (parameters: ParametersState): void => {
@@ -115,21 +105,23 @@ function Simulations (): JSX.Element {
             </Tooltip>
           </Box>
           <Stack sx={{ borderRadius: theme.shape.borderRadius }}>
-            <CreatePopover
-              anchorEl={addButtonRef.current}
-              open={showCreateModal}
-              onClose={onClosePopover}
-            />
-            <Stack spacing={0.5}>
-              {allSimulations.map((simulation) => (
-                <SimulationEntry
-                  key={simulation.id}
-                  simulation={simulation}
-                  isActive={runningSimulation?.id === simulation.id}
-                  onDuplicate={onDuplicate}
-                />
-              ))}
-            </Stack>
+            {allSimulations.length === 0
+              ? <Paper sx={{ textAlign: 'center' }}>
+                  <Typography>
+                    Create a new entry and watch it run!
+                  </Typography>
+                </Paper>
+              : <Stack spacing={0.5}>
+                  {allSimulations.map((simulation) => (
+                    <SimulationEntry
+                      key={simulation.id}
+                      simulation={simulation}
+                      isActive={runningSimulation?.id === simulation.id}
+                      onDuplicate={onDuplicate}
+                    />
+                  ))}
+                </Stack>
+            }
           </Stack>
         </Grid2>
         <Grid2 xs={12} md={6} spacing={1}>
