@@ -31,19 +31,14 @@ function RunningSimulationDisplay ({ simulation }: RunningSimulationDisplayProps
         <Stack>
           <Typography variant="caption" pt={1}>Current Best</Typography>
           {globalBest != null
-            ? (
-            <>
-              <OrganismCanvas
-                organism={globalBest.organism}
-                width={width}
-                height={height}
-                willReadFrequently={false}
-              />
-            </>
-              )
-            : (
-                <Skeleton variant="rectangular" width={width} height={height} />
-              )}
+            ? <OrganismCanvas
+              organism={globalBest.organism}
+              width={width}
+              height={height}
+              willReadFrequently={false}
+            />
+            : <Skeleton variant="rectangular" width={width} height={height} />
+          }
         </Stack>
       </Stack>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', lineHeight: 1 }}>

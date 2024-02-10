@@ -41,7 +41,7 @@ function SimulationEntry ({
   isActive = false
 }: SimulationEntryProps): JSX.Element {
   const { id, createdOn, name, status, population } = simulation
-  const maxFitness = population?.best?.organism?.fitness ?? 0
+  const maxFitness = population?.best?.organism.fitness ?? 0
   const gen = population?.genId ?? 0
   const theme = useTheme()
   const dispatch = useDispatch()
@@ -132,13 +132,18 @@ function SimulationEntry ({
             >
               {id}
             </Typography>
-            {isActive && (
-              <Stack direction='row' spacing={1.5}>
-                <StatText text='Max' value={currentGenStats?.stats.maxFitness ?? 0} />
-                <StatText text='Mean' value={currentGenStats?.stats.meanFitness ?? 0} />
-                <StatText text='Min' value={currentGenStats?.stats.minFitness ?? 0} />
-              </Stack>
-            )}
+            {isActive
+              ? <Stack direction='row' spacing={1.5}>
+                  <StatText text='Max' value={currentGenStats?.stats.maxFitness ?? 0} />
+                  <StatText text='Mean' value={currentGenStats?.stats.meanFitness ?? 0} />
+                  <StatText text='Min' value={currentGenStats?.stats.minFitness ?? 0} />
+                </Stack>
+              : <StatText
+                  sigFigs={0}
+                  text='△'
+                  value={population?.best?.organism.genome.chromosomes.length ?? 0}
+                />
+            }
             <Typography
               variant='lightCaption'
               fontFamily='Oxygen Mono, monospace'
