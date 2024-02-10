@@ -51,7 +51,6 @@ function SimulationEntry ({
   const isChecked = useIsGraphEntry(id as number)
   const color = useGraphColor(id as number)
   const isPending = status === 'pending'
-  const isRunning = status === 'running'
   const date = new Date(createdOn)
   const openMenu = Boolean(anchorEl)
 
@@ -62,7 +61,7 @@ function SimulationEntry ({
 
   const onDelete = (event: SyntheticEvent): void => {
     event.stopPropagation()
-    if (isRunning) {
+    if (isActive) {
       dispatch(deleteRunningSimulation())
     } else {
       deleteSimulation(id).catch(console.error)
@@ -147,7 +146,7 @@ function SimulationEntry ({
               {`${gen.toLocaleString()} gen`}
             </Typography>
           </Box>
-          {isRunning && <RunningSimulationDisplay simulation={simulation} />}
+          {isActive && <RunningSimulationDisplay simulation={simulation} />}
         </Stack>
         <ActionButtons
           isActive={isActive}

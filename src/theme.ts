@@ -11,6 +11,7 @@ declare module '@mui/material/Fab' {
 declare module '@mui/material/Typography' {
   interface TypographyPropsVariantOverrides {
     lightCaption: true
+    codeCaption: true
   }
 }
 
@@ -76,6 +77,16 @@ const theme = createTheme({
         style: {
           fontSize: '0.7rem',
           color: 'GrayText'
+        }
+      },
+      {
+        props: { variant: 'codeCaption' },
+        style: {
+          fontWeight: 400,
+          fontSize: '0.75rem',
+          lineHeight: 1.66,
+          letterSpacing: '0.03333em',
+          fontFamily: '"Oxygen Mono", monospace'
         }
       }]
     }
