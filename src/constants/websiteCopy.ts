@@ -6,7 +6,6 @@ import {
   type MutationProbabilityType,
   type CrossoverProbabilityTypes
 } from '../population/types'
-import ChromosomeIcon from '../common/ChromosomeIcon'
 
 export interface FormField {
   text: string
@@ -128,17 +127,14 @@ export const ParameterLabels: ParameterLabelsType = {
         },
         addChromosome: {
           text: 'Add',
-          Icon: ChromosomeIcon,
           tooltip: 'Chance of adding a new chromosome'
         },
         removeChromosome: {
           text: 'Remove',
-          Icon: ChromosomeIcon,
           tooltip: 'Chance of removing an existing chromosome'
         },
         permuteChromosomes: {
           text: 'Permute',
-          Icon: ChromosomeIcon,
           tooltip: 'Chance of swapping the order of chromosomes in an organism'
         }
       }
@@ -173,17 +169,14 @@ export const MutationProbabilityFormFields: Record<MutationProbabilityType, Form
   },
   addChromosome: {
     text: '+ 🧬',
-    Icon: ChromosomeIcon,
     tooltip: 'Chance of adding a new chromosome'
   },
   removeChromosome: {
     text: '- 🧬',
-    Icon: ChromosomeIcon,
     tooltip: 'Chance of removing an existing chromosome'
   },
   permuteChromosomes: {
     text: 'Permute',
-    Icon: ChromosomeIcon,
     tooltip: 'Chance of swapping the order of chromosomes in an organism'
   }
 }
