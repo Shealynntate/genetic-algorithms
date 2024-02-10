@@ -19,3 +19,9 @@ export interface MousePosition {
   x: number
   y: number
 }
+
+export const NavPaths: Record<Page, string> = {
+  gallery: '/',
+  experiment: '/experiment',
+  yourArt: '/your-art'
+}
