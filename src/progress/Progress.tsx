@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Paper, Typography } from '@mui/material'
 import { useGetCompletedSimulationReports } from '../database/hooks'
 import LocalGalleryEntry from '../gallery/LocalGalleryEntry'
 
@@ -20,7 +20,11 @@ function SimulationStatusPanel (): JSX.Element {
             ))}
           </Box>
         : <Box>
-            <Typography variant='h6'>Run some experiments to see the results here!</Typography>
+          <Paper sx={{ textAlign: 'center' }}>
+            <Typography color='GrayText'>
+              Run some experiments to see the results here!
+            </Typography>
+          </Paper>
           </Box>
       }
     </Box>

@@ -13,6 +13,7 @@ import SimulationEntry from './SimulationEntry'
 import SimulationFormDialog from './SimulationFormDialog'
 import { defaultParameters } from '../parameters/config'
 import { useCreateRunningSimulation } from './hooks'
+import SkeletonExperimentEntry from './SkeletonExperimentEntry'
 
 const statusToOrder: Record<SimulationStatus, number> = {
   running: 0,
@@ -34,12 +35,15 @@ function Simulations (): JSX.Element {
   const formData = useRef<ParametersState>(defaultParameters)
   const addButtonRef = useRef<HTMLButtonElement | null>(null)
   const runningSimulation = useCreateRunningSimulation()
-  const simulations = useGetAllButCurrentSimulation() ?? []
+  const simulations = useGetAllButCurrentSimulation()
   const [openForm, setOpenForm] = useState(false)
 
-  const allSimulations = sortSimulations(
-    runningSimulation == null ? simulations : [...simulations, runningSimulation]
-  )
+  const isLoading = simulations === undefined
+  let allSimulations: Simulation[] = isLoading ? [] : simulations
+  if (runningSimulation != null) {
+    allSimulations.push(runningSimulation)
+  }
+  allSimulations = sortSimulations(allSimulations)
 
   const idToSimulation = (id: number | null): Simulation | undefined => {
     if (id == null) {
@@ -105,7 +109,14 @@ function Simulations (): JSX.Element {
             </Tooltip>
           </Box>
           <Stack sx={{ borderRadius: theme.shape.borderRadius }}>
-            {allSimulations.length === 0
+            {isLoading && (
+              <Stack spacing={0.5}>
+                <SkeletonExperimentEntry />
+                <SkeletonExperimentEntry />
+                <SkeletonExperimentEntry />
+              </Stack>
+            )}
+            {!isLoading && allSimulations.length === 0
               ? <Paper sx={{ textAlign: 'center' }}>
                   <Typography>
                     Create a new entry and watch it run!
