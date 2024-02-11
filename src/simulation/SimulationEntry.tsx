@@ -41,15 +41,16 @@ function SimulationEntry ({
   isActive = false
 }: SimulationEntryProps): JSX.Element {
   const { id, createdOn, name, status, population } = simulation
-  const maxFitness = population?.best?.organism.fitness ?? 0
-  const gen = population?.genId ?? 0
   const theme = useTheme()
   const dispatch = useDispatch()
   const currentGenStats = useSelector((state: RootState) => state.simulation.currentGenStats)
+  const maxFitOrganism = useSelector((state: RootState) => state.simulation.globalBest)
   const [nameValue, setNameValue] = useState(name)
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
   const isChecked = useIsGraphEntry(id as number)
   const color = useGraphColor(id as number)
+  const gen = isActive ? (currentGenStats?.stats.gen ?? 0) : population?.genId ?? 0
+  const maxFitness = isActive ? (maxFitOrganism?.organism.fitness ?? 0) : (population?.best?.organism.fitness ?? 0)
   const isPending = status === 'pending'
   const date = new Date(createdOn)
   const openMenu = Boolean(anchorEl)
