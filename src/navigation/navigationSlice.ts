@@ -9,7 +9,7 @@ import { firestore, experimentRecordConverter, storage } from '../firebase/fireb
 import { type Simulation, type SimulationReport } from '../database/types'
 import { lineColors } from '../constants/constants'
 import { clearCurrentSimulation } from '../simulation/simulationSlice'
-import { addDoc, collection, deleteDoc, doc, getDocs, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getCountFromServer, getDocs, serverTimestamp, updateDoc, writeBatch } from 'firebase/firestore'
 import { NavTag } from '../common/types'
 import { type GenerationStatsRecord } from '../population/types'
 import { type ExperimentRecord } from '../firebase/types'
@@ -107,7 +107,7 @@ export const navigationSlice = createSlice({
   }
 })
 
-const simulationReportToExperimentRecord = (record: SimulationReport): ExperimentRecord => {
+const simulationReportToExperimentRecord = (record: SimulationReport, order: number): ExperimentRecord => {
   const parameters = record.simulation.parameters
   return {
     createdOn: serverTimestamp(),
@@ -115,6 +115,7 @@ const simulationReportToExperimentRecord = (record: SimulationReport): Experimen
     simulationName: record.simulation.name,
     simulationId: record.simulation.id ?? -1,
     gif: '',
+    order,
     parameters: {
       ...parameters,
       population: {
@@ -141,10 +142,12 @@ export const navigationApi = firestoreApi.injectEndpoints({
           if (experimentsRef == null) {
             throw new Error('[uploadSimulationReport] ref is null')
           }
+          const experimentsSnapshot = await getCountFromServer(experimentsRef)
+          const order = experimentsSnapshot.data().count
           // Upload the simulation report to firestore
           const experimentResult = await addDoc(
             experimentsRef,
-            simulationReportToExperimentRecord(report)
+            simulationReportToExperimentRecord(report, order)
           )
           const recordId = experimentResult.id
           // Next upload the target image and gif to storage
@@ -214,6 +217,34 @@ export const navigationApi = firestoreApi.injectEndpoints({
         ? [{ type: NavTag.SIMULATION_REPORTS, id: 'LIST' }]
         : [{ type: NavTag.SIMULATION_REPORTS, id: 'LIST' }]
     }),
+    updateExperiments: builder.mutation<ExperimentRecord[], ExperimentRecord[]>({
+      async queryFn (records: ExperimentRecord[]) {
+        try {
+          const collectionRef = collection(firestore, 'experiments')
+          if (collectionRef == null) {
+            throw new Error('[updateExperiments] ref is null')
+          }
+          const batch = writeBatch(firestore)
+          records.forEach((record) => {
+            if (record.id == null) {
+              throw new Error('[updateExperiments] record id is null')
+            }
+            const docRef = doc(firestore, 'experiments', record.id).withConverter(experimentRecordConverter)
+            // Update the lastModified timestamp
+            const entry = { ...record, lastModified: serverTimestamp() }
+            batch.set(docRef, entry)
+          })
+          await batch.commit()
+          // TODO: Return the updated records
+          return { data: records }
+        } catch (error: any) {
+          console.error(error)
+
+          return { error: error.message }
+        }
+      },
+      invalidatesTags: [NavTag.SIMULATION_REPORTS]
+    }),
     deleteExperiment: builder.mutation<void, string>({
       async queryFn (id: string) {
         try {
@@ -273,7 +304,8 @@ export const selectSuccessSnackbarMessage =
 export const {
   useUploadExperimentReportMutation,
   useFetchAllExperimentsQuery,
-  useDeleteExperimentMutation
+  useDeleteExperimentMutation,
+  useUpdateExperimentsMutation
 } = navigationApi
 
 export default navigationSlice.reducer

@@ -6,6 +6,7 @@ import { type User, getAuth, onAuthStateChanged } from 'firebase/auth'
 import store from '../store'
 import { type ExperimentRecord, type ExperimentRecordDbEntry } from './types'
 import { GIF_FILE, TARGET_IMAGE_FILE, firebaseConfig } from './config'
+import { toTimestamp } from './utils'
 
 // Initialize Firebase and its services
 // ------------------------------------------------------------
@@ -22,8 +23,8 @@ export const experimentRecordConverter = {
     const { createdOn, id, lastModified, parameters, gif, ...rest } = record
 
     return {
-      createdOn,
-      lastModified,
+      createdOn: toTimestamp(createdOn),
+      lastModified: toTimestamp(lastModified),
       parameters: {
         ...parameters,
         population: {

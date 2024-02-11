@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { Box, IconButton, Paper, Stack, Typography, Tooltip, Skeleton, Fade } from '@mui/material'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import DownloadIcon from '@mui/icons-material/Download'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { download } from '../utils/fileUtils'
@@ -21,6 +23,7 @@ function GalleryEntry ({ data }: GallerEntryProps): JSX.Element {
   const isAdmin = useSelector(selectIsAuthenticated)
   const [deleteExperiment] = useDeleteExperimentMutation()
   const dispatch = useDispatch()
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: data.id ?? 0 })
   const width = canvasParameters.width / 2
   const height = canvasParameters.height / 2
   const { results, gif, parameters, simulationName } = data
@@ -57,6 +60,13 @@ function GalleryEntry ({ data }: GallerEntryProps): JSX.Element {
       sx={{ display: 'inline-block', m: 1, p: 0 }}
       onMouseEnter={(): void => { setHover(true) }}
       onMouseLeave={(): void => { setHover(false) }}
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition
+      }}
     >
       <Stack direction='row' spacing={0}>
         <Stack spacing={0}>

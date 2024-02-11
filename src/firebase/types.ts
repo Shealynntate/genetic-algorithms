@@ -9,6 +9,8 @@ export interface ExperimentRecord {
   id?: string
   createdOn: number | FieldValue
   lastModified: number | FieldValue
+  /** The order of the experiment in the gallery */
+  order: number
   /** The actual Gif content as a base64 string */
   gif: string
   simulationName: string
@@ -28,6 +30,8 @@ export interface ExperimentRecordDbEntry {
   lastModified: number | FieldValue
   simulationName: string
   simulationId: number
+  /** The order of the experiment in the gallery */
+  order: number
   /** A relative file path to the gif in firebase storage */
   gif: string
   results: ExperimentStatsRecord[]
