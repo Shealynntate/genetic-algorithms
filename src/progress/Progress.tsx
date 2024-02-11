@@ -9,7 +9,9 @@ function SimulationStatusPanel (): JSX.Element {
 
   return (
     <Box>
-      <Typography variant='h4' color='GrayText'>Your Art</Typography>
+      <Typography variant='h4' color='GrayText' sx={{ textAlign: 'center' }}>
+        Your Art
+      </Typography>
       {hasEntries
         ? <Box sx={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
             {completedEntries.map((simulationReport) => (
