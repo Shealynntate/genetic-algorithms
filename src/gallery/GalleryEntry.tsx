@@ -116,7 +116,7 @@ function GalleryEntry ({ data }: GallerEntryProps): JSX.Element {
           />
         </Stack>
       </Stack>
-      <Paper elevation={0} sx={{ position: 'relative', pt: 0, px: 1 }}>
+      <Paper elevation={0} sx={{ position: 'relative', p: 1, pt: 0 }}>
         <Stack direction='row' sx={{ justifyContent: 'space-between' }}>
           <Stack>
             <Typography variant='h6'>{simulationName}</Typography>

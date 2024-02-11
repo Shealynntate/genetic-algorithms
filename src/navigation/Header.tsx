@@ -92,15 +92,6 @@ function Header (): JSX.Element {
                 <PhotoCameraBackIcon fontSize='inherit' />
               </IconButton>
             </Tooltip>
-            <Tooltip title='Experiment'>
-              <IconButton
-                onClick={onExperimentClick}
-                size='large'
-                color={isSelected(NavPaths.experiment) ? 'primary' : 'default'}
-              >
-                <ScienceOutlinedIcon fontSize='inherit' />
-              </IconButton>
-            </Tooltip>
             <Tooltip title='Your Art'>
               <IconButton
                 onClick={onYourArtClick}
@@ -108,6 +99,15 @@ function Header (): JSX.Element {
                 color={isSelected(NavPaths.yourArt) ? 'primary' : 'default'}
               >
                 <PortraitIcon fontSize='inherit' />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title='Experiment'>
+              <IconButton
+                onClick={onExperimentClick}
+                size='large'
+                color={isSelected(NavPaths.experiment) ? 'primary' : 'default'}
+              >
+                <ScienceOutlinedIcon fontSize='inherit' />
               </IconButton>
             </Tooltip>
             {isAdmin && (
