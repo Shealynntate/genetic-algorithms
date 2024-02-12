@@ -14,7 +14,7 @@ import MutationModel from './mutationModel'
 import OrganismModel from './organismModel'
 import SelectionModel from './selectionModel'
 import { statsSigFigs } from '../constants/constants'
-import { genRange, setSigFigs } from '../utils/utils'
+import { setSigFigs } from '../utils/utils'
 import { randomFloat, randomIndex } from '../utils/statsUtils'
 
 class PopulationModel {
@@ -141,10 +141,10 @@ class PopulationModel {
   performSelection (type: SelectionType, tournamentSize: number, eliteCount: number): Organism[][] {
     const count = (this.size - eliteCount) / 2
     switch (type) {
-      case 'roulette':
-        return this.rouletteSelection(count)
       case 'tournament':
         return this.tournamentSelection(count, tournamentSize)
+      case 'roulette':
+        return this.rouletteSelection(count)
       case 'sus':
         return this.susSelection(count)
     }
@@ -229,14 +229,14 @@ class PopulationModel {
   tournamentSelectParent (size: number): Organism {
     let best = this.randomOrganism()
     let fitA = best.fitness
-    genRange(size).forEach(() => {
+    for (let i = 1; i < size; ++i) {
       const next = this.randomOrganism()
       const fitB = next.fitness
       if (fitB > fitA) {
         best = next
         fitA = fitB
       }
-    })
+    }
 
     return best
   }
@@ -270,7 +270,13 @@ class PopulationModel {
   }
 
   maxFitOrganism (): Organism {
-    return this.organismsByFitness()[0]
+    let maxFitOrganism = this.organisms[0]
+    for (let i = 0; i < this.size; ++i) {
+      if (this.organisms[i].fitness > maxFitOrganism.fitness) {
+        maxFitOrganism = this.organisms[i]
+      }
+    }
+    return maxFitOrganism
   }
 
   // Helper Methods

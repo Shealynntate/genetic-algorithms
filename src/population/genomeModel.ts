@@ -43,7 +43,7 @@ const GenomeModel = {
     // Choose a crossover index using the shorter of the two parents' lengths
     const index = crossover.doCrossover() ? randomIndex(minLength) : -1
 
-    genRange(maxLength).forEach((i) => {
+    for (let i = 0; i < maxLength; ++i) {
       if (index >= 0 && i <= index) {
         // Perform a crossover event
         child1.push(ChromosomeModel.clone(parent2.chromosomes[i]))
@@ -56,7 +56,7 @@ const GenomeModel = {
           child2.push(ChromosomeModel.clone(parent2.chromosomes[i]))
         }
       }
-    })
+    }
 
     return [{ chromosomes: child1 }, { chromosomes: child2 }]
   },
@@ -77,7 +77,7 @@ const GenomeModel = {
       index1 = index2
       index2 = temp
     }
-    genRange(maxLength).forEach((i) => {
+    for (let i = 0; i < maxLength; ++i) {
       if (i >= index1 && i <= index2) {
         // Perform a crossover event
         child1.push(ChromosomeModel.clone(parent2.chromosomes[i]))
@@ -90,7 +90,7 @@ const GenomeModel = {
           child2.push(ChromosomeModel.clone(parent2.chromosomes[i]))
         }
       }
-    })
+    }
 
     return [{ chromosomes: child1 }, { chromosomes: child2 }]
   },

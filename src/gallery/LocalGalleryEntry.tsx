@@ -2,10 +2,9 @@ import React, { type ChangeEvent, useState } from 'react'
 import {
   Box, IconButton, Paper, Stack, TextField, Typography, Tooltip, Fade
 } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
 import DownloadIcon from '@mui/icons-material/Download'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { deleteGifEntry, renameSimulation } from '../database/api'
+import { renameSimulation } from '../database/api'
 import { download } from '../utils/fileUtils'
 import { canvasParameters } from '../constants/constants'
 import OrganismCanvas from '../canvas/OrganismCanvas'
@@ -30,14 +29,6 @@ function LocalGalleryEntry ({ data }: GallerEntryProps): JSX.Element {
   const [entryName, setEntryName] = useState(name)
   const bestOrganism = results[results.length - 1].stats.maxFitOrganism
   const totalGen = results[results.length - 1].stats.gen
-
-  const onDelete = (): void => {
-    if (id == null) {
-      console.error('Cannot delete gallery entry with no id')
-      return
-    }
-    deleteGifEntry(id).catch(console.error)
-  }
 
   const onUpload = (): void => {
     if (!isAdmin) {
@@ -127,9 +118,6 @@ function LocalGalleryEntry ({ data }: GallerEntryProps): JSX.Element {
             <Stack direction='row' sx={{ alignItems: 'end' }}>
               <IconButton onClick={onDownload} color='primary'>
                 <DownloadIcon />
-              </IconButton>
-              <IconButton color='error' onClick={onDelete}>
-                <DeleteIcon />
               </IconButton>
               {isAdmin && (
                 <IconButton onClick={onUpload}>
