@@ -1,6 +1,7 @@
-import { createAction, createSlice } from '@reduxjs/toolkit'
+import { type PayloadAction, createAction, createSlice } from '@reduxjs/toolkit'
 import { type SimulationState } from './types'
 import { type Simulation } from '../database/types'
+import { type OrganismRecord, type GenerationStatsRecord } from '../population/types'
 
 const initialState: SimulationState = {
   targetFitnessReached: false,
@@ -11,33 +12,23 @@ export const simulationSlice = createSlice({
   name: 'simulation',
   initialState,
   reducers: {
-    setGlobalBest: (state, action) => {
+    setGlobalBest: (state, action: PayloadAction<OrganismRecord>) => {
       state.globalBest = action.payload
     },
-    setCurrentBest: (state, action) => {
-      state.currentBest = action.payload
-    },
-    setTargetFitnessReached: (state, action) => {
+    setTargetFitnessReached: (state, action: PayloadAction<boolean>) => {
       state.targetFitnessReached = action.payload
     },
-    setCurrentGenStats: (state, action) => {
+    setCurrentGenStats: (state, action: PayloadAction<GenerationStatsRecord | undefined>) => {
       state.currentGenStats = action.payload
     },
-    setLastThreshold: (state, action) => {
+    setLastThreshold: (state, action: PayloadAction<number>) => {
       state.lastThreshold = action.payload
     },
     clearCurrentSimulation: (state) => {
-      state.currentBest = undefined
       state.globalBest = undefined
       state.currentGenStats = undefined
       state.targetFitnessReached = false
       state.lastThreshold = 0
-    },
-    // Set both the currentBest and current stats in one call
-    updateCurrentGen: (state, action) => {
-      const { currentBest, stats } = action.payload
-      state.currentBest = currentBest
-      state.currentGenStats = stats
     }
   }
 })
@@ -54,12 +45,10 @@ export const restorePopulation = createAction<Simulation>(
 
 export const {
   setGlobalBest,
-  setCurrentBest,
   setTargetFitnessReached,
   setCurrentGenStats,
   setLastThreshold,
-  clearCurrentSimulation,
-  updateCurrentGen
+  clearCurrentSimulation
 } = simulationSlice.actions
 
 export default simulationSlice.reducer

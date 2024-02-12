@@ -12,10 +12,9 @@ export interface OrganismRecord {
 export interface SimulationState {
   targetFitnessReached: boolean
   globalBest?: OrganismRecord
-  currentBest?: OrganismRecord
-  // The current gen's stats, updated every generation
+  /** The current gen's stats, updated every generation */
   currentGenStats?: GenerationStatsRecord
-  // The last threshold value that was used to store records in the db
+  /** The last threshold value that was used to store records in the db */
   lastThreshold: number
 }
 

@@ -29,7 +29,7 @@ import { approxEqual, setSigFigs } from '../utils/utils'
 import { genomeToPhenotype, createGif } from '../utils/imageUtils'
 import { isRunningSelector } from '../navigation/hooks'
 import { setSimulationParameters } from '../parameters/parametersSlice'
-import { setGlobalBest, updateCurrentGen, clearCurrentSimulation, setLastThreshold } from './simulationSlice'
+import { setGlobalBest, clearCurrentSimulation, setLastThreshold, setCurrentGenStats } from './simulationSlice'
 import {
   deleteRunningSimulation,
   endSimulationEarly,
@@ -98,6 +98,10 @@ const createGalleryEntry = async (totalGen: number, globalBest: OrganismRecord):
   await addGifEntry(id, gif)
 }
 
+let startTime: number = 0
+const genTimes: number[] = []
+// let averageTime: number = 0
+
 // Generator<GetContextEffect | PutEffect<ClearCurrentSimulationAction>, void, PopulationServiceType> | Promise<Simulation | undefined>
 // Saga Functions
 // --------------------------------------------------
@@ -110,12 +114,13 @@ function * resetSimulationsSaga (): any {
 }
 
 function * completeSimulationRunSaga (): any { // } Generator<SelectEffect | GetContextEffect | Promise<number> | Promise<void> | CallEffect<void>, void, SimulationState & PopulationServiceType> {
-  const { globalBest, currentBest } = yield * typedSelect((state) => state.simulation)
+  const { globalBest, currentGenStats } = yield * typedSelect((state) => state.simulation)
   const populationService = yield * typedGetContext<PopulationServiceType>('population')
   const population = populationService.getPopulation()
   // Create a Gallery Entry for the run
   if (globalBest != null) {
-    yield createGalleryEntry(currentBest?.gen ?? 0, globalBest)
+    // TODO: Check that this is correct - why am I getting gen from here?
+    yield createGalleryEntry(currentGenStats?.stats.gen ?? 0, globalBest)
   } else {
     console.error('[completeSimulationRunSaga] No globalBest found')
   }
@@ -158,6 +163,7 @@ function * runSimulationSaga (action: StartSimulationAction): any {
       })
       if (endSim != null) {
         // End the simulation early, saving the run as if it completed normally
+        // yield call(addResultsForCurrentSimulation, genStats)
         yield call(completeSimulationRunSaga)
         return true
       }
@@ -177,9 +183,12 @@ function * runSimulationSaga (action: StartSimulationAction): any {
       yield delay(10)
     }
     // First run the next generation of the simulation
-    console.time('runGeneration')
+    startTime = Date.now()
     const runGenResult: GenerationStats = yield population.runGeneration()
-    console.timeEnd('runGeneration')
+    genTimes.push(Date.now() - startTime)
+    if (population.genId % 20 === 0) {
+      console.log('Average Time:', genTimes.reduce((a, b) => a + b, 0) / genTimes.length)
+    }
     const organism = runGenResult.maxFitOrganism
     // Should we store a copy of the maxFitOrganism for Image History?
     if (shouldSaveGenImage(population.genId)) {
@@ -193,7 +202,7 @@ function * runSimulationSaga (action: StartSimulationAction): any {
     // Update the list of maxFitness scores
     const currentMax = setSigFigs(runGenResult.maxFitness, 3)
     const genStats: GenerationStatsRecord = { threshold: currentMax, stats: runGenResult }
-    yield put(updateCurrentGen({ stats: genStats, currentBest: organism }))
+    yield put(setCurrentGenStats(genStats))
     // --------------------------------------------------
     // Update the list of maxFitness scores
     const { globalBest, lastThreshold } = yield * typedSelect((state) => state.simulation)
