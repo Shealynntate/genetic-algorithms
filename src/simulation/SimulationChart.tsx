@@ -83,7 +83,7 @@ function SimulationChart (): JSX.Element {
       range: [0, graphWidth],
       domain: domainX
     }),
-    [domainX, windowSize]
+    [domainX, windowSize, graphWidth]
   )
 
   const buffer = [20, 0.01]
