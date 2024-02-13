@@ -4,7 +4,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import DownloadIcon from '@mui/icons-material/Download'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { download } from '../utils/fileUtils'
+import { downloadUrl } from '../utils/fileUtils'
 import { canvasParameters } from '../constants/constants'
 import OrganismCanvas from '../canvas/OrganismCanvas'
 import { type ExperimentRecord } from '../firebase/types'
@@ -32,11 +32,18 @@ function GalleryEntry ({ data }: GallerEntryProps): JSX.Element {
 
   const onDownload = (): void => {
     if (gif == null) {
-      // TODO: Turn into snackbar warning
-      console.warn('[onDownload] Cannot download null gif')
+      dispatch(openErrorSnackbar('Cannot download null gif'))
+      console.error('[onDownload] Cannot download null gif')
       return
     }
-    download(simulationName, gif)
+    downloadUrl(gif, simulationName)
+      .then(() => {
+        dispatch(openSuccessSnackbar('Gif downloaded'))
+      })
+      .catch((error) => {
+        dispatch(openErrorSnackbar(`Error encountered while downloading gif ${error}`))
+        console.error('[onDownload] Failed to download gif')
+      })
   }
 
   const onDelete = (): void => {

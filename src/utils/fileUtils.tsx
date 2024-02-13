@@ -45,3 +45,9 @@ export const download = (filename: string, contents: string): void => {
   a.click()
   document.body.removeChild(a)
 }
+
+export const downloadUrl = async (url: string, filename: string): Promise<void> => {
+  const response = await fetch(url)
+  const blob = await response.blob()
+  download(filename, URL.createObjectURL(blob))
+}
