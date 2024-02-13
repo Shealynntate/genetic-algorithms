@@ -3,7 +3,7 @@
 <p align="center" width="100%">
   <img src="/src/assets/readme/mona_lisa.gif" />
   <img src="/src/assets/readme/son_of_man.gif" />
-  <img src="/src/assets/readme/marilyn_diptych.gif" />
+  <img src="/src/assets/readme/surprised_pikachu.gif" />
   <h5 align="center">Reproducing images by evolving populations of polygons</h5>
   <p align="center">Visit the <a href="https://genetic-algorithms-1.web.app/">site</a> to learn more and try it yourself!</p>
 </p>
