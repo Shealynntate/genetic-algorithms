@@ -1,4 +1,4 @@
-export type Page = 'gallery' | 'experiment' | 'yourArt'
+export type Page = 'gallery' | 'experiment' | 'yourArt' | 'github' | 'admin'
 
 export type AppState = 'none' | 'running' | 'paused' | 'complete'
 
@@ -18,10 +18,4 @@ export interface NavigationState {
 export interface MousePosition {
   x: number
   y: number
-}
-
-export const NavPaths: Record<Page, string> = {
-  gallery: '/',
-  experiment: '/experiment',
-  yourArt: '/your-art'
 }

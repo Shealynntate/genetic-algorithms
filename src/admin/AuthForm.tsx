@@ -12,7 +12,7 @@ import { auth } from '../firebase/firebase'
 import { useDispatch } from 'react-redux'
 import { openErrorSnackbar, openSuccessSnackbar } from '../navigation/navigationSlice'
 import { useNavigate } from 'react-router-dom'
-import { NavPaths } from '../navigation/types'
+import { NavPaths } from '../navigation/config'
 
 interface AuthFormProps {
   sx?: SxProps

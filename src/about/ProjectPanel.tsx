@@ -1,9 +1,8 @@
 import React from 'react'
-import { Link, Stack, Typography } from '@mui/material'
+import { Stack, Typography } from '@mui/material'
 import Panel from '../common/Panel'
 import Keyword from '../common/Keyword'
 import SectionTitle from '../common/SectionTitle'
-import { projectUrl } from '../constants/constants'
 
 function ProjectPanel (): JSX.Element {
   return (
@@ -50,19 +49,6 @@ function ProjectPanel (): JSX.Element {
         from a 200 run would look indistinguishable from a 300 or 400 run. Generally larger
         sizes make the increase over time smoother, but it definitely isn&apos;t
         a linear relationship.
-      </Typography>
-
-      <SectionTitle>The Site</SectionTitle>
-      <Typography>
-        If you&apos;d like more info on the website itself and/or you want to view the source code,
-        check it out on the
-        <Link
-          href={projectUrl}
-          underline="hover"
-          pl={1}
-        >
-          Github repo!
-        </Link>
       </Typography>
     </Panel>
   )

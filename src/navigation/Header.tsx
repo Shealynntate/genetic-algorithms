@@ -1,30 +1,18 @@
 import React, { useState } from 'react'
-import {
-  AppBar,
-  Box,
-  Container,
-  IconButton,
-  Menu,
-  MenuItem,
-  Stack,
-  Toolbar,
-  Tooltip,
-  Typography,
-  useTheme
-} from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { AppBar, Box, Container, Menu, MenuItem, Toolbar, useTheme } from '@mui/material'
 import { GitHub } from '@mui/icons-material'
 import PhotoCameraBackIcon from '@mui/icons-material/PhotoCameraBack'
 import PortraitIcon from '@mui/icons-material/Portrait'
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
-import { projectUrl } from '../constants/constants'
-import { useLocation, useNavigate } from 'react-router-dom'
-import DNAImage from '../assets/DNA.png'
-import { useDispatch, useSelector } from 'react-redux'
-import { openErrorSnackbar, openSuccessSnackbar, selectIsAuthenticated } from './navigationSlice'
 import { signOut } from 'firebase/auth'
 import { auth } from '../firebase/firebase'
-import { NavPaths } from './types'
+import { openErrorSnackbar, openSuccessSnackbar, selectIsAuthenticated } from './navigationSlice'
+import { NavLabels, NavPaths } from './config'
+import HeaderIconButton from './HeaderIconButton'
+import HeaderTitle from './HeaderTitle'
 
 function Header (): JSX.Element {
   const navigate = useNavigate()
@@ -39,7 +27,7 @@ function Header (): JSX.Element {
   }
 
   const onClickGithub = (): void => {
-    window.open(projectUrl)
+    window.open(NavPaths.github, '_blank')
   }
 
   const onGalleryClick = (): void => {
@@ -78,46 +66,45 @@ function Header (): JSX.Element {
     <AppBar position='static' elevation={1} sx={{ p: 0, background: theme.palette.background.paper }}>
       <Container maxWidth='xl'>
         <Toolbar variant='dense' disableGutters sx={{ justifyContent: 'space-between' }}>
-          <Stack direction='row' spacing={1}>
-            <img src={DNAImage} alt='DNA Helix' width={28} height={28} />
-            <Typography variant="h5">Genetic Algorithms</Typography>
-          </Stack>
+          <HeaderTitle />
           <Box>
-            <Tooltip title='Gallery'>
-              <IconButton
-                onClick={onGalleryClick}
-                size='large'
-                color={isSelected(NavPaths.gallery) ? 'primary' : 'default'}
-              >
-                <PhotoCameraBackIcon fontSize='inherit' />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title='Your Art'>
-              <IconButton
-                onClick={onYourArtClick}
-                size='large'
-                color={isSelected(NavPaths.yourArt) ? 'primary' : 'default'}
-              >
-                <PortraitIcon fontSize='inherit' />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title='Experiment'>
-              <IconButton
-                onClick={onExperimentClick}
-                size='large'
-                color={isSelected(NavPaths.experiment) ? 'primary' : 'default'}
-              >
-                <ScienceOutlinedIcon fontSize='inherit' />
-              </IconButton>
-            </Tooltip>
+            <HeaderIconButton
+              label={NavLabels.gallery}
+              onClick={onGalleryClick}
+              isSelected={isSelected(NavPaths.gallery)}
+            >
+              <PhotoCameraBackIcon fontSize='inherit' />
+            </HeaderIconButton>
+            <HeaderIconButton
+              label={NavLabels.yourArt}
+              onClick={onYourArtClick}
+              isSelected={isSelected(NavPaths.yourArt)}
+            >
+              <PortraitIcon fontSize='inherit' />
+            </HeaderIconButton>
+            <HeaderIconButton
+              label={NavLabels.experiment}
+              onClick={onExperimentClick}
+              isSelected={isSelected(NavPaths.experiment)}
+            >
+              <ScienceOutlinedIcon fontSize='inherit' />
+            </HeaderIconButton>
             {isAdmin && (
-              <IconButton onClick={onAdminClick} size='large'>
+              <HeaderIconButton
+                label={NavLabels.admin}
+                onClick={onAdminClick}
+                isSelected={false}
+              >
                 <AdminPanelSettingsIcon fontSize='inherit' />
-              </IconButton>
+              </HeaderIconButton>
             )}
-            <IconButton size='large' onClick={onClickGithub}>
+            <HeaderIconButton
+              label={NavLabels.github}
+              onClick={onClickGithub}
+              isSelected={false}
+            >
               <GitHub fontSize='inherit' />
-            </IconButton>
+            </HeaderIconButton>
           </Box>
         </Toolbar>
       </Container>

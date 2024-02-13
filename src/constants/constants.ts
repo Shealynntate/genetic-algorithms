@@ -62,8 +62,6 @@ export const lineColors = [
   theme.palette.success.dark
 ]
 
-export const projectUrl = 'https://github.com/Shealynntate/genetic-algorithms'
-
 export const MIN_BROWSER_WIDTH = 400
 
 export const MIN_BROWSER_HEIGHT = 400
