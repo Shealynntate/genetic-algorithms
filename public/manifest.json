@@ -3,17 +3,17 @@
   "name": "Genetic Algorithms",
   "icons": [
     {
-      "src": "chromosome.svg",
+      "src": "icons/dna_64.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "chromosome.svg",
+      "src": "icons/dna_192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "chromosome.svg",
+      "src": "icons/dna_512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
