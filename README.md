@@ -8,28 +8,37 @@
   <p align="center">Visit the <a href="https://genetic-algorithms-1.web.app/">site</a> to learn more and try it yourself!</p>
 </p>
 
-# Resources
-Full credit to Robert Johansson for this project idea. [Genetic Programming: Evolution of the Mona Lisa](https://rogerjohansson.blog/2008/12/07/genetic-programming-evolution-of-mona-lisa/)
-
-Here&apos;s a list of other resources I used while working on this project:
-
-[Essentials of Metaheuristics](https://cs.gmu.edu/~sean/book/metaheuristics/Essentials.pdf)
-
-[Analyzing Mutation Schemes for Real-Parameter Genetic Algorithms](https://www.egr.msu.edu/~kdeb/papers/k2012016.pdf)
-
-[Choosing Mutation and Crossover Ratios for Genetic Algorithms](https://pdfs.semanticscholar.org/5a25/a4d30528160eef96adbce1d7b03507ebd3d7.pdf)
-
-[Analyzing the Performance of Mutation Operators to Solve the Traveling Salesman Problem](https://arxiv.org/pdf/1203.3099.pdf)
-          
-[Initial Population for Genetic Algorithms: A Metric Approach](https://www.researchgate.net/publication/220862320_Initial_Population_for_Genetic_Algorithms_A_Metric_Approach)
-      
-[Self-Adaptive Simulated Binary Crossover for Real-Parameter Optimization](https://www.researchgate.net/publication/220742263_Self-adaptive_simulated_binary_crossover_for_real-parameter_optimization)
-
-[Genetic Programming Needs Better Benchmarks](http://gpbenchmarks.org/wp-content/uploads/2019/08/paper1.pdf)
-
-[A Genetic Algorithm for Image Recreation — Can it Paint the Mona Lisa?](https://medium.com/@sebastian.charmot/genetic-algorithm-for-image-recreation-4ca546454aaa)
+- [Genetic Algorithms](#genetic-algorithms)
+- [Genetic Algorithms Overview](#genetic-algorithms-overview)
+  - [Metaheuristics](#metaheuristics)
+  - [Genetic Algorithms](#genetic-algorithms-1)
+    - [Goal](#goal)
+    - [Setup](#setup)
+    - [Evaluation](#evaluation)
+    - [Selection](#selection)
+    - [Reproduction](#reproduction)
+    - [Replacement](#replacement)
+- [Things I've Learned Trying to Recreate the Mona Lisa](#things-ive-learned-trying-to-recreate-the-mona-lisa)
+  - [Plateaus](#plateaus)
+    - [Speciation](#speciation)
+    - [Disruption Events](#disruption-events)
+    - [Mitosis mechanism](#mitosis-mechanism)
+  - [Crossover](#crossover)
+  - [Population Size](#population-size)
+- [This Site](#this-site)
+  - [Site Tour](#site-tour)
+    - [Gallery](#gallery)
+    - [Your Art](#your-art)
+    - [Experiment](#experiment)
+- [Running The Code](#running-the-code)
+  - [Troubleshooting](#troubleshooting)
+    - [Mac](#mac)
+- [Site Architecture](#site-architecture)
+    - [Site Structure](#site-structure)
+- [Resources](#resources)
 
 # Genetic Algorithms Overview
+
 ## Metaheuristics
 A set of techniques that are useful for solving a hard problem that typically has these characteristics:
 - It&apos;s not obvious how to find a solution to the problem
@@ -78,13 +87,60 @@ _Mutation_ - randomly tweaking values in the offspring&apos;s chromosomes to int
 Lastly, we replace the previous generation of organisms with the new generation of children.<br>
 This process repeats until an organism in the population hits our target or run out of time.
 
+# Things I've Learned Trying to Recreate the Mona Lisa
+I spent a _lot_ of time trying to tune the hyperparameters of this particular Genetic Algorithm
+demo in order reach a higher maximum. I knew I wouldn't ever get a small number of polygons
+to perfectly recreate a painting (also there's something almost anticlimactic about it being a photocopy of the original, like "here's the image you gave me, but with a million more steps"), but it seemed like there was another percent or two to eek out of the model if I could only get the settings right.
+Here are a few of my findings along the way.
 
-# The Demo Site
-TL;DR: We&apos;re trying to randomly &quot;evolve&quot; a bunch of polygons to look like the Mona Lisa.
-Think the Mona Lisa is overrated? Got you covered, just drag n&apos; drop any image to be a target!
+## Plateaus
+Most images of any complexity seem to experience a fitness plateau around the 95 - 97% mark, depending on the image.
+This was good, but I had a strong suspicion it could be a percent or so better. Partly because it just didn't look good enough to me, and partly because even if I added 5 or 10 more polygons, the percent didn't seem to increase much at all. If the model was actually utilizing all the polygons decently, adding that many more should have made a difference.
+I tried so many things to avoid this and all of them just made things worse...
+
+### Speciation
+I tried splitting the population in to subgroups and letting them evolve separately.
+Then when the fitness stagnated I'd have the two populations mate with each other.
+
+### Disruption Events
+I tried adding disruption events if stagnation was detected,
+i.e. a brief period of increased mutation rates in an attempt to shake the population out of a local optimum.
+
+### Mitosis mechanism
+If a chromosome tried to add a point, but was already at the max number, it would instead split into two new polygons.
+Conversely, if it tried to remove a point and was already at the minimum it would delete the chromosome.
+Here I thought I was being clever... I was not, it mostly seemed to cause these cyclical dips in fitness variation every few generations.
+
+I think when it's that close to the target, most mutations are going to be deleterious, so achieving those last few percentage points are going to be slow no matter what.
+
+## Crossover
+My tests showed that having crossover was important, but it didn't really seem to
+matter which type. I could get comparable results with all of them. Probably this is related
+to the fact that mutation includes permutation of the chromosome order.
+    
+## Population Size
+Increasing population size wasn't as impactful as I was hoping. Often the results
+from a 200 run would look indistinguishable from a 300 or 400 run. Generally larger
+sizes make the increase over time smoother, but it definitely isn't
+a linear relationship.
+
+# This Site
+This is an interactive demo of Genetic Algorithms.
+Our organisms' DNA is an array of semi-transparent polygons and we're trying to evolve them to look like the Mona Lisa
+(or any other image of your choosing).
+
 ## Site Tour
-The *Gallery* page shows example runs of famous works of art. You can download the gif timelapses of any.
-The *Experiment* tab lets you set up and run new simulations. Queue up as many as you like and hit "play" to watch them go.
+### Gallery
+This page shows a collection of example runs, along with some of their stats. You can download the gif timelapses of any.
+
+### Your Art
+The results from your experiments will be displayed here. You can download the gif timelapses here as well.
+
+### Experiment
+This page lets you set up and run new simulations. Queue up as many as you like and hit "play" to watch them go.
+You can pause and end the run early or let it evolve until it hits a stopping point -
+either it reaches the target fitness (yay) or max number of generations.
+
 # Running The Code
 Install the project's packages by running `npm install`.
 
@@ -112,24 +168,24 @@ Data from previous and pending simulation runs is stored in IndexedDB using Dexi
 
 All of the Genetic Algorithm code I've tried to keep isolated in the `models` folder.
 ### Site Structure
-```
-> src
-  > assets
-    - Images & Json for tests and demos
-  > components
-    - All the React components
-  > constants
-    - Type definitions and config values
-  > contexts
-    - PopulationService
-  > features
-    - Redux slices, hooks, and sagas
-  > global
-    - database service
-  > models
-    - Most all of the Genetic Algorithm specific code
-  > test
-  > utils
-  > web-workers
-    - fitnessEvaluator - i.e. the fitness evaluation computations
-```
+
+# Resources
+Full credit to Robert Johansson for this project idea. [Genetic Programming: Evolution of the Mona Lisa](https://rogerjohansson.blog/2008/12/07/genetic-programming-evolution-of-mona-lisa/)
+
+Here&apos;s a list of other resources I used while working on this project:
+
+[Essentials of Metaheuristics](https://cs.gmu.edu/~sean/book/metaheuristics/Essentials.pdf)
+
+[Analyzing Mutation Schemes for Real-Parameter Genetic Algorithms](https://www.egr.msu.edu/~kdeb/papers/k2012016.pdf)
+
+[Choosing Mutation and Crossover Ratios for Genetic Algorithms](https://pdfs.semanticscholar.org/5a25/a4d30528160eef96adbce1d7b03507ebd3d7.pdf)
+
+[Analyzing the Performance of Mutation Operators to Solve the Traveling Salesman Problem](https://arxiv.org/pdf/1203.3099.pdf)
+          
+[Initial Population for Genetic Algorithms: A Metric Approach](https://www.researchgate.net/publication/220862320_Initial_Population_for_Genetic_Algorithms_A_Metric_Approach)
+      
+[Self-Adaptive Simulated Binary Crossover for Real-Parameter Optimization](https://www.researchgate.net/publication/220742263_Self-adaptive_simulated_binary_crossover_for_real-parameter_optimization)
+
+[Genetic Programming Needs Better Benchmarks](http://gpbenchmarks.org/wp-content/uploads/2019/08/paper1.pdf)
+
+[A Genetic Algorithm for Image Recreation — Can it Paint the Mona Lisa?](https://medium.com/@sebastian.charmot/genetic-algorithm-for-image-recreation-4ca546454aaa)
