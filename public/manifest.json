@@ -3,9 +3,24 @@
   "name": "Genetic Algorithms",
   "icons": [
     {
+      "src": "icons/dna_16.png",
+      "type": "image/x-icon",
+      "sizes": "16x16"
+    },
+    {
+      "src": "icons/dna_24.png",
+      "type": "image/x-icon",
+      "sizes": "24x24"
+    },
+    {
+      "src": "icons/dna_32.png",
+      "type": "image/x-icon",
+      "sizes": "32x32"
+    },
+    {
       "src": "icons/dna_64.png",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "sizes": "64x64"
     },
     {
       "src": "icons/dna_192.png",
