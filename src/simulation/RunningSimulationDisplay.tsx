@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
 import { type Simulation } from '../database/types'
-import { canvasParameters } from '../constants/constants'
+import { canvasParameters } from '../simulation/config'
 import TargetCanvas from '../canvas/TargetCanvas'
 import { type RootState } from '../store'
 import { useSelector } from 'react-redux'

@@ -1,6 +1,6 @@
 import WorkerBuilder from './workerBuilder'
 import fitnessEvaluator from './fitnessEvaluator'
-import { canvasParameters, maxColorValue, numColorChannels } from '../constants/constants'
+import { canvasParameters, maxColorValue, numColorChannels } from '../simulation/config'
 
 const { width, height } = canvasParameters
 

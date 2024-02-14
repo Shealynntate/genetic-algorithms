@@ -14,3 +14,14 @@ export const saveThresholds = [
   { threshold: 50_000, mod: 5_000 },
   { threshold: maxGenerations, mod: 10_000 }
 ]
+
+// Organism Phenotype Parameters
+// ------------------------------------------------------------
+export const canvasParameters = {
+  width: 200,
+  height: 200
+}
+
+export const maxColorValue = 255
+
+export const numColorChannels = 4

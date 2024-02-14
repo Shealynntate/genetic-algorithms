@@ -1,6 +1,6 @@
 import gifshot from 'gifshot'
 import { type Dim } from './types'
-import { canvasParameters } from '../constants/constants'
+import { canvasParameters } from '../simulation/config'
 import { type Phenotype, type Genome, type Point } from '../population/types'
 
 // Internal Helper Functions

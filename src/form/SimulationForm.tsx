@@ -12,7 +12,7 @@ import {
   Typography
 } from '@mui/material'
 import { useForm } from 'react-hook-form'
-import { canvasParameters } from '../constants/constants'
+import { canvasParameters } from '../simulation/config'
 import { CrossoverTypeLabels, MutationProbabilityFormFields, SelectionTypeLabels } from '../constants/websiteCopy'
 import SigmaInput from './SigmaInput'
 import { defaultParameters } from '../parameters/config'

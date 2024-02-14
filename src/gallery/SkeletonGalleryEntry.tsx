@@ -1,6 +1,6 @@
 import React from 'react'
 import { Paper, Skeleton, Stack } from '@mui/material'
-import { canvasParameters } from '../constants/constants'
+import { canvasParameters } from '../simulation/config'
 
 function SkeletonGalleryEntry (): JSX.Element {
   const width = canvasParameters.width

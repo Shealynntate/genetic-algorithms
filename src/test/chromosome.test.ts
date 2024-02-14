@@ -1,5 +1,5 @@
 import { expectRange, mockRandom } from './utils'
-import { maxColorValue } from '../constants/constants'
+import { maxColorValue } from '../simulation/config'
 import { genRange } from '../utils/utils'
 import * as statsUtils from '../utils/statsUtils'
 import { type Color, type Point } from '../population/types'

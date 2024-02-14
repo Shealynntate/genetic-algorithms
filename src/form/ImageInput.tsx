@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Alert, Box, Snackbar, useTheme } from '@mui/material'
 import { useDropzone } from 'react-dropzone'
 import { type AlertState } from '../navigation/types'
-import { canvasParameters } from '../constants/constants'
+import { canvasParameters } from '../simulation/config'
 import { fileToBase64 } from '../utils/fileUtils'
 import TargetCanvas from '../canvas/TargetCanvas'
 

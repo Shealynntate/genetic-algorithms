@@ -1,8 +1,6 @@
-// Important Note: For image imports to be base64 and not a path, need to be under ~10kb
-import defaultTarget from '../assets/mona_lisa.jpeg'
-// import defaultTarget from '../assets/son_of_man.jpeg';
-// import defaultTarget from '../assets/composition_II.jpeg';
 import { type ParametersState } from './types'
+// Note: For image imports to be base64 and not a path, need to be under ~10kb
+import defaultTarget from '../assets/mona_lisa.jpeg'
 
 export const maxPopulation = 500
 

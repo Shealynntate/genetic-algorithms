@@ -6,7 +6,7 @@ import {
   type Organism,
   type WorkerMessage
 } from './types'
-import { canvasParameters } from '../constants/constants'
+import { canvasParameters } from '../simulation/config'
 import { workerBatchSize } from '../parameters/config'
 import createWorker from '../web-workers/fitnessEvaluatorCreator'
 import PopulationModel from './populationModel'
