@@ -1,4 +1,4 @@
-import { type Page } from './types'
+import { type AppState, type Page } from './types'
 
 /**
  * The title of the site displayed in the header.
@@ -26,3 +26,9 @@ export const NavLabels: Record<Page, string> = {
   admin: 'Admin Page',
   github: 'GitHub Page'
 }
+
+export const MIN_BROWSER_WIDTH = 400
+
+export const MIN_BROWSER_HEIGHT = 400
+
+export const RunningStates: AppState[] = ['running']

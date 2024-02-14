@@ -3,9 +3,17 @@ import defaultTarget from '../assets/mona_lisa.jpeg'
 // import defaultTarget from '../assets/son_of_man.jpeg';
 // import defaultTarget from '../assets/composition_II.jpeg';
 import { type ParametersState } from './types'
-import { maxPopulation, maxGenerations } from '../constants/constants'
+
+export const maxPopulation = 500
+
+export const maxGenerations = 500_000
+
+export const targetFitness = 1
+
+export const workerBatchSize = 40
 
 // The Default Parameters for a Simulation
+// --------------------------------------------------
 export const defaultParameters: ParametersState = {
   population: {
     size: 200,

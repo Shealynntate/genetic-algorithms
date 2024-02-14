@@ -1,31 +1,4 @@
-import { type AppState } from '../navigation/types'
 import theme from '../theme'
-
-export const RunningStates: AppState[] = ['running']
-
-// --------------------------------------------------
-export const maxPopulation = 500
-
-export const maxGenerations = 500_000
-
-export const targetFitness = 1
-
-export const statsSigFigs = 4
-
-export const workerBatchSize = 40
-
-export const minResultsThreshold = 0.90
-
-export const saveThresholds = [
-  { threshold: 60, mod: 20 },
-  { threshold: 100, mod: 50 },
-  { threshold: 300, mod: 100 },
-  { threshold: 1_000, mod: 200 },
-  { threshold: 5_000, mod: 500 },
-  { threshold: 10_000, mod: 1_000 },
-  { threshold: 50_000, mod: 5_000 },
-  { threshold: maxGenerations, mod: 10_000 }
-]
 
 // ------------------------------------------------------------
 export const maxColorValue = 255
@@ -61,7 +34,3 @@ export const lineColors = [
   theme.palette.info.dark,
   theme.palette.success.dark
 ]
-
-export const MIN_BROWSER_WIDTH = 400
-
-export const MIN_BROWSER_HEIGHT = 400

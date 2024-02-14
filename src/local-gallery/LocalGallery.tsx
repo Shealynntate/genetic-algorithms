@@ -1,9 +1,9 @@
 import React from 'react'
 import { Box, Paper, Typography } from '@mui/material'
 import { useGetCompletedSimulationReports } from '../database/hooks'
-import LocalGalleryEntry from '../gallery/LocalGalleryEntry'
+import LocalGalleryEntry from './LocalGalleryEntry'
 
-function SimulationStatusPanel (): JSX.Element {
+function LocalGallery (): JSX.Element {
   const completedEntries = useGetCompletedSimulationReports() ?? []
   const hasEntries = completedEntries.length > 0
 
@@ -33,4 +33,4 @@ function SimulationStatusPanel (): JSX.Element {
   )
 }
 
-export default SimulationStatusPanel
+export default LocalGallery

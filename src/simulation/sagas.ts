@@ -14,7 +14,7 @@ import {
   type ForkEffect
 } from 'redux-saga/effects'
 import { type SimulationState, type OrganismRecord, type StartSimulationAction } from './types'
-import { minResultsThreshold, saveThresholds } from '../constants/constants'
+import { minResultsThreshold, saveThresholds } from '../simulation/config'
 import {
   addGifEntry,
   addImageToDatabase,

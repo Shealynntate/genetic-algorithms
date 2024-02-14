@@ -3,7 +3,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import App from '../navigation/App'
 import Gallery from '../gallery/Gallery'
 import Simulations from '../simulation/Simulations'
-import Progress from '../progress/Progress'
+import LocalGallery from '../local-gallery/LocalGallery'
 import Admin from '../admin/Admin'
 
 const router = createBrowserRouter([
@@ -21,7 +21,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/your-art',
-        element: <Progress />
+        element: <LocalGallery />
       },
       {
         path: '/admin',

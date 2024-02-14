@@ -1,19 +1,26 @@
 import React from 'react'
-import { Paper, Typography, type SxProps, Button } from '@mui/material'
 import { signOut } from 'firebase/auth'
+import { useDispatch } from 'react-redux'
+import { Paper, Typography, type SxProps, Button } from '@mui/material'
 import { auth } from '../firebase/firebase'
+import { openErrorSnackbar, openSuccessSnackbar } from '../navigation/navigationSlice'
 
 interface SignOutProps {
   sx?: SxProps
 }
 
 function SignOut ({ sx }: SignOutProps): JSX.Element {
-  const onSignOut = async (): Promise<void> => {
-    await signOut(auth)
-  }
+  const dispatch = useDispatch()
 
   const handleClick = (): void => {
-    onSignOut().catch(console.error)
+    signOut(auth)
+      .then(() => {
+        dispatch(openSuccessSnackbar('Successfully signed out'))
+      })
+      .catch((error) => {
+        dispatch(openErrorSnackbar(`Error signing out ${error.message}`))
+        console.error('Error signing out', error)
+      })
   }
 
   return (

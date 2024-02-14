@@ -13,7 +13,7 @@ import CrossoverModel from './crossoverModel'
 import MutationModel from './mutationModel'
 import OrganismModel from './organismModel'
 import SelectionModel from './selectionModel'
-import { statsSigFigs } from '../constants/constants'
+import { statsSigFigs } from '../simulation/config'
 import { setSigFigs } from '../utils/utils'
 import { randomFloat, randomIndex } from '../utils/statsUtils'
 
