@@ -20,6 +20,8 @@ import { SimulationGraph } from './types'
 
 const { maxGenerations: maxGens } = defaultParameters.stopCriteria
 const graphHeight = 350
+const minX = 1
+
 const margin = {
   left: 30,
   top: 4,
@@ -50,7 +52,7 @@ function SimulationChart (): JSX.Element {
   const currentSim = useGetCurrentSimulationReport()
   // Local state
   const [domainY, setDomainY] = useState([0.5, 1])
-  const [domainX, setDomainX] = useState([1, maxGens])
+  const [domainX, setDomainX] = useState([minX, maxGens])
   const [showMean, setShowMean] = useState(true)
   const [showDeviation, setShowDeviation] = useState(false)
   const [showMin, setShowMin] = useState(false)
@@ -101,7 +103,7 @@ function SimulationChart (): JSX.Element {
     const fitness = clamp(yScale.invert(y), 0, 1)
 
     const max = findMaxGeneration(checkedSimulations)
-    const x0 = clamp(xScale.invert(x - x * zoomFactor[0]), 0, Math.max(gen - buffer[0], 0))
+    const x0 = clamp(xScale.invert(x - x * zoomFactor[0]), minX, Math.max(gen - buffer[0], minX))
     const x1 = clamp(xScale.invert(x + (graphWidth - x) * zoomFactor[0]), Math.min(gen + buffer[0], max), max)
     const y0 = clamp(yScale.invert(y + (graphHeight - y) * zoomFactor[1]), 0, Math.max(fitness - buffer[1], 0))
     const y1 = clamp(yScale.invert(y - y * zoomFactor[1]), Math.min(fitness + buffer[1], 1), 1)
@@ -130,7 +132,7 @@ function SimulationChart (): JSX.Element {
     const maxGens = findMaxGeneration(checkedSimulations)
     const deltaX = clamp(xScale.invert(lastMousePos.x) - xScale.invert(x), -domainX[0], maxGens - domainX[1])
     const deltaY = clamp(yScale.invert(lastMousePos.y) - yScale.invert(y), -domainY[0], 1 - domainY[1])
-    const x0 = clamp(deltaX + domainX[0], 0, maxGens - buffer[0])
+    const x0 = clamp(deltaX + domainX[0], minX, maxGens - buffer[0])
     const x1 = clamp(deltaX + domainX[1], buffer[0], maxGens)
     const y0 = clamp(deltaY + domainY[0], 0, 1 - buffer[1])
     const y1 = clamp(deltaY + domainY[1], buffer[1], 1)
