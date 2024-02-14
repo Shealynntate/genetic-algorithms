@@ -13,9 +13,8 @@ import {
 } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { canvasParameters } from '../simulation/config'
-import { CrossoverTypeLabels, MutationProbabilityFormFields, SelectionTypeLabels } from '../constants/websiteCopy'
+import { CrossoverTypeLabels, defaultParameters, MutationProbabilityFormFields, SelectionTypeLabels } from '../parameters/config'
 import SigmaInput from './SigmaInput'
-import { defaultParameters } from '../parameters/config'
 import ImageInput from './ImageInput'
 import NumberInput from './NumberInput'
 import { type ParametersState } from '../parameters/types'
@@ -151,7 +150,6 @@ function SimulationForm ({
                 readOnly={readOnly}
                 text={MutationProbabilityFormFields[key].text}
                 tooltip={MutationProbabilityFormFields[key].tooltip}
-                // Icon={MutationProbabilityFormFields[key].Icon}
               />
             ))}
           </Stack>

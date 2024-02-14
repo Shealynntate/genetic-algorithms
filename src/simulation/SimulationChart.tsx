@@ -10,13 +10,13 @@ import { MIN_BROWSER_WIDTH } from '../navigation/config'
 import CustomCheckbox from '../common/Checkbox'
 import { useGetCompletedSimulationReports, useGetCurrentSimulationReport } from '../database/hooks'
 import SimulationGraphEntry from '../graph/SimulatonGraphEntry'
-import { SimulationGraph } from '../constants/websiteCopy'
 import { useWindowSize } from '../navigation/hooks'
 import { type SimulationReport } from '../database/types'
 import { type RootState } from '../store'
 import { type Point } from '@visx/brush/lib/types'
 import { defaultParameters } from '../parameters/config'
 import { localPoint } from '@visx/event'
+import { SimulationGraph } from './types'
 
 const { maxGenerations: maxGens } = defaultParameters.stopCriteria
 const graphHeight = 350

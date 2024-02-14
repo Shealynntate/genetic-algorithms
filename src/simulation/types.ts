@@ -44,3 +44,10 @@ export interface StartSimulationAction {
   payload: Simulation
   type: 'simulation/startSimulation'
 }
+
+export const SimulationGraph = {
+  title: 'Fitness vs Generations',
+  minCheckbox: 'Min',
+  meanCheckbox: 'Mean',
+  deviationCheckbox: 'σ'
+}
