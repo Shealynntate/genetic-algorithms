@@ -157,13 +157,12 @@ export const navigationApi = firestoreApi.injectEndpoints({
           const target = report.simulation.parameters.population.target
           const targetImage = await convertBase64ToFile(target, TARGET_IMAGE_FILE)
           const targetRef = ref(storage, targetFilePath)
-          const targetResult = await uploadBytes(targetRef, targetImage)
-          console.log({ targetResult })
+          await uploadBytes(targetRef, targetImage)
+
           if (report.gif != null) {
             const gif = await convertBase64ToFile(report.gif, GIF_FILE)
             const gifStorageRef = ref(storage, gifFilePath)
-            const gifResult = await uploadBytes(gifStorageRef, gif)
-            console.log({ gifResult })
+            await uploadBytes(gifStorageRef, gif)
           }
           // Update the experiment record with the new paths
           const updatedRef = doc(firestore, 'experiments', recordId)
@@ -205,7 +204,7 @@ export const navigationApi = firestoreApi.injectEndpoints({
               return record
             })
           )
-          console.log({ updatedRecords })
+
           return { data: updatedRecords }
         } catch (error: any) {
           console.error(error)

@@ -1,32 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { call, delay, put, race, take, takeEvery, type ForkEffect } from 'redux-saga/effects'
+import { type StartSimulationAction } from './types'
 import {
-  call,
-  delay,
-  getContext,
-  put,
-  race,
-  select,
-  take,
-  takeEvery,
-  type SelectEffect,
-  // type CallEffect,
-  type GetContextEffect,
-  type ForkEffect
-} from 'redux-saga/effects'
-import { type SimulationState, type OrganismRecord, type StartSimulationAction } from './types'
-import { minResultsThreshold, saveThresholds } from '../simulation/config'
-import {
-  addGifEntry,
   addImageToDatabase,
   deleteCurrentSimulation,
-  getCurrentImages,
   getCurrentSimulation,
   updateCurrentSimulation,
   addResultsForCurrentSimulation,
   setCurrentSimulation
 } from '../database/api'
-import { approxEqual, setSigFigs } from '../utils/utils'
-import { genomeToPhenotype, createGif } from '../utils/imageUtils'
+import { setSigFigs } from '../common/utils'
 import { isRunningSelector } from '../navigation/hooks'
 import { setSimulationParameters } from '../parameters/parametersSlice'
 import { setGlobalBest, clearCurrentSimulation, setLastThreshold, setCurrentGenStats } from './simulationSlice'
@@ -37,72 +19,12 @@ import {
   removeGraphEntry,
   resumeSimulations
 } from '../navigation/navigationSlice'
-import { type RootState } from '../store'
 import populationService, { type PopulationServiceType } from '../population/population-context'
 import type PopulationModel from '../population/populationModel'
 import { type GenerationStatsRecord, type GenerationStats } from '../population/types'
-// import { type Simulation } from '../database/types'
+import { createGalleryEntry, hasReachedTarget, shouldSaveGenImage, typedGetContext, typedSelect } from './utils'
+import { recordSigFigs } from './config'
 
-function * typedSelect<T> (selector: (state: RootState) => T): Generator<SelectEffect, T, T> {
-  const slice: T = yield select(selector)
-
-  return slice
-}
-
-// function * typedCall<Fn extends (...args: any[]) => any> (
-//   fn: Fn,
-//   ...args: Parameters<Fn>
-// ): Generator<CallEffect<SagaReturnType<Fn>>, SagaReturnType<Fn>, SagaReturnType<Fn>> {
-//   const value: SagaReturnType<typeof fn> = yield call(fn, ...args)
-
-//   return value
-// }
-
-function * typedGetContext<T> (key: string): Generator<GetContextEffect, T, T> {
-  const value: T = yield getContext(key)
-
-  return value
-}
-
-// function * typedTake<T> (pattern: string): Generator<TakeEffect, T, T> {
-//   const action: T = yield take(pattern)
-
-//   return action
-// }
-
-// type RunSimulationsSagaReturnType =
-//   Generator<SelectEffect
-//   | Promise<PopulationModel>
-//   | Promise<Simulation | undefined>
-//   | Promise<number>
-//   | PutEffect<SetSimulationParametersAction>
-//   | CallEffect<any>
-//   | PutEffect<EndSimulationsAction>, void, any>
-
-const createGalleryEntry = async (totalGen: number, globalBest: OrganismRecord): Promise<void> => {
-  const simulation = await getCurrentSimulation()
-  if (simulation == null) {
-    console.error('[createGalleryEntry] No current simulation found')
-    return
-  }
-  const { id } = simulation
-  const history = await getCurrentImages()
-  const imageData = history.map((entry) => entry.imageData)
-  const phenotype = genomeToPhenotype(globalBest.organism.genome)
-  // Show the last image 4 times as long in the gif
-  const result = [...imageData, phenotype, phenotype, phenotype, phenotype]
-  const gif = await createGif(result as ImageData[])
-  if (id == null) {
-    throw new Error('[createGalleryEntry] No simulation id found')
-  }
-  await addGifEntry(id, gif)
-}
-
-let startTime: number = 0
-let genTimes: number[] = []
-// let averageTime: number = 0
-
-// Generator<GetContextEffect | PutEffect<ClearCurrentSimulationAction>, void, PopulationServiceType> | Promise<Simulation | undefined>
 // Saga Functions
 // --------------------------------------------------
 function * resetSimulationsSaga (): any {
@@ -113,14 +35,13 @@ function * resetSimulationsSaga (): any {
   populationService.reset()
 }
 
-function * completeSimulationRunSaga (): any { // } Generator<SelectEffect | GetContextEffect | Promise<number> | Promise<void> | CallEffect<void>, void, SimulationState & PopulationServiceType> {
-  const { globalBest, currentGenStats } = yield * typedSelect((state) => state.simulation)
+function * completeSimulationRunSaga (): any {
+  const { globalBest } = yield * typedSelect((state) => state.simulation)
   const populationService = yield * typedGetContext<PopulationServiceType>('population')
   const population = populationService.getPopulation()
   // Create a Gallery Entry for the run
   if (globalBest != null) {
-    // TODO: Check that this is correct - why am I getting gen from here?
-    yield createGalleryEntry(currentGenStats?.stats.gen ?? 0, globalBest)
+    yield createGalleryEntry(globalBest)
   } else {
     console.error('[completeSimulationRunSaga] No globalBest found')
   }
@@ -186,13 +107,7 @@ function * runSimulationSaga (action: StartSimulationAction): any {
       yield delay(10)
     }
     // First run the next generation of the simulation
-    startTime = Date.now()
     const runGenResult: GenerationStats = yield population.runGeneration()
-    genTimes.push(Date.now() - startTime)
-    if (population.genId % 20 === 0) {
-      console.log('Average Time:', genTimes.reduce((a, b) => a + b, 0) / genTimes.length)
-      genTimes = []
-    }
     // Should we store a copy of the maxFitOrganism for Image History?
     if (shouldSaveGenImage(population.genId)) {
       yield call(addImageToDatabase, population.genId, runGenResult.maxFitOrganism)
@@ -202,25 +117,20 @@ function * runSimulationSaga (action: StartSimulationAction): any {
     if (runGenResult.isGlobalBest) {
       yield put(setGlobalBest({ gen: runGenResult.gen, organism: runGenResult.maxFitOrganism }))
     }
-    // Update the list of maxFitness scores
-    const currentMax = setSigFigs(runGenResult.maxFitness, 3)
+    // Record the current generation's stats in Redux
+    const currentMax = setSigFigs(runGenResult.maxFitness, recordSigFigs)
     currentGenStats = { threshold: currentMax, stats: runGenResult }
     yield put(setCurrentGenStats(currentGenStats))
-    // --------------------------------------------------
-    // Update the list of maxFitness scores
+    // Check if the simulation has reached a stopping point
     const { globalBest, lastThreshold } = yield * typedSelect((state) => state.simulation)
     const isSuccess = hasReachedTarget(globalBest, stopCriteria.targetFitness)
     const isStopping = isSuccess || runGenResult.gen >= stopCriteria.maxGenerations
-    // Add the current stats to the record if they meet the requirements
-    if (population.genId === 1 || currentMax >= minResultsThreshold) {
-      // If the results are a new GlobalBest or are different enough from the previously
-      // recorded value, add them to the record
-      if (population.genId === 1 || currentMax !== lastThreshold || runGenResult.isGlobalBest || isStopping) {
-        yield call(addResultsForCurrentSimulation, currentGenStats)
-        yield put(setLastThreshold(currentMax))
-      }
+    // If the results qualify for saving, add them to the database
+    if (population.genId === 1 || currentMax !== lastThreshold || runGenResult.isGlobalBest || isStopping) {
+      yield call(addResultsForCurrentSimulation, currentGenStats)
+      yield put(setLastThreshold(currentMax))
     }
-    // Check if the simulation is over
+    // If the simulation is over, complete the run and exit the loop
     if (isStopping) {
       yield call(completeSimulationRunSaga)
       return true
@@ -230,27 +140,6 @@ function * runSimulationSaga (action: StartSimulationAction): any {
 
 function * simulationSaga (): Generator<ForkEffect<never>, void, unknown> {
   yield takeEvery('navigation/runSimulation', runSimulationSaga)
-}
-
-// Private Helper Functions
-// --------------------------------------------------
-const shouldSaveGenImage = (genId: number): boolean => {
-  for (let i = 0; i < saveThresholds.length; ++i) {
-    if (genId <= saveThresholds[i].threshold) {
-      const mod = saveThresholds[i].mod
-
-      return (genId % mod) === 0
-    }
-  }
-  return false
-}
-
-const hasReachedTarget = (globalBest: OrganismRecord | undefined, target: number): boolean => {
-  if (globalBest == null) return false
-
-  const { fitness } = globalBest.organism
-
-  return fitness > target || approxEqual(fitness, target)
 }
 
 export default simulationSaga

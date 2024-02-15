@@ -14,7 +14,7 @@ import MutationModel from './mutationModel'
 import OrganismModel from './organismModel'
 import SelectionModel from './selectionModel'
 import { statsSigFigs } from '../simulation/config'
-import { setSigFigs } from '../utils/utils'
+import { setSigFigs } from '../common/utils'
 import { randomFloat, randomIndex } from '../utils/statsUtils'
 
 class PopulationModel {

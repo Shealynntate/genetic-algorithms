@@ -1,4 +1,4 @@
-import { setSigFigs } from './utils'
+import { setSigFigs } from '../common/utils'
 
 // A Collection of math and probability based functions
 // --------------------------------------------------

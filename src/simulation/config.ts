@@ -2,7 +2,8 @@ import { maxGenerations } from '../parameters/config'
 
 export const statsSigFigs = 4
 
-export const minResultsThreshold = 0.90
+/** How much precision when comparing max fitness scores to determine new bests */
+export const recordSigFigs = 3
 
 export const saveThresholds = [
   { threshold: 60, mod: 20 },

@@ -1,7 +1,7 @@
 import { type Chromosome, type ChromosomeParameters, type Color, type Point } from './types'
 import type MutationModel from './mutationModel'
 import { randomFloat, randomIndex, randomInt } from '../utils/statsUtils'
-import { genRange, setSigFigs } from '../utils/utils'
+import { genRange, setSigFigs } from '../common/utils'
 import { maxColorValue, statsSigFigs } from '../simulation/config'
 import { clamp } from 'lodash'
 import GaussianNoise from '../utils/gaussianNoise'

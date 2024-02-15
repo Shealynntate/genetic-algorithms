@@ -1,4 +1,4 @@
-import { approxEqual, genRange, setSigFigs } from '../utils/utils'
+import { approxEqual, genRange, setSigFigs } from '../common/utils'
 
 // --------------------------------------------------
 describe('Rounding And Approx Value Functions', () => {

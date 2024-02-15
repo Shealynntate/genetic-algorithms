@@ -1,7 +1,7 @@
 import { type GenomeBounds, type Chromosome, type Genome, type GenomeParameters } from './types'
 import type CrossoverModel from './crossoverModel'
 import type MutationModel from './mutationModel'
-import { genRange } from '../utils/utils'
+import { genRange } from '../common/utils'
 import { randomIndex } from '../utils/statsUtils'
 import ChromosomeModel from './chromosomeModel'
 
