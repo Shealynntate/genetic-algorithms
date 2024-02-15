@@ -13,7 +13,13 @@ import {
 } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { canvasParameters } from '../simulation/config'
-import { CrossoverTypeLabels, defaultParameters, MutationProbabilityFormFields, SelectionTypeLabels } from '../parameters/config'
+import {
+  CrossoverTypeLabels,
+  defaultParameters,
+  MutationProbabilityFormFields,
+  ParameterLabels,
+  SelectionTypeLabels
+} from '../parameters/config'
 import SigmaInput from './SigmaInput'
 import ImageInput from './ImageInput'
 import NumberInput from './NumberInput'
@@ -87,8 +93,8 @@ function SimulationForm ({
               name='population.size'
               readOnly={readOnly}
               control={control}
-              text='Size'
-              tooltip='How many organisms are in the population'
+              text={ParameterLabels.population.size.text}
+              tooltip={ParameterLabels.population.size.tooltip}
               validate={(value) => (value % 2 === 0 || 'Population size must be even')}
             />
             <NumberInput
@@ -96,8 +102,8 @@ function SimulationForm ({
               name='population.minGenomeSize'
               readOnly={readOnly}
               control={control}
-              text='Min △'
-              tooltip='Min number of chromosomes (polygons) an organism can have'
+              text={ParameterLabels.population.minPolygons.text}
+              tooltip={ParameterLabels.population.minPolygons.tooltip}
               validate={(v, state) => (
                 (v <= state.population.maxGenomeSize) || 'Min polygons can\'t be greater than max polygons'
               )}
@@ -107,8 +113,8 @@ function SimulationForm ({
               name='population.maxGenomeSize'
               readOnly={readOnly}
               control={control}
-              text='Max △'
-              tooltip='Max number of chromosomes (polygons) an organism can have'
+              text={ParameterLabels.population.maxPolygons.text}
+              tooltip={ParameterLabels.population.maxPolygons.tooltip}
               validate={(v, state) => (
                 (v >= state.population.minGenomeSize) || 'Max polygons can\'t be less than min polygons'
               )}
@@ -118,8 +124,8 @@ function SimulationForm ({
               name='population.minPoints'
               readOnly={readOnly}
               control={control}
-              text='Min Sides'
-              tooltip='Min number of points a chromosome (polygon) can have'
+              text={ParameterLabels.population.minPoints.text}
+              tooltip={ParameterLabels.population.minPoints.tooltip}
               validate={(v, state) => (
                 (v <= state.population.maxPoints) || 'Min number of sides can\'t be greater than max sides'
               )}
@@ -129,8 +135,8 @@ function SimulationForm ({
               name='population.maxPoints'
               readOnly={readOnly}
               control={control}
-              text='Max Sides'
-              tooltip='Max number of points a chromosome (polygon) can have'
+              text={ParameterLabels.population.maxPoints.text}
+              tooltip={ParameterLabels.population.maxPoints.tooltip}
               validate={(v, state) => (
                 (v >= state.population.minPoints) || 'Max number of sides can\'t be less than min sides'
               )}
@@ -160,15 +166,15 @@ function SimulationForm ({
             name={'population.mutation.distributions.colorSigma'}
             readOnly={readOnly}
             control={control}
-            text='Color'
-            tooltip='Should tweak mutations apply\nonce per gene or should each\npoint and color have a uniform\nchance of being tweaked'
+            text={ParameterLabels.population.mutation.colorSigma.text}
+            tooltip={ParameterLabels.population.mutation.colorSigma.tooltip}
           />
           <SigmaInput
             name={'population.mutation.distributions.pointSigma'}
             readOnly={readOnly}
             control={control}
-            text='Point'
-            tooltip='How far a point (x,y) can get nudged'
+            text={ParameterLabels.population.mutation.pointSigma.text}
+            tooltip={ParameterLabels.population.mutation.pointSigma.tooltip}
           />
         </Grid2>
         <Grid2 xs={6} md={4} pl={5}>
@@ -199,7 +205,8 @@ function SimulationForm ({
             name='population.selection.eliteCount'
             control={control}
             readOnly={readOnly}
-            text='Elites'
+            text={ParameterLabels.population.selection.eliteCount.text}
+            tooltip={ParameterLabels.population.selection.eliteCount.tooltip}
             validate={(v, state) => (
               ((v % 2 === 0) && v < state.population.size) || 'Elite count must be even and less than the population size'
             )}
@@ -209,7 +216,8 @@ function SimulationForm ({
             name='population.selection.tournamentSize'
             control={control}
             readOnly={readOnly}
-            text='Tourney Size'
+            text={ParameterLabels.population.selection.tournamentSize.text}
+            tooltip={ParameterLabels.population.selection.tournamentSize.tooltip}
             validate={(v, state) => (
               (v < state.population.size) || 'Tournament size must be less than the population size'
             )}
@@ -237,8 +245,8 @@ function SimulationForm ({
             name='population.crossover.probabilities.swap'
             control={control}
             readOnly={readOnly}
-            text='Swap'
-            tooltip='Probability of swapping chromosomes'
+            text={ParameterLabels.population.crossover.probabilities.swap.text}
+            tooltip={ParameterLabels.population.crossover.probabilities.swap.tooltip}
           />
           <Typography color='primary' variant='h5' my={1}>Stop Criteria</Typography>
           <NumberInput
@@ -246,14 +254,16 @@ function SimulationForm ({
             control={control}
             name='stopCriteria.targetFitness'
             readOnly={readOnly}
-            text='Target Fitness'
+            text={ParameterLabels.stopCriteria.targetFitness.text}
+            tooltip={ParameterLabels.stopCriteria.targetFitness.tooltip}
           />
           <NumberInput
             errors={errors}
             control={control}
             name='stopCriteria.maxGenerations'
             readOnly={readOnly}
-            text='Max Gens'
+            text={ParameterLabels.stopCriteria.maxGenerations.text}
+            tooltip={ParameterLabels.stopCriteria.maxGenerations.tooltip}
           />
         </Grid2>
       </Grid2>

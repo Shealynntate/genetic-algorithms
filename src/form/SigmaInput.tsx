@@ -26,10 +26,10 @@ function SigmaInput<T extends FieldValues> ({
       render={({ field: { onChange, value } }) => (
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Tooltip title={tooltip}>
-            <>
+            <Box>
               <Typography variant="body2">{text}</Typography>
               {Icon != null && <Icon />}
-            </>
+            </Box>
           </Tooltip>
           <Input
             onChange={(event) => { onChange(+event.target.value) }}

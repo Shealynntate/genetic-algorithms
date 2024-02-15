@@ -232,22 +232,27 @@ export const ParameterLabels: ParameterLabelsType = {
     },
     selection: {
       type: {
-        text: 'Type'
+        text: 'Type',
+        tooltip: 'The method used to select parents for the next generation'
       },
       eliteCount: {
-        text: 'Elite Count'
+        text: 'Elites',
+        tooltip: 'The number of top organisms that are automatically passed to the next generation'
       },
       tournamentSize: {
-        text: 'Tourney Size'
+        text: 'Tourney Size',
+        tooltip: 'The number of organisms that compete in a selection tournament'
       }
     },
     crossover: {
       type: {
-        text: 'Type'
+        text: 'Type',
+        tooltip: 'The method used to combine the chromosomes of two parents'
       },
       probabilities: {
         swap: {
-          text: 'Swap'
+          text: 'Swap',
+          tooltip: 'The probability of swapping the chromosomes of two parents'
         }
       }
     },
@@ -294,10 +299,12 @@ export const ParameterLabels: ParameterLabelsType = {
   },
   stopCriteria: {
     targetFitness: {
-      text: 'Target Fitness'
+      text: 'Target Fitness',
+      tooltip: 'The fitness score that is considered "good enough"'
     },
     maxGenerations: {
-      text: 'Max Generations'
+      text: 'Max Gens',
+      tooltip: 'The maximum number of generations the simulation will run'
     }
   }
 }
