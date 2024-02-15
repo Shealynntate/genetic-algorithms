@@ -30,11 +30,10 @@
     - [Gallery](#gallery)
     - [Your Art](#your-art)
     - [Experiment](#experiment)
+  - [Site Architecture](#site-architecture)
 - [Running The Code](#running-the-code)
   - [Troubleshooting](#troubleshooting)
     - [Mac](#mac)
-- [Site Architecture](#site-architecture)
-    - [Site Structure](#site-structure)
 - [Resources](#resources)
 
 # Genetic Algorithms Overview
@@ -130,6 +129,7 @@ Our organisms' DNA is an array of semi-transparent polygons and we're trying to 
 (or any other image of your choosing).
 
 ## Site Tour
+
 ### Gallery
 This page shows a collection of example runs, along with some of their stats. You can download the gif timelapses of any.
 
@@ -140,6 +140,16 @@ The results from your experiments will be displayed here. You can download the g
 This page lets you set up and run new simulations. Queue up as many as you like and hit "play" to watch them go.
 You can pause and end the run early or let it evolve until it hits a stopping point -
 either it reaches the target fitness (yay) or max number of generations.
+
+## Site Architecture
+This entirely client-side app was written in `React` using `Redux` for state management and `React Sagas` for asynchronous logic handling.
+
+To help speed up some of the most time intensive calculations
+I used React18's new webworker feature to split up parallelizable work into separate workers.
+
+Data from previous and pending simulation runs is stored in IndexedDB using `Dexie`. This allows it to persist between page reloads.
+
+All of the Genetic Algorithm code I've tried to keep isolated in the `population` folder.
 
 # Running The Code
 Install the project's packages by running `npm install`.
@@ -158,16 +168,6 @@ node-pre-gyp ERR!
 
 Using the advice on [this thread](https://github.com/Automattic/node-canvas/issues/1825) I was able to fix that by installing `cairo` on OSX, it's pretty straight forward and [this page](https://github.com/Automattic/node-canvas/wiki/Installation%3A-Mac-OS-X) walks you through it.
 
-# Site Architecture
-This entirely client-side app was written in `React` using `Redux` for state management and `React Sagas` for asynchronous logic handling.
-
-To help speed up some of the most time intensive calculations
-I used React18's new webworker feature to split up parallelizable work into separate workers.
-
-Data from previous and pending simulation runs is stored in IndexedDB using Dexie. This allows it to persist between page reloads.
-
-All of the Genetic Algorithm code I've tried to keep isolated in the `models` folder.
-### Site Structure
 
 # Resources
 Full credit to Robert Johansson for this project idea. [Genetic Programming: Evolution of the Mona Lisa](https://rogerjohansson.blog/2008/12/07/genetic-programming-evolution-of-mona-lisa/)
