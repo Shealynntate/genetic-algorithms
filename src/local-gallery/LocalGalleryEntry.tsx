@@ -61,13 +61,19 @@ function LocalGalleryEntry ({ data }: GallerEntryProps): JSX.Element {
   const onChangeName = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target
     setEntryName(value)
-
-    // TODO: Snackbar for success/failure
     if (id == null) {
-      console.error('Cannot rename gallery entry with no id')
+      dispatch(openErrorSnackbar('Cannot rename gallery entry with no id'))
+      console.error('[onChangeName] Cannot rename gallery entry with no id')
       return
     }
-    renameSimulation(id, value).catch(console.error)
+    renameSimulation(id, value)
+      .then(() => {
+        dispatch(openSuccessSnackbar(`Renamed gallery entry to ${value}`))
+      })
+      .catch((error) => {
+        dispatch(openErrorSnackbar(`Failed to rename gallery entry: ${error}`))
+        console.error('[onChangeName] Failed to rename gallery entry: ', error)
+      })
   }
 
   return (
