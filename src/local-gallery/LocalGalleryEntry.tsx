@@ -51,8 +51,9 @@ function LocalGalleryEntry ({ data }: GallerEntryProps): JSX.Element {
 
   const onDownload = (): void => {
     if (gif == null) {
-      // TODO: Turn into snackbar warning
-      console.warn('[onDownload] Cannot download null gif')
+      dispatch(openErrorSnackbar('Cannot download null gif'))
+      console.error('[onDownload] Cannot download null gif')
+
       return
     }
     download(name, gif)

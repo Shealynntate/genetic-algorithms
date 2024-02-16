@@ -65,7 +65,6 @@ export const useGetAllResults = (): Results[] | undefined => useLiveQuery(
   async () => await db.results.toArray()
 )
 
-// TODO: Turn into transation with both tables used?
 export const useGetCompletedSimulationReports = (): SimulationReport[] | undefined => useLiveQuery(
   async () => {
     return await db.transaction('r', db.simulations, db.results, db.gifs, async () => {
