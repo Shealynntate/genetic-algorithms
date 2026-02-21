@@ -1,4 +1,8 @@
-import { type Crossover, type CrossoverProbabilities, type CrossoverType } from './types'
+import {
+  type Crossover,
+  type CrossoverProbabilities,
+  type CrossoverType
+} from './types'
 import { flipCoin } from '../utils/statsUtils'
 
 /**
@@ -8,16 +12,16 @@ class CrossoverModel {
   type: CrossoverType
   probabilities: CrossoverProbabilities
 
-  constructor ({ type, probabilities }: Crossover) {
+  constructor({ type, probabilities }: Crossover) {
     this.type = type
     this.probabilities = probabilities
   }
 
-  doCrossover (): boolean {
+  doCrossover(): boolean {
     return flipCoin(this.probabilities.swap)
   }
 
-  serialize (): Crossover {
+  serialize(): Crossover {
     return {
       type: this.type,
       probabilities: this.probabilities

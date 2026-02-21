@@ -20,7 +20,8 @@ const store = configureStore({
     navigation: navigationReducer,
     [firestoreApi.reducerPath]: firestoreApi.reducer
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(sagaMiddleware, firestoreApi.middleware)
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(sagaMiddleware, firestoreApi.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>

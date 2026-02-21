@@ -6,7 +6,10 @@ interface SectionTitleProps {
   variant?: 'primary' | 'secondary'
 }
 
-function SectionTitle ({ children, variant = 'primary' }: SectionTitleProps): JSX.Element {
+function SectionTitle({
+  children,
+  variant = 'primary'
+}: SectionTitleProps): JSX.Element {
   return (
     <Typography
       sx={{

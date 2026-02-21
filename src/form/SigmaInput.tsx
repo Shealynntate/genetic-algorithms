@@ -1,6 +1,11 @@
 import React from 'react'
 import { Box, Input, type InputProps, Tooltip, Typography } from '@mui/material'
-import { type Control, Controller, type Path, type FieldValues } from 'react-hook-form'
+import {
+  type Control,
+  Controller,
+  type Path,
+  type FieldValues
+} from 'react-hook-form'
 
 interface SigmaInputProps<T extends FieldValues> extends InputProps {
   name: Path<T>
@@ -11,7 +16,7 @@ interface SigmaInputProps<T extends FieldValues> extends InputProps {
   readOnly?: boolean
 }
 
-function SigmaInput<T extends FieldValues> ({
+function SigmaInput<T extends FieldValues>({
   name,
   control,
   text,
@@ -24,7 +29,13 @@ function SigmaInput<T extends FieldValues> ({
       control={control}
       name={name}
       render={({ field: { onChange, value } }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
           <Tooltip title={tooltip}>
             <Box>
               <Typography variant="body2">{text}</Typography>
@@ -32,7 +43,9 @@ function SigmaInput<T extends FieldValues> ({
             </Box>
           </Tooltip>
           <Input
-            onChange={(event) => { onChange(+event.target.value) }}
+            onChange={(event) => {
+              onChange(+event.target.value)
+            }}
             value={value}
             readOnly={readOnly}
             inputProps={{

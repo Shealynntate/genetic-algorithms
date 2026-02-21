@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Oxygen+Mono&display=swap');
 
 * {
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   margin: 0;
 }
 
@@ -43,13 +43,13 @@ html body {
   color: var(--tooltip-text-color);
   background: var(--tooltip-background-color);
   font-size: 14px;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   line-height: 1;
 }
 
 /* CSS border triangles */
 .Tooltip-Tip::before {
-  content: " ";
+  content: ' ';
   left: 50%;
   border: solid transparent;
   height: 0;
@@ -109,4 +109,3 @@ html body {
   transform: translateX(0) translateY(-50%);
   border-left-color: var(--tooltip-background-color);
 }
-

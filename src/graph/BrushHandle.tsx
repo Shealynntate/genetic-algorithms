@@ -11,7 +11,11 @@ interface BrushHandleProps {
   isBrushActive: boolean
 }
 
-function BrushHandle ({ x, height, isBrushActive }: BrushHandleProps): JSX.Element | null {
+function BrushHandle({
+  x,
+  height,
+  isBrushActive
+}: BrushHandleProps): JSX.Element | null {
   const theme = useTheme()
 
   if (!isBrushActive) {

@@ -20,14 +20,7 @@ Line.defaultProps = {
   color: theme.palette.primary.main
 }
 
-function Line ({
-  data,
-  x,
-  y,
-  color,
-  type,
-  width
-}: LineProps): JSX.Element {
+function Line({ data, x, y, color, type, width }: LineProps): JSX.Element {
   return (
     <LinePath<GenerationStatsRecord>
       data={data}

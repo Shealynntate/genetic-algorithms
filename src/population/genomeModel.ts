@@ -1,4 +1,9 @@
-import { type GenomeBounds, type Chromosome, type Genome, type GenomeParameters } from './types'
+import {
+  type GenomeBounds,
+  type Chromosome,
+  type Genome,
+  type GenomeParameters
+} from './types'
 import type CrossoverModel from './crossoverModel'
 import type MutationModel from './mutationModel'
 import { genRange } from '../common/utils'
@@ -18,7 +23,11 @@ const GenomeModel = {
 
   // Crossover Methods
   // ------------------------------------------------------------
-  crossover: (parent1: Genome, parent2: Genome, crossover: CrossoverModel): Genome[] => {
+  crossover: (
+    parent1: Genome,
+    parent2: Genome,
+    crossover: CrossoverModel
+  ): Genome[] => {
     let func
     switch (crossover.type) {
       case 'onePoint':
@@ -34,12 +43,22 @@ const GenomeModel = {
     return func(parent1, parent2, crossover)
   },
 
-  onePointCrossover: (parent1: Genome, parent2: Genome, crossover: CrossoverModel): Genome[] => {
+  onePointCrossover: (
+    parent1: Genome,
+    parent2: Genome,
+    crossover: CrossoverModel
+  ): Genome[] => {
     const child1: Chromosome[] = []
     const child2: Chromosome[] = []
     // Check if the parents have different length genomes
-    const minLength = Math.min(parent1.chromosomes.length, parent2.chromosomes.length)
-    const maxLength = Math.max(parent1.chromosomes.length, parent2.chromosomes.length)
+    const minLength = Math.min(
+      parent1.chromosomes.length,
+      parent2.chromosomes.length
+    )
+    const maxLength = Math.max(
+      parent1.chromosomes.length,
+      parent2.chromosomes.length
+    )
     // Choose a crossover index using the shorter of the two parents' lengths
     const index = crossover.doCrossover() ? randomIndex(minLength) : -1
 
@@ -61,12 +80,22 @@ const GenomeModel = {
     return [{ chromosomes: child1 }, { chromosomes: child2 }]
   },
 
-  twoPointCrossover: (parent1: Genome, parent2: Genome, crossover: CrossoverModel): Genome[] => {
+  twoPointCrossover: (
+    parent1: Genome,
+    parent2: Genome,
+    crossover: CrossoverModel
+  ): Genome[] => {
     const child1: Chromosome[] = []
     const child2: Chromosome[] = []
     // Check if the parents have different length genomes
-    const minLength = Math.min(parent1.chromosomes.length, parent2.chromosomes.length)
-    const maxLength = Math.max(parent1.chromosomes.length, parent2.chromosomes.length)
+    const minLength = Math.min(
+      parent1.chromosomes.length,
+      parent2.chromosomes.length
+    )
+    const maxLength = Math.max(
+      parent1.chromosomes.length,
+      parent2.chromosomes.length
+    )
     const doCrossover = crossover.doCrossover()
     // Choose a crossover indices using the shorter of the two parents' lengths
     let index1 = doCrossover ? randomIndex(minLength) : -1
@@ -95,12 +124,22 @@ const GenomeModel = {
     return [{ chromosomes: child1 }, { chromosomes: child2 }]
   },
 
-  uniformCrossover: (parent1: Genome, parent2: Genome, crossover: CrossoverModel): Genome[] => {
+  uniformCrossover: (
+    parent1: Genome,
+    parent2: Genome,
+    crossover: CrossoverModel
+  ): Genome[] => {
     const child1: Chromosome[] = []
     const child2: Chromosome[] = []
     // Check if the parents have different length genomes
-    const minLength = Math.min(parent1.chromosomes.length, parent2.chromosomes.length)
-    const maxLength = Math.max(parent1.chromosomes.length, parent2.chromosomes.length)
+    const minLength = Math.min(
+      parent1.chromosomes.length,
+      parent2.chromosomes.length
+    )
+    const maxLength = Math.max(
+      parent1.chromosomes.length,
+      parent2.chromosomes.length
+    )
 
     genRange(maxLength).forEach((i) => {
       if (i < minLength && crossover.doCrossover()) {

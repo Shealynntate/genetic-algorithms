@@ -6,19 +6,20 @@ import { selectIsAuthenticated } from '../navigation/navigationSlice'
 import AuthForm from './AuthForm'
 import SignOut from './SignOut'
 
-function Admin (): JSX.Element {
+function Admin(): JSX.Element {
   const isAuthenticated = useSelector(selectIsAuthenticated)
 
   return (
     <Container>
-      <Button href='/' startIcon={<ArrowBackIcon />}>
+      <Button href="/" startIcon={<ArrowBackIcon />}>
         Back
       </Button>
-      <Container maxWidth='sm'>
-        {isAuthenticated
-          ? <SignOut sx={{ mt: 2 }} />
-          : <AuthForm sx={{ mt: 2 }} />
-        }
+      <Container maxWidth="sm">
+        {isAuthenticated ? (
+          <SignOut sx={{ mt: 2 }} />
+        ) : (
+          <AuthForm sx={{ mt: 2 }} />
+        )}
       </Container>
     </Container>
   )

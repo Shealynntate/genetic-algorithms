@@ -21,7 +21,7 @@ describe('Random Number Functions', () => {
     const results2: Record<number, number> = {}
     genRange(1e5).forEach(() => {
       const key = rand(1)
-      results2[key] = (key in results2) ? results2[key] + 1 : 1
+      results2[key] = key in results2 ? results2[key] + 1 : 1
     })
     const ideal = genRange(11).map(() => 1e4)
     // Only half the ideal distribution will fall into the two extremes
@@ -46,7 +46,7 @@ describe('Random Number Functions', () => {
     const results1: Record<number, number> = {}
     genRange(1e5).forEach(() => {
       const key = randomInt(0, 3)
-      results1[key] = (key in results1) ? results1[key] + 1 : 1
+      results1[key] = key in results1 ? results1[key] + 1 : 1
     })
     // Expect each value to have 25% of the distribution
     testDistrubution(results1, 0, 4, 1e5 / 4)
@@ -54,7 +54,7 @@ describe('Random Number Functions', () => {
     const results2: Record<number, number> = {}
     genRange(1e5).forEach(() => {
       const key = randomInt(7, 10)
-      results2[key] = (key in results2) ? results2[key] + 1 : 1
+      results2[key] = key in results2 ? results2[key] + 1 : 1
     })
     // Expect each value to have 25% of the distribution
     testDistrubution(results2, 7, 11, 1e5 / 4)
@@ -66,7 +66,7 @@ describe('Random Number Functions', () => {
     // Sample a ton of random indices and keep track of results
     genRange(1e5).forEach(() => {
       const key = randomIndex(10)
-      results[key] = (key in results) ? results[key] + 1 : 1
+      results[key] = key in results ? results[key] + 1 : 1
     })
 
     testDistrubution(results, 0, 10, 1e4)
@@ -80,14 +80,14 @@ describe('Probability Functions', () => {
     const results1: Record<number, number> = {}
     genRange(1e5).forEach(() => {
       const key = flipCoin() ? 1 : 0
-      results1[key] = (key in results1) ? results1[key] + 1 : 1
+      results1[key] = key in results1 ? results1[key] + 1 : 1
     })
     testDistrubution(results1, 0, 2, 1e5 * 0.5)
     // Check a 0.8 biased coin
     const results2: Record<number, number> = {}
     genRange(1e5).forEach(() => {
       const key = flipCoin(0.8) ? 1 : 0
-      results2[key] = (key in results2) ? results2[key] + 1 : 1
+      results2[key] = key in results2 ? results2[key] + 1 : 1
     })
     testDistrubution(results2, 0, 2, [1e5 * 0.2, 1e5 * 0.8])
   })

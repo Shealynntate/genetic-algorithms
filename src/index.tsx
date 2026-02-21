@@ -7,12 +7,12 @@ import reportWebVitals from './reportWebVitals'
 import './styles.css'
 import store from './store'
 import theme from './theme'
-import poulationService, { PopulationContext } from './population/population-context'
+import poulationService, {
+  PopulationContext
+} from './population/population-context'
 import router from './router/router'
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-)
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>
     <Provider store={store}>

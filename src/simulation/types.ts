@@ -2,7 +2,12 @@ import { type Simulation } from '../database/types'
 import { type ParametersState } from '../parameters/types'
 import { type GenerationStatsRecord, type Organism } from '../population/types'
 
-export type SimulationStatus = 'unknown' | 'pending' | 'running' | 'paused' | 'complete'
+export type SimulationStatus =
+  | 'unknown'
+  | 'pending'
+  | 'running'
+  | 'paused'
+  | 'complete'
 
 export interface OrganismRecord {
   organism: Organism

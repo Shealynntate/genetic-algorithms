@@ -23,85 +23,87 @@ import db, {
 // --------------------------------------------------
 export const useGetSimulations = (
   ids: number[]
-): Array<Simulation | undefined> | undefined => useLiveQuery(
-  async () => await getSimulations(ids)
-)
+): Array<Simulation | undefined> | undefined =>
+  useLiveQuery(async () => await getSimulations(ids))
 
-export const useGetAllSimulations = (): Simulation[] | undefined => useLiveQuery(
-  async () => await getAllSimulations(),
-  [currentSimulationId]
-)
+export const useGetAllSimulations = (): Simulation[] | undefined =>
+  useLiveQuery(async () => await getAllSimulations(), [currentSimulationId])
 
-export const useGetAllButCurrentSimulation = (): Simulation[] | undefined => useLiveQuery(
-  async () => {
+export const useGetAllButCurrentSimulation = (): Simulation[] | undefined =>
+  useLiveQuery(async () => {
     const allSimulations = await getAllSimulations()
-    return allSimulations.filter(sim => sim.id !== currentSimulationId)
-  },
-  [currentSimulationId]
-)
+    return allSimulations.filter((sim) => sim.id !== currentSimulationId)
+  }, [currentSimulationId])
 
-export const useGetCurrentSimulation = (): Simulation | undefined => useLiveQuery(
-  async () => await getCurrentSimulation(),
-  [currentSimulationId]
-)
+export const useGetCurrentSimulation = (): Simulation | undefined =>
+  useLiveQuery(async () => await getCurrentSimulation(), [currentSimulationId])
 
-export const useGetCompletedSimulations = (): Simulation[] | undefined => useLiveQuery(
-  async () => await getCompletedSimulations()
-)
+export const useGetCompletedSimulations = (): Simulation[] | undefined =>
+  useLiveQuery(async () => await getCompletedSimulations())
 
-export const useGetPendingSimulations = (): Simulation[] | undefined => useLiveQuery(
-  async () => await getPendingSimulations()
-)
+export const useGetPendingSimulations = (): Simulation[] | undefined =>
+  useLiveQuery(async () => await getPendingSimulations())
 
 // Gallery Hooks
 // --------------------------------------------------
-export const useGetGalleryEntries = (): Gif[] | undefined => useLiveQuery(
-  async () => await db.gifs.toArray()
-)
+export const useGetGalleryEntries = (): Gif[] | undefined =>
+  useLiveQuery(async () => await db.gifs.toArray())
 
 // Results Hooks
 // --------------------------------------------------
-export const useGetAllResults = (): Results[] | undefined => useLiveQuery(
-  async () => await db.results.toArray()
-)
+export const useGetAllResults = (): Results[] | undefined =>
+  useLiveQuery(async () => await db.results.toArray())
 
-export const useGetCompletedSimulationReports = (): SimulationReport[] | undefined => useLiveQuery(
-  async () => {
-    return await db.transaction('r', db.simulations, db.results, db.gifs, async () => {
-      const completedSimulations = await getCompletedSimulations()
+export const useGetCompletedSimulationReports = ():
+  | SimulationReport[]
+  | undefined =>
+  useLiveQuery(async () => {
+    return await db
+      .transaction('r', db.simulations, db.results, db.gifs, async () => {
+        const completedSimulations = await getCompletedSimulations()
 
-      const findResults = async (simId: number | undefined): Promise<GenerationStatsRecord[] | undefined> => {
-        if (simId == null) {
-          throw new Error('[useGetCompletedSimulationReports] Simulation ID is null')
+        const findResults = async (
+          simId: number | undefined
+        ): Promise<GenerationStatsRecord[] | undefined> => {
+          if (simId == null) {
+            throw new Error(
+              '[useGetCompletedSimulationReports] Simulation ID is null'
+            )
+          }
+          return await getSimulationRecords(simId)
         }
-        return await getSimulationRecords(simId)
-      }
 
-      return await Promise.all(
-        completedSimulations.map(async (simulation) => {
-          if (simulation.id == null) {
-            throw new Error(`[useGetCompletedSimulationReports] Simulation ID is null: ${simulation.id}`)
-          }
-          const results = await findResults(simulation.id)
-          if (results == null) {
-            throw new Error(`[useGetCompletedSimulationReports] Results are null: ${simulation.id}`)
-          }
-          const gifEntry = await getGifEntryBySimulation(simulation.id)
-          if (gifEntry == null) {
-            throw new Error(`[useGetCompletedSimulationReports] Gif Entry is null: ${simulation.id}`)
-          }
-          return { simulation, results, gif: gifEntry.gif }
-        })
-      )
-    }).catch((e) => {
-      console.error(`[useGetCompletedSimulationReports] ${e}`)
-      return undefined
-    })
-  }
-)
+        return await Promise.all(
+          completedSimulations.map(async (simulation) => {
+            if (simulation.id == null) {
+              throw new Error(
+                `[useGetCompletedSimulationReports] Simulation ID is null: ${simulation.id}`
+              )
+            }
+            const results = await findResults(simulation.id)
+            if (results == null) {
+              throw new Error(
+                `[useGetCompletedSimulationReports] Results are null: ${simulation.id}`
+              )
+            }
+            const gifEntry = await getGifEntryBySimulation(simulation.id)
+            if (gifEntry == null) {
+              throw new Error(
+                `[useGetCompletedSimulationReports] Gif Entry is null: ${simulation.id}`
+              )
+            }
+            return { simulation, results, gif: gifEntry.gif }
+          })
+        )
+      })
+      .catch((e) => {
+        console.error(`[useGetCompletedSimulationReports] ${e}`)
+        return undefined
+      })
+  })
 
-export const useGetCurrentSimulationReport = (): SimulationReport | undefined => useLiveQuery(
-  async () => {
+export const useGetCurrentSimulationReport = (): SimulationReport | undefined =>
+  useLiveQuery(async () => {
     const simulation = await getCurrentSimulation()
     if (simulation?.id == null) {
       return undefined
@@ -111,16 +113,13 @@ export const useGetCurrentSimulationReport = (): SimulationReport | undefined =>
       return undefined
     }
     return { simulation, results }
-  }, [currentSimulationId]
-)
+  }, [currentSimulationId])
 
 // Image Hooks
 // --------------------------------------------------
-export const useImageDbQuery = (): Image[] | undefined => useLiveQuery(
-  async () => {
+export const useImageDbQuery = (): Image[] | undefined =>
+  useLiveQuery(async () => {
     if (currentSimulationId == null) return []
 
     return await getCurrentImages()
-  },
-  [currentSimulationId]
-)
+  }, [currentSimulationId])

@@ -1,21 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import { Box, IconButton, Stack, Typography } from '@mui/material'
-import { DndContext, type DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import {
+  DndContext,
+  type DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core'
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import SaveIcon from '@mui/icons-material/Save'
-import { openErrorSnackbar, openSuccessSnackbar, selectIsAuthenticated, useFetchAllExperimentsQuery, useUpdateExperimentsMutation } from '../navigation/navigationSlice'
+import {
+  openErrorSnackbar,
+  openSuccessSnackbar,
+  selectIsAuthenticated,
+  useFetchAllExperimentsQuery,
+  useUpdateExperimentsMutation
+} from '../navigation/navigationSlice'
 import GalleryEntry from './GalleryEntry'
 import SkeletonGalleryEntry from './SkeletonGalleryEntry'
 import { hasDataChanged, hasOrderChanged, sortGalleryEntries } from './utils'
 import { useDispatch, useSelector } from 'react-redux'
 
-function Gallery (): JSX.Element {
+function Gallery(): JSX.Element {
   const { data: entries = [], isLoading } = useFetchAllExperimentsQuery()
   const [updateEntryOrder] = useUpdateExperimentsMutation()
   const isAdmin = useSelector(selectIsAuthenticated)
   const dispatch = useDispatch()
   const sortedData = sortGalleryEntries(entries)
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  )
   const [galleryEntries, setGalleryEntries] = useState(sortedData)
   useEffect(() => {
     if (hasDataChanged(galleryEntries, sortedData)) {
@@ -31,7 +45,10 @@ function Gallery (): JSX.Element {
     const oldIndex = galleryEntries.findIndex((entry) => entry.id === active.id)
     const newIndex = galleryEntries.findIndex((entry) => entry.id === over?.id)
     const reordered = arrayMove(galleryEntries, oldIndex, newIndex)
-    const newOrder = reordered.map((entry, index) => ({ ...entry, order: index }))
+    const newOrder = reordered.map((entry, index) => ({
+      ...entry,
+      order: index
+    }))
     setGalleryEntries(newOrder)
   }
 
@@ -41,21 +58,25 @@ function Gallery (): JSX.Element {
         dispatch(openSuccessSnackbar('Gallery order saved'))
       })
       .catch((error) => {
-        dispatch(openErrorSnackbar(`Error encountered while saving gallery order ${error}`))
+        dispatch(
+          openErrorSnackbar(
+            `Error encountered while saving gallery order ${error}`
+          )
+        )
         console.error('[onSaveOrder] Failed to save gallery order')
       })
   }
 
   return (
     <Box>
-      <Typography variant='h4' color='GrayText' sx={{ textAlign: 'center' }}>
+      <Typography variant="h4" color="GrayText" sx={{ textAlign: 'center' }}>
         Gallery
       </Typography>
       {isAdmin && (
-        <Stack direction='row' sx={{ justifyContent: 'flex-end' }}>
+        <Stack direction="row" sx={{ justifyContent: 'flex-end' }}>
           <IconButton
-            color='primary'
-            size='medium'
+            color="primary"
+            size="medium"
             disabled={!hasOrderChanged(sortedData, galleryEntries)}
             onClick={onSaveOrder}
           >
@@ -63,7 +84,13 @@ function Gallery (): JSX.Element {
           </IconButton>
         </Stack>
       )}
-      <Box sx={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-evenly',
+          flexWrap: 'wrap'
+        }}
+      >
         {isLoading && (
           <>
             <SkeletonGalleryEntry />
@@ -75,7 +102,10 @@ function Gallery (): JSX.Element {
           </>
         )}
         <DndContext onDragEnd={onDragEnd} sensors={sensors}>
-          <SortableContext items={sortedData.map((entry) => entry.id ?? 0)} disabled={!isAdmin}>
+          <SortableContext
+            items={sortedData.map((entry) => entry.id ?? 0)}
+            disabled={!isAdmin}
+          >
             {galleryEntries.map((entry) => (
               <GalleryEntry key={entry.id} data={entry} />
             ))}

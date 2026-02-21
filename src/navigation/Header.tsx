@@ -1,7 +1,15 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { AppBar, Box, Container, Menu, MenuItem, Toolbar, useTheme } from '@mui/material'
+import {
+  AppBar,
+  Box,
+  Container,
+  Menu,
+  MenuItem,
+  Toolbar,
+  useTheme
+} from '@mui/material'
 import { GitHub } from '@mui/icons-material'
 import PhotoCameraBackIcon from '@mui/icons-material/PhotoCameraBack'
 import PortraitIcon from '@mui/icons-material/Portrait'
@@ -9,12 +17,16 @@ import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import { signOut } from 'firebase/auth'
 import { auth } from '../firebase/firebase'
-import { openErrorSnackbar, openSuccessSnackbar, selectIsAuthenticated } from './navigationSlice'
+import {
+  openErrorSnackbar,
+  openSuccessSnackbar,
+  selectIsAuthenticated
+} from './navigationSlice'
 import { NavLabels, NavPaths } from './config'
 import HeaderIconButton from './HeaderIconButton'
 import HeaderTitle from './HeaderTitle'
 
-function Header (): JSX.Element {
+function Header(): JSX.Element {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const theme = useTheme()
@@ -63,9 +75,17 @@ function Header (): JSX.Element {
   }
 
   return (
-    <AppBar position='static' elevation={1} sx={{ p: 0, background: theme.palette.background.paper }}>
-      <Container maxWidth='xl'>
-        <Toolbar variant='dense' disableGutters sx={{ justifyContent: 'space-between' }}>
+    <AppBar
+      position="static"
+      elevation={1}
+      sx={{ p: 0, background: theme.palette.background.paper }}
+    >
+      <Container maxWidth="xl">
+        <Toolbar
+          variant="dense"
+          disableGutters
+          sx={{ justifyContent: 'space-between' }}
+        >
           <HeaderTitle />
           <Box>
             <HeaderIconButton
@@ -73,21 +93,21 @@ function Header (): JSX.Element {
               onClick={onGalleryClick}
               isSelected={isSelected(NavPaths.gallery)}
             >
-              <PhotoCameraBackIcon fontSize='inherit' />
+              <PhotoCameraBackIcon fontSize="inherit" />
             </HeaderIconButton>
             <HeaderIconButton
               label={NavLabels.yourArt}
               onClick={onYourArtClick}
               isSelected={isSelected(NavPaths.yourArt)}
             >
-              <PortraitIcon fontSize='inherit' />
+              <PortraitIcon fontSize="inherit" />
             </HeaderIconButton>
             <HeaderIconButton
               label={NavLabels.experiment}
               onClick={onExperimentClick}
               isSelected={isSelected(NavPaths.experiment)}
             >
-              <ScienceOutlinedIcon fontSize='inherit' />
+              <ScienceOutlinedIcon fontSize="inherit" />
             </HeaderIconButton>
             {isAdmin && (
               <HeaderIconButton
@@ -95,7 +115,7 @@ function Header (): JSX.Element {
                 onClick={onAdminClick}
                 isSelected={false}
               >
-                <AdminPanelSettingsIcon fontSize='inherit' />
+                <AdminPanelSettingsIcon fontSize="inherit" />
               </HeaderIconButton>
             )}
             <HeaderIconButton
@@ -103,7 +123,7 @@ function Header (): JSX.Element {
               onClick={onClickGithub}
               isSelected={false}
             >
-              <GitHub fontSize='inherit' />
+              <GitHub fontSize="inherit" />
             </HeaderIconButton>
           </Box>
         </Toolbar>

@@ -10,7 +10,7 @@ class GeneticAlgorithms extends Dexie {
   results!: Dexie.Table<Results, number>
   gifs!: Dexie.Table<Gif, number>
 
-  constructor () {
+  constructor() {
     super(databaseName)
     this.version(2).stores({
       gifs: '++id,createdOn,simulationId',

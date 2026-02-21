@@ -8,7 +8,13 @@ import {
   type PathValue,
   type FieldPathByValue
 } from 'react-hook-form'
-import { Input, type InputProps, Stack, Tooltip, Typography } from '@mui/material'
+import {
+  Input,
+  type InputProps,
+  Stack,
+  Tooltip,
+  Typography
+} from '@mui/material'
 import _ from 'lodash'
 import ErrorTooltip from '../common/ErrorTooltip'
 
@@ -31,7 +37,7 @@ interface NumberInputProps<
 function NumberInput<
   TFieldValues extends FieldValues,
   TPath extends FieldPathByValue<TFieldValues, number>
-> ({
+>({
   name,
   control,
   text,
@@ -47,9 +53,18 @@ function NumberInput<
   const error = _.get(errors, name)
 
   return (
-    <Stack direction='row' sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+    <Stack
+      direction="row"
+      sx={{
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%'
+      }}
+    >
       <Tooltip title={tooltip}>
-        <Typography pr={1} sx={{ flexGrow: 1, flexBasis: 150 }}>{text}</Typography>
+        <Typography pr={1} sx={{ flexGrow: 1, flexBasis: 150 }}>
+          {text}
+        </Typography>
       </Tooltip>
       <Controller
         control={control}
@@ -60,10 +75,12 @@ function NumberInput<
             <Input
               {...props}
               value={value}
-              onChange={(event) => { onChange(+event.target.value) }}
+              onChange={(event) => {
+                onChange(+event.target.value)
+              }}
               readOnly={readOnly}
               inputProps={{ min, max, step, type: 'number' }}
-              type='number'
+              type="number"
             />
           </ErrorTooltip>
         )}

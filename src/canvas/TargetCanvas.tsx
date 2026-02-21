@@ -10,7 +10,7 @@ interface TargetCanvasProps {
   willReadFrequently?: boolean
 }
 
-function TargetCanvas ({
+function TargetCanvas({
   height,
   target,
   width,
@@ -34,7 +34,7 @@ function TargetCanvas ({
   }, [target])
 
   if (imageData === null) {
-    return <Skeleton variant='rectangular' width={width} height={height} />
+    return <Skeleton variant="rectangular" width={width} height={height} />
   }
   return (
     <Canvas

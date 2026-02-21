@@ -30,9 +30,18 @@ module.exports = {
     'import'
   ],
   rules: {
-    'import/no-unresolved': 'error'
+    'import/no-unresolved': 'error',
+    // Disable formatting rules that conflict with Prettier
+    '@typescript-eslint/space-before-function-paren': 'off',
+    '@typescript-eslint/indent': 'off',
+    'multiline-ternary': 'off',
+    'generator-star-spacing': 'off',
+    'yield-star-spacing': 'off'
   },
   settings: {
+    react: {
+      version: 'detect'
+    },
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.tsx']
     },

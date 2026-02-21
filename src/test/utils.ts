@@ -8,7 +8,7 @@ export const expectRange = (value: number, min: number, max: number): void => {
   expect(value).toBeLessThanOrEqual(max)
 }
 
-export const mockRandom = (outputs: number[]): () => number => {
+export const mockRandom = (outputs: number[]): (() => number) => {
   let index = -1
 
   return (): number => {
@@ -17,7 +17,12 @@ export const mockRandom = (outputs: number[]): () => number => {
   }
 }
 
-export const testDistrubution = (entries: Record<number, number>, lower: number, upper: number, ideal: number[] | number): void => {
+export const testDistrubution = (
+  entries: Record<number, number>,
+  lower: number,
+  upper: number,
+  ideal: number[] | number
+): void => {
   Object.entries(entries).forEach(([key, value], i) => {
     // Check that only the expected keys exist
     expectRange(parseInt(key, 10), lower, upper)
@@ -28,7 +33,12 @@ export const testDistrubution = (entries: Record<number, number>, lower: number,
   })
 }
 
-export const testDistrubutionAverage = (entries: number[], lower: number, upper: number, average: number): void => {
+export const testDistrubutionAverage = (
+  entries: number[],
+  lower: number,
+  upper: number,
+  average: number
+): void => {
   entries.forEach((entry) => {
     // Check that only the expected keys exist
     expectRange(entry, lower, upper)

@@ -10,16 +10,12 @@ interface MyImageData {
   data: Uint8ClampedArray
 }
 
-Object.defineProperty(
-  window,
-  'ImageData',
-  {
-    value: class ImageData implements MyImageData {
-      constructor (
-        public width: number,
-        public height: number,
-        public data: Uint8ClampedArray
-      ) {}
-    }
+Object.defineProperty(window, 'ImageData', {
+  value: class ImageData implements MyImageData {
+    constructor(
+      public width: number,
+      public height: number,
+      public data: Uint8ClampedArray
+    ) {}
   }
-)
+})

@@ -7,11 +7,16 @@ export type DistributionMap = {
 }
 
 export const mutationProbabilityTypes = [
-  'tweakPoint', 'tweakColor', 'addPoint', 'removePoint', 'addChromosome',
-  'removeChromosome', 'permuteChromosomes'
+  'tweakPoint',
+  'tweakColor',
+  'addPoint',
+  'removePoint',
+  'addChromosome',
+  'removeChromosome',
+  'permuteChromosomes'
 ] as const
 
-export type MutationProbabilityType = typeof mutationProbabilityTypes[number]
+export type MutationProbabilityType = (typeof mutationProbabilityTypes)[number]
 
 export type MutationProbabilities = {
   [key in MutationProbabilityType]: number

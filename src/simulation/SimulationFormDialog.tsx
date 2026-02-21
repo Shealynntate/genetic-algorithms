@@ -10,7 +10,7 @@ interface SimulationFormDialogProps {
   onSubmit: (parameters: ParametersState) => void
 }
 
-function SimulationFormDialog ({
+function SimulationFormDialog({
   defaultValues,
   open = false,
   onClose,
@@ -22,13 +22,17 @@ function SimulationFormDialog ({
   }
 
   return (
-    <Dialog open={open} onClose={() => { onClose() }} maxWidth="xl" sx={{ p: 0 }}>
+    <Dialog
+      open={open}
+      onClose={() => {
+        onClose()
+      }}
+      maxWidth="xl"
+      sx={{ p: 0 }}
+    >
       <DialogTitle sx={{ p: 0.5 }}>Simulation Setup</DialogTitle>
       <DialogContent sx={{ py: 0, px: 0.5 }}>
-        <SimulationForm
-          defaultValues={defaultValues}
-          onSubmit={handleSubmit}
-        />
+        <SimulationForm defaultValues={defaultValues} onSubmit={handleSubmit} />
       </DialogContent>
     </Dialog>
   )

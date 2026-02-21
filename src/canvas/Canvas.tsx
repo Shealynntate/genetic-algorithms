@@ -7,7 +7,7 @@ interface CanvasProps {
   willReadFrequently: boolean
 }
 
-function Canvas ({
+function Canvas({
   height,
   imageData,
   width,
@@ -29,13 +29,7 @@ function Canvas ({
     }
   }, [imageData])
 
-  return (
-    <canvas
-      width={width}
-      height={height}
-      ref={canvasRef}
-    />
-  )
+  return <canvas width={width} height={height} ref={canvasRef} />
 }
 
 export default Canvas

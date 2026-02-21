@@ -13,23 +13,23 @@ interface IconEntry {
 
 const statusIconMap: Record<SimulationStatus, IconEntry> = {
   pending: {
-    icon: <PendingOutlinedIcon color='inherit' />,
+    icon: <PendingOutlinedIcon color="inherit" />,
     tooltip: 'Pending'
   },
   running: {
-    icon: <RunCircleOutlinedIcon color='info' />,
+    icon: <RunCircleOutlinedIcon color="info" />,
     tooltip: 'Running'
   },
   paused: {
-    icon: <PauseCircleOutlineOutlinedIcon color='warning' />,
+    icon: <PauseCircleOutlineOutlinedIcon color="warning" />,
     tooltip: 'Paused'
   },
   complete: {
-    icon: <CheckCircleOutlineOutlinedIcon color='success' />,
+    icon: <CheckCircleOutlineOutlinedIcon color="success" />,
     tooltip: 'Completed'
   },
   unknown: {
-    icon: <PendingOutlinedIcon color='warning' />,
+    icon: <PendingOutlinedIcon color="warning" />,
     tooltip: 'Unknown'
   }
 }
@@ -39,7 +39,7 @@ interface StatusIconProps {
   sx?: SxProps
 }
 
-function StatusIcon ({ status, sx }: StatusIconProps): JSX.Element {
+function StatusIcon({ status, sx }: StatusIconProps): JSX.Element {
   const data: IconEntry = statusIconMap[status]
   return (
     <Tooltip title={data.tooltip}>

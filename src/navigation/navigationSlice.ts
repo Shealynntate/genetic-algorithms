@@ -5,11 +5,25 @@ import _ from 'lodash'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { type NavigationState } from './types'
 import firestoreApi from '../firebase/firestoreApi'
-import { firestore, experimentRecordConverter, storage } from '../firebase/firebase'
+import {
+  firestore,
+  experimentRecordConverter,
+  storage
+} from '../firebase/firebase'
 import { type Simulation, type SimulationReport } from '../database/types'
 import { lineColors } from './config'
 import { clearCurrentSimulation } from '../simulation/simulationSlice'
-import { addDoc, collection, deleteDoc, doc, getCountFromServer, getDocs, serverTimestamp, updateDoc, writeBatch } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getCountFromServer,
+  getDocs,
+  serverTimestamp,
+  updateDoc,
+  writeBatch
+} from 'firebase/firestore'
 import { NavTag } from '../common/types'
 import { type GenerationStatsRecord } from '../population/types'
 import { type ExperimentRecord } from '../firebase/types'
@@ -56,22 +70,22 @@ export const navigationSlice = createSlice({
       // This is called from a PAUSED state, resume running to process the next run
       state.simulationState = 'none'
     },
-    setIsAuthenticated (state, action) {
+    setIsAuthenticated(state, action) {
       state.isAuthenticated = action.payload
     },
-    openErrorSnackbar (state, action) {
+    openErrorSnackbar(state, action) {
       state.errorSnackbarOpen = true
       state.errorSnackbarMessage = action.payload
     },
-    openSuccessSnackbar (state, action) {
+    openSuccessSnackbar(state, action) {
       state.successSnackbarOpen = true
       state.successSnackbarMessage = action.payload
     },
-    closeErrorSnackbar (state) {
+    closeErrorSnackbar(state) {
       state.errorSnackbarOpen = false
       state.errorSnackbarMessage = ''
     },
-    closeSuccessSnackbar (state) {
+    closeSuccessSnackbar(state) {
       state.successSnackbarOpen = false
       state.successSnackbarMessage = ''
     },
@@ -100,14 +114,16 @@ export const navigationSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(clearCurrentSimulation, (state) => {
-        state.simulationState = 'complete'
-      })
+    builder.addCase(clearCurrentSimulation, (state) => {
+      state.simulationState = 'complete'
+    })
   }
 })
 
-const simulationReportToExperimentRecord = (record: SimulationReport, order: number): ExperimentRecord => {
+const simulationReportToExperimentRecord = (
+  record: SimulationReport,
+  order: number
+): ExperimentRecord => {
   const parameters = record.simulation.parameters
   return {
     createdOn: serverTimestamp(),
@@ -123,11 +139,14 @@ const simulationReportToExperimentRecord = (record: SimulationReport, order: num
         target: ''
       }
     },
-    results: record.results.map(({ threshold, stats }: GenerationStatsRecord) => ({
-      threshold,
-      stats: _.omit(stats, ['maxFitOrganism', 'isGlobalBest'])
-    })),
-    maxFitOrganism: record.results[record.results.length - 1].stats.maxFitOrganism
+    results: record.results.map(
+      ({ threshold, stats }: GenerationStatsRecord) => ({
+        threshold,
+        stats: _.omit(stats, ['maxFitOrganism', 'isGlobalBest'])
+      })
+    ),
+    maxFitOrganism:
+      record.results[record.results.length - 1].stats.maxFitOrganism
   }
 }
 
@@ -136,7 +155,7 @@ const simulationReportToExperimentRecord = (record: SimulationReport, order: num
 export const navigationApi = firestoreApi.injectEndpoints({
   endpoints: (builder) => ({
     uploadExperimentReport: builder.mutation<string, SimulationReport>({
-      async queryFn (report: SimulationReport) {
+      async queryFn(report: SimulationReport) {
         try {
           const experimentsRef = collection(firestore, 'experiments')
           if (experimentsRef == null) {
@@ -155,7 +174,10 @@ export const navigationApi = firestoreApi.injectEndpoints({
           const gifFilePath = `experiments/${recordId}/${GIF_FILE}`
 
           const target = report.simulation.parameters.population.target
-          const targetImage = await convertBase64ToFile(target, TARGET_IMAGE_FILE)
+          const targetImage = await convertBase64ToFile(
+            target,
+            TARGET_IMAGE_FILE
+          )
           const targetRef = ref(storage, targetFilePath)
           await uploadBytes(targetRef, targetImage)
 
@@ -183,7 +205,10 @@ export const navigationApi = firestoreApi.injectEndpoints({
     fetchAllExperiments: builder.query<ExperimentRecord[], void>({
       queryFn: async () => {
         try {
-          const collectionRef = collection(firestore, 'experiments').withConverter(experimentRecordConverter)
+          const collectionRef = collection(
+            firestore,
+            'experiments'
+          ).withConverter(experimentRecordConverter)
           const snapshot = await getDocs(collectionRef)
           const records = snapshot.docs.map((doc) => doc.data())
           // Replace the relative paths with the actual image urls
@@ -212,40 +237,47 @@ export const navigationApi = firestoreApi.injectEndpoints({
           return { error: error.message }
         }
       },
-      providesTags: (result) => (result != null)
-        ? [{ type: NavTag.SIMULATION_REPORTS, id: 'LIST' }]
-        : [{ type: NavTag.SIMULATION_REPORTS, id: 'LIST' }]
+      providesTags: (result) =>
+        result != null
+          ? [{ type: NavTag.SIMULATION_REPORTS, id: 'LIST' }]
+          : [{ type: NavTag.SIMULATION_REPORTS, id: 'LIST' }]
     }),
-    updateExperiments: builder.mutation<ExperimentRecord[], ExperimentRecord[]>({
-      async queryFn (records: ExperimentRecord[]) {
-        try {
-          const collectionRef = collection(firestore, 'experiments')
-          if (collectionRef == null) {
-            throw new Error('[updateExperiments] ref is null')
-          }
-          const batch = writeBatch(firestore)
-          records.forEach((record) => {
-            if (record.id == null) {
-              throw new Error('[updateExperiments] record id is null')
+    updateExperiments: builder.mutation<ExperimentRecord[], ExperimentRecord[]>(
+      {
+        async queryFn(records: ExperimentRecord[]) {
+          try {
+            const collectionRef = collection(firestore, 'experiments')
+            if (collectionRef == null) {
+              throw new Error('[updateExperiments] ref is null')
             }
-            const docRef = doc(firestore, 'experiments', record.id).withConverter(experimentRecordConverter)
-            // Update the lastModified timestamp
-            const entry = { ...record, lastModified: serverTimestamp() }
-            batch.set(docRef, entry)
-          })
-          await batch.commit()
-          // TODO: Return the updated records
-          return { data: records }
-        } catch (error: any) {
-          console.error(error)
+            const batch = writeBatch(firestore)
+            records.forEach((record) => {
+              if (record.id == null) {
+                throw new Error('[updateExperiments] record id is null')
+              }
+              const docRef = doc(
+                firestore,
+                'experiments',
+                record.id
+              ).withConverter(experimentRecordConverter)
+              // Update the lastModified timestamp
+              const entry = { ...record, lastModified: serverTimestamp() }
+              batch.set(docRef, entry)
+            })
+            await batch.commit()
+            // TODO: Return the updated records
+            return { data: records }
+          } catch (error: any) {
+            console.error(error)
 
-          return { error: error.message }
-        }
-      },
-      invalidatesTags: [NavTag.SIMULATION_REPORTS]
-    }),
+            return { error: error.message }
+          }
+        },
+        invalidatesTags: [NavTag.SIMULATION_REPORTS]
+      }
+    ),
     deleteExperiment: builder.mutation<void, string>({
-      async queryFn (id: string) {
+      async queryFn(id: string) {
         try {
           const ref = doc(firestore, 'experiments', id)
           if (ref == null) {
@@ -285,20 +317,25 @@ export const {
 
 // Selectors
 // ------------------------------------------------------------
-export const selectIsAuthenticated =
-  (state: { navigation: NavigationState }): boolean => state.navigation.isAuthenticated
+export const selectIsAuthenticated = (state: {
+  navigation: NavigationState
+}): boolean => state.navigation.isAuthenticated
 
-export const selectErrorSnackbarOpen =
-  (state: { navigation: NavigationState }): boolean => state.navigation.errorSnackbarOpen
+export const selectErrorSnackbarOpen = (state: {
+  navigation: NavigationState
+}): boolean => state.navigation.errorSnackbarOpen
 
-export const selectSuccessSnackbarOpen =
-  (state: { navigation: NavigationState }): boolean => state.navigation.successSnackbarOpen
+export const selectSuccessSnackbarOpen = (state: {
+  navigation: NavigationState
+}): boolean => state.navigation.successSnackbarOpen
 
-export const selectErrorSnackbarMessage =
-  (state: { navigation: NavigationState }): string => state.navigation.errorSnackbarMessage
+export const selectErrorSnackbarMessage = (state: {
+  navigation: NavigationState
+}): string => state.navigation.errorSnackbarMessage
 
-export const selectSuccessSnackbarMessage =
-  (state: { navigation: NavigationState }): string => state.navigation.successSnackbarMessage
+export const selectSuccessSnackbarMessage = (state: {
+  navigation: NavigationState
+}): string => state.navigation.successSnackbarMessage
 
 export const {
   useUploadExperimentReportMutation,

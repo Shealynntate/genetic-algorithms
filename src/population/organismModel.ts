@@ -1,4 +1,8 @@
-import { type GenomeBounds, type Organism, type OrganismParameters } from './types'
+import {
+  type GenomeBounds,
+  type Organism,
+  type OrganismParameters
+} from './types'
 import type CrossoverModel from './crossoverModel'
 import type MutationModel from './mutationModel'
 import Genome from './genomeModel'
@@ -48,7 +52,11 @@ const OrganismModel = {
     }
   },
 
-  cloneAndMutate: (organism: Organism, mutation: MutationModel, bounds: GenomeBounds): Organism => {
+  cloneAndMutate: (
+    organism: Organism,
+    mutation: MutationModel,
+    bounds: GenomeBounds
+  ): Organism => {
     const copy = OrganismModel.clone(organism)
     Genome.mutate(copy.genome, mutation, bounds)
     return copy
@@ -56,7 +64,7 @@ const OrganismModel = {
 
   // Organism ID Functions
   // ------------------------------------------------------------
-  getLatestId: (): number => (organismCount),
+  getLatestId: (): number => organismCount,
 
   reset: () => {
     organismCount = -1

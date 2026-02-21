@@ -6,7 +6,9 @@ import { render, screen } from '@testing-library/react'
 import 'fake-indexeddb/auto'
 import store from '../store'
 import theme from '../theme'
-import populationService, { PopulationContext } from '../population/population-context'
+import populationService, {
+  PopulationContext
+} from '../population/population-context'
 import { RouterProvider } from 'react-router-dom'
 import router from '../router/router'
 
@@ -24,21 +26,18 @@ import router from '../router/router'
 //   }
 // }
 
-jest.mock(
-  '../web-workers/fitnessEvaluatorCreator',
-  () => {
-    const worker = {
-      url: '',
-      onconnect: () => {},
-      port: {
-        start: () => {},
-        postMessage: () => {},
-        onmessage: () => {}
-      }
+jest.mock('../web-workers/fitnessEvaluatorCreator', () => {
+  const worker = {
+    url: '',
+    onconnect: () => {},
+    port: {
+      start: () => {},
+      postMessage: () => {},
+      onmessage: () => {}
     }
-    return worker
   }
-)
+  return worker
+})
 
 test('renders title', async () => {
   render(

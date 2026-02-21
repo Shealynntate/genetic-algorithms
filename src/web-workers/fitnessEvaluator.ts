@@ -22,15 +22,23 @@ export default (): void => {
     target: Uint8ClampedArray
     denominator: number
 
-    constructor (canvas: HTMLCanvasElement, numColorChannels: number, maxColorValue: number, target: Uint8ClampedArray) {
-      this.ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D
+    constructor(
+      canvas: HTMLCanvasElement,
+      numColorChannels: number,
+      maxColorValue: number,
+      target: Uint8ClampedArray
+    ) {
+      this.ctx = canvas.getContext('2d', {
+        willReadFrequently: true
+      }) as CanvasRenderingContext2D
       this.width = canvas.width
       this.height = canvas.height
       this.target = target
-      this.denominator = maxColorValue * numColorChannels * this.width * this.height
+      this.denominator =
+        maxColorValue * numColorChannels * this.width * this.height
     }
 
-    getImageData (chromosomes: Chromosome[]): ImageData {
+    getImageData(chromosomes: Chromosome[]): ImageData {
       this.ctx.clearRect(0, 0, this.width, this.height)
 
       chromosomes.forEach(({ color, points }) => {
@@ -47,10 +55,12 @@ export default (): void => {
       return this.ctx.getImageData(0, 0, this.width, this.height)
     }
 
-    evaluateFitness (p: ImageData): number {
+    evaluateFitness(p: ImageData): number {
       const pixels = p.data
       if (pixels.length !== this.target.length) {
-        throw new Error(`Target length ${this.target.length} does not match phenotype length ${pixels.length}`)
+        throw new Error(
+          `Target length ${this.target.length} does not match phenotype length ${pixels.length}`
+        )
       }
 
       let difference = 0
@@ -60,22 +70,21 @@ export default (): void => {
         difference += Math.abs(pixels[i] - this.target[i])
       }
 
-      return (1 - difference / this.denominator)
+      return 1 - difference / this.denominator
     }
   }
 
   self.onmessage = ({
-    data: {
-      canvas,
-      organisms,
-      numColorChannels,
-      maxColorValue,
-      target
-    }
+    data: { canvas, organisms, numColorChannels, maxColorValue, target }
   }: Input) => {
     // If the canvas is provided, then we're initializing the FitnessEvaluator
     if (canvas !== undefined) {
-      fitnessEvaluator = new FitnessEvaluator(canvas, numColorChannels, maxColorValue, target)
+      fitnessEvaluator = new FitnessEvaluator(
+        canvas,
+        numColorChannels,
+        maxColorValue,
+        target
+      )
       return
     }
 

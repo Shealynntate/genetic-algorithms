@@ -5,7 +5,9 @@ import { type ExperimentRecord } from '../firebase/types'
  * @param entries the gallery entries to sort
  * @returns a new array of gallery entries sorted by their order
  */
-export const sortGalleryEntries = (entries: ExperimentRecord[]): ExperimentRecord[] => {
+export const sortGalleryEntries = (
+  entries: ExperimentRecord[]
+): ExperimentRecord[] => {
   return [...entries].sort((a, b) => a.order - b.order)
 }
 
@@ -15,7 +17,10 @@ export const sortGalleryEntries = (entries: ExperimentRecord[]): ExperimentRecor
  * @param newEntries the array of gallery entries after the change
  * @returns true if the order has changed, false otherwise
  */
-export const hasOrderChanged = (oldEntries: ExperimentRecord[], newEntries: ExperimentRecord[]): boolean => {
+export const hasOrderChanged = (
+  oldEntries: ExperimentRecord[],
+  newEntries: ExperimentRecord[]
+): boolean => {
   if (oldEntries.length !== newEntries.length) return true
 
   return oldEntries.some((entry, index) => entry.id !== newEntries[index].id)
@@ -27,7 +32,10 @@ export const hasOrderChanged = (oldEntries: ExperimentRecord[], newEntries: Expe
  * @param newEntries the array of gallery entries after the change
  * @returns true if the data has changed, false otherwise
  */
-export const hasDataChanged = (oldEntries: ExperimentRecord[], newEntries: ExperimentRecord[]): boolean => {
+export const hasDataChanged = (
+  oldEntries: ExperimentRecord[],
+  newEntries: ExperimentRecord[]
+): boolean => {
   if (oldEntries.length !== newEntries.length) return true
 
   return oldEntries.some((entry, index) => entry.id !== newEntries[index].id)

@@ -1,7 +1,10 @@
 import { type PayloadAction, createAction, createSlice } from '@reduxjs/toolkit'
 import { type SimulationState } from './types'
 import { type Simulation } from '../database/types'
-import { type OrganismRecord, type GenerationStatsRecord } from '../population/types'
+import {
+  type OrganismRecord,
+  type GenerationStatsRecord
+} from '../population/types'
 
 const initialState: SimulationState = {
   targetFitnessReached: false,
@@ -18,7 +21,10 @@ export const simulationSlice = createSlice({
     setTargetFitnessReached: (state, action: PayloadAction<boolean>) => {
       state.targetFitnessReached = action.payload
     },
-    setCurrentGenStats: (state, action: PayloadAction<GenerationStatsRecord | undefined>) => {
+    setCurrentGenStats: (
+      state,
+      action: PayloadAction<GenerationStatsRecord | undefined>
+    ) => {
       state.currentGenStats = action.payload
     },
     setLastThreshold: (state, action: PayloadAction<number>) => {

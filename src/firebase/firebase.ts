@@ -1,6 +1,11 @@
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
-import { type QueryDocumentSnapshot, type SnapshotOptions, getFirestore, type Timestamp } from 'firebase/firestore'
+import {
+  type QueryDocumentSnapshot,
+  type SnapshotOptions,
+  getFirestore,
+  type Timestamp
+} from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 import { type User, getAuth, onAuthStateChanged } from 'firebase/auth'
 import store from '../store'
@@ -36,7 +41,10 @@ export const experimentRecordConverter = {
       ...rest
     }
   },
-  fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): ExperimentRecord => {
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot,
+    options: SnapshotOptions
+  ): ExperimentRecord => {
     const data = snapshot.data(options) as ExperimentRecordDbEntry
     const { createdOn, lastModified, ...rest } = data
 

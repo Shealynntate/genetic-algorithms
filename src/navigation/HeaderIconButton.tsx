@@ -8,7 +8,7 @@ interface HeaderIconButtonProps {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
-function HeaderIconButton ({
+function HeaderIconButton({
   children,
   isSelected,
   label,

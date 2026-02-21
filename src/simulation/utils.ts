@@ -10,7 +10,11 @@ import {
   type TakeEffect
 } from 'redux-saga/effects'
 import { approxEqual } from '../common/utils'
-import { addGifEntry, getCurrentImages, getCurrentSimulation } from '../database/api'
+import {
+  addGifEntry,
+  getCurrentImages,
+  getCurrentSimulation
+} from '../database/api'
 import { saveThresholds } from '../simulation/config'
 import { createGif, genomeToPhenotype } from '../utils/imageUtils'
 import { type OrganismRecord } from './types'
@@ -21,7 +25,7 @@ export const shouldSaveGenImage = (genId: number): boolean => {
     if (genId <= saveThresholds[i].threshold) {
       const mod = saveThresholds[i].mod
 
-      return (genId % mod) === 0
+      return genId % mod === 0
     }
   }
   return false
@@ -33,7 +37,10 @@ export const shouldSaveGenImage = (genId: number): boolean => {
  * @param target the target fitness, a number between [0, 1]
  * @returns true if the global best has reached the target
  */
-export const hasReachedTarget = (globalBest: OrganismRecord | undefined, target: number): boolean => {
+export const hasReachedTarget = (
+  globalBest: OrganismRecord | undefined,
+  target: number
+): boolean => {
   if (globalBest == null) return false
 
   const { fitness } = globalBest.organism
@@ -46,7 +53,9 @@ export const hasReachedTarget = (globalBest: OrganismRecord | undefined, target:
  * @param globalBest the best organism of the entire simulation
  * @returns a promise that resolves when the gif has been created and saved
  */
-export const createGalleryEntry = async (globalBest: OrganismRecord): Promise<void> => {
+export const createGalleryEntry = async (
+  globalBest: OrganismRecord
+): Promise<void> => {
   const simulation = await getCurrentSimulation()
   if (simulation == null) {
     console.error('[createGalleryEntry] No current simulation found')
@@ -65,28 +74,36 @@ export const createGalleryEntry = async (globalBest: OrganismRecord): Promise<vo
   await addGifEntry(id, gif)
 }
 
-export function * typedSelect<T> (selector: (state: RootState) => T): Generator<SelectEffect, T, T> {
+export function* typedSelect<T>(
+  selector: (state: RootState) => T
+): Generator<SelectEffect, T, T> {
   const slice: T = yield select(selector)
 
   return slice
 }
 
-export function * typedCall<Fn extends (...args: any[]) => any> (
+export function* typedCall<Fn extends (...args: any[]) => any>(
   fn: Fn,
   ...args: Parameters<Fn>
-): Generator<CallEffect<SagaReturnType<Fn>>, SagaReturnType<Fn>, SagaReturnType<Fn>> {
+): Generator<
+  CallEffect<SagaReturnType<Fn>>,
+  SagaReturnType<Fn>,
+  SagaReturnType<Fn>
+> {
   const value: SagaReturnType<typeof fn> = yield call(fn, ...args)
 
   return value
 }
 
-export function * typedGetContext<T> (key: string): Generator<GetContextEffect, T, T> {
+export function* typedGetContext<T>(
+  key: string
+): Generator<GetContextEffect, T, T> {
   const value: T = yield getContext(key)
 
   return value
 }
 
-export function * typedTake<T> (pattern: string): Generator<TakeEffect, T, T> {
+export function* typedTake<T>(pattern: string): Generator<TakeEffect, T, T> {
   const action: T = yield take(pattern)
 
   return action

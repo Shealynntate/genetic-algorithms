@@ -10,21 +10,26 @@ import { type Phenotype, type Genome, type Point } from '../population/types'
  * @param {*} src - the src parameter for an HTML image element to load
  * @returns a Promise that resolves into the created Image object or an error
  */
-export const createImage = async (
-  src: string
-): Promise<HTMLImageElement> => await new Promise((resolve, reject) => {
-  const image = new Image()
-  image.onload = () => { resolve(image) }
-  image.onerror = (error) => { reject(error) }
-  image.src = src
-})
+export const createImage = async (src: string): Promise<HTMLImageElement> =>
+  await new Promise((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => {
+      resolve(image)
+    }
+    image.onerror = (error) => {
+      reject(error)
+    }
+    image.src = src
+  })
 
 /**
  * A helper method that asynchronously creates an Image element from canvas ImageData
  * @param {*} imageData - an ImageData object of canvas pixel data
  * @returns a new Image object whose src data is set to the ImageData provided
  */
-const imageDataToImage = async (imageData: ImageData): Promise<HTMLImageElement> => {
+const imageDataToImage = async (
+  imageData: ImageData
+): Promise<HTMLImageElement> => {
   const canvas = document.createElement('canvas')
   canvas.width = imageData.width
   canvas.height = imageData.height
@@ -33,9 +38,10 @@ const imageDataToImage = async (imageData: ImageData): Promise<HTMLImageElement>
   return await createImage(canvas.toDataURL())
 }
 
-const scalePoint = (point: Point, { w, h }: Dim): number[] => (
-  [point.x * w, point.y * h]
-)
+const scalePoint = (point: Point, { w, h }: Dim): number[] => [
+  point.x * w,
+  point.y * h
+]
 
 // Canvas, ImageData and Phenotype Functions
 // --------------------------------------------------
@@ -57,7 +63,10 @@ export const createImageData = async (
   return ctx.getImageData(0, 0, width, height)
 }
 
-export const convertBase64ToFile = async (base64: string, fileName: string): Promise<File> => {
+export const convertBase64ToFile = async (
+  base64: string,
+  fileName: string
+): Promise<File> => {
   const response = await fetch(base64)
   const blob = await response.blob()
   return new File([blob], fileName, { type: blob.type })
@@ -95,7 +104,9 @@ export const genomeToPhenotype = (genome: Genome): Phenotype | undefined => {
 
 export const createGif = async (images: ImageData[]): Promise<string> => {
   const { width, height } = canvasParameters
-  const imgs = await Promise.all(images.map(async (image) => (await imageDataToImage(image))))
+  const imgs = await Promise.all(
+    images.map(async (image) => await imageDataToImage(image))
+  )
   const promise = new Promise<string>((resolve, reject) => {
     gifshot.createGIF(
       {

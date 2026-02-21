@@ -8,7 +8,10 @@ import { AxisBottom, AxisLeft } from '@visx/axis'
 import { Group } from '@visx/group'
 import { MIN_BROWSER_WIDTH } from '../navigation/config'
 import CustomCheckbox from '../common/Checkbox'
-import { useGetCompletedSimulationReports, useGetCurrentSimulationReport } from '../database/hooks'
+import {
+  useGetCompletedSimulationReports,
+  useGetCurrentSimulationReport
+} from '../database/hooks'
 import SimulationGraphEntry from '../graph/SimulatonGraphEntry'
 import { useWindowSize } from '../navigation/hooks'
 import { type SimulationReport } from '../database/types'
@@ -40,15 +43,18 @@ const findMaxGeneration = (simulations: SimulationReport[]): number => {
   return result
 }
 
-function SimulationChart (): JSX.Element {
+function SimulationChart(): JSX.Element {
   const windowSize = useWindowSize()
   const containerRef = useRef<HTMLDivElement>(null)
   const graphRef = useRef<SVGSVGElement>(null)
   const [fullWidth, setFullWidth] = useState(MIN_BROWSER_WIDTH)
   const graphWidth = fullWidth - margin.left - margin.right
-  const graphEntries = useSelector((state: RootState) => state.navigation.simulationGraphColors)
+  const graphEntries = useSelector(
+    (state: RootState) => state.navigation.simulationGraphColors
+  )
   const theme = useTheme()
-  const completedSims: SimulationReport[] = useGetCompletedSimulationReports() ?? []
+  const completedSims: SimulationReport[] =
+    useGetCompletedSimulationReports() ?? []
   const currentSim = useGetCurrentSimulationReport()
   // Local state
   const [domainY, setDomainY] = useState([0.5, 1])
@@ -60,9 +66,13 @@ function SimulationChart (): JSX.Element {
 
   const bgColor = theme.palette.background.default
   const axisColor = theme.palette.grey[400]
-  const isCurrentSimGraphed = currentSim?.simulation.id != null && currentSim.simulation.id in graphEntries
+  const isCurrentSimGraphed =
+    currentSim?.simulation.id != null &&
+    currentSim.simulation.id in graphEntries
   // Determine which simulations are being graphed
-  const checkedSimulations = completedSims.filter(({ simulation }) => (simulation.id != null && simulation.id in graphEntries))
+  const checkedSimulations = completedSims.filter(
+    ({ simulation }) => simulation.id != null && simulation.id in graphEntries
+  )
   if (isCurrentSimGraphed) checkedSimulations.push(currentSim)
 
   useEffect(() => {
@@ -73,18 +83,20 @@ function SimulationChart (): JSX.Element {
   }, [windowSize])
 
   const yScale = useMemo(
-    () => scaleLinear({
-      range: [graphHeight, 0],
-      domain: domainY
-    }),
+    () =>
+      scaleLinear({
+        range: [graphHeight, 0],
+        domain: domainY
+      }),
     [domainY, windowSize]
   )
 
   const xScale = useMemo(
-    () => scaleLog({
-      range: [0, graphWidth],
-      domain: domainX
-    }),
+    () =>
+      scaleLog({
+        range: [0, graphWidth],
+        domain: domainX
+      }),
     [domainX, windowSize, graphWidth]
   )
 
@@ -96,17 +108,33 @@ function SimulationChart (): JSX.Element {
     // Negative deltaY means zoom in
     const sign = Math.sign(event.deltaY)
     const value = Math.log(Math.abs(event.deltaY))
-    const zoomFactor = [1 + sign * value / 40, 1 + sign * value / 100]
+    const zoomFactor = [1 + (sign * value) / 40, 1 + (sign * value) / 100]
     const x = mousePos.x - margin.left
     const y = mousePos.y + margin.top
     const gen = clamp(Math.round(xScale.invert(x)), 0, maxGens)
     const fitness = clamp(yScale.invert(y), 0, 1)
 
     const max = findMaxGeneration(checkedSimulations)
-    const x0 = clamp(xScale.invert(x - x * zoomFactor[0]), minX, Math.max(gen - buffer[0], minX))
-    const x1 = clamp(xScale.invert(x + (graphWidth - x) * zoomFactor[0]), Math.min(gen + buffer[0], max), max)
-    const y0 = clamp(yScale.invert(y + (graphHeight - y) * zoomFactor[1]), 0, Math.max(fitness - buffer[1], 0))
-    const y1 = clamp(yScale.invert(y - y * zoomFactor[1]), Math.min(fitness + buffer[1], 1), 1)
+    const x0 = clamp(
+      xScale.invert(x - x * zoomFactor[0]),
+      minX,
+      Math.max(gen - buffer[0], minX)
+    )
+    const x1 = clamp(
+      xScale.invert(x + (graphWidth - x) * zoomFactor[0]),
+      Math.min(gen + buffer[0], max),
+      max
+    )
+    const y0 = clamp(
+      yScale.invert(y + (graphHeight - y) * zoomFactor[1]),
+      0,
+      Math.max(fitness - buffer[1], 0)
+    )
+    const y1 = clamp(
+      yScale.invert(y - y * zoomFactor[1]),
+      Math.min(fitness + buffer[1], 1),
+      1
+    )
     setDomainX([x0, x1])
     setDomainY([y0, y1])
   }
@@ -114,7 +142,10 @@ function SimulationChart (): JSX.Element {
   const onMouseDown = (event: React.MouseEvent): void => {
     const mousePos = localPoint(event)
     if (mousePos !== null) {
-      setLastMousePos({ y: mousePos.y - margin.top, x: mousePos.x - margin.left })
+      setLastMousePos({
+        y: mousePos.y - margin.top,
+        x: mousePos.x - margin.left
+      })
     }
   }
 
@@ -130,8 +161,16 @@ function SimulationChart (): JSX.Element {
     const x = mousePos.x - margin.left
     const y = mousePos.y - margin.top
     const maxGens = findMaxGeneration(checkedSimulations)
-    const deltaX = clamp(xScale.invert(lastMousePos.x) - xScale.invert(x), -domainX[0], maxGens - domainX[1])
-    const deltaY = clamp(yScale.invert(lastMousePos.y) - yScale.invert(y), -domainY[0], 1 - domainY[1])
+    const deltaX = clamp(
+      xScale.invert(lastMousePos.x) - xScale.invert(x),
+      -domainX[0],
+      maxGens - domainX[1]
+    )
+    const deltaY = clamp(
+      yScale.invert(lastMousePos.y) - yScale.invert(y),
+      -domainY[0],
+      1 - domainY[1]
+    )
     const x0 = clamp(deltaX + domainX[0], minX, maxGens - buffer[0])
     const x1 = clamp(deltaX + domainX[1], buffer[0], maxGens)
     const y0 = clamp(deltaY + domainY[0], 0, 1 - buffer[1])
@@ -149,7 +188,9 @@ function SimulationChart (): JSX.Element {
       event.preventDefault()
       event.stopPropagation()
     }
-    graphRef.current.addEventListener('wheel', onWheelCapture, { passive: false })
+    graphRef.current.addEventListener('wheel', onWheelCapture, {
+      passive: false
+    })
 
     return () => {
       if (graphRef.current == null) return
@@ -159,10 +200,12 @@ function SimulationChart (): JSX.Element {
 
   return (
     <Stack ref={containerRef}>
-      <Stack direction="row" sx={{ justifyContent: 'space-between' }} spacing={2}>
-        <Typography color="GrayText">
-          {SimulationGraph.title}
-        </Typography>
+      <Stack
+        direction="row"
+        sx={{ justifyContent: 'space-between' }}
+        spacing={2}
+      >
+        <Typography color="GrayText">{SimulationGraph.title}</Typography>
         <Box sx={{ display: 'flex' }}>
           <CustomCheckbox
             label={SimulationGraph.meanCheckbox}

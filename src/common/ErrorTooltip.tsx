@@ -11,42 +11,42 @@ interface ErrorTooltipProps {
   show?: boolean
 }
 
-const ErrorTooltip = styled(({
-  error,
-  children,
-  direction = 'bottom',
-  display = 'block',
-  show = false
-}: ErrorTooltipProps): JSX.Element => {
-  if (error == null) {
-    // Don't create the tooltip if there's no text content
-    return children
-  }
+const ErrorTooltip = styled(
+  ({
+    error,
+    children,
+    direction = 'bottom',
+    display = 'block',
+    show = false
+  }: ErrorTooltipProps): JSX.Element => {
+    if (error == null) {
+      // Don't create the tooltip if there's no text content
+      return children
+    }
 
-  return (
-    <Box
-      style={{ display: 'inherit', position: 'relative' }}
-    >
-      {children}
-      {show && (
-        <div
-          className={`Tooltip-Tip ${direction}`}
-          style={{
-            display,
-            position: 'absolute',
-            lineHeight: 1.3,
-            zIndex: 9999,
-            whiteSpace: 'pre',
-            overflowX: 'visible',
-            color: theme.palette.error.light,
-            background: theme.palette.background.paper
-          }}
-        >
-          {error}
-        </div>
-      )}
-    </Box>
-  )
-})()
+    return (
+      <Box style={{ display: 'inherit', position: 'relative' }}>
+        {children}
+        {show && (
+          <div
+            className={`Tooltip-Tip ${direction}`}
+            style={{
+              display,
+              position: 'absolute',
+              lineHeight: 1.3,
+              zIndex: 9999,
+              whiteSpace: 'pre',
+              overflowX: 'visible',
+              color: theme.palette.error.light,
+              background: theme.palette.background.paper
+            }}
+          >
+            {error}
+          </div>
+        )}
+      </Box>
+    )
+  }
+)()
 
 export default ErrorTooltip

@@ -19,7 +19,7 @@ interface SimulationGraphEntryProps {
   yScale: (value: number) => number
 }
 
-function SimulationGraphEntry ({
+function SimulationGraphEntry({
   color = theme.palette.primary.main,
   data,
   id,

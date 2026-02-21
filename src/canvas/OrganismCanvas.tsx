@@ -9,7 +9,7 @@ interface OrganismCanvasProps {
   willReadFrequently?: boolean
 }
 
-function OrganismCanvas ({
+function OrganismCanvas({
   organism,
   width,
   height,
@@ -31,13 +31,7 @@ function OrganismCanvas ({
     }
   }, [organism.genome])
 
-  return (
-    <canvas
-      width={width}
-      height={height}
-      ref={canvasRef}
-    />
-  )
+  return <canvas width={width} height={height} ref={canvasRef} />
 }
 
 export default OrganismCanvas

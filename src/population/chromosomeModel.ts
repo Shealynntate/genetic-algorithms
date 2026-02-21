@@ -1,4 +1,9 @@
-import { type Chromosome, type ChromosomeParameters, type Color, type Point } from './types'
+import {
+  type Chromosome,
+  type ChromosomeParameters,
+  type Color,
+  type Point
+} from './types'
 import type MutationModel from './mutationModel'
 import { randomFloat, randomIndex, randomInt } from '../utils/statsUtils'
 import { genRange, setSigFigs } from '../common/utils'
@@ -30,7 +35,7 @@ const Model = {
   },
 
   clone: (chromosome: Chromosome): Chromosome => ({
-    points: chromosome.points.map(p => ({ ...p })),
+    points: chromosome.points.map((p) => ({ ...p })),
     color: {
       r: chromosome.color.r,
       g: chromosome.color.g,
@@ -98,13 +103,11 @@ const Model = {
     y: clamp(setSigFigs(p.y + m.pointNudge(), statsSigFigs), 0, 1)
   }),
 
-  tweakColor: (m: MutationModel, value: number): number => (
-    clamp(Math.round(value + m.colorNudge() * maxColorValue), 0, maxColorValue)
-  ),
+  tweakColor: (m: MutationModel, value: number): number =>
+    clamp(Math.round(value + m.colorNudge() * maxColorValue), 0, maxColorValue),
 
-  tweakAlpha: (m: MutationModel, value: number): number => (
-    clamp(setSigFigs(value + m.colorNudge(), statsSigFigs), 0, 1)
-  ),
+  tweakAlpha: (m: MutationModel, value: number): number =>
+    clamp(setSigFigs(value + m.colorNudge(), statsSigFigs), 0, 1),
 
   // Initialization Methods
   // ------------------------------------------------------------

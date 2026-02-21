@@ -13,7 +13,7 @@ interface DeviationLineProps {
   yMax: number
 }
 
-function DeviationLine ({
+function DeviationLine({
   color,
   data = [],
   id,
@@ -27,12 +27,8 @@ function DeviationLine ({
         id={`id-${id}`}
         data={data}
         x={({ stats }) => xScale(stats.gen)}
-        y0={({ stats }) => (
-          yScale(stats.meanFitness - stats.deviation)
-        )}
-        y1={({ stats }) => (
-          yScale(stats.meanFitness + stats.deviation)
-        )}
+        y0={({ stats }) => yScale(stats.meanFitness - stats.deviation)}
+        y1={({ stats }) => yScale(stats.meanFitness + stats.deviation)}
         curve={curveMonotoneX}
         clipAboveTo={0}
         clipBelowTo={yMax}
@@ -48,18 +44,14 @@ function DeviationLine ({
       <Line
         data={data}
         x={({ stats }) => xScale(stats.gen)}
-        y={({ stats }) => (
-          yScale(stats.meanFitness - stats.deviation)
-        )}
+        y={({ stats }) => yScale(stats.meanFitness - stats.deviation)}
         color={color}
         width={0.3}
       />
       <Line
         data={data}
         x={({ stats }) => xScale(stats.gen)}
-        y={({ stats }) => (
-          yScale(stats.meanFitness + stats.deviation)
-        )}
+        y={({ stats }) => yScale(stats.meanFitness + stats.deviation)}
         color={color}
         width={0.3}
       />

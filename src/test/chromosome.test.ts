@@ -11,7 +11,7 @@ import MutationModel from '../population/mutationModel'
 const PlaceholderProbability = 0
 
 class MockMutationModel extends MutationModel {
-  constructor () {
+  constructor() {
     super({
       distributions: {
         colorSigma: 0,
@@ -238,7 +238,11 @@ describe('Chromosome Initialization', () => {
   })
 
   test('Create A Chromosome With Fixed Points and Color', () => {
-    const points: Point[] = [{ x: 1, y: 2 }, { x: 3, y: 4 }, { x: 5, y: 6 }]
+    const points: Point[] = [
+      { x: 1, y: 2 },
+      { x: 3, y: 4 },
+      { x: 5, y: 6 }
+    ]
     const color: Color = { r: 1, g: 2, b: 3, a: 0 }
     jest.spyOn(ChromosomeModel, 'randomColor')
     // jest.spyOn(ChromosomeModel, 'randomPoints')

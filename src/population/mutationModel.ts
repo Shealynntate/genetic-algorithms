@@ -1,4 +1,8 @@
-import { type MutationProbabilities, type Mutation, type DistributionMap } from './types'
+import {
+  type MutationProbabilities,
+  type Mutation,
+  type DistributionMap
+} from './types'
 import GaussianNoise from '../utils/gaussianNoise'
 import { flipCoin } from '../utils/statsUtils'
 
@@ -12,7 +16,7 @@ class MutationModel {
   distributions: DistributionMap
   genomeSize: number
 
-  constructor (parameters: Mutation) {
+  constructor(parameters: Mutation) {
     const { distributions } = parameters
     this.distributions = distributions
     this.colorDist = new GaussianNoise(0, distributions.colorSigma)
@@ -21,43 +25,43 @@ class MutationModel {
     this.probabilities = parameters.probabilities
   }
 
-  doTweakPoint (): boolean {
+  doTweakPoint(): boolean {
     return flipCoin(this.probabilities.tweakPoint)
   }
 
-  doTweakColor (): boolean {
+  doTweakColor(): boolean {
     return flipCoin(this.probabilities.tweakColor)
   }
 
-  doAddPoint (): boolean {
+  doAddPoint(): boolean {
     return flipCoin(this.probabilities.addPoint)
   }
 
-  doRemovePoint (): boolean {
+  doRemovePoint(): boolean {
     return flipCoin(this.probabilities.removePoint)
   }
 
-  doAddChromosome (): boolean {
+  doAddChromosome(): boolean {
     return flipCoin(this.probabilities.addChromosome)
   }
 
-  doRemoveChromosome (): boolean {
+  doRemoveChromosome(): boolean {
     return flipCoin(this.probabilities.removeChromosome)
   }
 
-  doPermute (): boolean {
+  doPermute(): boolean {
     return flipCoin(this.probabilities.permuteChromosomes)
   }
 
-  colorNudge (): number {
+  colorNudge(): number {
     return this.colorDist.next()
   }
 
-  pointNudge (): number {
+  pointNudge(): number {
     return this.pointDist.next()
   }
 
-  serialize (): Mutation {
+  serialize(): Mutation {
     return {
       genomeSize: this.genomeSize,
       distributions: this.distributions,

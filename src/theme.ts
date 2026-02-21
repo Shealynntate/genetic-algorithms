@@ -40,17 +40,19 @@ const theme = createTheme({
       }
     },
     MuiFab: {
-      variants: [{
-        props: { size: 'extrasmall' },
-        style: {
-          height: 24,
-          width: 24,
-          minHeight: 0,
-          '.MuiSvgIcon-root': {
-            fontSize: '1.2rem'
+      variants: [
+        {
+          props: { size: 'extrasmall' },
+          style: {
+            height: 24,
+            width: 24,
+            minHeight: 0,
+            '.MuiSvgIcon-root': {
+              fontSize: '1.2rem'
+            }
           }
         }
-      }]
+      ]
     },
     MuiPaper: {
       styleOverrides: {
@@ -72,23 +74,25 @@ const theme = createTheme({
           fontFamily: '"Montserrat", Helvetica, Arial, sans-serif'
         }
       },
-      variants: [{
-        props: { variant: 'lightCaption' },
-        style: {
-          fontSize: '0.7rem',
-          color: 'GrayText'
+      variants: [
+        {
+          props: { variant: 'lightCaption' },
+          style: {
+            fontSize: '0.7rem',
+            color: 'GrayText'
+          }
+        },
+        {
+          props: { variant: 'codeCaption' },
+          style: {
+            fontWeight: 400,
+            fontSize: '0.75rem',
+            lineHeight: 1.66,
+            letterSpacing: '0.03333em',
+            fontFamily: '"Oxygen Mono", monospace'
+          }
         }
-      },
-      {
-        props: { variant: 'codeCaption' },
-        style: {
-          fontWeight: 400,
-          fontSize: '0.75rem',
-          lineHeight: 1.66,
-          letterSpacing: '0.03333em',
-          fontFamily: '"Oxygen Mono", monospace'
-        }
-      }]
+      ]
     }
   }
 })

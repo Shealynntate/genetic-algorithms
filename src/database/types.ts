@@ -1,5 +1,9 @@
 import { type SimulationStatus } from '../simulation/types'
-import { type GenerationStatsRecord, type Genome, type Population } from '../population/types'
+import {
+  type GenerationStatsRecord,
+  type Genome,
+  type Population
+} from '../population/types'
 import { type ParametersState } from '../parameters/types'
 
 /**
@@ -56,4 +60,7 @@ export interface SimulationReport {
   gif?: string // The base64 encoded gif
 }
 
-export type MutableSimulation = Pick<Simulation, 'population' | 'parameters' | 'status' | 'name'>
+export type MutableSimulation = Pick<
+  Simulation,
+  'population' | 'parameters' | 'status' | 'name'
+>

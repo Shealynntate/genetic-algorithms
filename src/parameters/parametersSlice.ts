@@ -42,14 +42,19 @@ export const parametersSlice = createSlice({
       const count = action.payload
       const popSize = state.population.size
       if (count > popSize) {
-        throw new Error(`Elite count ${count} cannot exceed population size ${popSize}`)
+        throw new Error(
+          `Elite count ${count} cannot exceed population size ${popSize}`
+        )
       }
       state.population.selection.eliteCount = count
     },
     setTournamentSize: (state, action) => {
       state.population.selection.tournamentSize = action.payload
     },
-    setSimulationParameters: (state, action: PayloadAction<ParametersState>) => {
+    setSimulationParameters: (
+      state,
+      action: PayloadAction<ParametersState>
+    ) => {
       const parameters = action.payload
       state.population = parameters.population
       state.stopCriteria = parameters.stopCriteria

@@ -21,7 +21,7 @@ interface ImageInputProps {
   width?: number
 }
 
-function ImageInput ({
+function ImageInput({
   defaultTarget,
   onChange = () => {},
   readOnly = false,
@@ -82,10 +82,12 @@ function ImageInput ({
     >
       <input {...getInputProps()} disabled={readOnly} />
       <TargetCanvas width={width} height={height} target={target} />
-      <Snackbar open={alertState !== 'info'} autoHideDuration={6e3} onClose={onSnackbarClose}>
-          <Alert severity={alertState}>
-            {AlertMessage[alertState]}
-          </Alert>
+      <Snackbar
+        open={alertState !== 'info'}
+        autoHideDuration={6e3}
+        onClose={onSnackbarClose}
+      >
+        <Alert severity={alertState}>{AlertMessage[alertState]}</Alert>
       </Snackbar>
     </Box>
   )

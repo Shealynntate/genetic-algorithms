@@ -23,24 +23,33 @@ class PopulationService {
   population: PopulationModel | null
   workers: WorkerBuilder[]
 
-  constructor () {
+  constructor() {
     this.population = null
     this.workers = []
   }
 
-  async create (parameters: PopulationParameters): Promise<PopulationModel> {
+  async create(parameters: PopulationParameters): Promise<PopulationModel> {
     const { size, target } = parameters
-    const imageData = await createImageData(target, canvasParameters.width, canvasParameters.height)
+    const imageData = await createImageData(
+      target,
+      canvasParameters.width,
+      canvasParameters.height
+    )
     // Setup web workers for evaluateFitness work
     const numWorkers = Math.ceil(size / workerBatchSize)
-    this.workers = [...Array(numWorkers)].map(() => createWorker(imageData.data))
-    this.population = new PopulationModel(parameters, this.evaluateFitness.bind(this))
+    this.workers = [...Array(numWorkers)].map(() =>
+      createWorker(imageData.data)
+    )
+    this.population = new PopulationModel(
+      parameters,
+      this.evaluateFitness.bind(this)
+    )
     await this.population.initialize()
 
     return this.population
   }
 
-  async restore (
+  async restore(
     state: Population,
     minGenomeSize: number,
     maxGenomeSize: number
@@ -66,25 +75,27 @@ class PopulationService {
    * Should only be called per generation as it's compulationally expensive
    * @returns the array of evaluated Organisms
    */
-  async evaluateFitness (organisms: Organism[]): Promise<Organism[]> {
+  async evaluateFitness(organisms: Organism[]): Promise<Organism[]> {
     const size = organisms.length
     const promises: Array<Promise<WorkerMessage>> = []
 
     for (let i = 0; i < this.workers.length; ++i) {
       const start = i * workerBatchSize
       const end = Math.min((i + 1) * workerBatchSize, size)
-      promises.push(new Promise((resolve, reject) => {
-        try {
-          this.workers[i].postMessage({
-            organisms: organisms.slice(start, end)
-          })
-          this.workers[i].onmessage = (result) => {
-            resolve(result.data)
+      promises.push(
+        new Promise((resolve, reject) => {
+          try {
+            this.workers[i].postMessage({
+              organisms: organisms.slice(start, end)
+            })
+            this.workers[i].onmessage = (result) => {
+              resolve(result.data)
+            }
+          } catch (error) {
+            reject(error)
           }
-        } catch (error) {
-          reject(error)
-        }
-      }))
+        })
+      )
     }
 
     const results = await Promise.all(promises)
@@ -93,16 +104,18 @@ class PopulationService {
       orgs = orgs.concat(results[i].updatedOrganisms)
     }
     if (orgs.length !== size) {
-      throw new Error(`evaluateFitness returned incorrect number of organisms ${orgs.length}`)
+      throw new Error(
+        `evaluateFitness returned incorrect number of organisms ${orgs.length}`
+      )
     }
     return orgs
   }
 
-  serialize (): Population | undefined {
+  serialize(): Population | undefined {
     return this.population?.serialize()
   }
 
-  reset (): void {
+  reset(): void {
     // Reset the static state of the Population
     PopulationModel.reset()
     OrganismModel.reset()
@@ -114,7 +127,7 @@ class PopulationService {
     this.workers = []
   }
 
-  getPopulation (): PopulationModel | null {
+  getPopulation(): PopulationModel | null {
     return this.population
   }
 }

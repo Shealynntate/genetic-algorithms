@@ -7,7 +7,7 @@ interface CustomCheckboxProps {
   onCheck?: (value: boolean) => void
 }
 
-function CustomCheckbox ({
+function CustomCheckbox({
   label = '',
   checked = false,
   onCheck = (value: boolean) => {}
@@ -18,14 +18,16 @@ function CustomCheckbox ({
   }
 
   return (
-    <Stack direction='row' sx={{ alignItems: 'end' }}>
+    <Stack direction="row" sx={{ alignItems: 'end' }}>
       <Checkbox
-        size='small'
+        size="small"
         sx={{ pb: 0 }}
         checked={checked}
-        onClick={(event) => { onClick(event) }}
+        onClick={(event) => {
+          onClick(event)
+        }}
       />
-      <Typography variant='body2'>{label}</Typography>
+      <Typography variant="body2">{label}</Typography>
     </Stack>
   )
 }

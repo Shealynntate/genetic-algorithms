@@ -41,9 +41,9 @@ const populationParameters: PopulationParameters = {
   }
 }
 
-const mockEvaluateFitness = async (organisms: Organism[]): Promise<Organism[]> => (
-  organisms.map((o) => ({ ...o, fitness: 1 }))
-)
+const mockEvaluateFitness = async (
+  organisms: Organism[]
+): Promise<Organism[]> => organisms.map((o) => ({ ...o, fitness: 1 }))
 
 beforeEach(() => {
   // Reset ID generations
@@ -104,5 +104,5 @@ test('Roulette Selection', async () => {
 
   expect(utils.randomFloat).toBeCalledTimes(10)
 
-// run many spins, make sure the disribution is correct
+  // run many spins, make sure the disribution is correct
 })

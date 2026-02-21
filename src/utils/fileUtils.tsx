@@ -1,11 +1,19 @@
 // File Type Conversion and Creation
 // --------------------------------------------------
-export const fileToBase64 = async (file: File): Promise<string | ArrayBuffer | null> => {
+export const fileToBase64 = async (
+  file: File
+): Promise<string | ArrayBuffer | null> => {
   const reader = new FileReader()
-  const promise = new Promise<string | ArrayBuffer | null>((resolve, reject) => {
-    reader.onload = () => { resolve(reader.result) }
-    reader.onerror = (error) => { reject(error) }
-  })
+  const promise = new Promise<string | ArrayBuffer | null>(
+    (resolve, reject) => {
+      reader.onload = () => {
+        resolve(reader.result)
+      }
+      reader.onerror = (error) => {
+        reject(error)
+      }
+    }
+  )
   reader.readAsDataURL(file)
 
   return await promise
@@ -46,7 +54,10 @@ export const download = (filename: string, contents: string): void => {
   document.body.removeChild(a)
 }
 
-export const downloadUrl = async (url: string, filename: string): Promise<void> => {
+export const downloadUrl = async (
+  url: string,
+  filename: string
+): Promise<void> => {
   const response = await fetch(url)
   const blob = await response.blob()
   download(filename, URL.createObjectURL(blob))

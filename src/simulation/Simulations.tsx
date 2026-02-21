@@ -1,5 +1,13 @@
 import React, { type SyntheticEvent, useRef, useState } from 'react'
-import { Box, Button, Paper, Stack, Tooltip, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  Paper,
+  Stack,
+  Tooltip,
+  Typography,
+  useTheme
+} from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import _ from 'lodash'
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
@@ -30,7 +38,7 @@ const sortSimulations = (simulations: Simulation[]): Simulation[] => {
   return sorted
 }
 
-function Simulations (): JSX.Element {
+function Simulations(): JSX.Element {
   const theme = useTheme()
   const formData = useRef<ParametersState>(defaultParameters)
   const addButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -93,15 +101,17 @@ function Simulations (): JSX.Element {
               alignItems: 'center'
             }}
           >
-            <Typography variant='h5' color='GrayText'>Experiments</Typography>
-            <Tooltip title='Add a new run'>
+            <Typography variant="h5" color="GrayText">
+              Experiments
+            </Typography>
+            <Tooltip title="Add a new run">
               <Button
                 onClick={onAddSimulation}
-                color='secondary'
+                color="secondary"
                 ref={addButtonRef}
                 sx={{ boxShadow: 'none' }}
-                variant='outlined'
-                size='small'
+                variant="outlined"
+                size="small"
                 startIcon={<AddIcon />}
               >
                 Add
@@ -116,23 +126,22 @@ function Simulations (): JSX.Element {
                 <SkeletonExperimentEntry />
               </Stack>
             )}
-            {!isLoading && allSimulations.length === 0
-              ? <Paper sx={{ textAlign: 'center' }}>
-                  <Typography>
-                    Create a new entry and watch it run!
-                  </Typography>
-                </Paper>
-              : <Stack spacing={0.5}>
-                  {allSimulations.map((simulation) => (
-                    <SimulationEntry
-                      key={simulation.id}
-                      simulation={simulation}
-                      isActive={runningSimulation?.id === simulation.id}
-                      onDuplicate={onDuplicate}
-                    />
-                  ))}
-                </Stack>
-            }
+            {!isLoading && allSimulations.length === 0 ? (
+              <Paper sx={{ textAlign: 'center' }}>
+                <Typography>Create a new entry and watch it run!</Typography>
+              </Paper>
+            ) : (
+              <Stack spacing={0.5}>
+                {allSimulations.map((simulation) => (
+                  <SimulationEntry
+                    key={simulation.id}
+                    simulation={simulation}
+                    isActive={runningSimulation?.id === simulation.id}
+                    onDuplicate={onDuplicate}
+                  />
+                ))}
+              </Stack>
+            )}
           </Stack>
         </Grid2>
         <Grid2 xs={12} md={6} spacing={1}>

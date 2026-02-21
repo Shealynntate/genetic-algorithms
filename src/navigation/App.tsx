@@ -6,9 +6,9 @@ import Footer from './Footer'
 import ErrorSnackbar from '../common/ErrorSnackbar'
 import SuccessSnackbar from '../common/SuccessSnackbar'
 
-function App (): JSX.Element {
+function App(): JSX.Element {
   return (
-    <Stack height='100vh'>
+    <Stack height="100vh">
       <Header />
       <Container sx={{ mt: 1, flexGrow: 1 }}>
         <Outlet />

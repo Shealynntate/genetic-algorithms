@@ -7,7 +7,7 @@ import {
   selectErrorSnackbarOpen
 } from '../navigation/navigationSlice'
 
-function ErrorSnackbar (): JSX.Element {
+function ErrorSnackbar(): JSX.Element {
   const isOpen = useSelector(selectErrorSnackbarOpen)
   const message = useSelector(selectErrorSnackbarMessage)
   const dispatch = useDispatch()
@@ -18,7 +18,7 @@ function ErrorSnackbar (): JSX.Element {
 
   return (
     <Snackbar open={isOpen} onClose={onClose}>
-      <Alert severity='error' onClose={onClose}>
+      <Alert severity="error" onClose={onClose}>
         {message}
       </Alert>
     </Snackbar>

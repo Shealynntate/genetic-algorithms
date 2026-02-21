@@ -1,5 +1,10 @@
 import GeneticAlgorithmsDatabase from './GeneticAlgorithmsDatabase'
-import { type Gif, type Image, type MutableSimulation, type Simulation } from './types'
+import {
+  type Gif,
+  type Image,
+  type MutableSimulation,
+  type Simulation
+} from './types'
 import { type Organism, type GenerationStatsRecord } from '../population/types'
 import { genomeToPhenotype } from '../utils/imageUtils'
 
@@ -28,23 +33,33 @@ export const insertSimulation = async (
   })
 }
 
-export const getSimulation = async (id: number): Promise<Simulation | undefined> => {
+export const getSimulation = async (
+  id: number
+): Promise<Simulation | undefined> => {
   return await db.simulations.get(id)
 }
 
-export const getSimulations = async (ids: number[]): Promise<Array<Simulation | undefined>> => {
+export const getSimulations = async (
+  ids: number[]
+): Promise<Array<Simulation | undefined>> => {
   return await db.simulations.bulkGet(ids)
 }
 
-export const getSimulationsByStatus = async (status: string): Promise<Simulation[]> => {
+export const getSimulationsByStatus = async (
+  status: string
+): Promise<Simulation[]> => {
   return await db.simulations.where('status').equals(status).toArray()
 }
 
-export const getSimulationByStatus = async (status: string): Promise<Simulation | undefined> => {
+export const getSimulationByStatus = async (
+  status: string
+): Promise<Simulation | undefined> => {
   return await db.simulations.where('status').equals(status).first()
 }
 
-export const getCurrentSimulation = async (): Promise<Simulation | undefined> => {
+export const getCurrentSimulation = async (): Promise<
+  Simulation | undefined
+> => {
   if (currentSimulationId === undefined) return undefined
 
   return await db.simulations.get(currentSimulationId)
@@ -82,7 +97,9 @@ export const updateCurrentSimulation = async (
   data: Partial<MutableSimulation>
 ): Promise<number> => {
   if (currentSimulationId == null) {
-    throw new Error('[updateCurrentSimulation] Current simulation ID is not set, cannot update it')
+    throw new Error(
+      '[updateCurrentSimulation] Current simulation ID is not set, cannot update it'
+    )
   }
   return await updateSimulation(currentSimulationId, data)
 }
@@ -93,7 +110,10 @@ export const updateCurrentSimulation = async (
  * @param name the new name for the simulation
  * @returns a promise that resolves to the number of entries updated
  */
-export const renameSimulation = async (simulationId: number, name: string): Promise<number> => {
+export const renameSimulation = async (
+  simulationId: number,
+  name: string
+): Promise<number> => {
   return await db.simulations.update(simulationId, { name })
 }
 
@@ -114,7 +134,9 @@ export const setCurrentSimulation = async (
   }
   const entry = await db.simulations.get(simulationId)
   if (entry == null) {
-    throw new Error(`[setCurrentSimulation] No entry found for simulationId ${simulationId}`)
+    throw new Error(
+      `[setCurrentSimulation] No entry found for simulationId ${simulationId}`
+    )
   }
   currentSimulationId = simulationId
 
@@ -125,7 +147,9 @@ export const setCurrentSimulation = async (
  * Find the next pending simulation to run and set it as the current simulation.
  * @returns the next pending simulation to run, or undefined if none are pending
  */
-export const getNextSimulationToRun = async (): Promise<Simulation | undefined> => {
+export const getNextSimulationToRun = async (): Promise<
+  Simulation | undefined
+> => {
   const simulation = await getSimulationByStatus('pending')
   if (simulation == null) return undefined
 
@@ -182,7 +206,9 @@ export const deleteSimulation = async (id: number): Promise<number[]> => {
 
 export const deleteCurrentSimulation = async (): Promise<number[]> => {
   if (currentSimulationId == null) {
-    throw new Error('[deleteCurrentSimulation] Current simulation ID is not set, cannot delete it')
+    throw new Error(
+      '[deleteCurrentSimulation] Current simulation ID is not set, cannot delete it'
+    )
   }
   return await deleteSimulation(currentSimulationId)
 }
@@ -200,30 +226,45 @@ export const addResultsEntry = async (
   })
 }
 
-export const addResultsForCurrentSimulation = async (results: GenerationStatsRecord): Promise<number> => {
+export const addResultsForCurrentSimulation = async (
+  results: GenerationStatsRecord
+): Promise<number> => {
   if (currentSimulationId == null) {
-    throw new Error('[insertResultsForCurrentSimulation] Current simulation ID is null')
+    throw new Error(
+      '[insertResultsForCurrentSimulation] Current simulation ID is null'
+    )
   }
   return await addResultsEntry(currentSimulationId, results)
 }
 
-export const getSimulationRecords = async (simulationId: number): Promise<GenerationStatsRecord[]> => {
+export const getSimulationRecords = async (
+  simulationId: number
+): Promise<GenerationStatsRecord[]> => {
   const results = await db.results.where({ simulationId }).toArray()
   return results.map((result) => result.stats)
 }
 
-export const getCurrentSimulationRecords = async (): Promise<GenerationStatsRecord[]> => {
+export const getCurrentSimulationRecords = async (): Promise<
+  GenerationStatsRecord[]
+> => {
   if (currentSimulationId == null) {
-    throw new Error('[getCurrentSimulationResults] Current simulation ID is not set')
+    throw new Error(
+      '[getCurrentSimulationResults] Current simulation ID is not set'
+    )
   }
   return await getSimulationRecords(currentSimulationId)
 }
 
 // Images Table
 // --------------------------------------------------
-export const addImageToDatabase = async (gen: number, maxFitOrganism: Organism): Promise<number> => {
+export const addImageToDatabase = async (
+  gen: number,
+  maxFitOrganism: Organism
+): Promise<number> => {
   if (currentSimulationId == null) {
-    throw new Error('[addImageToDatabase] Current simulation ID is not set, cannot add image')
+    throw new Error(
+      '[addImageToDatabase] Current simulation ID is not set, cannot add image'
+    )
   }
   const { fitness, genome } = maxFitOrganism
   const phenotype = genomeToPhenotype(genome)
@@ -255,7 +296,10 @@ export const getCurrentImages = async (): Promise<Image[]> => {
 
 // Gallery Table
 // --------------------------------------------------
-export const addGifEntry = async (simulationId: number, gif: string): Promise<number> => {
+export const addGifEntry = async (
+  simulationId: number,
+  gif: string
+): Promise<number> => {
   return await db.gifs.add({
     createdOn: Date.now(),
     simulationId,
@@ -267,7 +311,9 @@ export const deleteGifEntry = async (id: number): Promise<void> => {
   await db.gifs.delete(id)
 }
 
-export const getGifEntryBySimulation = async (simulationId: number): Promise<Gif | undefined> => {
+export const getGifEntryBySimulation = async (
+  simulationId: number
+): Promise<Gif | undefined> => {
   return await db.gifs.where('simulationId').equals(simulationId).first()
 }
 

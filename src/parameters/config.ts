@@ -1,7 +1,17 @@
-import { type ParametersState, type FormField, type ParameterLabelsType } from './types'
+import {
+  type ParametersState,
+  type FormField,
+  type ParameterLabelsType
+} from './types'
 // Note: For image imports to be base64 and not a path, need to be under ~10kb
 import defaultTarget from '../assets/mona_lisa.jpeg'
-import { type SelectionType, type MutationProbabilityType, type CrossoverType, type DistributionTypes, type CrossoverProbabilityTypes } from '../population/types'
+import {
+  type SelectionType,
+  type MutationProbabilityType,
+  type CrossoverType,
+  type DistributionTypes,
+  type CrossoverProbabilityTypes
+} from '../population/types'
 import { type AppState } from '../navigation/types'
 
 export const maxPopulation = 500
@@ -173,7 +183,10 @@ export const ParameterBounds = {
   }
 }
 
-export const MutationProbabilityFormFields: Record<MutationProbabilityType, FormField> = {
+export const MutationProbabilityFormFields: Record<
+  MutationProbabilityType,
+  FormField
+> = {
   tweakColor: {
     text: 'Tweak Color',
     tooltip: 'Chance of nudging the rgba channels of a polygon'
@@ -228,7 +241,7 @@ export const ParameterLabels: ParameterLabelsType = {
     },
     target: {
       text: 'Target Image',
-      tooltip: 'Drag n\' drop a new target image here'
+      tooltip: "Drag n' drop a new target image here"
     },
     selection: {
       type: {
@@ -237,11 +250,13 @@ export const ParameterLabels: ParameterLabelsType = {
       },
       eliteCount: {
         text: 'Elites',
-        tooltip: 'The number of top organisms that are automatically passed to the next generation'
+        tooltip:
+          'The number of top organisms that are automatically passed to the next generation'
       },
       tournamentSize: {
         text: 'Tourney Size',
-        tooltip: 'The number of organisms that compete in a selection tournament'
+        tooltip:
+          'The number of organisms that compete in a selection tournament'
       }
     },
     crossover: {
@@ -328,7 +343,10 @@ export const DistSigmaLabels: Record<DistributionTypes, string> = {
   pointSigma: 'Points'
 }
 
-export const MutationProbabilityLabels: Record<MutationProbabilityType, string> = {
+export const MutationProbabilityLabels: Record<
+  MutationProbabilityType,
+  string
+> = {
   tweakColor: 'Tweak Color',
   tweakPoint: 'Tweak Point',
   addPoint: 'Add Point',
@@ -338,7 +356,10 @@ export const MutationProbabilityLabels: Record<MutationProbabilityType, string> 
   permuteChromosomes: 'Permute Chromosomes'
 }
 
-export const CrossoverProbabilityLabels: Record<CrossoverProbabilityTypes, string> = {
+export const CrossoverProbabilityLabels: Record<
+  CrossoverProbabilityTypes,
+  string
+> = {
   swap: 'Swap'
 }
 

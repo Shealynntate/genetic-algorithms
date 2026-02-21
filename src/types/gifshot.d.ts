@@ -1,5 +1,5 @@
 declare module 'gifshot' {
-  declare function createGIF (
+  declare function createGIF(
     options: {
       images?: string[] | HTMLImageElement[]
       gifWidth?: number
@@ -16,7 +16,11 @@ declare module 'gifshot' {
       sampleInterval?: number
       numWorkers?: number
       progressCallback?: (captureProgress: number) => void
-      completeCallback?: (obj: { image: string, cameraStream: MediaStream, error: string }) => void
+      completeCallback?: (obj: {
+        image: string
+        cameraStream: MediaStream
+        error: string
+      }) => void
       saveRenderingContexts?: boolean
       savedRenderingContexts?: CanvasRenderingContext2D[]
       crossOrigin?: string
@@ -39,6 +43,6 @@ declare module 'gifshot' {
       error: boolean
       errorCode: number
       errorMsg: string
-    }) => void,
+    }) => void
   ): void
 }

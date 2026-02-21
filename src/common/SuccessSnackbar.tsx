@@ -1,9 +1,13 @@
 import React from 'react'
 import { Alert, Snackbar } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import { closeSuccessSnackbar, selectSuccessSnackbarMessage, selectSuccessSnackbarOpen } from '../navigation/navigationSlice'
+import {
+  closeSuccessSnackbar,
+  selectSuccessSnackbarMessage,
+  selectSuccessSnackbarOpen
+} from '../navigation/navigationSlice'
 
-function SuccessSnackbar (): JSX.Element {
+function SuccessSnackbar(): JSX.Element {
   const dispatch = useDispatch()
   const isOpen = useSelector(selectSuccessSnackbarOpen)
   const message = useSelector(selectSuccessSnackbarMessage)
@@ -14,7 +18,7 @@ function SuccessSnackbar (): JSX.Element {
 
   return (
     <Snackbar open={isOpen} onClose={onClose} autoHideDuration={6_000}>
-      <Alert severity='success' onClose={onClose}>
+      <Alert severity="success" onClose={onClose}>
         {message}
       </Alert>
     </Snackbar>

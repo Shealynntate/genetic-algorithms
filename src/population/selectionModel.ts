@@ -6,19 +6,19 @@ class SelectionModel {
   eliteCount: number
   tournamentSize: number
 
-  constructor (parameters: Selection) {
+  constructor(parameters: Selection) {
     this.type = parameters.type
     this.eliteCount = parameters.eliteCount
     this.tournamentSize = parameters.tournamentSize
   }
 
-  initialize (parameters: Selection): void {
+  initialize(parameters: Selection): void {
     this.type = parameters.type
     this.eliteCount = parameters.eliteCount
     this.tournamentSize = parameters.tournamentSize
   }
 
-  serialize (): Selection {
+  serialize(): Selection {
     return {
       type: this.type,
       eliteCount: this.eliteCount,

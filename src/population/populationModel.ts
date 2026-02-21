@@ -38,13 +38,13 @@ class PopulationModel {
 
   // Static Methods
   // ------------------------------------------------------------
-  static get nextGenId (): number {
+  static get nextGenId(): number {
     PopulationModel.count += 1
 
     return PopulationModel.count
   }
 
-  static restorePopulation (
+  static restorePopulation(
     parameters: PopulationParameters,
     restoreParameters: RestorePopulationParameters,
     evaluateFitness: FitnessEvaluator
@@ -59,13 +59,16 @@ class PopulationModel {
     return population
   }
 
-  static reset (): void {
+  static reset(): void {
     PopulationModel.count = -1
   }
 
   // Instance Methods
   // ------------------------------------------------------------
-  constructor (parameters: PopulationParameters, evaluateFitness: FitnessEvaluator) {
+  constructor(
+    parameters: PopulationParameters,
+    evaluateFitness: FitnessEvaluator
+  ) {
     this.genId = PopulationModel.nextGenId
     this.target = parameters.target
     this.crossover = new CrossoverModel(parameters.crossover)
@@ -76,8 +79,11 @@ class PopulationModel {
     this.maxPoints = parameters.maxPoints
     this.evaluateFitness = evaluateFitness
     this.best = null
-    this.organisms = [...Array(parameters.size)].map(
-      () => OrganismModel.create({ size: parameters.minGenomeSize, numSides: parameters.minPoints })
+    this.organisms = [...Array(parameters.size)].map(() =>
+      OrganismModel.create({
+        size: parameters.minGenomeSize,
+        numSides: parameters.minPoints
+      })
     )
     // If population is shrinking, keep the first <size> organisms
     // If fitness has been evaluated, then they're the most fit, otherwise it's a random selection
@@ -99,7 +105,7 @@ class PopulationModel {
     }
   }
 
-  serialize (): Population {
+  serialize(): Population {
     const best = this.best
 
     return {
@@ -117,18 +123,23 @@ class PopulationModel {
     }
   }
 
-  async initialize (): Promise<void> {
+  async initialize(): Promise<void> {
     // Prep for the first call of runGeneration
-    this.organisms = await (this.evaluateFitness(this.organisms))
+    this.organisms = await this.evaluateFitness(this.organisms)
   }
 
-  async runGeneration (): Promise<GenerationStats> {
+  async runGeneration(): Promise<GenerationStats> {
     const parents = this.performSelection(
       this.selection.type,
       this.selection.tournamentSize,
       this.selection.eliteCount
     )
-    this.organisms = this.reproduce(parents, this.selection, this.crossover, this.mutation)
+    this.organisms = this.reproduce(
+      parents,
+      this.selection,
+      this.crossover,
+      this.mutation
+    )
     // This is handled externally in a webWorker in order to parallelize the work
     this.organisms = await this.evaluateFitness(this.organisms)
 
@@ -138,7 +149,11 @@ class PopulationModel {
     return stats
   }
 
-  performSelection (type: SelectionType, tournamentSize: number, eliteCount: number): Organism[][] {
+  performSelection(
+    type: SelectionType,
+    tournamentSize: number,
+    eliteCount: number
+  ): Organism[][] {
     const count = (this.size - eliteCount) / 2
     switch (type) {
       case 'tournament':
@@ -150,7 +165,7 @@ class PopulationModel {
     }
   }
 
-  reproduce (
+  reproduce(
     parents: Organism[][],
     selection: SelectionModel,
     crossover: CrossoverModel,
@@ -165,7 +180,13 @@ class PopulationModel {
       maxPoints: this.maxPoints
     }
     parents.forEach(([p1, p2]) => {
-      const offspring = OrganismModel.reproduce(p1, p2, crossover, mutation, bounds)
+      const offspring = OrganismModel.reproduce(
+        p1,
+        p2,
+        crossover,
+        mutation,
+        bounds
+      )
       nextGen.push(...offspring)
     })
 
@@ -174,7 +195,7 @@ class PopulationModel {
 
   // Parent Selection Algorithms
   // ------------------------------------------------------------
-  rouletteSelection (count: number): Organism[][] {
+  rouletteSelection(count: number): Organism[][] {
     const parents = []
     const cdf = this.createFitnessCDF()
     while (parents.length < count) {
@@ -185,7 +206,7 @@ class PopulationModel {
     return parents
   }
 
-  tournamentSelection (count: number, tournamentSize: number): Organism[][] {
+  tournamentSelection(count: number, tournamentSize: number): Organism[][] {
     const parents = []
     while (parents.length < count) {
       const p1 = this.tournamentSelectParent(tournamentSize)
@@ -195,7 +216,7 @@ class PopulationModel {
     return parents
   }
 
-  susSelection (count: number): Organism[][] {
+  susSelection(count: number): Organism[][] {
     const parents = []
     const cdf = this.createFitnessCDF()
     const step = cdf[cdf.length - 1] / this.size
@@ -212,7 +233,7 @@ class PopulationModel {
 
   // Parent Selection Algorithm Helpers
   // ------------------------------------------------------------
-  rouletteSelectParent (cdf: number[]): Organism {
+  rouletteSelectParent(cdf: number[]): Organism {
     const total = cdf[cdf.length - 1]
     const n = randomFloat(0, total)
     let index = 0
@@ -226,7 +247,7 @@ class PopulationModel {
     return this.organisms[index]
   }
 
-  tournamentSelectParent (size: number): Organism {
+  tournamentSelectParent(size: number): Organism {
     let best = this.randomOrganism()
     let fitA = best.fitness
     for (let i = 1; i < size; ++i) {
@@ -241,13 +262,13 @@ class PopulationModel {
     return best
   }
 
-  susSelectParent (cdf: number[], value: number): Organism {
+  susSelectParent(cdf: number[], value: number): Organism {
     const index = cdf.findIndex((f) => value <= f)
 
     return this.organisms[index]
   }
 
-  createFitnessCDF (): number[] {
+  createFitnessCDF(): number[] {
     const cdf: number[] = []
     let fitnessSum = 0
     this.organisms.forEach((org) => {
@@ -257,19 +278,19 @@ class PopulationModel {
     return cdf
   }
 
-  getElites (count: number): Organism[] {
+  getElites(count: number): Organism[] {
     if (count === 0) return []
 
     const organisms = this.organismsByFitness()
     return organisms.slice(0, count).map((org) => OrganismModel.clone(org))
   }
 
-  randomOrganism (): Organism {
+  randomOrganism(): Organism {
     const index = randomIndex(this.size)
     return this.organisms[index]
   }
 
-  maxFitOrganism (): Organism {
+  maxFitOrganism(): Organism {
     let maxFitOrganism = this.organisms[0]
     for (let i = 0; i < this.size; ++i) {
       if (this.organisms[i].fitness > maxFitOrganism.fitness) {
@@ -285,11 +306,11 @@ class PopulationModel {
    * Sorts a copy of the list of organisms by fitness in descending order.
    * @returns the array of sorted organisms
    */
-  organismsByFitness (): Organism[] {
+  organismsByFitness(): Organism[] {
     return [...this.organisms].sort((a, b) => b.fitness - a.fitness)
   }
 
-  createStats (): GenerationStats {
+  createStats(): GenerationStats {
     let max = Number.MIN_SAFE_INTEGER
     let min = Number.MAX_SAFE_INTEGER
     let total = 0
@@ -307,7 +328,10 @@ class PopulationModel {
     // Update the overall best organism
     let isGlobalBest = false
     max = setSigFigs(max, statsSigFigs)
-    if (this.best == null || max > setSigFigs(this.best.organism.fitness, statsSigFigs)) {
+    if (
+      this.best == null ||
+      max > setSigFigs(this.best.organism.fitness, statsSigFigs)
+    ) {
       this.best = { gen: this.genId, organism: maxFitOrganism }
       isGlobalBest = true
     }
@@ -317,7 +341,10 @@ class PopulationModel {
       meanFitness: setSigFigs(mean, statsSigFigs),
       maxFitness: setSigFigs(max, statsSigFigs),
       minFitness: setSigFigs(min, statsSigFigs),
-      deviation: setSigFigs(deviation(this.organisms, (o) => o.fitness) ?? 0, statsSigFigs),
+      deviation: setSigFigs(
+        deviation(this.organisms, (o) => o.fitness) ?? 0,
+        statsSigFigs
+      ),
       maxFitOrganism,
       isGlobalBest
     }
@@ -326,7 +353,7 @@ class PopulationModel {
   /**
    * The size of the population (number of organisms per generation)
    */
-  get size (): number {
+  get size(): number {
     return this.organisms.length
   }
 }

@@ -37,7 +37,8 @@ export const randomInt = (start: number, end: number): number => {
  * @param {*} length - The length of the array
  * @returns An index value between [0, length)
  */
-export const randomIndex = (length: number): number => (Math.trunc(Math.random() * length))
+export const randomIndex = (length: number): number =>
+  Math.trunc(Math.random() * length)
 
 /**
  * Flips a biased coin and returns true (heads) or false (tails)
@@ -45,7 +46,7 @@ export const randomIndex = (length: number): number => (Math.trunc(Math.random()
  * By default it's set to 0.5, making it a fair coin
  * @returns the result of flipping the coin - true or false
  */
-export const flipCoin = (bias: number = 0.5): boolean => (Math.random() <= bias)
+export const flipCoin = (bias: number = 0.5): boolean => Math.random() <= bias
 
 /**
  * Converts a fractional number to a percentage string
@@ -53,4 +54,5 @@ export const flipCoin = (bias: number = 0.5): boolean => (Math.random() <= bias)
  * @param sigFigs the number of significant figures to display
  * @returns a string representation of the percentage
  */
-export const toPercent = (value: number, sigFigs: number = 1): string => `${setSigFigs(value * 100, sigFigs)}%`
+export const toPercent = (value: number, sigFigs: number = 1): string =>
+  `${setSigFigs(value * 100, sigFigs)}%`
