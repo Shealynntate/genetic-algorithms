@@ -1,5 +1,4 @@
 import { createContext } from 'react'
-import type WorkerBuilder from '../web-workers/workerBuilder'
 import {
   type Population,
   type PopulationParameters,
@@ -21,7 +20,7 @@ import { createImageData } from '../utils/imageUtils'
  */
 class PopulationService {
   population: PopulationModel | null
-  workers: WorkerBuilder[]
+  workers: Worker[]
 
   constructor() {
     this.population = null

@@ -75,13 +75,13 @@ test('Roulette Parent Selection', async () => {
     { n: 10, id: 9 },
     { n: 0, id: 0 }
   ]
-  // Extract the "random" values and feed them into the mock randomFloat function
-  const rvs = picks.map(({ n }) => n)
-  jest.spyOn(utils, 'randomFloat').mockImplementation(mockRandom(rvs))
 
   const population = new Population(populationParameters, mockEvaluateFitness)
   await population.initialize()
   const cdf = population.createFitnessCDF()
+  // Set up the mock AFTER population creation so mock values aren't consumed during init
+  const rvs = picks.map(({ n }) => n)
+  vi.spyOn(utils, 'randomFloat').mockImplementation(mockRandom(rvs))
   // Check that the appropriate parent was chosen for each of the corresponding n values
   picks.forEach(({ id }) => {
     const p = population.rouletteSelectParent(cdf)
@@ -99,7 +99,7 @@ test('Roulette Selection', async () => {
   })
 
   const rvs = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-  jest.spyOn(utils, 'randomFloat').mockImplementation(mockRandom(rvs))
+  vi.spyOn(utils, 'randomFloat').mockImplementation(mockRandom(rvs))
   population.performSelection('roulette', 0, 0)
 
   expect(utils.randomFloat).toBeCalledTimes(10)

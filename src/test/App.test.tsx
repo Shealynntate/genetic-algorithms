@@ -26,7 +26,14 @@ import router from '../router/router'
 //   }
 // }
 
-jest.mock('../web-workers/fitnessEvaluatorCreator', () => {
+vi.mock('../firebase/firebase', () => ({
+  firestore: {},
+  storage: {},
+  auth: {},
+  experimentRecordConverter: { toFirestore: vi.fn(), fromFirestore: vi.fn() }
+}))
+
+vi.mock('../web-workers/fitnessEvaluatorCreator', () => {
   const worker = {
     url: '',
     onconnect: () => {},

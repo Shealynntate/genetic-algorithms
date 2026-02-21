@@ -1,5 +1,3 @@
-import WorkerBuilder from './workerBuilder'
-import fitnessEvaluator from './fitnessEvaluator'
 import {
   canvasParameters,
   maxColorValue,
@@ -8,9 +6,11 @@ import {
 
 const { width, height } = canvasParameters
 
-const createWorker = (target: Uint8ClampedArray): WorkerBuilder => {
+const createWorker = (target: Uint8ClampedArray): Worker => {
   // Create a new worker
-  const worker = new WorkerBuilder(fitnessEvaluator as unknown as string)
+  const worker = new Worker(new URL('./fitnessEvaluator.ts', import.meta.url), {
+    type: 'module'
+  })
   // Create a canvas to transfer to the worker
   const canvas = document.createElement('canvas')
   canvas.width = width

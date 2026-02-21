@@ -5,18 +5,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm start          # Dev server on localhost:3000
-npm run build      # Production build
-npm test           # Run Jest tests (interactive watch mode)
-npm test -- --watchAll=false   # Run all tests once
-npm test -- --testPathPattern="organism"  # Run a single test file by name
+npm start          # Vite dev server on localhost:3000
+npm run build      # TypeScript check + Vite production build
+npm run preview    # Preview production build
+npm run test       # Run Vitest tests (single run)
+npx vitest         # Run Vitest in watch mode
+npx vitest src/test/organism  # Run a single test file by name
 ```
 
 First-time setup on Mac may require installing `cairo` for the `canvas` package — see README for details.
 
 ## Architecture
 
-This is a Create React App project (React 18, TypeScript strict mode) that uses genetic algorithms to evolve populations of semi-transparent polygons to approximate a target image.
+This is a Vite project (React 18, TypeScript strict mode) that uses genetic algorithms to evolve populations of semi-transparent polygons to approximate a target image.
 
 ### State Management
 
