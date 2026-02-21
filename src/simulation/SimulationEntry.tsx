@@ -58,11 +58,11 @@ function SimulationEntry({
   const isChecked = useIsGraphEntry(id as number)
   const color = useGraphColor(id as number)
   const gen = isActive
-    ? currentGenStats?.stats.gen ?? 0
-    : population?.genId ?? 0
+    ? (currentGenStats?.stats.gen ?? 0)
+    : (population?.genId ?? 0)
   const maxFitness = isActive
-    ? maxFitOrganism?.organism.fitness ?? 0
-    : population?.best?.organism.fitness ?? 0
+    ? (maxFitOrganism?.organism.fitness ?? 0)
+    : (population?.best?.organism.fitness ?? 0)
   const isPending = status === 'pending'
   const date = new Date(createdOn)
   const openMenu = Boolean(anchorEl)
