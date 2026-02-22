@@ -6,12 +6,14 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import DownloadIcon from '@mui/icons-material/Download'
 import {
   Box,
+  Card,
+  CardContent,
+  CardMedia,
   IconButton,
-  Paper,
+  Skeleton,
   Stack,
   Typography,
   Tooltip,
-  Skeleton,
   Fade
 } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
@@ -33,7 +35,6 @@ interface GallerEntryProps {
 }
 
 function GalleryEntry({ data }: GallerEntryProps): JSX.Element {
-  const [targetLoaded, setTargetLoaded] = useState(false)
   const [gifLoaded, setGifLoaded] = useState(false)
   const [hover, setHover] = useState(false)
   const isAdmin = useSelector(selectIsAuthenticated)
@@ -41,8 +42,8 @@ function GalleryEntry({ data }: GallerEntryProps): JSX.Element {
   const dispatch = useDispatch()
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: data.id ?? 0 })
-  const width = canvasParameters.width / 2
-  const height = canvasParameters.height / 2
+  const thumbWidth = canvasParameters.width / 3
+  const thumbHeight = canvasParameters.height / 3
   const { results, gif, parameters, simulationName } = data
   const bestOrganism = data.maxFitOrganism
   const totalGen = results[results.length - 1].stats.gen
@@ -83,15 +84,7 @@ function GalleryEntry({ data }: GallerEntryProps): JSX.Element {
   }
 
   return (
-    <Paper
-      elevation={1}
-      sx={{ display: 'inline-block', m: 1, p: 0 }}
-      onMouseEnter={(): void => {
-        setHover(true)
-      }}
-      onMouseLeave={(): void => {
-        setHover(false)
-      }}
+    <Card
       ref={setNodeRef}
       {...attributes}
       {...listeners}
@@ -99,88 +92,92 @@ function GalleryEntry({ data }: GallerEntryProps): JSX.Element {
         transform: CSS.Transform.toString(transform),
         transition
       }}
+      onMouseEnter={(): void => { setHover(true) }}
+      onMouseLeave={(): void => { setHover(false) }}
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        transition: 'box-shadow 0.2s ease-in-out',
+        '&:hover': {
+          boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)'
+        }
+      }}
     >
-      <Stack direction="row" spacing={0}>
-        <Stack spacing={0}>
-          <Tooltip title="final result">
-            <Box sx={{ m: 0, p: 0, lineHeight: 0 }}>
-              <OrganismCanvas
-                organism={bestOrganism}
-                width={width}
-                height={height}
-              />
-            </Box>
-          </Tooltip>
-          <Tooltip title="The target image">
-            <Box sx={{ m: 0, p: 0, lineHeight: 0, position: 'relative' }}>
-              <img
-                src={parameters.population.target}
-                alt="target image"
-                width={width}
-                height={height}
-                onLoad={(): void => {
-                  setTargetLoaded(true)
-                }}
-              />
-              {!targetLoaded && (
-                <Skeleton
-                  variant="rectangular"
-                  width={width}
-                  height={height}
-                  sx={{ position: 'absolute', bottom: 0, left: 0 }}
-                />
-              )}
-            </Box>
-          </Tooltip>
-        </Stack>
-        <Stack sx={{ position: 'relative', minWidth: width * 2 }}>
-          <Tooltip title="A timelapse of the evolution of the best solution">
-            <img
-              src={gif}
-              alt={`${simulationName} timelapse gif`}
-              onLoad={(): void => {
-                setGifLoaded(true)
-              }}
-            />
-          </Tooltip>
+      <Box sx={{ position: 'relative' }}>
+        <CardMedia
+          component="img"
+          image={gif}
+          alt={`${simulationName} timelapse gif`}
+          onLoad={(): void => { setGifLoaded(true) }}
+          sx={{
+            width: '100%',
+            display: gifLoaded ? 'block' : 'none'
+          }}
+        />
+        {!gifLoaded && (
           <Skeleton
             variant="rectangular"
-            width={width * 2}
-            height={height * 2}
-            sx={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              visibility: gifLoaded ? 'hidden' : 'visible'
-            }}
+            sx={{ width: '100%', aspectRatio: '1' }}
           />
+        )}
+      </Box>
+
+      <CardContent sx={{ flexGrow: 1, p: 2, '&:last-child': { pb: 2 } }}>
+        <Stack direction="row" spacing={1.5} sx={{ mb: 1.5 }}>
+          <Tooltip title="Final result">
+            <Box sx={{ lineHeight: 0, borderRadius: 1, overflow: 'hidden' }}>
+              <OrganismCanvas
+                organism={bestOrganism}
+                width={thumbWidth}
+                height={thumbHeight}
+              />
+            </Box>
+          </Tooltip>
+          <Tooltip title="Target image">
+            <Box sx={{ lineHeight: 0, borderRadius: 1, overflow: 'hidden' }}>
+              <img
+                src={parameters.population.target}
+                alt="target"
+                width={thumbWidth}
+                height={thumbHeight}
+              />
+            </Box>
+          </Tooltip>
         </Stack>
-      </Stack>
-      <Paper elevation={0} sx={{ position: 'relative', p: 1, pt: 0 }}>
-        <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
-          <Stack>
-            <Typography variant="h6">{simulationName}</Typography>
-            <Typography variant="body2">{`Top score: ${toPercent(bestOrganism.fitness)}`}</Typography>
-            <Typography variant="body2">{`Number of △: ${bestOrganism.genome.chromosomes.length}`}</Typography>
-            <Typography variant="body2">{`Generations: ${totalGen.toLocaleString()}`}</Typography>
+
+        <Stack
+          direction="row"
+          sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
+        >
+          <Stack spacing={0.25}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.3 }}>
+              {simulationName}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {`Score: ${toPercent(bestOrganism.fitness)}`}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {`${bestOrganism.genome.chromosomes.length} polygons \u00B7 ${totalGen.toLocaleString()} gen`}
+            </Typography>
           </Stack>
           <Fade in={hover}>
-            <Box sx={{ display: 'flex', alignItems: 'end' }}>
-              <Tooltip title="Download Gif">
-                <IconButton onClick={onDownload} color="primary">
-                  <DownloadIcon />
+            <Stack direction="row">
+              <Tooltip title="Download GIF">
+                <IconButton onClick={onDownload} color="primary" size="small">
+                  <DownloadIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
               {isAdmin && (
-                <IconButton onClick={onDelete} color="error">
-                  <DeleteIcon />
+                <IconButton onClick={onDelete} color="error" size="small">
+                  <DeleteIcon fontSize="small" />
                 </IconButton>
               )}
-            </Box>
+            </Stack>
           </Fade>
         </Stack>
-      </Paper>
-    </Paper>
+      </CardContent>
+    </Card>
   )
 }
 

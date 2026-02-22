@@ -2,9 +2,9 @@ import { Stack, Typography } from '@mui/material'
 
 function Footer(): JSX.Element {
   return (
-    <Stack direction="row" sx={{ p: 2 }}>
-      <Typography variant="caption" color="GrayText">
-        &copy; 2024 Shealyn Hindenlang
+    <Stack sx={{ p: 2, alignItems: 'center' }}>
+      <Typography variant="caption" color="text.secondary">
+        &copy; 2026 Blob Ross &middot; Shealyn Hindenlang
       </Typography>
     </Stack>
   )

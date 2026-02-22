@@ -1,5 +1,4 @@
 import { createTheme } from '@mui/material'
-import { cyan, purple } from '@mui/material/colors'
 
 // Augment the Theme interface for custom fields
 declare module '@mui/material/Fab' {
@@ -18,24 +17,53 @@ declare module '@mui/material/Typography' {
 const theme = createTheme({
   palette: {
     primary: {
-      main: cyan[500]
+      main: '#2E7D6F'
     },
     secondary: {
-      main: purple[500]
+      main: '#D4816B'
+    },
+    background: {
+      default: '#FAFAFA',
+      paper: '#FFFFFF'
+    },
+    text: {
+      primary: '#1A1A2E',
+      secondary: '#6B7280'
     }
   },
+  shape: {
+    borderRadius: 8
+  },
   components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          boxShadow: 'none',
+          borderBottom: '1px solid #E5E7EB'
+        }
+      }
+    },
     MuiButton: {
       styleOverrides: {
         root: {
-          fontFamily: '"Montserrat", Helvetica, Arial, sans-serif'
+          fontFamily: '"Inter", Helvetica, Arial, sans-serif',
+          borderRadius: 8,
+          textTransform: 'none'
         }
       }
     },
     MuiButtonBase: {
       styleOverrides: {
         root: {
-          fontFamily: '"Montserrat", Helvetica, Arial, sans-serif'
+          fontFamily: '"Inter", Helvetica, Arial, sans-serif'
+        }
+      }
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06)'
         }
       }
     },
@@ -57,21 +85,22 @@ const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          padding: '1rem'
+          padding: '1rem',
+          borderRadius: 12
         }
       }
     },
     MuiTab: {
       styleOverrides: {
         root: {
-          fontFamily: '"Montserrat", Helvetica, Arial, sans-serif'
+          fontFamily: '"Inter", Helvetica, Arial, sans-serif'
         }
       }
     },
     MuiTypography: {
       styleOverrides: {
         root: {
-          fontFamily: '"Montserrat", Helvetica, Arial, sans-serif'
+          fontFamily: '"Inter", Helvetica, Arial, sans-serif'
         }
       },
       variants: [
@@ -79,7 +108,7 @@ const theme = createTheme({
           props: { variant: 'lightCaption' },
           style: {
             fontSize: '0.7rem',
-            color: 'GrayText'
+            color: '#6B7280'
           }
         },
         {

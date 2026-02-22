@@ -1,23 +1,22 @@
-import { Paper, Skeleton, Stack } from '@mui/material'
-
-import { canvasParameters } from '../simulation/config'
+import { Card, CardContent, Skeleton, Stack } from '@mui/material'
 
 function SkeletonGalleryEntry(): JSX.Element {
-  const width = canvasParameters.width
-  const height = canvasParameters.height
-
   return (
-    <Paper elevation={1} sx={{ p: 0, m: 1 }}>
-      <Stack>
-        <Skeleton variant="rectangular" width={width * 1.5} height={height} />
-        <Paper elevation={0} sx={{ p: 1 }}>
-          <Skeleton variant="text" width="50%" />
-          <Skeleton variant="text" width="80%" />
-          <Skeleton variant="text" width="80%" />
-          <Skeleton variant="text" width="80%" />
-        </Paper>
-      </Stack>
-    </Paper>
+    <Card sx={{ height: '100%' }}>
+      <Skeleton
+        variant="rectangular"
+        sx={{ width: '100%', aspectRatio: '1' }}
+      />
+      <CardContent sx={{ p: 2 }}>
+        <Stack direction="row" spacing={1} sx={{ mb: 1.5 }}>
+          <Skeleton variant="rounded" width={60} height={60} />
+          <Skeleton variant="rounded" width={60} height={60} />
+        </Stack>
+        <Skeleton variant="text" width="60%" />
+        <Skeleton variant="text" width="80%" />
+        <Skeleton variant="text" width="70%" />
+      </CardContent>
+    </Card>
   )
 }
 

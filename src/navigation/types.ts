@@ -1,4 +1,4 @@
-export type Page = 'gallery' | 'experiment' | 'yourArt' | 'github' | 'admin'
+export type Page = 'home' | 'gallery' | 'experiment' | 'yourArt' | 'github' | 'admin'
 
 export type AppState = 'none' | 'running' | 'paused' | 'complete'
 

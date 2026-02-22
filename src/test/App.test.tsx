@@ -62,6 +62,6 @@ test('renders title', async () => {
   )
 
   // await new Promise((r) => { setTimeout(r, 1000); });
-  const titleElement = screen.getByText(/genetic algorithms/i)
-  expect(titleElement).toBeInTheDocument()
+  const titleElements = screen.getAllByText(/blob ross/i)
+  expect(titleElements.length).toBeGreaterThan(0)
 })

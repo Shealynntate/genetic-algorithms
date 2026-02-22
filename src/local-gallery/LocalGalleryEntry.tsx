@@ -4,8 +4,9 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import DownloadIcon from '@mui/icons-material/Download'
 import {
   Box,
+  Card,
+  CardContent,
   IconButton,
-  Paper,
   Stack,
   TextField,
   Typography,
@@ -38,8 +39,8 @@ function LocalGalleryEntry({ data }: GallerEntryProps): JSX.Element {
   const isAdmin = useSelector(selectIsAuthenticated)
   const [hover, setHover] = useState(false)
   const dispatch = useDispatch()
-  const width = canvasParameters.width / 2
-  const height = canvasParameters.height / 2
+  const thumbWidth = canvasParameters.width / 3
+  const thumbHeight = canvasParameters.height / 3
   const [entryName, setEntryName] = useState(name)
   const bestOrganism = results[results.length - 1].stats.maxFitOrganism
   const totalGen = results[results.length - 1].stats.gen
@@ -98,48 +99,60 @@ function LocalGalleryEntry({ data }: GallerEntryProps): JSX.Element {
   }
 
   return (
-    <Paper
-      elevation={1}
-      onMouseEnter={(): void => {
-        setHover(true)
+    <Card
+      onMouseEnter={(): void => { setHover(true) }}
+      onMouseLeave={(): void => { setHover(false) }}
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        transition: 'box-shadow 0.2s ease-in-out',
+        '&:hover': {
+          boxShadow: '0 4px 12px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08)'
+        }
       }}
-      onMouseLeave={(): void => {
-        setHover(false)
-      }}
-      sx={{ display: 'inline-block', m: 1, p: 0 }}
     >
-      <Stack direction="row">
-        <Stack>
-          <Tooltip title="final result">
-            <Box sx={{ m: 0, p: 0, lineHeight: 0 }}>
+      {gif != null && (
+        <Tooltip title="A timelapse of the evolution of the best solution">
+          <Box sx={{ lineHeight: 0 }}>
+            <img
+              src={gif}
+              alt={`${name} gif`}
+              style={{ width: '100%', display: 'block' }}
+            />
+          </Box>
+        </Tooltip>
+      )}
+      <CardContent sx={{ flexGrow: 1, p: 2, '&:last-child': { pb: 2 } }}>
+        <Stack direction="row" spacing={1.5} sx={{ mb: 1.5 }}>
+          <Tooltip title="Final result">
+            <Box sx={{ lineHeight: 0, borderRadius: 1, overflow: 'hidden' }}>
               <OrganismCanvas
                 organism={bestOrganism}
-                width={width}
-                height={height}
+                width={thumbWidth}
+                height={thumbHeight}
               />
             </Box>
           </Tooltip>
-          <Tooltip title="The target image">
-            <Box sx={{ m: 0, p: 0, lineHeight: 0 }}>
+          <Tooltip title="Target image">
+            <Box sx={{ lineHeight: 0, borderRadius: 1, overflow: 'hidden' }}>
               <TargetCanvas
-                width={width}
-                height={height}
+                width={thumbWidth}
+                height={thumbHeight}
                 target={parameters.population.target}
               />
             </Box>
           </Tooltip>
         </Stack>
-        <Tooltip title="A timelapse of the evolution of the best solution">
-          <img src={gif} alt={`${name} gif`} />
-        </Tooltip>
-      </Stack>
-      <Paper elevation={0} sx={{ position: 'relative', pt: 0, px: 1 }}>
-        <Stack direction="row" sx={{ justifyContent: 'space-between' }}>
-          <Stack>
+
+        <Stack
+          direction="row"
+          sx={{ justifyContent: 'space-between', alignItems: 'flex-start' }}
+        >
+          <Stack spacing={0.25}>
             <Typography
-              color="GrayText"
-              fontSize="small"
-              sx={{ position: 'absolute', top: '0.25rem', right: '0.5rem' }}
+              color="text.secondary"
+              sx={{ fontSize: '0.65rem' }}
             >
               {id}
             </Typography>
@@ -147,27 +160,35 @@ function LocalGalleryEntry({ data }: GallerEntryProps): JSX.Element {
               value={entryName}
               onChange={onChangeName}
               variant="standard"
-              sx={{ pb: 1 }}
+              size="small"
+              sx={{ mb: 0.5 }}
             />
-            <Typography variant="body2">{`Top score: ${bestOrganism.fitness.toFixed(3)}`}</Typography>
-            <Typography variant="body2">{`Number of △: ${bestOrganism.genome.chromosomes.length}`}</Typography>
-            <Typography variant="body2">{`Generations: ${totalGen.toLocaleString()}`}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {`Score: ${bestOrganism.fitness.toFixed(3)}`}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {`${bestOrganism.genome.chromosomes.length} polygons \u00B7 ${totalGen.toLocaleString()} gen`}
+            </Typography>
           </Stack>
           <Fade in={hover}>
             <Stack direction="row" sx={{ alignItems: 'end' }}>
-              <IconButton onClick={onDownload} color="primary">
-                <DownloadIcon />
-              </IconButton>
-              {isAdmin && (
-                <IconButton onClick={onUpload}>
-                  <CloudUploadIcon />
+              <Tooltip title="Download GIF">
+                <IconButton onClick={onDownload} color="primary" size="small">
+                  <DownloadIcon fontSize="small" />
                 </IconButton>
+              </Tooltip>
+              {isAdmin && (
+                <Tooltip title="Upload to gallery">
+                  <IconButton onClick={onUpload} size="small">
+                    <CloudUploadIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
               )}
             </Stack>
           </Fade>
         </Stack>
-      </Paper>
-    </Paper>
+      </CardContent>
+    </Card>
   )
 }
 

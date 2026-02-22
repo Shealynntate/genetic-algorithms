@@ -7,9 +7,9 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import {
   Box,
   Button,
+  Card,
   Checkbox,
   IconButton,
-  Paper,
   Popover,
   Stack,
   TextField,
@@ -109,16 +109,16 @@ function SimulationEntry({
   }
 
   return (
-    <Paper
-      elevation={1}
+    <Card
+      variant="outlined"
       sx={{
-        py: 1,
-        px: 0,
-        border: isActive ? `1px solid ${theme.palette.primary.main}` : null
+        p: 1.5,
+        border: isActive
+          ? `1px solid ${theme.palette.primary.main}`
+          : `1px solid ${theme.palette.divider}`,
+        transition: 'border-color 0.2s ease-in-out'
       }}
-      onClick={() => {
-        onSelect(id)
-      }}
+      onClick={() => { onSelect(id) }}
     >
       <Stack
         direction="row"
@@ -130,9 +130,7 @@ function SimulationEntry({
             checked={isChecked}
             disabled={isPending}
             size="small"
-            onClick={(event) => {
-              onCheck(event)
-            }}
+            onClick={(event) => { onCheck(event) }}
             sx={{
               color: color ?? 'inherit',
               '&.Mui-checked': {
@@ -159,7 +157,7 @@ function SimulationEntry({
               pt: '0.25rem'
             }}
           >
-            <Typography color="GrayText" sx={{ fontSize: '0.7rem' }}>
+            <Typography color="text.secondary" sx={{ fontSize: '0.7rem' }}>
               {id}
             </Typography>
             {isActive ? (
@@ -221,16 +219,14 @@ function SimulationEntry({
         >
           <Stack p={0}>
             <Typography
-              color="GrayText"
+              color="text.secondary"
               sx={{ fontSize: '0.7rem', textAlign: 'right' }}
             >
               {date.toLocaleString()}
             </Typography>
             <Stack direction="row" spacing={2} mb={1}>
               <Button
-                onClick={(event) => {
-                  onDuplicate(event, id)
-                }}
+                onClick={(event) => { onDuplicate(event, id) }}
                 startIcon={<ContentCopyIcon fontSize="small" />}
                 size="small"
                 color="inherit"
@@ -254,7 +250,7 @@ function SimulationEntry({
           </Stack>
         </Popover>
       </Stack>
-    </Paper>
+    </Card>
   )
 }
 

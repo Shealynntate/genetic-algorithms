@@ -1,12 +1,14 @@
 import { type SyntheticEvent, useRef, useState } from 'react'
 
 import AddIcon from '@mui/icons-material/Add'
+import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import {
   Box,
   Button,
+  Card,
+  CardContent,
   Paper,
   Stack,
-  Tooltip,
   Typography,
   useTheme
 } from '@mui/material'
@@ -34,7 +36,6 @@ const statusToOrder: Record<SimulationStatus, number> = {
 }
 
 const sortSimulations = (simulations: Simulation[]): Simulation[] => {
-  // Remove duplicate simulations by id
   simulations = _.uniqBy(simulations, (s) => s.id)
   const sorted = _.sortBy(simulations, (s) => statusToOrder[s.status])
   return sorted
@@ -75,7 +76,6 @@ function Simulations(): JSX.Element {
     if (parameters != null) {
       insertSimulation({ parameters, status: 'pending' }).catch(console.error)
     }
-    // Reset the form data for the next time the form is opened
     formData.current = defaultParameters
   }
 
@@ -92,48 +92,67 @@ function Simulations(): JSX.Element {
   }
 
   return (
-    <Stack>
-      <Grid2 container spacing={1}>
+    <Stack spacing={3}>
+      <Stack spacing={1}>
+        <Typography variant="h4" sx={{ fontWeight: 700 }}>
+          Experiments
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Create and manage your evolutionary painting experiments
+        </Typography>
+      </Stack>
+
+      <Grid2 container spacing={3}>
         <Grid2 xs={12} md={6}>
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
-              mb: 1,
-              alignItems: 'center'
+              justifyContent: 'flex-end',
+              mb: 2
             }}
           >
-            <Typography variant="h5" color="GrayText">
-              Experiments
-            </Typography>
-            <Tooltip title="Add a new run">
-              <Button
-                onClick={onAddSimulation}
-                color="secondary"
-                ref={addButtonRef}
-                sx={{ boxShadow: 'none' }}
-                variant="outlined"
-                size="small"
-                startIcon={<AddIcon />}
-              >
-                Add
-              </Button>
-            </Tooltip>
+            <Button
+              onClick={onAddSimulation}
+              color="primary"
+              ref={addButtonRef}
+              variant="contained"
+              startIcon={<AddIcon />}
+              sx={{ fontWeight: 600 }}
+            >
+              New Experiment
+            </Button>
           </Box>
           <Stack sx={{ borderRadius: theme.shape.borderRadius }}>
             {isLoading && (
-              <Stack spacing={0.5}>
+              <Stack spacing={1}>
                 <SkeletonExperimentEntry />
                 <SkeletonExperimentEntry />
                 <SkeletonExperimentEntry />
               </Stack>
             )}
             {!isLoading && allSimulations.length === 0 ? (
-              <Paper sx={{ textAlign: 'center' }}>
-                <Typography>Create a new entry and watch it run!</Typography>
-              </Paper>
+              <Card variant="outlined" sx={{ textAlign: 'center', py: 6 }}>
+                <CardContent>
+                  <ScienceOutlinedIcon
+                    sx={{ fontSize: 48, color: theme.palette.text.secondary, mb: 1 }}
+                  />
+                  <Typography variant="h6" sx={{ mb: 1 }}>
+                    No experiments yet
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Create your first experiment to start evolving polygons into art
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    startIcon={<AddIcon />}
+                    onClick={onAddSimulation}
+                  >
+                    New Experiment
+                  </Button>
+                </CardContent>
+              </Card>
             ) : (
-              <Stack spacing={0.5}>
+              <Stack spacing={1}>
                 {allSimulations.map((simulation) => (
                   <SimulationEntry
                     key={simulation.id}
@@ -146,10 +165,19 @@ function Simulations(): JSX.Element {
             )}
           </Stack>
         </Grid2>
-        <Grid2 xs={12} md={6} spacing={1}>
-          <Paper sx={{ mt: 5 }}>
-            <SimulationChart />
-          </Paper>
+        <Grid2 xs={12} md={6}>
+          <Card variant="outlined">
+            <CardContent>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                Fitness Over Time
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Track how well your organisms approximate the target image across
+                generations. Check experiments in the list to graph them.
+              </Typography>
+              <SimulationChart />
+            </CardContent>
+          </Card>
         </Grid2>
       </Grid2>
       <SimulationFormDialog

@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 
-import SimulationForm from '../form/SimulationForm'
+import ExperimentWizard from '../form/ExperimentWizard'
 import { type ParametersState } from '../parameters/types'
 
 interface SimulationFormDialogProps {
@@ -16,7 +16,6 @@ function SimulationFormDialog({
   onClose,
   onSubmit
 }: SimulationFormDialogProps): JSX.Element {
-  // Send to database and close form
   const handleSubmit = (data: ParametersState): void => {
     onSubmit(data)
   }
@@ -24,15 +23,20 @@ function SimulationFormDialog({
   return (
     <Dialog
       open={open}
-      onClose={() => {
-        onClose()
-      }}
-      maxWidth="xl"
-      sx={{ p: 0 }}
+      onClose={() => { onClose() }}
+      maxWidth="md"
+      fullWidth
+      sx={{ '& .MuiDialog-paper': { borderRadius: 3 } }}
     >
-      <DialogTitle sx={{ p: 0.5 }}>Simulation Setup</DialogTitle>
-      <DialogContent sx={{ py: 0, px: 0.5 }}>
-        <SimulationForm defaultValues={defaultValues} onSubmit={handleSubmit} />
+      <DialogTitle sx={{ fontWeight: 600, pb: 1 }}>
+        New Experiment
+      </DialogTitle>
+      <DialogContent sx={{ px: 3, pb: 3 }}>
+        <ExperimentWizard
+          defaultValues={defaultValues}
+          onSubmit={handleSubmit}
+          onCancel={onClose}
+        />
       </DialogContent>
     </Dialog>
   )

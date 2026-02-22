@@ -4,13 +4,14 @@ import { type AppState, type Page } from './types'
 /**
  * The title of the site displayed in the header.
  */
-export const SiteTitle = 'Genetic Algorithms'
+export const SiteTitle = 'Blob Ross'
 
 /**
  * The paths for the navigation buttons in the site header.
  */
 export const NavPaths: Record<Page, string> = {
-  gallery: '/',
+  home: '/',
+  gallery: '/gallery',
   experiment: '/experiment',
   yourArt: '/your-art',
   admin: '/admin',
@@ -21,6 +22,7 @@ export const NavPaths: Record<Page, string> = {
  * The labels for the navigation buttons in the site header.
  */
 export const NavLabels: Record<Page, string> = {
+  home: 'Home',
   gallery: 'Gallery',
   experiment: 'Experiment',
   yourArt: 'Your Art',

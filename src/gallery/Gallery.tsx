@@ -10,6 +10,7 @@ import {
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import SaveIcon from '@mui/icons-material/Save'
 import { Box, IconButton, Stack, Typography } from '@mui/material'
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
 import { useDispatch, useSelector } from 'react-redux'
 
 import GalleryEntry from './GalleryEntry'
@@ -71,11 +72,16 @@ function Gallery(): JSX.Element {
 
   return (
     <Box>
-      <Typography variant="h4" color="GrayText" sx={{ textAlign: 'center' }}>
-        Gallery
-      </Typography>
+      <Stack spacing={1} sx={{ mb: 3 }}>
+        <Typography variant="h4" sx={{ fontWeight: 700 }}>
+          Gallery
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Explore experiments where genetic algorithms evolved polygons into art
+        </Typography>
+      </Stack>
       {isAdmin && (
-        <Stack direction="row" sx={{ justifyContent: 'flex-end' }}>
+        <Stack direction="row" sx={{ justifyContent: 'flex-end', mb: 1 }}>
           <IconButton
             color="primary"
             size="medium"
@@ -86,34 +92,30 @@ function Gallery(): JSX.Element {
           </IconButton>
         </Stack>
       )}
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-evenly',
-          flexWrap: 'wrap'
-        }}
-      >
-        {isLoading && (
-          <>
-            <SkeletonGalleryEntry />
-            <SkeletonGalleryEntry />
-            <SkeletonGalleryEntry />
-            <SkeletonGalleryEntry />
-            <SkeletonGalleryEntry />
-            <SkeletonGalleryEntry />
-          </>
-        )}
+      {isLoading ? (
+        <Grid2 container spacing={3}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Grid2 key={i} xs={12} sm={6} lg={4}>
+              <SkeletonGalleryEntry />
+            </Grid2>
+          ))}
+        </Grid2>
+      ) : (
         <DndContext onDragEnd={onDragEnd} sensors={sensors}>
           <SortableContext
             items={sortedData.map((entry) => entry.id ?? 0)}
             disabled={!isAdmin}
           >
-            {galleryEntries.map((entry) => (
-              <GalleryEntry key={entry.id} data={entry} />
-            ))}
+            <Grid2 container spacing={3}>
+              {galleryEntries.map((entry) => (
+                <Grid2 key={entry.id} xs={12} sm={6} lg={4}>
+                  <GalleryEntry data={entry} />
+                </Grid2>
+              ))}
+            </Grid2>
           </SortableContext>
         </DndContext>
-      </Box>
+      )}
     </Box>
   )
 }
