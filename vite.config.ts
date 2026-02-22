@@ -15,6 +15,9 @@ export default defineConfig({
       optimizer: {
         web: { include: ['vitest-canvas-mock'] }
       }
+    },
+    benchmark: {
+      include: ['src/benchmarks/**/*.bench.ts']
     }
   }
 })

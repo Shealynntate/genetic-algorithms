@@ -159,7 +159,16 @@ export default tseslint.config(
     },
   },
 
-  // 8. Ignore patterns
+  // 8. Relaxed rules for benchmark files
+  {
+    files: ['src/benchmarks/**'],
+    rules: {
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+    },
+  },
+
+  // 9. Ignore patterns
   {
     ignores: ['dist/', 'node_modules/', 'public/', '*.config.*'],
   }

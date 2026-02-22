@@ -185,3 +185,22 @@ export interface GenerationStatsRecord {
   threshold: number
   stats: GenerationStats
 }
+
+/**
+ * Per-generation timing breakdown returned alongside stats from runGeneration().
+ */
+export interface GenerationTimings {
+  selectionMs: number
+  reproductionMs: number
+  fitnessEvalMs: number
+  statsMs: number
+  totalMs: number
+}
+
+/**
+ * The full result of running a generation, including stats and timing data.
+ */
+export interface GenerationResult {
+  stats: GenerationStats
+  timings: GenerationTimings
+}

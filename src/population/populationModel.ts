@@ -12,7 +12,8 @@ import {
   type Population,
   type SelectionType,
   type RestorePopulationParameters,
-  type GenerationStats
+  type GenerationStats,
+  type GenerationResult
 } from './types'
 import { setSigFigs } from '../common/utils'
 import { statsSigFigs } from '../simulation/config'
@@ -129,25 +130,42 @@ class PopulationModel {
     this.organisms = await this.evaluateFitness(this.organisms)
   }
 
-  async runGeneration(): Promise<GenerationStats> {
+  async runGeneration(): Promise<GenerationResult> {
+    const t0 = performance.now()
+
     const parents = this.performSelection(
       this.selection.type,
       this.selection.tournamentSize,
       this.selection.eliteCount
     )
+    const t1 = performance.now()
+
     this.organisms = this.reproduce(
       parents,
       this.selection,
       this.crossover,
       this.mutation
     )
+    const t2 = performance.now()
+
     // This is handled externally in a webWorker in order to parallelize the work
     this.organisms = await this.evaluateFitness(this.organisms)
+    const t3 = performance.now()
 
     this.genId = PopulationModel.nextGenId
     const stats = this.createStats()
+    const t4 = performance.now()
 
-    return stats
+    return {
+      stats,
+      timings: {
+        selectionMs: t1 - t0,
+        reproductionMs: t2 - t1,
+        fitnessEvalMs: t3 - t2,
+        statsMs: t4 - t3,
+        totalMs: t4 - t0
+      }
+    }
   }
 
   performSelection(

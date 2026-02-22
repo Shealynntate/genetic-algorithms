@@ -41,13 +41,14 @@ import {
   resumeSimulations
 } from '../navigation/navigationSlice'
 import { setSimulationParameters } from '../parameters/parametersSlice'
+import { PerformanceMetrics } from '../diagnostics/performanceMetrics'
 import populationService, {
   type PopulationServiceType
 } from '../population/population-context'
 import type PopulationModel from '../population/populationModel'
 import {
   type GenerationStatsRecord,
-  type GenerationStats
+  type GenerationResult
 } from '../population/types'
 
 // Saga Functions
@@ -104,6 +105,10 @@ function* runSimulationSaga(action: StartSimulationAction): any {
   const stopCriteria = yield* typedSelect(
     (state) => state.parameters.stopCriteria
   )
+  const DIAGNOSTICS_ENABLED = import.meta.env.VITE_DIAGNOSTICS === 'true'
+  const DIAGNOSTICS_LOG_INTERVAL =
+    Number(import.meta.env.VITE_DIAGNOSTICS_INTERVAL) || 100
+  const metrics = DIAGNOSTICS_ENABLED ? new PerformanceMetrics() : null
   let currentGenStats: GenerationStatsRecord | undefined
   // Run the experiment in a loop until one of the stop criteria is met
   while (true) {
@@ -143,7 +148,15 @@ function* runSimulationSaga(action: StartSimulationAction): any {
       yield delay(10)
     }
     // First run the next generation of the simulation
-    const runGenResult: GenerationStats = yield population.runGeneration()
+    const genResult: GenerationResult = yield population.runGeneration()
+    const runGenResult = genResult.stats
+    // Record timing data if diagnostics are enabled
+    if (metrics != null) {
+      metrics.record(genResult.timings)
+      if (metrics.count % DIAGNOSTICS_LOG_INTERVAL === 0) {
+        console.log(metrics.formatMetricsTable())
+      }
+    }
     // Should we store a copy of the maxFitOrganism for Image History?
     if (shouldSaveGenImage(population.genId)) {
       yield call(

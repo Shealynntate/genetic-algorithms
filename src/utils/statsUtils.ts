@@ -1,4 +1,5 @@
 import { setSigFigs } from '../common/utils'
+import { random } from './random'
 
 // A Collection of math and probability based functions
 // --------------------------------------------------
@@ -8,7 +9,7 @@ import { setSigFigs } from '../common/utils'
  * @param {*} num - the number of sig figs (places after the decimal), default is 5
  * @returns the random floating point number
  */
-export const rand = (num = 5): number => setSigFigs(Math.random(), num)
+export const rand = (num = 5): number => setSigFigs(random(), num)
 
 /**
  * Generates a random floating point number shifted to be in the specified range
@@ -18,7 +19,7 @@ export const rand = (num = 5): number => setSigFigs(Math.random(), num)
  */
 export const randomFloat = (start: number, end: number): number => {
   const range = end - start
-  return Math.random() * range + start
+  return random() * range + start
 }
 
 /**
@@ -28,7 +29,7 @@ export const randomFloat = (start: number, end: number): number => {
  * @returns a random integer between [start, end] inclusive
  */
 export const randomInt = (start: number, end: number): number => {
-  const range = Math.random() * (end - start + 1)
+  const range = random() * (end - start + 1)
   return Math.round(range + start - 0.5)
 }
 
@@ -38,7 +39,7 @@ export const randomInt = (start: number, end: number): number => {
  * @returns An index value between [0, length)
  */
 export const randomIndex = (length: number): number =>
-  Math.trunc(Math.random() * length)
+  Math.trunc(random() * length)
 
 /**
  * Flips a biased coin and returns true (heads) or false (tails)
@@ -46,7 +47,7 @@ export const randomIndex = (length: number): number =>
  * By default it's set to 0.5, making it a fair coin
  * @returns the result of flipping the coin - true or false
  */
-export const flipCoin = (bias = 0.5): boolean => Math.random() <= bias
+export const flipCoin = (bias = 0.5): boolean => random() <= bias
 
 /**
  * Converts a fractional number to a percentage string
