@@ -37,7 +37,7 @@
     "d3-time-format": "^4.1.0",
     "dexie": "^3.2.2",
     "dexie-react-hooks": "^1.1.1",
-    "firebase": "^10.7.2",
+    "firebase": "^12.9.0",
     "gifshot": "^0.4.5",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
@@ -47,7 +47,7 @@
     "react-redux": "^9.0.4",
     "react-router-dom": "^6.21.1",
     "redux-saga": "^1.2.1",
-    "typescript": "~5.4.5"
+    "typescript": "~5.9.3"
   },
   "scripts": {
     "start": "vite",
@@ -64,7 +64,7 @@
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "@vitejs/plugin-react": "^4.7.0",
-    "canvas": "^2.11.2",
+    "canvas": "^3.2.1",
     "eslint": "^8.56.0",
     "eslint-config-standard-with-typescript": "^39.1.1",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -74,7 +74,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "fake-indexeddb": "^5.0.2",
-    "jsdom": "^25.0.1",
+    "jsdom": "^28.1.0",
     "prettier": "^3.1.1",
     "vite": "^6.4.1",
     "vitest": "^3.2.4",
