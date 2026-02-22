@@ -102,6 +102,60 @@ function Simulations(): JSX.Element {
         </Typography>
       </Stack>
 
+      <Stack
+        direction="row"
+        spacing={3}
+        sx={{
+          justifyContent: 'center',
+          py: 2,
+          px: 1
+        }}
+      >
+        {[
+          {
+            step: '1',
+            title: 'Pick an Image',
+            description: 'Choose a target image to recreate with polygons'
+          },
+          {
+            step: '2',
+            title: 'Configure',
+            description: 'Set mutation rates, selection type, and population size'
+          },
+          {
+            step: '3',
+            title: 'Watch it Evolve',
+            description: 'See the best painting emerge and track fitness on the graph'
+          }
+        ].map(({ step, title, description }) => (
+          <Stack
+            key={step}
+            direction="row"
+            spacing={1.5}
+            sx={{ flex: 1, maxWidth: 300, alignItems: 'flex-start' }}
+          >
+            <Typography
+              sx={{
+                fontWeight: 800,
+                color: theme.palette.primary.main,
+                fontSize: '1.25rem',
+                lineHeight: 1.4
+              }}
+            >
+              {step}
+            </Typography>
+            <Stack>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                {title}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {description}
+              </Typography>
+            </Stack>
+          </Stack>
+        ))}
+      </Stack>
+
       <Grid2 container spacing={3}>
         <Grid2 xs={12} md={6}>
           <Box

@@ -1,4 +1,3 @@
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import {
   Box,
   Button,
@@ -7,7 +6,6 @@ import {
   Skeleton,
   Stack,
   Typography,
-  useMediaQuery,
   useTheme
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
@@ -18,7 +16,6 @@ import { useFetchAllExperimentsQuery } from '../navigation/navigationSlice'
 function HeroSection(): JSX.Element {
   const theme = useTheme()
   const navigate = useNavigate()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const { data: entries = [], isLoading } = useFetchAllExperimentsQuery()
 
   const heroEntry = entries.find(
@@ -30,7 +27,8 @@ function HeroSection(): JSX.Element {
   return (
     <Box
       sx={{
-        py: { xs: 6, md: 10 },
+        pt: { xs: 3, md: 4 },
+        pb: { xs: 6, md: 8 },
         px: { xs: 3, md: 8 },
         maxWidth: 1200,
         mx: 'auto'
@@ -112,7 +110,6 @@ function HeroSection(): JSX.Element {
             <Button
               variant="outlined"
               size="large"
-              startIcon={<AutoAwesomeIcon />}
               onClick={() => { navigate(NavPaths.experiment) }}
               sx={{
                 px: 4,
@@ -127,66 +124,6 @@ function HeroSection(): JSX.Element {
           </Stack>
         </Stack>
       </Stack>
-
-      {!isMobile && (
-        <Stack
-          direction="row"
-          spacing={4}
-          sx={{
-            mt: 10,
-            justifyContent: 'center'
-          }}
-        >
-          {[
-            {
-              step: '1',
-              title: 'Pick an Image',
-              description: 'Choose any target image you want to recreate'
-            },
-            {
-              step: '2',
-              title: 'Evolve Polygons',
-              description:
-                'Populations of polygons compete, mutate, and recombine'
-            },
-            {
-              step: '3',
-              title: 'Watch it Paint',
-              description:
-                'See your image emerge from random shapes over generations'
-            }
-          ].map(({ step, title, description }) => (
-            <Stack
-              key={step}
-              spacing={1}
-              sx={{ textAlign: 'center', flex: 1, maxWidth: 280 }}
-            >
-              <Typography
-                variant="h4"
-                sx={{
-                  fontWeight: 800,
-                  color: theme.palette.primary.main,
-                  fontSize: '1.5rem'
-                }}
-              >
-                {step}
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={{ fontWeight: 600, fontSize: '1rem' }}
-              >
-                {title}
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{ color: theme.palette.text.secondary }}
-              >
-                {description}
-              </Typography>
-            </Stack>
-          ))}
-        </Stack>
-      )}
     </Box>
   )
 }
