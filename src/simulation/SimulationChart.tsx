@@ -1,25 +1,35 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Fragment,
+  type MouseEvent,
+  type WheelEvent as ReactWheelEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react'
+
 import { Box, Stack, Typography, useTheme } from '@mui/material'
+import { AxisBottom, AxisLeft } from '@visx/axis'
+import { type Point } from '@visx/brush/lib/types'
+import { localPoint } from '@visx/event'
+import { Grid } from '@visx/grid'
+import { Group } from '@visx/group'
+import { scaleLinear, scaleLog } from '@visx/scale'
 import { clamp } from 'lodash'
 import { useSelector } from 'react-redux'
-import { scaleLinear, scaleLog } from '@visx/scale'
-import { Grid } from '@visx/grid'
-import { AxisBottom, AxisLeft } from '@visx/axis'
-import { Group } from '@visx/group'
-import { MIN_BROWSER_WIDTH } from '../navigation/config'
+
+import { SimulationGraph } from './types'
 import CustomCheckbox from '../common/Checkbox'
 import {
   useGetCompletedSimulationReports,
   useGetCurrentSimulationReport
 } from '../database/hooks'
-import SimulationGraphEntry from '../graph/SimulatonGraphEntry'
-import { useWindowSize } from '../navigation/hooks'
 import { type SimulationReport } from '../database/types'
-import { type RootState } from '../store'
-import { type Point } from '@visx/brush/lib/types'
+import SimulationGraphEntry from '../graph/SimulatonGraphEntry'
+import { MIN_BROWSER_WIDTH } from '../navigation/config'
+import { useWindowSize } from '../navigation/hooks'
 import { defaultParameters } from '../parameters/config'
-import { localPoint } from '@visx/event'
-import { SimulationGraph } from './types'
+import { type RootState } from '../store'
 
 const { maxGenerations: maxGens } = defaultParameters.stopCriteria
 const graphHeight = 350
@@ -101,7 +111,7 @@ function SimulationChart(): JSX.Element {
   )
 
   const buffer = [20, 0.01]
-  const handleWheel = (event: React.WheelEvent): void => {
+  const handleWheel = (event: ReactWheelEvent): void => {
     // Treat mousePos as center of zoom in point
     const mousePos = localPoint(event)
     if (mousePos == null) return
@@ -139,7 +149,7 @@ function SimulationChart(): JSX.Element {
     setDomainY([y0, y1])
   }
 
-  const onMouseDown = (event: React.MouseEvent): void => {
+  const onMouseDown = (event: MouseEvent): void => {
     const mousePos = localPoint(event)
     if (mousePos !== null) {
       setLastMousePos({
@@ -149,11 +159,11 @@ function SimulationChart(): JSX.Element {
     }
   }
 
-  const onMouseUp = (event: React.MouseEvent): void => {
+  const onMouseUp = (_event: MouseEvent): void => {
     setLastMousePos(null)
   }
 
-  const onMouseMove = (event: React.MouseEvent): void => {
+  const onMouseMove = (event: MouseEvent): void => {
     // Use the mouse position to pan the graph
     const mousePos = localPoint(event)
     if (lastMousePos == null || mousePos == null) return
@@ -183,7 +193,7 @@ function SimulationChart(): JSX.Element {
   useEffect(() => {
     if (graphRef.current == null) return
 
-    const onWheelCapture = (event: WheelEvent): void => {
+    const onWheelCapture = (event: globalThis.WheelEvent): void => {
       // This is a hack to prevent the page from scrolling when the user is zooming in/out
       event.preventDefault()
       event.stopPropagation()
@@ -251,10 +261,10 @@ function SimulationChart(): JSX.Element {
             numTicksColumns={0}
           />
           {checkedSimulations.map(({ simulation, results }) => (
-            <React.Fragment key={`graph-line-${simulation.id}`}>
+            <Fragment key={`graph-line-${simulation.id}`}>
               <SimulationGraphEntry
-                color={graphEntries[simulation.id as number]}
-                id={simulation.id as number}
+                color={graphEntries[simulation.id!]}
+                id={simulation.id!}
                 graphHeight={graphHeight}
                 data={results}
                 showDeviation={showDeviation}
@@ -263,7 +273,7 @@ function SimulationChart(): JSX.Element {
                 xScale={xScale}
                 yScale={yScale}
               />
-            </React.Fragment>
+            </Fragment>
           ))}
           <rect
             x={graphWidth}

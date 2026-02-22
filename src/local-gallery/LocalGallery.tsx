@@ -1,7 +1,7 @@
-import React from 'react'
 import { Box, Paper, Typography } from '@mui/material'
-import { useGetCompletedSimulationReports } from '../database/hooks'
+
 import LocalGalleryEntry from './LocalGalleryEntry'
+import { useGetCompletedSimulationReports } from '../database/hooks'
 
 function LocalGallery(): JSX.Element {
   const completedEntries = useGetCompletedSimulationReports() ?? []

@@ -1,16 +1,17 @@
 import { createContext } from 'react'
+
+import OrganismModel from './organismModel'
+import PopulationModel from './populationModel'
 import {
   type Population,
   type PopulationParameters,
   type Organism,
   type WorkerMessage
 } from './types'
-import { canvasParameters } from '../simulation/config'
 import { workerBatchSize } from '../parameters/config'
-import createWorker from '../web-workers/fitnessEvaluatorCreator'
-import PopulationModel from './populationModel'
-import OrganismModel from './organismModel'
+import { canvasParameters } from '../simulation/config'
 import { createImageData } from '../utils/imageUtils'
+import createWorker from '../web-workers/fitnessEvaluatorCreator'
 
 /**
  * A class that serves as the interface between the App and the Population
@@ -76,7 +77,7 @@ class PopulationService {
    */
   async evaluateFitness(organisms: Organism[]): Promise<Organism[]> {
     const size = organisms.length
-    const promises: Array<Promise<WorkerMessage>> = []
+    const promises: Promise<WorkerMessage>[] = []
 
     for (let i = 0; i < this.workers.length; ++i) {
       const start = i * workerBatchSize
@@ -91,7 +92,7 @@ class PopulationService {
               resolve(result.data)
             }
           } catch (error) {
-            reject(error)
+            reject(error instanceof Error ? error : new Error(String(error)))
           }
         })
       )
@@ -99,8 +100,8 @@ class PopulationService {
 
     const results = await Promise.all(promises)
     let orgs: Organism[] = []
-    for (let i = 0; i < results.length; ++i) {
-      orgs = orgs.concat(results[i].updatedOrganisms)
+    for (const result of results) {
+      orgs = orgs.concat(result.updatedOrganisms)
     }
     if (orgs.length !== size) {
       throw new Error(

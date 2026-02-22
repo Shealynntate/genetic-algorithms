@@ -1,11 +1,11 @@
-import React from 'react'
 import { Box, Stack, Tooltip, Typography } from '@mui/material'
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
-import { mutationProbabilityTypes } from '../population/types'
-import { type Simulation } from '../database/types'
+
 import NumberDisplay from '../common/NumberDisplay'
 import TextDisplay from '../common/TextDisplay'
+import { type Simulation } from '../database/types'
 import { MutationProbabilityFormFields } from '../parameters/config'
+import { mutationProbabilityTypes } from '../population/types'
 
 interface SimulationSummaryProps {
   simulation: Simulation

@@ -1,4 +1,9 @@
 import { deviation } from 'd3-array'
+
+import CrossoverModel from './crossoverModel'
+import MutationModel from './mutationModel'
+import OrganismModel from './organismModel'
+import SelectionModel from './selectionModel'
 import {
   type PopulationParameters,
   type Organism,
@@ -9,18 +14,14 @@ import {
   type RestorePopulationParameters,
   type GenerationStats
 } from './types'
-import CrossoverModel from './crossoverModel'
-import MutationModel from './mutationModel'
-import OrganismModel from './organismModel'
-import SelectionModel from './selectionModel'
-import { statsSigFigs } from '../simulation/config'
 import { setSigFigs } from '../common/utils'
+import { statsSigFigs } from '../simulation/config'
 import { randomFloat, randomIndex } from '../utils/statsUtils'
 
 class PopulationModel {
   // Static Properties
   // ------------------------------------------------------------
-  static count: number = -1
+  static count = -1
 
   // Instance Properties
   // ------------------------------------------------------------

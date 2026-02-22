@@ -1,4 +1,5 @@
-import React from 'react'
+import type React from 'react'
+
 import { Box, Input, type InputProps, Tooltip, Typography } from '@mui/material'
 import {
   type Control,

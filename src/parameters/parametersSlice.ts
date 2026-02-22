@@ -1,4 +1,5 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
+
 import { defaultParameters } from './config'
 import { type ParametersState } from './types'
 

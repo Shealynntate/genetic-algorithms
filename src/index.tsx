@@ -1,19 +1,21 @@
-import React from 'react'
+import { StrictMode } from 'react'
+
+import { CssBaseline, ThemeProvider } from '@mui/material'
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { CssBaseline, ThemeProvider } from '@mui/material'
 import { RouterProvider } from 'react-router-dom'
+
 import './styles.css'
-import store from './store'
-import theme from './theme'
 import poulationService, {
   PopulationContext
 } from './population/population-context'
 import router from './router/router'
+import store from './store'
+import theme from './theme'
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+const root = ReactDOM.createRoot(document.getElementById('root')!)
 root.render(
-  <React.StrictMode>
+  <StrictMode>
     <Provider store={store}>
       <PopulationContext.Provider value={poulationService}>
         <ThemeProvider theme={theme}>
@@ -25,5 +27,5 @@ root.render(
         </ThemeProvider>
       </PopulationContext.Provider>
     </Provider>
-  </React.StrictMode>
+  </StrictMode>
 )

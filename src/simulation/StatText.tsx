@@ -1,6 +1,5 @@
 import { Typography } from '@mui/material'
 import { Stack } from '@mui/system'
-import React from 'react'
 
 interface StatTextProps {
   sigFigs?: number

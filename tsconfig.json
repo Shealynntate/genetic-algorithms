@@ -23,7 +23,6 @@
     "types": ["vite/client", "vitest/globals"]
   },
   "include": [
-    "src",
-    ".eslintrc.js"
+    "src"
   ],
 }

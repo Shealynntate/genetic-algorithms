@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { createImageData } from '../utils/imageUtils'
-import Canvas from './Canvas'
+import { useEffect, useState } from 'react'
+
 import { Skeleton } from '@mui/material'
+
+import Canvas from './Canvas'
+import { createImageData } from '../utils/imageUtils'
 
 interface TargetCanvasProps {
   width: number

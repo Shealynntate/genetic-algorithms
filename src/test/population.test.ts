@@ -1,9 +1,9 @@
+import { mockRandom } from './utils'
+import OrganismModel from '../population/organismModel'
+import Population from '../population/populationModel'
 import { type Organism, type PopulationParameters } from '../population/types'
 import * as utils from '../utils/statsUtils'
 // import GaussianNoise from '../utils/gaussianNoise';
-import Population from '../population/populationModel'
-import { mockRandom } from './utils'
-import OrganismModel from '../population/organismModel'
 
 const populationParameters: PopulationParameters = {
   size: 10,

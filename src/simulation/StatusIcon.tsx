@@ -1,9 +1,9 @@
-import React from 'react'
-import { Box, type SxProps, Tooltip } from '@mui/material'
-import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined'
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
-import RunCircleOutlinedIcon from '@mui/icons-material/RunCircleOutlined'
 import PauseCircleOutlineOutlinedIcon from '@mui/icons-material/PauseCircleOutlineOutlined'
+import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined'
+import RunCircleOutlinedIcon from '@mui/icons-material/RunCircleOutlined'
+import { Box, type SxProps, Tooltip } from '@mui/material'
+
 import { type SimulationStatus } from './types'
 
 interface IconEntry {

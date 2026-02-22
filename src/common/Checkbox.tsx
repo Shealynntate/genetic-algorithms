@@ -1,4 +1,5 @@
-import React, { type SyntheticEvent } from 'react'
+import { type SyntheticEvent } from 'react'
+
 import { Checkbox, Stack, Typography } from '@mui/material'
 
 interface CustomCheckboxProps {
@@ -10,7 +11,7 @@ interface CustomCheckboxProps {
 function CustomCheckbox({
   label = '',
   checked = false,
-  onCheck = (value: boolean) => {}
+  onCheck = (_value: boolean) => {}
 }: CustomCheckboxProps): JSX.Element {
   const onClick = (event: SyntheticEvent): void => {
     event.stopPropagation()

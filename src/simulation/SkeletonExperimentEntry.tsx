@@ -1,5 +1,4 @@
 import { Checkbox, Paper, Skeleton, Stack } from '@mui/material'
-import React from 'react'
 
 function SkeletonExperimentEntry(): JSX.Element {
   return (

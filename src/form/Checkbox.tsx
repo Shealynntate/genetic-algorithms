@@ -1,10 +1,5 @@
-import React from 'react'
-import {
-  type Control,
-  type Path,
-  type FieldValues,
-  Controller
-} from 'react-hook-form'
+import type React from 'react'
+
 import {
   Checkbox,
   type CheckboxProps,
@@ -12,6 +7,12 @@ import {
   Tooltip,
   Typography
 } from '@mui/material'
+import {
+  type Control,
+  type Path,
+  type FieldValues,
+  Controller
+} from 'react-hook-form'
 
 interface CustomCheckboxProps<T extends FieldValues> extends CheckboxProps {
   control: Control<T>

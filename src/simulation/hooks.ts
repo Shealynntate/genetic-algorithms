@@ -1,9 +1,9 @@
+import { useSelector } from 'react-redux'
+
 import { type RootState } from '../store'
 import { type OrganismRecord } from './types'
-import { type Population } from '../population/types'
-import { type Simulation } from '../database/types'
-import { useSelector } from 'react-redux'
 import { useGetCurrentSimulation } from '../database/hooks'
+import { type Simulation } from '../database/types'
 
 export const useCreateRunningSimulation = (): Simulation | undefined => {
   const dbSimulation = useGetCurrentSimulation()
@@ -17,14 +17,13 @@ export const useCreateRunningSimulation = (): Simulation | undefined => {
   if (dbSimulation == null) {
     return undefined
   }
-  const defaultPopulation = dbSimulation.population as Population
+  const defaultPopulation = dbSimulation.population!
   const simulation: Simulation = {
     ...dbSimulation,
     population: {
       ...defaultPopulation,
       best: globalBest ?? (dbSimulation.population?.best as OrganismRecord),
-      genId:
-        currentGenStats?.stats.gen ?? (dbSimulation.population?.genId as number)
+      genId: currentGenStats?.stats.gen ?? dbSimulation.population!.genId
     }
   }
   return simulation

@@ -1,5 +1,5 @@
-import React from 'react'
 import { Stack, Typography, useMediaQuery, useTheme } from '@mui/material'
+
 import { SiteTitle } from './config'
 import DNAImage from '../assets/DNA.png'
 

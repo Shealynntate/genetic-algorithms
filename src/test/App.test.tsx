@@ -1,16 +1,16 @@
-import React from 'react'
-import { Provider } from 'react-redux'
 import { ThemeProvider } from '@emotion/react'
 import { CssBaseline } from '@mui/material'
 import { render, screen } from '@testing-library/react'
+import { Provider } from 'react-redux'
 import 'fake-indexeddb/auto'
-import store from '../store'
-import theme from '../theme'
+import { RouterProvider } from 'react-router-dom'
+
 import populationService, {
   PopulationContext
 } from '../population/population-context'
-import { RouterProvider } from 'react-router-dom'
 import router from '../router/router'
+import store from '../store'
+import theme from '../theme'
 
 // import createWorker from '../web-workers/fitnessEvaluatorCreator';
 

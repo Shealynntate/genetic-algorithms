@@ -1,7 +1,7 @@
-import React from 'react'
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
-import { type ParametersState } from '../parameters/types'
+
 import SimulationForm from '../form/SimulationForm'
+import { type ParametersState } from '../parameters/types'
 
 interface SimulationFormDialogProps {
   defaultValues?: ParametersState

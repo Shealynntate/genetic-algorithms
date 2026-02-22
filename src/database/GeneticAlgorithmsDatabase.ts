@@ -1,4 +1,5 @@
 import Dexie from 'dexie'
+
 import { type Gif, type Image, type Results, type Simulation } from './types'
 
 const databaseName = 'GeneticAlgorithmsDB'

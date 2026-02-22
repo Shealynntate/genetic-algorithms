@@ -1,5 +1,5 @@
-import React from 'react'
 import { Paper, Skeleton, Stack } from '@mui/material'
+
 import { canvasParameters } from '../simulation/config'
 
 function SkeletonGalleryEntry(): JSX.Element {

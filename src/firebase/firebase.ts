@@ -1,5 +1,6 @@
-import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
+import { initializeApp } from 'firebase/app'
+import { type User, getAuth, onAuthStateChanged } from 'firebase/auth'
 import {
   type QueryDocumentSnapshot,
   type SnapshotOptions,
@@ -7,10 +8,10 @@ import {
   type Timestamp
 } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
-import { type User, getAuth, onAuthStateChanged } from 'firebase/auth'
+
 import store from '../store'
-import { type ExperimentRecord, type ExperimentRecordDbEntry } from './types'
 import { GIF_FILE, TARGET_IMAGE_FILE, firebaseConfig } from './config'
+import { type ExperimentRecord, type ExperimentRecordDbEntry } from './types'
 import { toTimestamp } from './utils'
 
 // Initialize Firebase and its services

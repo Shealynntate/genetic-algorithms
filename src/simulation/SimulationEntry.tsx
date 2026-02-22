@@ -1,5 +1,9 @@
-import React, { type SyntheticEvent, useState, type ChangeEvent } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import type React from 'react'
+import { type SyntheticEvent, useState, type ChangeEvent } from 'react'
+
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import DeleteIcon from '@mui/icons-material/Delete'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import {
   Box,
   Button,
@@ -12,24 +16,23 @@ import {
   Typography,
   useTheme
 } from '@mui/material'
-import ContentCopyIcon from '@mui/icons-material/ContentCopy'
-import DeleteIcon from '@mui/icons-material/Delete'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { useDispatch, useSelector } from 'react-redux'
+
+import ActionButtons from './ActionButtons'
+import MaxFitnessDisplay from './MaxFitnessDisplay'
+import RunningSimulationDisplay from './RunningSimulationDisplay'
+import SimulationSummary from './SimulationSummary'
+import StatText from './StatText'
+import StatusIcon from './StatusIcon'
+import { deleteSimulation, renameSimulation } from '../database/api'
 import { type Simulation } from '../database/types'
+import { useGraphColor, useIsGraphEntry } from '../navigation/hooks'
 import {
   addGraphEntry,
   deleteRunningSimulation,
   removeGraphEntry
 } from '../navigation/navigationSlice'
-import { deleteSimulation, renameSimulation } from '../database/api'
-import { useGraphColor, useIsGraphEntry } from '../navigation/hooks'
-import StatusIcon from './StatusIcon'
-import MaxFitnessDisplay from './MaxFitnessDisplay'
-import RunningSimulationDisplay from './RunningSimulationDisplay'
-import ActionButtons from './ActionButtons'
-import SimulationSummary from './SimulationSummary'
 import { type RootState } from '../store'
-import StatText from './StatText'
 
 interface SimulationEntryProps {
   simulation: Simulation
@@ -40,8 +43,8 @@ interface SimulationEntryProps {
 
 function SimulationEntry({
   simulation,
-  onDuplicate = (event: SyntheticEvent, id: number) => {},
-  onSelect = (id: number | null) => {},
+  onDuplicate = (_event: SyntheticEvent, _id: number) => {},
+  onSelect = (_id: number | null) => {},
   isActive = false
 }: SimulationEntryProps): JSX.Element {
   const { id, createdOn, name, status, population } = simulation
@@ -55,8 +58,8 @@ function SimulationEntry({
   )
   const [nameValue, setNameValue] = useState(name)
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
-  const isChecked = useIsGraphEntry(id as number)
-  const color = useGraphColor(id as number)
+  const isChecked = useIsGraphEntry(id!)
+  const color = useGraphColor(id!)
   const gen = isActive
     ? (currentGenStats?.stats.gen ?? 0)
     : (population?.genId ?? 0)

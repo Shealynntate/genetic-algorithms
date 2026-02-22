@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+
 import { type Organism } from '../population/types'
 import { renderGenomeToCanvas } from '../utils/imageUtils'
 

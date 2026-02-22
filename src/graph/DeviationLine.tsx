@@ -1,8 +1,8 @@
-import React from 'react'
-import { Threshold } from '@visx/threshold'
 import { curveMonotoneX } from '@visx/curve'
-import { type GenerationStatsRecord } from '../population/types'
+import { Threshold } from '@visx/threshold'
+
 import Line from './Line'
+import { type GenerationStatsRecord } from '../population/types'
 
 interface DeviationLineProps {
   id: number

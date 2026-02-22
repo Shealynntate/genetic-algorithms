@@ -1,10 +1,10 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
-import { Button, Container } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { selectIsAuthenticated } from '../navigation/navigationSlice'
+import { Button, Container } from '@mui/material'
+import { useSelector } from 'react-redux'
+
 import AuthForm from './AuthForm'
 import SignOut from './SignOut'
+import { selectIsAuthenticated } from '../navigation/navigationSlice'
 
 function Admin(): JSX.Element {
   const isAuthenticated = useSelector(selectIsAuthenticated)

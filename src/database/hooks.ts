@@ -1,12 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import {
-  type Gif,
-  type Image,
-  type Simulation,
-  type Results,
-  type SimulationReport
-} from './types'
-import { type GenerationStatsRecord } from '../population/types'
+
 import db, {
   currentSimulationId,
   getAllSimulations,
@@ -18,12 +11,20 @@ import db, {
   getSimulationRecords,
   getSimulations
 } from './api'
+import {
+  type Gif,
+  type Image,
+  type Simulation,
+  type Results,
+  type SimulationReport
+} from './types'
+import { type GenerationStatsRecord } from '../population/types'
 
 // Simulation Hooks
 // --------------------------------------------------
 export const useGetSimulations = (
   ids: number[]
-): Array<Simulation | undefined> | undefined =>
+): (Simulation | undefined)[] | undefined =>
   useLiveQuery(async () => await getSimulations(ids))
 
 export const useGetAllSimulations = (): Simulation[] | undefined =>

@@ -1,7 +1,7 @@
-import React from 'react'
+import { Paper, Typography, type SxProps, Button } from '@mui/material'
 import { signOut } from 'firebase/auth'
 import { useDispatch } from 'react-redux'
-import { Paper, Typography, type SxProps, Button } from '@mui/material'
+
 import { auth } from '../firebase/firebase'
 import {
   openErrorSnackbar,

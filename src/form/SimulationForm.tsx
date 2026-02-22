@@ -1,4 +1,5 @@
-import React, { type SyntheticEvent, useEffect } from 'react'
+import { type SyntheticEvent, useEffect } from 'react'
+
 import {
   Box,
   Button,
@@ -11,8 +12,12 @@ import {
   Tooltip,
   Typography
 } from '@mui/material'
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
 import { useForm } from 'react-hook-form'
-import { canvasParameters } from '../simulation/config'
+
+import ImageInput from './ImageInput'
+import NumberInput from './NumberInput'
+import SigmaInput from './SigmaInput'
 import {
   CrossoverTypeLabels,
   defaultParameters,
@@ -20,12 +25,9 @@ import {
   ParameterLabels,
   SelectionTypeLabels
 } from '../parameters/config'
-import SigmaInput from './SigmaInput'
-import ImageInput from './ImageInput'
-import NumberInput from './NumberInput'
 import { type ParametersState } from '../parameters/types'
 import { mutationProbabilityTypes } from '../population/types'
-import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
+import { canvasParameters } from '../simulation/config'
 
 interface SimulationFormProps {
   imageHeight?: number

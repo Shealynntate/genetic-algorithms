@@ -1,8 +1,8 @@
-import React from 'react'
 import { Container, Stack } from '@mui/material'
 import { Outlet } from 'react-router-dom'
-import Header from './Header'
+
 import Footer from './Footer'
+import Header from './Header'
 import ErrorSnackbar from '../common/ErrorSnackbar'
 import SuccessSnackbar from '../common/SuccessSnackbar'
 

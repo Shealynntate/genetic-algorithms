@@ -1,10 +1,10 @@
-import { type SimulationStatus } from '../simulation/types'
+import { type ParametersState } from '../parameters/types'
 import {
   type GenerationStatsRecord,
   type Genome,
   type Population
 } from '../population/types'
-import { type ParametersState } from '../parameters/types'
+import { type SimulationStatus } from '../simulation/types'
 
 /**
  * Data stored in the images IndexedDB table

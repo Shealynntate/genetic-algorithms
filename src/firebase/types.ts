@@ -1,6 +1,7 @@
 import { type FieldValue } from 'firebase/firestore'
-import { type Organism } from '../population/types'
+
 import { type ParametersState } from '../parameters/types'
+import { type Organism } from '../population/types'
 
 /**
  * The local representation of the data object stored in firebase firestore for each experiment

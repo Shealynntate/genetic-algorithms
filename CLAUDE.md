@@ -63,7 +63,7 @@ Fitness is computed in **Web Workers** (`src/web-workers/`). Each organism's pol
 
 ## Code Style
 
-- ESLint with `standard-with-typescript` + `plugin:react/recommended`
+- ESLint 9 flat config (`eslint.config.mjs`) with `typescript-eslint` v8 `recommendedTypeChecked` + `stylisticTypeChecked`, `eslint-plugin-react`, `eslint-plugin-react-hooks`, `eslint-plugin-import-x`, `eslint-plugin-n`, `eslint-plugin-promise`
 - Prettier for formatting
-- Import ordering enforced: react first, then external, then internal, alphabetized
-- `import/no-unresolved` set to error
+- Import ordering enforced via `import-x/order`: react first, then external, then internal, alphabetized
+- `import-x/no-unresolved` set to error

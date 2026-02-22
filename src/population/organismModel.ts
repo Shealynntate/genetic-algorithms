@@ -1,11 +1,11 @@
+import type CrossoverModel from './crossoverModel'
+import Genome from './genomeModel'
+import type MutationModel from './mutationModel'
 import {
   type GenomeBounds,
   type Organism,
   type OrganismParameters
 } from './types'
-import type CrossoverModel from './crossoverModel'
-import type MutationModel from './mutationModel'
-import Genome from './genomeModel'
 
 let organismCount = -1
 const nextId = (): number => {

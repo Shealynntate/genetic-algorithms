@@ -1,11 +1,11 @@
-import React from 'react'
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
+import { useSelector } from 'react-redux'
+
+import OrganismCanvas from '../canvas/OrganismCanvas'
+import TargetCanvas from '../canvas/TargetCanvas'
 import { type Simulation } from '../database/types'
 import { canvasParameters } from '../simulation/config'
-import TargetCanvas from '../canvas/TargetCanvas'
 import { type RootState } from '../store'
-import { useSelector } from 'react-redux'
-import OrganismCanvas from '../canvas/OrganismCanvas'
 
 const { width, height } = canvasParameters
 

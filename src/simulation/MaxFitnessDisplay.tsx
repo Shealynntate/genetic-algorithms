@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, CircularProgress, Tooltip, Typography } from '@mui/material'
 
 interface MaxFitnessDisplayProps {

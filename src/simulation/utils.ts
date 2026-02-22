@@ -9,6 +9,8 @@ import {
   take,
   type TakeEffect
 } from 'redux-saga/effects'
+
+import { type OrganismRecord } from './types'
 import { approxEqual } from '../common/utils'
 import {
   addGifEntry,
@@ -16,15 +18,12 @@ import {
   getCurrentSimulation
 } from '../database/api'
 import { saveThresholds } from '../simulation/config'
-import { createGif, genomeToPhenotype } from '../utils/imageUtils'
-import { type OrganismRecord } from './types'
 import { type RootState } from '../store'
+import { createGif, genomeToPhenotype } from '../utils/imageUtils'
 
 export const shouldSaveGenImage = (genId: number): boolean => {
-  for (let i = 0; i < saveThresholds.length; ++i) {
-    if (genId <= saveThresholds[i].threshold) {
-      const mod = saveThresholds[i].mod
-
+  for (const { threshold, mod } of saveThresholds) {
+    if (genId <= threshold) {
       return genId % mod === 0
     }
   }
@@ -82,6 +81,7 @@ export function* typedSelect<T>(
   return slice
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function* typedCall<Fn extends (...args: any[]) => any>(
   fn: Fn,
   ...args: Parameters<Fn>

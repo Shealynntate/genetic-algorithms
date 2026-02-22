@@ -5,6 +5,7 @@ import {
 } from './types'
 // Note: For image imports to be base64 and not a path, need to be under ~10kb
 import defaultTarget from '../assets/mona_lisa.jpeg'
+import { type AppState } from '../navigation/types'
 import {
   type SelectionType,
   type MutationProbabilityType,
@@ -12,7 +13,6 @@ import {
   type DistributionTypes,
   type CrossoverProbabilityTypes
 } from '../population/types'
-import { type AppState } from '../navigation/types'
 
 export const maxPopulation = 500
 

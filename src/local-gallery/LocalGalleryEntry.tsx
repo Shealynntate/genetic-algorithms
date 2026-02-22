@@ -1,4 +1,7 @@
-import React, { type ChangeEvent, useState } from 'react'
+import { type ChangeEvent, useState } from 'react'
+
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import DownloadIcon from '@mui/icons-material/Download'
 import {
   Box,
   IconButton,
@@ -9,13 +12,11 @@ import {
   Tooltip,
   Fade
 } from '@mui/material'
-import DownloadIcon from '@mui/icons-material/Download'
-import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import { renameSimulation } from '../database/api'
-import { download } from '../utils/fileUtils'
-import { canvasParameters } from '../simulation/config'
+import { useDispatch, useSelector } from 'react-redux'
+
 import OrganismCanvas from '../canvas/OrganismCanvas'
 import TargetCanvas from '../canvas/TargetCanvas'
+import { renameSimulation } from '../database/api'
 import { type SimulationReport } from '../database/types'
 import {
   openErrorSnackbar,
@@ -23,7 +24,8 @@ import {
   selectIsAuthenticated,
   useUploadExperimentReportMutation
 } from '../navigation/navigationSlice'
-import { useDispatch, useSelector } from 'react-redux'
+import { canvasParameters } from '../simulation/config'
+import { download } from '../utils/fileUtils'
 
 interface GallerEntryProps {
   data: SimulationReport

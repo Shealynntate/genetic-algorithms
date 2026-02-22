@@ -1,10 +1,10 @@
 import { expectRange, mockRandom } from './utils'
-import { maxColorValue } from '../simulation/config'
 import { genRange } from '../common/utils'
-import * as statsUtils from '../utils/statsUtils'
-import { type Color, type Point } from '../population/types'
 import ChromosomeModel from '../population/chromosomeModel'
 import MutationModel from '../population/mutationModel'
+import { type Color, type Point } from '../population/types'
+import { maxColorValue } from '../simulation/config'
+import * as statsUtils from '../utils/statsUtils'
 
 // Test Helper Functions
 // --------------------------------------------------

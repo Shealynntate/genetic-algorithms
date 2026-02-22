@@ -1,7 +1,8 @@
-import React, { memo } from 'react'
-import { type GenerationStatsRecord } from '../population/types'
+import { memo } from 'react'
+
 import DeviationLine from './DeviationLine'
 import Line from './Line'
+import { type GenerationStatsRecord } from '../population/types'
 import theme from '../theme'
 
 const meanLineWidth = 0.8

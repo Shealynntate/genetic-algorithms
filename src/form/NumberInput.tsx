@@ -1,4 +1,11 @@
-import React from 'react'
+import {
+  Input,
+  type InputProps,
+  Stack,
+  Tooltip,
+  Typography
+} from '@mui/material'
+import _ from 'lodash'
 import {
   type Control,
   Controller,
@@ -8,14 +15,7 @@ import {
   type PathValue,
   type FieldPathByValue
 } from 'react-hook-form'
-import {
-  Input,
-  type InputProps,
-  Stack,
-  Tooltip,
-  Typography
-} from '@mui/material'
-import _ from 'lodash'
+
 import ErrorTooltip from '../common/ErrorTooltip'
 
 interface NumberInputProps<
@@ -71,7 +71,10 @@ function NumberInput<
         name={name}
         rules={{ validate }}
         render={({ field: { onChange, value } }) => (
-          <ErrorTooltip error={error?.message?.toString()} show={error != null}>
+          <ErrorTooltip
+            error={error?.message as string | undefined}
+            show={error != null}
+          >
             <Input
               {...props}
               value={value}

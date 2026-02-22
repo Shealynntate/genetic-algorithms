@@ -27,7 +27,7 @@ class FitnessEvaluator {
   ) {
     this.ctx = canvas.getContext('2d', {
       willReadFrequently: true
-    }) as CanvasRenderingContext2D
+    })!
     this.width = canvas.width
     this.height = canvas.height
     this.target = target

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Box, IconButton, Stack, Typography } from '@mui/material'
+import { useEffect, useState } from 'react'
+
 import {
   DndContext,
   type DragEndEvent,
@@ -9,6 +9,12 @@ import {
 } from '@dnd-kit/core'
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import SaveIcon from '@mui/icons-material/Save'
+import { Box, IconButton, Stack, Typography } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+
+import GalleryEntry from './GalleryEntry'
+import SkeletonGalleryEntry from './SkeletonGalleryEntry'
+import { hasDataChanged, hasOrderChanged, sortGalleryEntries } from './utils'
 import {
   openErrorSnackbar,
   openSuccessSnackbar,
@@ -16,10 +22,6 @@ import {
   useFetchAllExperimentsQuery,
   useUpdateExperimentsMutation
 } from '../navigation/navigationSlice'
-import GalleryEntry from './GalleryEntry'
-import SkeletonGalleryEntry from './SkeletonGalleryEntry'
-import { hasDataChanged, hasOrderChanged, sortGalleryEntries } from './utils'
-import { useDispatch, useSelector } from 'react-redux'
 
 function Gallery(): JSX.Element {
   const { data: entries = [], isLoading } = useFetchAllExperimentsQuery()

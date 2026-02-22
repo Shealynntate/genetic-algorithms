@@ -9,8 +9,8 @@ export const fileToBase64 = async (
       reader.onload = () => {
         resolve(reader.result)
       }
-      reader.onerror = (error) => {
-        reject(error)
+      reader.onerror = () => {
+        reject(new Error('FileReader failed'))
       }
     }
   )
@@ -40,7 +40,7 @@ export const downloadFile = (
   URL.revokeObjectURL(href)
 }
 
-export const downloadJSON = (fileName: string, data: any): void => {
+export const downloadJSON = (fileName: string, data: unknown): void => {
   const json = JSON.stringify(data)
   downloadFile(fileName, json, 'application/json', 'json')
 }

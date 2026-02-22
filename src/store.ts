@@ -1,11 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import createSagaMiddleware from 'redux-saga'
+
+import firestoreApi from './firebase/firestoreApi'
+import navigationReducer from './navigation/navigationSlice'
 import parametersReducer from './parameters/parametersSlice'
 import populationService from './population/population-context'
 import rootSaga from './rootSaga'
 import simulationReducer from './simulation/simulationSlice'
-import navigationReducer from './navigation/navigationSlice'
-import firestoreApi from './firebase/firestoreApi'
 
 const sagaMiddleware = createSagaMiddleware({
   context: {

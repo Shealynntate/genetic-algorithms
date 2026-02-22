@@ -1,8 +1,8 @@
-import React from 'react'
-import { LinePath } from '@visx/shape'
-import theme from '../theme'
-import { type GenerationStatsRecord } from '../population/types'
 import { curveMonotoneY } from '@visx/curve'
+import { LinePath } from '@visx/shape'
+
+import { type GenerationStatsRecord } from '../population/types'
+import theme from '../theme'
 
 interface LineProps {
   data: GenerationStatsRecord[]

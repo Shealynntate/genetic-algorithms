@@ -8,7 +8,7 @@ import { setSigFigs } from '../common/utils'
  * @param {*} num - the number of sig figs (places after the decimal), default is 5
  * @returns the random floating point number
  */
-export const rand = (num: number = 5): number => setSigFigs(Math.random(), num)
+export const rand = (num = 5): number => setSigFigs(Math.random(), num)
 
 /**
  * Generates a random floating point number shifted to be in the specified range
@@ -46,7 +46,7 @@ export const randomIndex = (length: number): number =>
  * By default it's set to 0.5, making it a fair coin
  * @returns the result of flipping the coin - true or false
  */
-export const flipCoin = (bias: number = 0.5): boolean => Math.random() <= bias
+export const flipCoin = (bias = 0.5): boolean => Math.random() <= bias
 
 /**
  * Converts a fractional number to a percentage string
@@ -54,5 +54,5 @@ export const flipCoin = (bias: number = 0.5): boolean => Math.random() <= bias
  * @param sigFigs the number of significant figures to display
  * @returns a string representation of the percentage
  */
-export const toPercent = (value: number, sigFigs: number = 1): string =>
+export const toPercent = (value: number, sigFigs = 1): string =>
   `${setSigFigs(value * 100, sigFigs)}%`

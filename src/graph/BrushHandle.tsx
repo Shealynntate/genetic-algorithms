@@ -1,4 +1,3 @@
-import React from 'react'
 import { useTheme } from '@mui/material/styles'
 import { Group } from '@visx/group'
 

@@ -1,8 +1,10 @@
 import { useLayoutEffect, useEffect, useState } from 'react'
+
 import { useSelector } from 'react-redux'
+
 import { type RootState } from '../store'
-import { type MousePosition, type AppState } from './types'
 import { MIN_BROWSER_WIDTH, MIN_BROWSER_HEIGHT, RunningStates } from './config'
+import { type MousePosition, type AppState } from './types'
 
 const currentStateSelector = ({ navigation }: RootState): AppState =>
   navigation.simulationState

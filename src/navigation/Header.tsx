@@ -1,6 +1,11 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router-dom'
+import type React from 'react'
+import { useState } from 'react'
+
+import { GitHub } from '@mui/icons-material'
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
+import PhotoCameraBackIcon from '@mui/icons-material/PhotoCameraBack'
+import PortraitIcon from '@mui/icons-material/Portrait'
+import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
 import {
   AppBar,
   Box,
@@ -10,21 +15,19 @@ import {
   Toolbar,
   useTheme
 } from '@mui/material'
-import { GitHub } from '@mui/icons-material'
-import PhotoCameraBackIcon from '@mui/icons-material/PhotoCameraBack'
-import PortraitIcon from '@mui/icons-material/Portrait'
-import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined'
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import { signOut } from 'firebase/auth'
-import { auth } from '../firebase/firebase'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router-dom'
+
+import { NavLabels, NavPaths } from './config'
+import HeaderIconButton from './HeaderIconButton'
+import HeaderTitle from './HeaderTitle'
 import {
   openErrorSnackbar,
   openSuccessSnackbar,
   selectIsAuthenticated
 } from './navigationSlice'
-import { NavLabels, NavPaths } from './config'
-import HeaderIconButton from './HeaderIconButton'
-import HeaderTitle from './HeaderTitle'
+import { auth } from '../firebase/firebase'
 
 function Header(): JSX.Element {
   const navigate = useNavigate()

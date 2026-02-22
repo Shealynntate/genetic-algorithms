@@ -1,18 +1,4 @@
-/* eslint-disable @typescript-eslint/no-dynamic-delete */
-/* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit'
-import _ from 'lodash'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import { type NavigationState } from './types'
-import firestoreApi from '../firebase/firestoreApi'
-import {
-  firestore,
-  experimentRecordConverter,
-  storage
-} from '../firebase/firebase'
-import { type Simulation, type SimulationReport } from '../database/types'
-import { lineColors } from './config'
-import { clearCurrentSimulation } from '../simulation/simulationSlice'
 import {
   addDoc,
   collection,
@@ -24,11 +10,24 @@ import {
   updateDoc,
   writeBatch
 } from 'firebase/firestore'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import _ from 'lodash'
+
+import { lineColors } from './config'
+import { type NavigationState } from './types'
 import { NavTag } from '../common/types'
-import { type GenerationStatsRecord } from '../population/types'
-import { type ExperimentRecord } from '../firebase/types'
-import { convertBase64ToFile } from '../utils/imageUtils'
+import { type Simulation, type SimulationReport } from '../database/types'
 import { GIF_FILE, TARGET_IMAGE_FILE } from '../firebase/config'
+import {
+  firestore,
+  experimentRecordConverter,
+  storage
+} from '../firebase/firebase'
+import firestoreApi from '../firebase/firestoreApi'
+import { type ExperimentRecord } from '../firebase/types'
+import { type GenerationStatsRecord } from '../population/types'
+import { clearCurrentSimulation } from '../simulation/simulationSlice'
+import { convertBase64ToFile } from '../utils/imageUtils'
 
 const initialState: NavigationState = {
   simulationState: 'none',
@@ -50,7 +49,7 @@ export const navigationSlice = createSlice({
     setAppState: (state, action) => {
       state.simulationState = action.payload
     },
-    runSimulation: (state, action: PayloadAction<Simulation>) => {
+    runSimulation: (state, _action: PayloadAction<Simulation>) => {
       state.simulationState = 'running'
     },
     pauseSimulations: (state) => {
@@ -194,10 +193,12 @@ export const navigationApi = firestoreApi.injectEndpoints({
           })
 
           return { data: recordId }
-        } catch (error: any) {
+        } catch (error) {
           console.error(error)
 
-          return { error: error.message }
+          return {
+            error: error instanceof Error ? error.message : String(error)
+          }
         }
       },
       invalidatesTags: [NavTag.SIMULATION_REPORTS]
@@ -231,10 +232,12 @@ export const navigationApi = firestoreApi.injectEndpoints({
           )
 
           return { data: updatedRecords }
-        } catch (error: any) {
+        } catch (error) {
           console.error(error)
 
-          return { error: error.message }
+          return {
+            error: error instanceof Error ? error.message : String(error)
+          }
         }
       },
       providesTags: (result) =>
@@ -267,10 +270,12 @@ export const navigationApi = firestoreApi.injectEndpoints({
             await batch.commit()
             // TODO: Return the updated records
             return { data: records }
-          } catch (error: any) {
+          } catch (error) {
             console.error(error)
 
-            return { error: error.message }
+            return {
+              error: error instanceof Error ? error.message : String(error)
+            }
           }
         },
         invalidatesTags: [NavTag.SIMULATION_REPORTS]
@@ -285,10 +290,12 @@ export const navigationApi = firestoreApi.injectEndpoints({
           }
           await deleteDoc(ref)
           return { data: undefined }
-        } catch (error: any) {
+        } catch (error) {
           console.error(error)
 
-          return { error: error.message }
+          return {
+            error: error instanceof Error ? error.message : String(error)
+          }
         }
       },
       invalidatesTags: [NavTag.SIMULATION_REPORTS]

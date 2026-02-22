@@ -1,7 +1,8 @@
 import gifshot from 'gifshot'
+
 import { type Dim } from './types'
-import { canvasParameters } from '../simulation/config'
 import { type Phenotype, type Genome, type Point } from '../population/types'
+import { canvasParameters } from '../simulation/config'
 
 // Internal Helper Functions
 // --------------------------------------------------
@@ -16,8 +17,8 @@ export const createImage = async (src: string): Promise<HTMLImageElement> =>
     image.onload = () => {
       resolve(image)
     }
-    image.onerror = (error) => {
-      reject(error)
+    image.onerror = () => {
+      reject(new Error(`Failed to load image: ${src}`))
     }
     image.src = src
   })
@@ -96,7 +97,7 @@ export const genomeToPhenotype = (genome: Genome): Phenotype | undefined => {
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+  const ctx = canvas.getContext('2d')!
   renderGenomeToCanvas(genome, ctx, { w: width, h: height })
 
   return ctx?.getImageData(0, 0, width, height)

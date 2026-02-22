@@ -1,4 +1,5 @@
-import React, { type ChangeEvent, useState, type SyntheticEvent } from 'react'
+import { type ChangeEvent, useState, type SyntheticEvent } from 'react'
+
 import {
   Button,
   Paper,
@@ -8,14 +9,15 @@ import {
   Typography
 } from '@mui/material'
 import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../firebase/firebase'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+
+import { auth } from '../firebase/firebase'
+import { NavPaths } from '../navigation/config'
 import {
   openErrorSnackbar,
   openSuccessSnackbar
 } from '../navigation/navigationSlice'
-import { useNavigate } from 'react-router-dom'
-import { NavPaths } from '../navigation/config'
 
 interface AuthFormProps {
   sx?: SxProps
@@ -28,7 +30,7 @@ function AuthForm({ sx }: AuthFormProps): JSX.Element {
   const [password, setPassword] = useState<string>('')
   const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false)
 
-  const handleClick = (event: SyntheticEvent): void => {
+  const handleClick = (_event: SyntheticEvent): void => {
     setIsAuthenticating(true)
     signInWithEmailAndPassword(auth, email, password)
       .then(() => {

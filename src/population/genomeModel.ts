@@ -1,14 +1,14 @@
+import ChromosomeModel from './chromosomeModel'
+import type CrossoverModel from './crossoverModel'
+import type MutationModel from './mutationModel'
 import {
   type GenomeBounds,
   type Chromosome,
   type Genome,
   type GenomeParameters
 } from './types'
-import type CrossoverModel from './crossoverModel'
-import type MutationModel from './mutationModel'
 import { genRange } from '../common/utils'
 import { randomIndex } from '../utils/statsUtils'
-import ChromosomeModel from './chromosomeModel'
 
 const GenomeModel = {
   // Creation Methods
@@ -199,7 +199,7 @@ const GenomeModel = {
   },
 
   // Swap a random range of adjacent Chromosome objects in the array
-  mutateOrder: (genome: Genome, mutation: MutationModel) => {
+  mutateOrder: (genome: Genome, _mutation: MutationModel) => {
     const index = randomIndex(genome.chromosomes.length - 1)
     const chromosome = genome.chromosomes.splice(index, 1)[0]
     // Insert it in a new location

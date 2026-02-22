@@ -1,10 +1,9 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { Fab, Stack, type SxProps } from '@mui/material'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import StopIcon from '@mui/icons-material/Stop'
-import { type RootState } from '../store'
+import { Fab, Stack, type SxProps } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+
 import { type Simulation } from '../database/types'
 import {
   endSimulationEarly,
@@ -12,6 +11,7 @@ import {
   resumeSimulations,
   runSimulation
 } from '../navigation/navigationSlice'
+import { type RootState } from '../store'
 
 interface ActionButtonsProps {
   isActive?: boolean

@@ -2,9 +2,7 @@
 // ------------------------------------------------------------
 export type DistributionTypes = 'colorSigma' | 'pointSigma'
 
-export type DistributionMap = {
-  [key in DistributionTypes]: number
-}
+export type DistributionMap = Record<DistributionTypes, number>
 
 export const mutationProbabilityTypes = [
   'tweakPoint',
@@ -18,9 +16,7 @@ export const mutationProbabilityTypes = [
 
 export type MutationProbabilityType = (typeof mutationProbabilityTypes)[number]
 
-export type MutationProbabilities = {
-  [key in MutationProbabilityType]: number
-}
+export type MutationProbabilities = Record<MutationProbabilityType, number>
 
 export interface Mutation {
   genomeSize: number
@@ -37,9 +33,7 @@ export type CrossoverProbabilityTypes = 'swap'
 /**
  * Map of CrossoverTypes to probability values
  */
-export type CrossoverProbabilities = {
-  [key in CrossoverProbabilityTypes]: number
-}
+export type CrossoverProbabilities = Record<CrossoverProbabilityTypes, number>
 
 /**
  * The input parameters for creating a new Crossover model

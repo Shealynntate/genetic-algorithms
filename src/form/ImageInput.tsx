@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+
 import { Alert, Box, Snackbar, useTheme } from '@mui/material'
 import { useDropzone } from 'react-dropzone'
+
+import TargetCanvas from '../canvas/TargetCanvas'
 import { type AlertState } from '../navigation/types'
 import { canvasParameters } from '../simulation/config'
 import { fileToBase64 } from '../utils/fileUtils'
-import TargetCanvas from '../canvas/TargetCanvas'
 
 const AlertMessage: Record<AlertState, string> = {
   error: 'Oops, unable to read the file provided',
@@ -60,7 +62,7 @@ function ImageInput({
       const data = await fileToBase64(acceptedFile)
       setTarget(data as string)
       onChange(data as string)
-    } catch (error) {
+    } catch {
       setAlertState('error')
     }
   }

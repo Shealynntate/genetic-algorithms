@@ -35,6 +35,6 @@ export const approxEqual = (a: number, b: number): boolean =>
  * @param obj the object to get the keys of
  * @returns an array of the object's keys cast to the appropriate type
  */
-export const objectKeys = <T extends object>(obj: T): Array<keyof T> => {
-  return Object.keys(obj) as Array<keyof T>
+export const objectKeys = <T extends object>(obj: T): (keyof T)[] => {
+  return Object.keys(obj) as (keyof T)[]
 }

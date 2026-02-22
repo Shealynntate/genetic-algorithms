@@ -41,7 +41,7 @@ export const getSimulation = async (
 
 export const getSimulations = async (
   ids: number[]
-): Promise<Array<Simulation | undefined>> => {
+): Promise<(Simulation | undefined)[]> => {
   return await db.simulations.bulkGet(ids)
 }
 

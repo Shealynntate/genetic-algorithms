@@ -1,4 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
+
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import DeleteIcon from '@mui/icons-material/Delete'
+import DownloadIcon from '@mui/icons-material/Download'
 import {
   Box,
   IconButton,
@@ -9,22 +14,19 @@ import {
   Skeleton,
   Fade
 } from '@mui/material'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import DownloadIcon from '@mui/icons-material/Download'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { downloadUrl } from '../utils/fileUtils'
-import { canvasParameters } from '../simulation/config'
+import { useDispatch, useSelector } from 'react-redux'
+
 import OrganismCanvas from '../canvas/OrganismCanvas'
 import { type ExperimentRecord } from '../firebase/types'
-import { toPercent } from '../utils/statsUtils'
-import { useDispatch, useSelector } from 'react-redux'
 import {
   openErrorSnackbar,
   openSuccessSnackbar,
   selectIsAuthenticated,
   useDeleteExperimentMutation
 } from '../navigation/navigationSlice'
+import { canvasParameters } from '../simulation/config'
+import { downloadUrl } from '../utils/fileUtils'
+import { toPercent } from '../utils/statsUtils'
 
 interface GallerEntryProps {
   data: ExperimentRecord

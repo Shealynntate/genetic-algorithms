@@ -7,7 +7,23 @@ import {
   takeEvery,
   type ForkEffect
 } from 'redux-saga/effects'
+
+import { recordSigFigs } from './config'
+import {
+  setGlobalBest,
+  clearCurrentSimulation,
+  setLastThreshold,
+  setCurrentGenStats
+} from './simulationSlice'
 import { type StartSimulationAction } from './types'
+import {
+  createGalleryEntry,
+  hasReachedTarget,
+  shouldSaveGenImage,
+  typedGetContext,
+  typedSelect
+} from './utils'
+import { setSigFigs } from '../common/utils'
 import {
   addImageToDatabase,
   deleteCurrentSimulation,
@@ -16,15 +32,7 @@ import {
   addResultsForCurrentSimulation,
   setCurrentSimulation
 } from '../database/api'
-import { setSigFigs } from '../common/utils'
 import { isRunningSelector } from '../navigation/hooks'
-import { setSimulationParameters } from '../parameters/parametersSlice'
-import {
-  setGlobalBest,
-  clearCurrentSimulation,
-  setLastThreshold,
-  setCurrentGenStats
-} from './simulationSlice'
 import {
   deleteRunningSimulation,
   endSimulationEarly,
@@ -32,6 +40,7 @@ import {
   removeGraphEntry,
   resumeSimulations
 } from '../navigation/navigationSlice'
+import { setSimulationParameters } from '../parameters/parametersSlice'
 import populationService, {
   type PopulationServiceType
 } from '../population/population-context'
@@ -40,14 +49,6 @@ import {
   type GenerationStatsRecord,
   type GenerationStats
 } from '../population/types'
-import {
-  createGalleryEntry,
-  hasReachedTarget,
-  shouldSaveGenImage,
-  typedGetContext,
-  typedSelect
-} from './utils'
-import { recordSigFigs } from './config'
 
 // Saga Functions
 // --------------------------------------------------

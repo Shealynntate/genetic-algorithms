@@ -1,4 +1,6 @@
-import React, { type SyntheticEvent, useRef, useState } from 'react'
+import { type SyntheticEvent, useRef, useState } from 'react'
+
+import AddIcon from '@mui/icons-material/Add'
 import {
   Box,
   Button,
@@ -8,20 +10,20 @@ import {
   Typography,
   useTheme
 } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
-import _ from 'lodash'
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
-import { type Simulation } from '../database/types'
-import { type ParametersState } from '../parameters/types'
-import { type SimulationStatus } from './types'
-import { insertSimulation } from '../database/api'
-import { useGetAllButCurrentSimulation } from '../database/hooks'
+import _ from 'lodash'
+
+import { useCreateRunningSimulation } from './hooks'
 import SimulationChart from './SimulationChart'
 import SimulationEntry from './SimulationEntry'
 import SimulationFormDialog from './SimulationFormDialog'
-import { defaultParameters } from '../parameters/config'
-import { useCreateRunningSimulation } from './hooks'
 import SkeletonExperimentEntry from './SkeletonExperimentEntry'
+import { type SimulationStatus } from './types'
+import { insertSimulation } from '../database/api'
+import { useGetAllButCurrentSimulation } from '../database/hooks'
+import { type Simulation } from '../database/types'
+import { defaultParameters } from '../parameters/config'
+import { type ParametersState } from '../parameters/types'
 
 const statusToOrder: Record<SimulationStatus, number> = {
   running: 0,

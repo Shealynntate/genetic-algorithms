@@ -1,4 +1,5 @@
-import React from 'react'
+import type React from 'react'
+
 import { IconButton, Tooltip, useMediaQuery, useTheme } from '@mui/material'
 
 interface HeaderIconButtonProps {
