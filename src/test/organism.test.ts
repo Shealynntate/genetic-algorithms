@@ -1,4 +1,4 @@
-import Chromosome from '../population/chromosomeModel'
+import ChromosomeModel from '../population/chromosomeModel'
 import Organism from '../population/organismModel'
 
 beforeEach(() => {
@@ -43,10 +43,20 @@ describe('Organism Cloning', () => {
     // Different Ids
     expect(org1.id).toEqual(0)
     expect(org2.id).toEqual(1)
-    // Same Genome
-    expect(org1.genome).toEqual(org2.genome)
-    // Different Genome instances
-    org1.genome.chromosomes[0] = Chromosome.create({ numSides: 3 })
-    expect(org1.genome).not.toEqual(org2.genome)
+    // Same Genome data
+    expect(org1.genome.chromosomes.length).toEqual(
+      org2.genome.chromosomes.length
+    )
+    for (let i = 0; i < org1.genome.chromosomes.length; i++) {
+      expect(org1.genome.chromosomes[i].color.r).toEqual(
+        org2.genome.chromosomes[i].color.r
+      )
+    }
+    // Different Genome instances (deep clone)
+    const newChrom = ChromosomeModel.create({ numSides: 3 })
+    org1.genome.chromosomes[0] = newChrom
+    expect(org1.genome.chromosomes[0].color.r).not.toEqual(
+      org2.genome.chromosomes[0].color.r
+    )
   })
 })

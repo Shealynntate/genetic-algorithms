@@ -162,7 +162,7 @@ export interface Population {
 // Workers
 // ------------------------------------------------------------
 export interface WorkerMessage {
-  updatedOrganisms: Organism[]
+  fitnesses: Float64Array
 }
 
 /**

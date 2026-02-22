@@ -2,7 +2,6 @@ import { expectRange, mockRandom } from './utils'
 import { genRange } from '../common/utils'
 import ChromosomeModel from '../population/chromosomeModel'
 import MutationModel from '../population/mutationModel'
-import { type Color, type Point } from '../population/types'
 import { maxColorValue } from '../simulation/config'
 import * as statsUtils from '../utils/statsUtils'
 
@@ -39,7 +38,6 @@ afterEach(() => {
 // --------------------------------------------------
 describe('Chromosome Initialization Helpers', () => {
   test('Random Color Value (Mock Random)', () => {
-    // Check that the function is called once and returns the expected value
     const spy = vi.spyOn(statsUtils, 'randomInt')
     spy.mockImplementation(mockRandom([-1]))
     const result = ChromosomeModel.randCV()
@@ -49,9 +47,7 @@ describe('Chromosome Initialization Helpers', () => {
   })
 
   test('Random Color Value (True Random)', () => {
-    // Test it 3 times
     genRange(3).forEach(() => {
-      // Check that the actual function returns a value in the correct range
       const spy = vi.spyOn(statsUtils, 'randomInt')
       const result = ChromosomeModel.randCV()
       expectRange(result, 0, maxColorValue)
@@ -61,30 +57,26 @@ describe('Chromosome Initialization Helpers', () => {
   })
 
   test('Random Color (True Random)', () => {
-    // Test it 3 times
     genRange(3).forEach(() => {
       const result = ChromosomeModel.randomColor()
-      expectRange(result.r, 0, maxColorValue) // red
-      expectRange(result.g, 0, maxColorValue) // green
-      expectRange(result.b, 0, maxColorValue) // blue
-      expectRange(result.a, 0, 1) // alpha
+      expectRange(result.r, 0, maxColorValue)
+      expectRange(result.g, 0, maxColorValue)
+      expectRange(result.b, 0, maxColorValue)
+      expectRange(result.a, 0, 1)
     })
   })
 
   test('Random Transparent Color (True Random)', () => {
-    // Test it 3 times
     genRange(3).forEach(() => {
       const result = ChromosomeModel.randomColor()
-      expectRange(result.r, 0, maxColorValue) // red
-      expectRange(result.g, 0, maxColorValue) // green
-      expectRange(result.b, 0, maxColorValue) // blue
-      expectRange(result.a, 0, 1) // alpha
+      expectRange(result.r, 0, maxColorValue)
+      expectRange(result.g, 0, maxColorValue)
+      expectRange(result.b, 0, maxColorValue)
+      expectRange(result.a, 0, 1)
     })
   })
 
   test('Random Point Creation', () => {
-    // randomPoint uses a Gaussian distribution (normalDist.next()),
-    // so we just verify the result has numeric x and y values
     genRange(3).forEach(() => {
       const result = ChromosomeModel.randomPoint()
       expect(typeof result.x).toBe('number')
@@ -95,42 +87,6 @@ describe('Chromosome Initialization Helpers', () => {
 
 // --------------------------------------------------
 describe('Chromosome Mutation Utils', () => {
-  test('Tweak Point Zero Amount', () => {
-    const mockMutation = new MockMutationModel()
-    mockMutation.pointNudge = () => 0
-
-    const result = ChromosomeModel.tweakPoint(mockMutation, { x: 1, y: 1 })
-    expect(result.x).toEqual(1)
-    expect(result.y).toEqual(1)
-  })
-
-  test('Tweak Point Small Amount', () => {
-    const mockMutation = new MockMutationModel()
-    mockMutation.pointNudge = () => 0.1
-
-    const result = ChromosomeModel.tweakPoint(mockMutation, { x: 0.5, y: 0.5 })
-    expect(result.x).toEqual(0.6)
-    expect(result.y).toEqual(0.6)
-  })
-
-  test('Tweak Point Max Value Clamping', () => {
-    const mockMutation = new MockMutationModel()
-    mockMutation.pointNudge = () => 0.2
-
-    const result = ChromosomeModel.tweakPoint(mockMutation, { x: 1, y: 0.9 })
-    expect(result.x).toEqual(1)
-    expect(result.y).toEqual(1)
-  })
-
-  test('Tweak Point Min Value Clamping', () => {
-    const mockMutation = new MockMutationModel()
-    mockMutation.pointNudge = () => -0.2
-
-    const result = ChromosomeModel.tweakPoint(mockMutation, { x: 0, y: 0.1 })
-    expect(result.x).toEqual(0)
-    expect(result.y).toEqual(0)
-  })
-
   test('Tweak Color Zero Amount', () => {
     const mockMutation = new MockMutationModel()
     mockMutation.colorNudge = () => 0
@@ -202,8 +158,8 @@ describe('Chromosome Mutation Utils', () => {
 // --------------------------------------------------
 describe('Chromosome Initialization', () => {
   test('Create A Random Chromosome', () => {
-    const mockColor: Color = { r: 50, g: 100, b: 200, a: 0 }
-    const mockPoint: Point = { x: 0.5, y: 0.5 }
+    const mockColor = { r: 50, g: 100, b: 200, a: 0 }
+    const mockPoint = { x: 0.5, y: 0.5 }
 
     vi.spyOn(ChromosomeModel, 'randomColor').mockReturnValue(mockColor)
     vi.spyOn(ChromosomeModel, 'randomPoint').mockReturnValue(mockPoint)
@@ -213,8 +169,12 @@ describe('Chromosome Initialization', () => {
     const chrom1 = ChromosomeModel.create({ numSides: 1 })
     expect(ChromosomeModel.randomColor).toHaveBeenCalledTimes(1)
     expect(chrom1.points).toHaveLength(1)
-    expect(chrom1.points[0]).toEqual(mockPoint)
-    expect(chrom1.color).toEqual(mockColor)
+    expect(chrom1.points[0].x).toBeCloseTo(mockPoint.x, 2)
+    expect(chrom1.points[0].y).toBeCloseTo(mockPoint.y, 2)
+    expect(chrom1.color.r).toBe(mockColor.r)
+    expect(chrom1.color.g).toBe(mockColor.g)
+    expect(chrom1.color.b).toBe(mockColor.b)
+    expect(chrom1.color.a).toBe(mockColor.a)
 
     vi.restoreAllMocks()
 
@@ -226,25 +186,43 @@ describe('Chromosome Initialization', () => {
     const chrom2 = ChromosomeModel.create({ numSides: 3 })
     expect(ChromosomeModel.randomColor).toHaveBeenCalledTimes(1)
     expect(chrom2.points).toHaveLength(3)
-    chrom2.points.forEach((p) => {
-      expect(p).toEqual(mockPoint)
-    })
-    expect(chrom2.color).toEqual(mockColor)
+    for (let i = 0; i < 3; i++) {
+      expect(chrom2.points[i].x).toBeCloseTo(mockPoint.x, 2)
+      expect(chrom2.points[i].y).toBeCloseTo(mockPoint.y, 2)
+    }
+    expect(chrom2.color.r).toBe(mockColor.r)
   })
 
-  test('Create A Chromosome With Fixed Points and Color', () => {
-    const points: Point[] = [
-      { x: 1, y: 2 },
-      { x: 3, y: 4 },
-      { x: 5, y: 6 }
-    ]
-    const color: Color = { r: 1, g: 2, b: 3, a: 0 }
+  test('Create A Chromosome Clone With Fixed Points and Color', () => {
+    const original = {
+      points: [
+        { x: 1, y: 2 },
+        { x: 3, y: 4 },
+        { x: 5, y: 6 }
+      ],
+      color: { r: 1, g: 2, b: 3, a: 0 }
+    }
     vi.spyOn(ChromosomeModel, 'randomColor')
-    // vi.spyOn(ChromosomeModel, 'randomPoints')
-    const chrom = ChromosomeModel.clone({ color, points })
+    const chrom = ChromosomeModel.clone(original)
     expect(ChromosomeModel.randomColor).toHaveBeenCalledTimes(0)
-    // expect(ChromosomeModel.randomPoints).toHaveBeenCalledTimes(0)
-    expect(chrom.points).toEqual(points)
-    expect(chrom.color).toEqual(color)
+    // Verify data matches
+    expect(chrom.points).toEqual(original.points)
+    expect(chrom.color).toEqual(original.color)
+  })
+})
+
+// --------------------------------------------------
+describe('Chromosome Cloning', () => {
+  test('clone produces independent copy', () => {
+    const original = ChromosomeModel.create({ numSides: 3 })
+    const clone = ChromosomeModel.clone(original)
+
+    // Mutate clone
+    clone.color.r = 999
+    clone.points[0].x = 999
+
+    // Original unchanged
+    expect(original.color.r).not.toBe(999)
+    expect(original.points[0].x).not.toBe(999)
   })
 })

@@ -141,7 +141,7 @@ const GenomeModel = {
       parent2.chromosomes.length
     )
 
-    genRange(maxLength).forEach((i) => {
+    for (let i = 0; i < maxLength; ++i) {
       if (i < minLength && crossover.doCrossover()) {
         // Perform a crossover event
         child1.push(ChromosomeModel.clone(parent2.chromosomes[i]))
@@ -154,7 +154,7 @@ const GenomeModel = {
           child2.push(ChromosomeModel.clone(parent2.chromosomes[i]))
         }
       }
-    })
+    }
 
     return [{ chromosomes: child1 }, { chromosomes: child2 }]
   },

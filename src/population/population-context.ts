@@ -77,7 +77,7 @@ class PopulationService {
    */
   async evaluateFitness(organisms: Organism[]): Promise<Organism[]> {
     const size = organisms.length
-    const promises: Promise<WorkerMessage>[] = []
+    const promises: Promise<{ fitnesses: Float64Array; start: number }>[] = []
 
     for (let i = 0; i < this.workers.length; ++i) {
       const start = i * workerBatchSize
@@ -88,8 +88,8 @@ class PopulationService {
             this.workers[i].postMessage({
               organisms: organisms.slice(start, end)
             })
-            this.workers[i].onmessage = (result) => {
-              resolve(result.data)
+            this.workers[i].onmessage = (result: MessageEvent<WorkerMessage>) => {
+              resolve({ fitnesses: result.data.fitnesses, start })
             }
           } catch (error) {
             reject(error instanceof Error ? error : new Error(String(error)))
@@ -98,17 +98,14 @@ class PopulationService {
       )
     }
 
+    // B7+B8: Assign fitness values in place — no organism reconstruction needed
     const results = await Promise.all(promises)
-    let orgs: Organism[] = []
-    for (const result of results) {
-      orgs = orgs.concat(result.updatedOrganisms)
+    for (const { fitnesses, start } of results) {
+      for (let j = 0; j < fitnesses.length; j++) {
+        organisms[start + j].fitness = fitnesses[j]
+      }
     }
-    if (orgs.length !== size) {
-      throw new Error(
-        `evaluateFitness returned incorrect number of organisms ${orgs.length}`
-      )
-    }
-    return orgs
+    return organisms
   }
 
   serialize(): Population | undefined {

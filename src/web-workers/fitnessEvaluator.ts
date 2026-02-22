@@ -38,16 +38,20 @@ class FitnessEvaluator {
   getImageData(chromosomes: Chromosome[]): ImageData {
     this.ctx.clearRect(0, 0, this.width, this.height)
 
-    chromosomes.forEach(({ color, points }) => {
+    for (const c of chromosomes) {
+      const { color, points } = c
       this.ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`
       this.ctx.beginPath()
       this.ctx.moveTo(points[0].x * this.width, points[0].y * this.height)
       for (let i = 1; i < points.length; ++i) {
-        this.ctx.lineTo(points[i].x * this.width, points[i].y * this.height)
+        this.ctx.lineTo(
+          points[i].x * this.width,
+          points[i].y * this.height
+        )
       }
       this.ctx.closePath()
       this.ctx.fill()
-    })
+    }
 
     return this.ctx.getImageData(0, 0, this.width, this.height)
   }
@@ -91,15 +95,11 @@ self.onmessage = ({
   if (fe == null) {
     throw new Error('FitnessEvaluator not initialized')
   }
-  const updatedOrganisms = organisms.map((org) => {
-    const data = fe.getImageData(org.genome.chromosomes)
-    return {
-      ...org,
-      genome: {
-        ...org.genome
-      },
-      fitness: fe.evaluateFitness(data)
-    }
-  })
-  postMessage({ updatedOrganisms })
+  // B7: Return fitness values only as a transferable Float64Array (zero-copy)
+  const fitnesses = new Float64Array(organisms.length)
+  for (let i = 0; i < organisms.length; i++) {
+    const imageData = fe.getImageData(organisms[i].genome.chromosomes)
+    fitnesses[i] = fe.evaluateFitness(imageData)
+  }
+  postMessage({ fitnesses }, { transfer: [fitnesses.buffer] })
 }

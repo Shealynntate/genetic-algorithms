@@ -1,7 +1,11 @@
 import gifshot from 'gifshot'
 
 import { type Dim } from './types'
-import { type Phenotype, type Genome, type Point } from '../population/types'
+import {
+  type Chromosome,
+  type Phenotype,
+  type Genome
+} from '../population/types'
 import { canvasParameters } from '../simulation/config'
 
 // Internal Helper Functions
@@ -39,9 +43,9 @@ const imageDataToImage = async (
   return await createImage(canvas.toDataURL())
 }
 
-const scalePoint = (point: Point, { w, h }: Dim): number[] => [
-  point.x * w,
-  point.y * h
+const scaleXY = (x: number, y: number, { w, h }: Dim): [number, number] => [
+  x * w,
+  y * h
 ]
 
 // Canvas, ImageData and Phenotype Functions
@@ -73,23 +77,32 @@ export const convertBase64ToFile = async (
   return new File([blob], fileName, { type: blob.type })
 }
 
+const renderChromosome = (
+  c: Chromosome,
+  ctx: CanvasRenderingContext2D,
+  dim: Dim
+): void => {
+  const { color, points } = c
+  ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`
+  ctx.beginPath()
+  const [x0, y0] = scaleXY(points[0].x, points[0].y, dim)
+  ctx.moveTo(x0, y0)
+  for (let i = 1; i < points.length; ++i) {
+    const [x, y] = scaleXY(points[i].x, points[i].y, dim)
+    ctx.lineTo(x, y)
+  }
+  ctx.closePath()
+  ctx.fill()
+}
+
 export const renderGenomeToCanvas = (
   genome: Genome,
   ctx: CanvasRenderingContext2D,
   { w, h }: Dim
 ): void => {
-  genome.chromosomes.forEach(({ color, points }) => {
-    const p0 = scalePoint(points[0], { w, h })
-    ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${color.a})`
-    ctx.beginPath()
-    ctx.moveTo(p0[0], p0[1])
-    for (let i = 1; i < points.length; ++i) {
-      const p = scalePoint(points[i], { w, h })
-      ctx.lineTo(p[0], p[1])
-    }
-    ctx.closePath()
-    ctx.fill()
-  })
+  for (const c of genome.chromosomes) {
+    renderChromosome(c, ctx, { w, h })
+  }
 }
 
 export const genomeToPhenotype = (genome: Genome): Phenotype | undefined => {

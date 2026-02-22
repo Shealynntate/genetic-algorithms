@@ -7,44 +7,36 @@ import {
   type Color,
   type Point
 } from './types'
-import { genRange, setSigFigs } from '../common/utils'
+import { setSigFigs } from '../common/utils'
 import { maxColorValue, statsSigFigs } from '../simulation/config'
 import GaussianNoise from '../utils/gaussianNoise'
 import { randomFloat, randomIndex, randomInt } from '../utils/statsUtils'
 
-/**
- * Chromosome Model
- */
 const Model = {
   normalDist: new GaussianNoise(0.5, 0.25),
 
+  // Creation Methods
+  // ------------------------------------------------------------
   create: ({ numSides }: ChromosomeParameters): Chromosome => {
     const origin = Model.randomPoint()
+    const color = Model.randomColor()
     const points: Point[] = []
-    // Generate points around the origin to form our polygon
-    genRange(numSides).forEach(() => {
-      const p = {
+    for (let i = 0; i < numSides; i++) {
+      points.push({
         x: setSigFigs(origin.x + randomFloat(-0.1, 0.1), statsSigFigs),
         y: setSigFigs(origin.y + randomFloat(-0.1, 0.1), statsSigFigs)
-      }
-      points.push(p)
-    })
-    return {
-      points,
-      color: Model.randomColor()
+      })
     }
+    return { points, color }
   },
 
   clone: (chromosome: Chromosome): Chromosome => ({
     points: chromosome.points.map((p) => ({ ...p })),
-    color: {
-      r: chromosome.color.r,
-      g: chromosome.color.g,
-      b: chromosome.color.b,
-      a: chromosome.color.a
-    }
+    color: { ...chromosome.color }
   }),
 
+  // Mutation Methods
+  // ------------------------------------------------------------
   tweakMutation: (chromosome: Chromosome, mutation: MutationModel) => {
     if (mutation.doTweakColor()) {
       chromosome.color.r = Model.tweakColor(mutation, chromosome.color.r)
@@ -60,30 +52,39 @@ const Model = {
     }
     for (let i = 0; i < chromosome.points.length; ++i) {
       if (mutation.doTweakPoint()) {
-        chromosome.points[i] = Model.tweakPoint(mutation, chromosome.points[i])
+        chromosome.points[i].x = clamp(
+          setSigFigs(
+            chromosome.points[i].x + mutation.pointNudge(),
+            statsSigFigs
+          ),
+          0,
+          1
+        )
+        chromosome.points[i].y = clamp(
+          setSigFigs(
+            chromosome.points[i].y + mutation.pointNudge(),
+            statsSigFigs
+          ),
+          0,
+          1
+        )
       }
     }
     return chromosome
   },
 
-  /**
-   * Adds a randomly generated (x,y) point to the Chromosome if possible
-   * @param {*} chromosome - an array of Chromosome objects
-   * @returns true if the add mutation was successful, false if the chromosome already has the
-   * maximum number of points allowed
-   */
   addPointMutation: (chromosome: Chromosome, maxNumPoints: number) => {
     if (chromosome.points.length >= maxNumPoints) {
       return false
     }
-
     const index = randomIndex(chromosome.points.length - 1)
     const a = chromosome.points[index]
     const b = chromosome.points[index + 1]
-    const x = (a.x + b.x) / 2
-    const y = (a.y + b.y) / 2
-    chromosome.points.splice(index + 1, 0, { x, y })
-
+    const midpoint = {
+      x: (a.x + b.x) / 2,
+      y: (a.y + b.y) / 2
+    }
+    chromosome.points.splice(index + 1, 0, midpoint)
     return true
   },
 
@@ -93,19 +94,15 @@ const Model = {
     }
     const index = randomIndex(chromosome.points.length - 1)
     chromosome.points.splice(index, 1)
-
     return true
   },
 
-  // Mutation Methods
-  // ------------------------------------------------------------
-  tweakPoint: (m: MutationModel, p: Point): Point => ({
-    x: clamp(setSigFigs(p.x + m.pointNudge(), statsSigFigs), 0, 1),
-    y: clamp(setSigFigs(p.y + m.pointNudge(), statsSigFigs), 0, 1)
-  }),
-
   tweakColor: (m: MutationModel, value: number): number =>
-    clamp(Math.round(value + m.colorNudge() * maxColorValue), 0, maxColorValue),
+    clamp(
+      Math.round(value + m.colorNudge() * maxColorValue),
+      0,
+      maxColorValue
+    ),
 
   tweakAlpha: (m: MutationModel, value: number): number =>
     clamp(setSigFigs(value + m.colorNudge(), statsSigFigs), 0, 1),

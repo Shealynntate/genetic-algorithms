@@ -1,5 +1,3 @@
-import { deviation } from 'd3-array'
-
 import CrossoverModel from './crossoverModel'
 import MutationModel from './mutationModel'
 import OrganismModel from './organismModel'
@@ -56,7 +54,7 @@ class PopulationModel {
 
     const population = new PopulationModel(parameters, evaluateFitness)
     population.organisms = restoreParameters.organisms
-    population.best = restoreParameters.best
+    population.best = restoreParameters.best ?? null
 
     return population
   }
@@ -255,13 +253,7 @@ class PopulationModel {
   rouletteSelectParent(cdf: number[]): Organism {
     const total = cdf[cdf.length - 1]
     const n = randomFloat(0, total)
-    let index = 0
-    for (let i = 1; i < cdf.length; ++i) {
-      if (cdf[i - 1] < n && cdf[i] >= n) {
-        index = i
-        break
-      }
-    }
+    const index = PopulationModel.binarySearchCDF(cdf, n)
 
     return this.organisms[index]
   }
@@ -282,7 +274,7 @@ class PopulationModel {
   }
 
   susSelectParent(cdf: number[], value: number): Organism {
-    const index = cdf.findIndex((f) => value <= f)
+    const index = PopulationModel.binarySearchCDF(cdf, value)
 
     return this.organisms[index]
   }
@@ -297,11 +289,57 @@ class PopulationModel {
     return cdf
   }
 
+  /**
+   * Binary search on a monotonically increasing CDF array.
+   * Returns the index of the first element where cdf[index] >= value.
+   */
+  static binarySearchCDF(cdf: number[], value: number): number {
+    let lo = 0
+    let hi = cdf.length - 1
+    while (lo < hi) {
+      const mid = (lo + hi) >>> 1
+      if (cdf[mid] < value) {
+        lo = mid + 1
+      } else {
+        hi = mid
+      }
+    }
+    return lo
+  }
+
   getElites(count: number): Organism[] {
     if (count === 0) return []
 
-    const organisms = this.organismsByFitness()
-    return organisms.slice(0, count).map((org) => OrganismModel.clone(org))
+    const topN: Organism[] = []
+    let minFitness = -Infinity
+    let minIndex = 0
+
+    for (const org of this.organisms) {
+      if (topN.length < count) {
+        topN.push(org)
+        if (topN.length === count) {
+          // Find the initial minimum
+          for (let i = 0; i < count; i++) {
+            if (i === 0 || topN[i].fitness < minFitness) {
+              minFitness = topN[i].fitness
+              minIndex = i
+            }
+          }
+        }
+      } else if (org.fitness > minFitness) {
+        topN[minIndex] = org
+        // Rescan for new minimum
+        minFitness = topN[0].fitness
+        minIndex = 0
+        for (let i = 1; i < count; i++) {
+          if (topN[i].fitness < minFitness) {
+            minFitness = topN[i].fitness
+            minIndex = i
+          }
+        }
+      }
+    }
+    return topN.map((org) => OrganismModel.clone(org))
   }
 
   randomOrganism(): Organism {
@@ -332,8 +370,11 @@ class PopulationModel {
   createStats(): GenerationStats {
     let max = Number.MIN_SAFE_INTEGER
     let min = Number.MAX_SAFE_INTEGER
-    let total = 0
     let maxFitOrganism = this.organisms[0]
+
+    // Welford's online algorithm for single-pass mean + variance
+    let mean = 0
+    let m2 = 0
     for (let i = 0; i < this.size; ++i) {
       const { fitness } = this.organisms[i]
       if (fitness < min) min = fitness
@@ -341,9 +382,15 @@ class PopulationModel {
         max = fitness
         maxFitOrganism = this.organisms[i]
       }
-      total += fitness
+      // Welford's update
+      const delta = fitness - mean
+      mean += delta / (i + 1)
+      const delta2 = fitness - mean
+      m2 += delta * delta2
     }
-    const mean = total / this.size
+    const variance = this.size > 1 ? m2 / (this.size - 1) : 0
+    const dev = Math.sqrt(variance)
+
     // Update the overall best organism
     let isGlobalBest = false
     max = setSigFigs(max, statsSigFigs)
@@ -360,10 +407,7 @@ class PopulationModel {
       meanFitness: setSigFigs(mean, statsSigFigs),
       maxFitness: setSigFigs(max, statsSigFigs),
       minFitness: setSigFigs(min, statsSigFigs),
-      deviation: setSigFigs(
-        deviation(this.organisms, (o) => o.fitness) ?? 0,
-        statsSigFigs
-      ),
+      deviation: setSigFigs(dev, statsSigFigs),
       maxFitOrganism,
       isGlobalBest
     }
