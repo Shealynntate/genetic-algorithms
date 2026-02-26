@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   IconButton,
+  Skeleton,
   Stack,
   TextField,
   Typography,
@@ -37,6 +38,7 @@ function LocalGalleryEntry({ data }: GallerEntryProps): JSX.Element {
   const { id, parameters, name } = simulation
   const [uploadExperiment] = useUploadExperimentReportMutation()
   const isAdmin = useSelector(selectIsAuthenticated)
+  const [gifLoaded, setGifLoaded] = useState(false)
   const [hover, setHover] = useState(false)
   const dispatch = useDispatch()
   const thumbWidth = canvasParameters.width / 3
@@ -112,12 +114,19 @@ function LocalGalleryEntry({ data }: GallerEntryProps): JSX.Element {
         }
       }}
     >
+      {gif != null && !gifLoaded && (
+        <Skeleton
+          variant="rectangular"
+          sx={{ width: '100%', height: 0, paddingBottom: '100%' }}
+        />
+      )}
       {gif != null && (
         <Tooltip title="A timelapse of the evolution of the best solution">
-          <Box sx={{ lineHeight: 0 }}>
+          <Box sx={{ lineHeight: 0, display: gifLoaded ? 'block' : 'none' }}>
             <img
               src={gif}
               alt={`${name} gif`}
+              onLoad={(): void => { setGifLoaded(true) }}
               style={{ width: '100%', display: 'block' }}
             />
           </Box>

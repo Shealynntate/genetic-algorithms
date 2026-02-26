@@ -118,7 +118,7 @@ function GalleryEntry({ data }: GallerEntryProps): JSX.Element {
         {!gifLoaded && (
           <Skeleton
             variant="rectangular"
-            sx={{ width: '100%', aspectRatio: '1' }}
+            sx={{ width: '100%', height: 0, paddingBottom: '100%' }}
           />
         )}
       </Box>

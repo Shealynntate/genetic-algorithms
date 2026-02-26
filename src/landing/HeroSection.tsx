@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import {
   Box,
   Button,
@@ -17,6 +19,7 @@ function HeroSection(): JSX.Element {
   const theme = useTheme()
   const navigate = useNavigate()
   const { data: entries = [], isLoading } = useFetchAllExperimentsQuery()
+  const [gifLoaded, setGifLoaded] = useState(false)
 
   const heroEntry = entries.find(
     (e) =>
@@ -36,35 +39,39 @@ function HeroSection(): JSX.Element {
     >
       <Stack spacing={{ xs: 4, md: 5 }} sx={{ alignItems: 'center' }}>
         <Box sx={{ maxWidth: 560, width: '100%' }}>
-          {isLoading ? (
+          {isLoading || (heroEntry?.gif != null && !gifLoaded) ? (
             <Skeleton
               variant="rounded"
               sx={{
                 width: '100%',
-                aspectRatio: '1',
+                height: 0,
+                paddingBottom: '100%',
                 borderRadius: 1
               }}
             />
-          ) : heroEntry?.gif != null ? (
+          ) : null}
+          {heroEntry?.gif != null && (
             <Card
               elevation={0}
               sx={{
                 borderRadius: 1,
                 overflow: 'hidden',
-                border: `1px solid ${theme.palette.divider}`
+                border: `1px solid ${theme.palette.divider}`,
+                display: gifLoaded ? 'block' : 'none'
               }}
             >
               <CardMedia
                 component="img"
                 image={heroEntry.gif}
                 alt={`${heroEntry.simulationName} timelapse`}
+                onLoad={(): void => { setGifLoaded(true) }}
                 sx={{
                   width: '100%',
                   display: 'block'
                 }}
               />
             </Card>
-          ) : null}
+          )}
         </Box>
 
         <Stack spacing={3} sx={{ textAlign: 'center', maxWidth: 600, alignItems: 'center' }}>
