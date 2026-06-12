@@ -13,7 +13,7 @@ export default defineConfig({
     css: true,
     deps: {
       optimizer: {
-        web: { include: ['vitest-canvas-mock'] }
+        client: { include: ['vitest-canvas-mock'] }
       }
     },
     benchmark: {

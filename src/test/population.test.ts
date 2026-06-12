@@ -51,6 +51,8 @@ beforeEach(() => {
   // Reset ID generations
   Population.reset()
   OrganismModel.reset()
+  // Vitest 4 reuses spies across tests, so call history must be cleared explicitly
+  vi.restoreAllMocks()
 })
 
 // --------------------------------------------------
