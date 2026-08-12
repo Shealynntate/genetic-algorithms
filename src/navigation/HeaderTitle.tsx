@@ -1,5 +1,5 @@
 import { Stack, Typography, useMediaQuery, useTheme } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 import { NavPaths, SiteTitle } from './config'
 import DNAImage from '../assets/DNA.png'

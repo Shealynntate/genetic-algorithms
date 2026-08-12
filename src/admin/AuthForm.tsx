@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 import { auth } from '../firebase/firebase'
 import { NavPaths } from '../navigation/config'
@@ -36,7 +36,7 @@ function AuthForm({ sx }: AuthFormProps): JSX.Element {
       .then(() => {
         setIsAuthenticating(false)
         dispatch(openSuccessSnackbar('Successfully logged in!'))
-        navigate(NavPaths.gallery)
+        void navigate(NavPaths.gallery)
       })
       .catch((error) => {
         setIsAuthenticating(false)

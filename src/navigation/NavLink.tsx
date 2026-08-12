@@ -1,5 +1,5 @@
 import { Button, useTheme } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 interface NavLinkProps {
   label: string
@@ -13,7 +13,7 @@ function NavLink({ label, path, isSelected }: NavLinkProps): JSX.Element {
 
   return (
     <Button
-      onClick={() => { navigate(path) }}
+      onClick={() => { void navigate(path) }}
       sx={{
         color: isSelected ? theme.palette.primary.main : theme.palette.text.secondary,
         fontWeight: isSelected ? 600 : 500,

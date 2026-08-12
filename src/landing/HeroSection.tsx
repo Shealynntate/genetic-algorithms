@@ -10,7 +10,7 @@ import {
   Typography,
   useTheme
 } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 import { NavPaths } from '../navigation/config'
 import { useFetchAllExperimentsQuery } from '../navigation/navigationSlice'
@@ -103,7 +103,7 @@ function HeroSection(): JSX.Element {
             <Button
               variant="contained"
               size="large"
-              onClick={() => { navigate(NavPaths.gallery) }}
+              onClick={() => { void navigate(NavPaths.gallery) }}
               sx={{
                 px: 4,
                 py: 1.5,
@@ -117,7 +117,7 @@ function HeroSection(): JSX.Element {
             <Button
               variant="outlined"
               size="large"
-              onClick={() => { navigate(NavPaths.experiment) }}
+              onClick={() => { void navigate(NavPaths.experiment) }}
               sx={{
                 px: 4,
                 py: 1.5,

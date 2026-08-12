@@ -1,5 +1,5 @@
 import { Box, Container, Stack } from '@mui/material'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router'
 
 import Footer from './Footer'
 import Header from './Header'

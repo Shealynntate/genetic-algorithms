@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router'
 
 import Admin from '../admin/Admin'
 import Gallery from '../gallery/Gallery'

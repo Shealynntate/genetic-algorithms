@@ -2,7 +2,7 @@ import AddIcon from '@mui/icons-material/Add'
 import BrushIcon from '@mui/icons-material/Brush'
 import { Box, Button, Card, CardContent, Stack, Typography, useTheme } from '@mui/material'
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 import LocalGalleryEntry from './LocalGalleryEntry'
 import { useGetCompletedSimulationReports } from '../database/hooks'
@@ -47,7 +47,7 @@ function LocalGallery(): JSX.Element {
             <Button
               variant="outlined"
               startIcon={<AddIcon />}
-              onClick={() => { navigate(NavPaths.experiment) }}
+              onClick={() => { void navigate(NavPaths.experiment) }}
             >
               Start an Experiment
             </Button>

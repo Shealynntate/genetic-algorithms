@@ -3,7 +3,7 @@ import { StrictMode } from 'react'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { RouterProvider } from 'react-router-dom'
+import { RouterProvider } from 'react-router'
 
 import './styles.css'
 import poulationService, {
@@ -20,10 +20,7 @@ root.render(
       <PopulationContext.Provider value={poulationService}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <RouterProvider
-            router={router}
-            fallbackElement={<div>Loading...</div>}
-          />
+          <RouterProvider router={router} />
         </ThemeProvider>
       </PopulationContext.Provider>
     </Provider>

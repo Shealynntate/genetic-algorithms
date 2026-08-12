@@ -3,7 +3,7 @@ import { CssBaseline } from '@mui/material'
 import { render, screen } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import 'fake-indexeddb/auto'
-import { RouterProvider } from 'react-router-dom'
+import { RouterProvider } from 'react-router'
 
 import populationService, {
   PopulationContext
@@ -52,10 +52,7 @@ test('renders title', async () => {
       <PopulationContext.Provider value={populationService}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <RouterProvider
-            router={router}
-            fallbackElement={<div>Loading...</div>}
-          />
+          <RouterProvider router={router} />
         </ThemeProvider>
       </PopulationContext.Provider>
     </Provider>

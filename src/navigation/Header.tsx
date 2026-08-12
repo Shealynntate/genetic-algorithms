@@ -22,7 +22,7 @@ import {
 } from '@mui/material'
 import { signOut } from 'firebase/auth'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 
 import HeaderTitle from './HeaderTitle'
 import NavLink from './NavLink'
@@ -131,7 +131,7 @@ function Header(): JSX.Element {
           open={Boolean(anchorEl)}
           onClose={onAdminMenuClose}
         >
-          <MenuItem onClick={() => { navigate(NavPaths.admin); onAdminMenuClose() }}>
+          <MenuItem onClick={() => { void navigate(NavPaths.admin); onAdminMenuClose() }}>
             Admin Panel
           </MenuItem>
           <MenuItem onClick={onSignOutClick}>Sign Out</MenuItem>
@@ -150,7 +150,7 @@ function Header(): JSX.Element {
                 key={path}
                 selected={isSelected(path)}
                 onClick={() => {
-                  navigate(path)
+                  void navigate(path)
                   setDrawerOpen(false)
                 }}
               >
@@ -163,7 +163,7 @@ function Header(): JSX.Element {
             {isAdmin && (
               <ListItemButton
                 onClick={() => {
-                  navigate(NavPaths.admin)
+                  void navigate(NavPaths.admin)
                   setDrawerOpen(false)
                 }}
               >
