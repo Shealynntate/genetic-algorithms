@@ -32,6 +32,7 @@ import {
   addResultsForCurrentSimulation,
   setCurrentSimulation
 } from '../database/api'
+import { PerformanceMetrics } from '../diagnostics/performanceMetrics'
 import { isRunningSelector } from '../navigation/hooks'
 import {
   deleteRunningSimulation,
@@ -41,7 +42,6 @@ import {
   resumeSimulations
 } from '../navigation/navigationSlice'
 import { setSimulationParameters } from '../parameters/parametersSlice'
-import { PerformanceMetrics } from '../diagnostics/performanceMetrics'
 import populationService, {
   type PopulationServiceType
 } from '../population/population-context'

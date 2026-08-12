@@ -6,11 +6,9 @@ import {
   type UseFormSetValue
 } from 'react-hook-form'
 
-import ImageInput from '../ImageInput'
-import NumberInput from '../NumberInput'
-import { ParameterLabels } from '../../parameters/config'
 import { type ParametersState } from '../../parameters/types'
 import { canvasParameters } from '../../simulation/config'
+import ImageInput from '../ImageInput'
 
 interface ImageStepProps {
   control: Control<ParametersState>
@@ -21,8 +19,6 @@ interface ImageStepProps {
 }
 
 function ImageStep({
-  control,
-  errors,
   register,
   setValue,
   defaultTarget

@@ -1,9 +1,9 @@
 import { Stack, Typography } from '@mui/material'
 import { type Control, type FieldErrors } from 'react-hook-form'
 
-import NumberInput from '../NumberInput'
 import { ParameterLabels } from '../../parameters/config'
 import { type ParametersState } from '../../parameters/types'
+import NumberInput from '../NumberInput'
 
 interface PopulationStepProps {
   control: Control<ParametersState>

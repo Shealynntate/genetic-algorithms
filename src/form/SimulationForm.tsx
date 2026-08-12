@@ -60,7 +60,7 @@ function SimulationForm({
 
   useEffect(() => {
     reset(defaultValues)
-  }, [defaultValues])
+  }, [defaultValues, reset])
 
   const localOnSubmit = (event: SyntheticEvent): void => {
     event.preventDefault()

@@ -24,17 +24,17 @@ import { signOut } from 'firebase/auth'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 
+import { NavLabels, NavPaths } from './config'
 import HeaderTitle from './HeaderTitle'
-import NavLink from './NavLink'
 import {
   openErrorSnackbar,
   openSuccessSnackbar,
   selectIsAuthenticated
 } from './navigationSlice'
-import { NavLabels, NavPaths } from './config'
+import NavLink from './NavLink'
 import { auth } from '../firebase/firebase'
 
-const navItems: Array<{ label: string; path: string }> = [
+const navItems: { label: string; path: string }[] = [
   { label: NavLabels.gallery, path: NavPaths.gallery },
   { label: NavLabels.experiment, path: NavPaths.experiment },
   { label: NavLabels.yourArt, path: NavPaths.yourArt }

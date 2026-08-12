@@ -50,21 +50,15 @@ const Model = {
     if (mutation.doTweakColor()) {
       chromosome.color.a = Model.tweakAlpha(mutation, chromosome.color.a)
     }
-    for (let i = 0; i < chromosome.points.length; ++i) {
+    for (const point of chromosome.points) {
       if (mutation.doTweakPoint()) {
-        chromosome.points[i].x = clamp(
-          setSigFigs(
-            chromosome.points[i].x + mutation.pointNudge(),
-            statsSigFigs
-          ),
+        point.x = clamp(
+          setSigFigs(point.x + mutation.pointNudge(), statsSigFigs),
           0,
           1
         )
-        chromosome.points[i].y = clamp(
-          setSigFigs(
-            chromosome.points[i].y + mutation.pointNudge(),
-            statsSigFigs
-          ),
+        point.y = clamp(
+          setSigFigs(point.y + mutation.pointNudge(), statsSigFigs),
           0,
           1
         )

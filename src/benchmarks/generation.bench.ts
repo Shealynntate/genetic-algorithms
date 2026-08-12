@@ -4,11 +4,8 @@ import {
   setupBenchmark,
   teardownBenchmark,
   createBenchmarkPopulation,
-  createBenchmarkParams,
   mockFitnessEvaluator
 } from './setup'
-import OrganismModel from '../population/organismModel'
-import PopulationModel from '../population/populationModel'
 
 describe('generation phases', () => {
   afterAll(() => {

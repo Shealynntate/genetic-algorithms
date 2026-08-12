@@ -7,7 +7,6 @@ import {
   Button,
   Card,
   CardContent,
-  Paper,
   Stack,
   Typography,
   useTheme

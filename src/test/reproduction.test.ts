@@ -159,7 +159,7 @@ describe('OrganismModel.reproduce', () => {
     for (let i = 0; i < child1Genome.chromosomes.length; i++) {
       const childChrom = child1Genome.chromosomes[i]
       const parentChrom = parentASnapshot[i]
-      if (parentChrom) {
+      if (parentChrom != null) {
         if (
           childChrom.color.r !== parentChrom.color.r ||
           childChrom.color.g !== parentChrom.color.g ||

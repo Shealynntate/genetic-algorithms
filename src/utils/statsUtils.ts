@@ -1,5 +1,5 @@
-import { setSigFigs } from '../common/utils'
 import { random } from './random'
+import { setSigFigs } from '../common/utils'
 
 // A Collection of math and probability based functions
 // --------------------------------------------------

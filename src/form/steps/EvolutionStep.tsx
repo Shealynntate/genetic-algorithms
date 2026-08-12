@@ -12,8 +12,6 @@ import {
   type UseFormRegister
 } from 'react-hook-form'
 
-import NumberInput from '../NumberInput'
-import SigmaInput from '../SigmaInput'
 import {
   CrossoverTypeLabels,
   MutationProbabilityFormFields,
@@ -22,6 +20,8 @@ import {
 } from '../../parameters/config'
 import { type ParametersState } from '../../parameters/types'
 import { mutationProbabilityTypes } from '../../population/types'
+import NumberInput from '../NumberInput'
+import SigmaInput from '../SigmaInput'
 
 interface EvolutionStepProps {
   control: Control<ParametersState>

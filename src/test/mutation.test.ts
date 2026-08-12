@@ -138,11 +138,11 @@ describe('ChromosomeModel.tweakMutation', () => {
 
     ChromosomeModel.tweakMutation(chromosome, mutation)
 
-    for (let i = 0; i < chromosome.points.length; i++) {
-      expect(chromosome.points[i].x).toBeGreaterThanOrEqual(0)
-      expect(chromosome.points[i].x).toBeLessThanOrEqual(1)
-      expect(chromosome.points[i].y).toBeGreaterThanOrEqual(0)
-      expect(chromosome.points[i].y).toBeLessThanOrEqual(1)
+    for (const point of chromosome.points) {
+      expect(point.x).toBeGreaterThanOrEqual(0)
+      expect(point.x).toBeLessThanOrEqual(1)
+      expect(point.y).toBeGreaterThanOrEqual(0)
+      expect(point.y).toBeLessThanOrEqual(1)
     }
   })
 })

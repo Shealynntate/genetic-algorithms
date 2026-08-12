@@ -98,7 +98,7 @@ function SimulationChart(): JSX.Element {
         range: [graphHeight, 0],
         domain: domainY
       }),
-    [domainY, windowSize]
+    [domainY]
   )
 
   const xScale = useMemo(
@@ -107,7 +107,7 @@ function SimulationChart(): JSX.Element {
         range: [0, graphWidth],
         domain: domainX
       }),
-    [domainX, windowSize, graphWidth]
+    [domainX, graphWidth]
   )
 
   const buffer = [20, 0.01]
@@ -191,20 +191,20 @@ function SimulationChart(): JSX.Element {
   }
 
   useEffect(() => {
-    if (graphRef.current == null) return
+    const graphNode = graphRef.current
+    if (graphNode == null) return
 
     const onWheelCapture = (event: globalThis.WheelEvent): void => {
       // This is a hack to prevent the page from scrolling when the user is zooming in/out
       event.preventDefault()
       event.stopPropagation()
     }
-    graphRef.current.addEventListener('wheel', onWheelCapture, {
+    graphNode.addEventListener('wheel', onWheelCapture, {
       passive: false
     })
 
     return () => {
-      if (graphRef.current == null) return
-      graphRef.current.removeEventListener('wheel', onWheelCapture)
+      graphNode.removeEventListener('wheel', onWheelCapture)
     }
   }, [])
 

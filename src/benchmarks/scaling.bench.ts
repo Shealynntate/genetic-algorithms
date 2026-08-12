@@ -1,4 +1,4 @@
-import { bench, describe, beforeEach, afterAll } from 'vitest'
+import { bench, describe, afterAll } from 'vitest'
 
 import {
   setupBenchmark,
